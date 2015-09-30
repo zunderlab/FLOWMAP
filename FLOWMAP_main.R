@@ -57,16 +57,26 @@ CLUSTERING_VAR <- setdiff(CLUSTERING_VAR, VAR_REMOVE)
 # VAR_UPSAMPLE <- "cCaspase3"
 
 
+makeOutFolder <- function(runtype, ...) {
+  if (!exists("output_folder")) {
+    output_folder <- "~/Desktop"
+  }
+  name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
+  name <- gsub(":", ".", name, fixed = TRUE)
+  output_folder <- paste(output_folder, "/", name, "_", runtype, "_run", sep = "")
+  dir.create(output_folder)
+  return (output_folder)
+}
+
+
+
 singleFLOWMAP <- function(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
                           CLUSTERING_VAR, CLUSTNUM, saveGRAPHML = TRUE,
                           savePDFS = TRUE, subsampleRand = TRUE,
-                          findStages = TRUE, exportStages = TRUE, ...) {
+                          findStages = TRUE, exportStages = TRUE,
+                          noEdge = FALSE, ...) {
   fcs_file_names <- getFCSNames(FOLDER, FILE_FORMAT)
-  output_folder <- "~/Desktop"
-  name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
-  name <- gsub(":", ".", name, fixed = TRUE)
-  output_folder <- paste(output_folder, "/", name, "_singleFLOWMAP_run", sep = "")
-  dir.create(output_folder)
+  output_folder <- makeOutFolder(runtype = "singleFLOWMAP")
   if (exists("VAR_UPSAMPLE")) {
     fcs_files <- loadCleanFCS(fcs_file_names, VAR_REMOVE, VAR_ANNOTATE)
     fcs_files <- upsampleFCS(fcs_files, VAR_UPSAMPLE, percent_upsample_limit = UPLIMIT, subsample = SUBSAMPLE) 
@@ -98,7 +108,12 @@ singleFLOWMAP <- function(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
     in_folder <- output_folder
     file_pattern <- file_name_xy
 #     visibleChannels <- c("Timepoint", "Treatment")
-    convertToPDF(in_folder, file_pattern) 
+    if (noEdge) {
+      convertToPDF(in_folder, file_pattern, edge_color = "#FF000000") 
+    }
+    else {
+      convertToPDF(in_folder, file_pattern) 
+    }
 #     convertToPDF(in_folder, file_pattern, listOfTreatments = listOfTreatments,
 #                  treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels = visibleChannels) 
     printSummary(output_folder)
@@ -111,10 +126,7 @@ multiFLOWMAP <- function(listOfTreatments, FOLDER, FILE_FORMAT, VAR_REMOVE,
                          savePDFS = TRUE, subsampleRand = TRUE, ...) {
   fcs_file_names <- getMultiFCSNames(listOfTreatments, FOLDER, FILE_FORMAT)
   output_folder <- "~/Desktop"
-  name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
-  name <- gsub(":", ".", name, fixed = TRUE)
-  output_folder <- paste(output_folder, "/", name, "_multiFLOWMAP_run", sep = "")
-  dir.create(output_folder)
+  output_folder <- makeOutFolder(runtype = "multiFLOWMAP")
   if (exists("VAR_UPSAMPLE")) {
     fcs_files <- loadMultiCleanFCS(fcs_file_names, VAR_REMOVE, VAR_ANNOTATE)
     fcs_files <- upsampleMultiFCS(fcs_files, VAR_UPSAMPLE, percent_upsample_limit = UPLIMIT,
@@ -171,7 +183,7 @@ singleFLOWMAP(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
               per, minimum, maximum, saveGRAPHML = TRUE,
               savePDFS = TRUE, subsampleRand = TRUE,
               findStages = TRUE, exportStages = TRUE, seedX,
-              channel_cluster = CLUSTERING_VAR)
+              channel_cluster = CLUSTERING_VAR, noEdge = TRUE)
 
 # multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
 #                CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
