@@ -113,16 +113,16 @@ clusterFCS <- function(fcs_files, channel_cluster, numcluster,
                              samples = SAMPLE_NUM, sampsize = SAMPLE_SIZE)
         for (n in 1:numcluster) {
           nclustdata <- currentfile[FCSclusters$clustering == n, ]
-          if (!is.na(match("Treat", colnames(nclustdata)))) {
-            Treat <- nclustdata[, "Treat"]
-#             print(head(Treat))
-            nclustdata <- subset(nclustdata, select = colnames(nclustdata)[colnames(nclustdata) != "Treat"])
-          }
+#           if (!is.na(match("Treat", colnames(nclustdata)))) {
+#             Treat <- nclustdata[, "Treat"]
+# #             print(head(Treat))
+#             nclustdata <- subset(nclustdata, select = colnames(nclustdata)[colnames(nclustdata) != "Treat"])
+#           }
           newmedian <- as.data.frame(colMedians(as.matrix(nclustdata)))
           if(colnames(newmedian) != colnames(currentfile)) {
             newmedian <- t(newmedian)
           }
-          newmedian <- cbind(newmedian, Treat)
+#           newmedian <- cbind(newmedian, Treat)
 #           print(Treat)
 #           print(colnames(newmedian))
           cluster_medians[[i]] <- rbind(cluster_medians[[i]], newmedian)

@@ -11,9 +11,8 @@ convertToGraphML <- function(output_graph, output_folder, file_name, ...) {
 convertToPDF <- function(in_folder, file_pattern = ".graphml", out_folder = FALSE,
                          scale = NULL, normalize = "none", node_size_scale = 2,
                          min_node_size = 12, max_node_size = 24, pdf_width = 100, pdf_height = 100,
-                         text_color = "black", edge_color = "grey", PALETTE = "jet", listOfTreatments,
-#                          treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels
-                         ) {
+                         text_color = "black", edge_color = "grey", PALETTE = "jet", listOfTreatments) {
+  #                          treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels
   # visibleChannels should be a vector of strings that are channels to be colored and displayed
   # with different treatments/times invisible
   PCTILE_COLOR = c(0.2, 0.98)

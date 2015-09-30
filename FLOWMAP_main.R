@@ -10,18 +10,22 @@ library(RForceAtlas2)
 library(huge)
 library(proxy)
 
-source("FLOW-MAP_loadFromFCS.R")
-source("FLOW-MAP_clusterCells.R")
-source("FLOW-MAP_buildGraph.R")
-source("FLOW-MAP_buildMultiGraph.R")
-source("FLOW-MAP_forceDirected.R")
-source("FLOW-MAP_cosineDist.R")
-source("FLOW-MAP_saveGraphs.R")
-source("FLOW-MAP_exportEvents.R")
+setwd("~/Desktop/Work/Research/FLOW-MAP Code/FLOWMAP")
+source("FLOWMAP_loadFromFCS.R")
+source("FLOWMAP_clusterCells.R")
+source("FLOWMAP_buildGraph.R")
+source("FLOWMAP_buildMultiGraph.R")
+source("FLOWMAP_forceDirected.R")
+source("FLOWMAP_cosineDist.R")
+source("FLOWMAP_saveGraphs.R")
+source("FLOWMAP_exportEvents.R")
 
 
-MULTI_FOLDER <- "~/Desktop/Work/Research/Raw FCS Files/20150804TRAILHeLa"
-listOfTreatments <- c("DMSO", "MEKi", "p38i")
+# MULTI_FOLDER <- "~/Desktop/Work/Research/Raw FCS Files/20150804TRAILHeLa"
+# listOfTreatments <- c("DMSO", "MEKi", "p38i")
+
+FOLDER <- "~/Desktop/Work/Research/Raw FCS Files/20150728TRAILHeLa"
+
 FILE_FORMAT <- "*.fcs"
 VAR_ANNOTATE <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
                      "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
@@ -46,7 +50,6 @@ VAR_REMOVE <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode",
 # use all variables
 CLUSTERING_VAR <- c()
 for (n in names(VAR_ANNOTATE)) {
-  print(VAR_ANNOTATE[[n]])
   CLUSTERING_VAR <- c(CLUSTERING_VAR, VAR_ANNOTATE[[n]])
 }
 CLUSTERING_VAR <- setdiff(CLUSTERING_VAR, VAR_REMOVE)
@@ -89,9 +92,9 @@ singleFLOWMAP <- function(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
     convertToGraphML(graph, output_folder, file_name)
   }
   graph_xy <- forceDirectedXY(graph)
+  file_name_xy <- paste(basename(FOLDER), x, "xy", sep = "_")
   convertToGraphML(graph_xy, output_folder, file_name_xy)
   if (savePDFS) {
-    file_name_xy <- paste(basename(FOLDER), x, "xy", sep = "_")
     in_folder <- output_folder
     file_pattern <- file_name_xy
 #     visibleChannels <- c("Timepoint", "Treatment")
@@ -138,9 +141,9 @@ multiFLOWMAP <- function(listOfTreatments, FOLDER, FILE_FORMAT, VAR_REMOVE,
     convertToGraphML(graph, output_folder, file_name)
   }
   graph_xy <- forceDirectedXY(graph)
+  file_name_xy <- paste(basename(FOLDER), x, "xy", sep = "_")
   convertToGraphML(graph_xy, output_folder, file_name_xy)
   if (savePDFS) {
-    file_name_xy <- paste(basename(FOLDER), x, "xy", sep = "_")
     in_folder <- output_folder
     file_pattern <- file_name_xy
 #     visibleChannels <- c("Timepoint", "Treatment")
@@ -163,10 +166,17 @@ numStages <- 10
 seedX <- 10
 set.seed(seedX)
 
-multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
-               CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
-               per, minimum, maximum, saveGRAPHML = TRUE,
-               savePDFS = TRUE, subsampleRand = TRUE, seedX)
+singleFLOWMAP(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
+              CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric,
+              per, minimum, maximum, saveGRAPHML = TRUE,
+              savePDFS = TRUE, subsampleRand = TRUE,
+              findStages = TRUE, exportStages = TRUE, seedX,
+              channel_cluster = CLUSTERING_VAR)
+
+# multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
+#                CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
+#                per, minimum, maximum, saveGRAPHML = TRUE,
+#                savePDFS = TRUE, subsampleRand = TRUE, seedX)
 
 # in_folder <- "~/Desktop/2015-09-11_00.59.06_multiFLOWMAP_run"
 # visibleChannels <- c("Timepoint", "Treatment")
@@ -177,25 +187,4 @@ multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTA
 #              treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels) 
 
 
-# singleFLOWMAP(FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
-#               CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric,
-#               per, minimum, maximum, saveGRAPHML = TRUE,
-#               savePDFS = TRUE, subsampleRand = TRUE,
-#               findStages = TRUE, exportStages = TRUE, seedX,
-#               channel_cluster = CLUSTERING_VAR)
-
-
-# n = 1
-# build tn to tn
-# build tn to tn+1
-# n = n + 1
-# repeat until n = last timepoint - 1
-# do we build n = last timepoint, tn to tn?
-# how to choose edges?
-# 1. top n% of all edges by weight, then MST
-# 2. complete graph with edge weight transformation
-# how to figure out the best edge weights?
-# 4. complete graph with all timepoints, excluding edges between
-# non-adjacent timepoints
-# follow up with edge trimming based on weight or number of edges
 
