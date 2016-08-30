@@ -1,44 +1,37 @@
-library(igraph)
 
-convertToGraphML <- function(output_graph, output_folder, file_name, ...) {
-  cat("Converting graph to graphml file:", file_name, "\n")
-  file_name <- paste(Sys.Date(), file_name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
-  write.graph(output_graph, paste(output_folder, "/", file_name,".graphml", sep = ""),
-              format = "graphml")
+makeOutFolder <- function(runtype) {
+  name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
+  name <- gsub(":", ".", name, fixed = TRUE)
+  output_folder <- paste(name, "_", runtype, "_run", sep = "")
+  dir.create(output_folder)
+  cat("output_folder is", output_folder, "\n")
+  return (output_folder)
 }
 
+convertToGraphML <- function(output_graph, file_name) {
+  cat("Converting graph to graphml file:", file_name, "\n")
+  file_name <- paste(Sys.Date(), file_name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
+  file_name <- paste(file_name, ".graphml", sep = "")
+  write.graph(output_graph, file_name, format = "graphml")
+  return(file_name)
+}
 
-convertToPDF <- function(in_folder, file_pattern = ".graphml", out_folder = FALSE,
-                         scale = NULL, normalize = "none", node_size_scale = 2,
+convertToPDF <- function(graphml_file, scale = NULL, normalize = "none", node_size_scale = 2,
                          min_node_size = 12, max_node_size = 24, pdf_width = 100, pdf_height = 100,
-                         text_color = "black", edge_color = "grey", PALETTE = "jet", listOfTreatments) {
+                         text_color = "black", edge_color = "grey", PALETTE = "jet") {
+  # listOfTreatments
   #                          treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels
   # visibleChannels should be a vector of strings that are channels to be colored and displayed
   # with different treatments/times invisible
-  PCTILE_COLOR = c(0.2, 0.98)
-  #   PCTILE_COLOR = c(0.25, 0.75)
+  PCTILE_COLOR = c(0.2, 0.98) # PCTILE_COLOR = c(0.25, 0.75)
   BARE = FALSE
   TEST = FALSE
-  if (file_pattern != "DEFAULT") {
-    graphml_file <- list.files(path = in_folder, pattern = file_pattern, full.names = TRUE)
-    graph <- read.graph(graphml_file, format = "graphml")
-  }
-  else {
-    graphml_file <- list.files(path = in_folder, pattern = "xy", full.names = TRUE)
-    notind <- grep(".graphmlpdf", graphml_file)
-    ind <- setdiff((1:length(graphml_file)), notind)
-    print(graphml_file[1])
-    graph <- read.graph(graphml_file[1], format = "graphml")
-  }
-  if (out_folder == FALSE) {
-    out_folder <- paste(in_folder, "/", basename(graphml_file), "pdf/", sep = "")
-    cat("Making output folder:", out_folder, "\n")
-    dir.create(out_folder)
-  }
-  else {
-    cat("Finding output folder:", out_folder, "\n")
-    setwd(out_folder)
-  }
+  graph <- read.graph(graphml_file, format = "graphml")
+  out_folder <- paste(basename(graphml_file), "_pdf", sep = "")
+  cat("Making output folder:", out_folder, "\n")
+  cat("out_folder is", out_folder, "\n")
+  dir.create(out_folder)
+  setwd(out_folder)
   # get matrix/table of all vertex attribute values
   attrs <- c()
   attrs_colnames <- c()
@@ -135,7 +128,7 @@ convertToPDF <- function(in_folder, file_pattern = ".graphml", out_folder = FALS
     fill_color <- color
     is.na(fill_color) <- is.na(attr)
     frame_color <- color
-    pdf(file = paste(out_folder, "/", name, ".pdf", sep = ""),
+    pdf(file = paste(name, ".pdf", sep = ""),
         width = pdf_width, height = pdf_height, pointsize = 12,
         bg = "transparent")
     graph_aspect <- ((max(graph_l[, 2]) - min(graph_l[, 2]))/(max(graph_l[, 1]) - min(graph_l[, 1])))
@@ -353,9 +346,9 @@ convertToPDF <- function(in_folder, file_pattern = ".graphml", out_folder = FALS
 #   }
 
 
-printSummary <- function(out_folder, ...) {
+printSummary <- function(...) {
   summary <- matrix()
-  print("Printing summary.")
+  cat("Printing summary.", "\n")
   if (exists("MULTI_FOLDER")) {
     summary["FCS file source folder:"] <- toString(MULTI_FOLDER)
   }
@@ -405,6 +398,5 @@ printSummary <- function(out_folder, ...) {
   file_name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file_name <- paste(file_name, "summary", sep = "_")
   file_name <- paste(file_name, ".xls", sep = "")
-  out_file <- paste(out_folder, file_name, sep = "/") 
-  write.csv(summary, file = out_file, row.names = TRUE, na = "", ...)
+  write.csv(summary, file = file_name, row.names = TRUE, na = "", ...)
 }

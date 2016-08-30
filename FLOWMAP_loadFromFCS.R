@@ -34,11 +34,6 @@ getMultiFCSNames <- function(listOfTreatments, folder, file_format, sort = TRUE)
   return(listOfTreatFileNames)
 }
 
-# gateCisplatin <- function(fcs_file, VAR_ANNOTATE) {
-#   cisplatin_channel <- names(VAR_ANNOTATE)[[which(VAR_ANNOTATE == "Cisplatin")]]
-#   fcs_file[, cisplatin_channel]
-#   return(gated_fcs_file)
-# }
 
 loadCleanFCS <- function(fcs_file_names, channel_remove, channel_annotate,
                          subsample = 10000, subsampleRand = FALSE,
@@ -122,75 +117,3 @@ loadMultiCleanFCS <- function(listOfTreatFileNames, channel_remove, channel_anno
   return(listOfTreatCleanFCSFiles)
 }
 
-
-upsampleFCS <- function(clean_fcs_files, channel_upsample,
-                        percent_upsample_limit, subsample) {
-  # add in low, mid, high functionality for which population to upsample
-  # somehow sample so it's a uniform distribution of that marker?
-  upsampled_fcs_files <- list()
-  all <- data.frame()
-  for (i in 1:length(clean_fcs_files)) {
-    all <- rbind(all, clean_fcs_files[[i]])
-  }
-  dist <- hist(all[, channel_upsample], xlab = channel_upsample, main = NULL)
-  local_minima <- which(diff(sign(diff(dist$counts))) == 2) + 1
-  if (length(local_minima) > 1) {
-    local_minima <- sort(local_minima)
-    local_maxima <- which(diff(sign(diff(dist$counts))) == -2) + 1
-    local_maxima <- sort(local_maxima)
-    last <- tail(local_maxima, n = 1)
-    min <- local_minima[which(local_minima < last)]
-  }    
-  else {
-    min <- local_minima
-  }
-  # min <- local_minima[which.min(dist$counts[local_minima])]
-  leeway <- round(length(dist$breaks) / 10)
-  leeway <- max(leeway, 1)
-  window <- c(dist$breaks[(min - leeway)], dist$breaks[(min + leeway)])
-  upsample_num <- sum(dist$counts[(min - leeway):(min + leeway)])  
-  cat("Number of cells in upsampled population across files is", upsample_num, "\n")
-  #   window <- dist$breaks[window_breaks]
-  #   max <- local_maxima[which.max(dist$counts[local_maxima])]
-  #   max_val <- local_maxima[which.max(dist$counts[local_maxima])]
-  for (i in 1:length(clean_fcs_files)) {
-    currentfile <- clean_fcs_files[[i]]
-    cat("Upsampling on: File", i, "\n")
-    upsamplepop <- currentfile[which(currentfile[, channel_upsample] < window[2]),]
-    upsamplepop <- upsamplepop[which(upsamplepop[, channel_upsample] > window[1]),]
-    if (dim(upsamplepop)[1] > 0) {
-      upsample_limit <- percent_upsample_limit * subsample
-      upsample_limit <- min(upsample_limit, dim(upsamplepop)[1])
-      upsamplepop <- head(upsamplepop, n = upsample_limit)
-      # subsample <- min(dim(currentfile)[1], subsample)
-      #           if (dim(upsamplepop)[1] > upsample_limit) {
-      #             upsamplepop <- head(upsamplepop, n = upsample_limit)
-      #           }
-      allminuspop <- currentfile[which(currentfile[, channel_upsample] > window[2]),]
-      allminuspop <- rbind(allminuspop, currentfile[which(currentfile[, channel_upsample] < window[1]),])
-      tmp_FCS <- head(allminuspop, n = (subsample - upsample_limit))
-      tmp_FCS <- rbind(tmp_FCS, upsamplepop)
-    }
-    else {
-      tmp_FCS <- head(currentfile, n = subsample)
-    }
-    upsampled_fcs_files[[i]] <- tmp_FCS
-    rm(tmp_FCS, allminuspop, upsamplepop)
-  }   
-  cat("Window of values for upsampled variable", channel_upsample, ": ", window, "\n")
-  return(upsampled_fcs_files)
-}
-
-
-upsampleMultiFCS <- function(listOfTreatCleanFCSFiles, channel_upsample,
-                             percent_upsample_limit, subsample) {
-  listOfTreatUpsampleFCSFiles <- list()
-  for (treat in names(listOfTreatCleanFCSFiles)) {
-    clean_fcs_files <- listOfTreatCleanFCSFiles[[treat]]
-    listOfTreatUpsampleFCSFiles[[treat]] <- upsampleFCS(clean_fcs_files,
-                                                        channel_upsample,
-                                                        percent_upsample_limit,
-                                                        subsample)
-  }
-  return(listOfTreatUpsampleFCSFiles)
-}
