@@ -1,13 +1,13 @@
 
-FLOWMAPcluster <- function(fullclusters, table_breaks, table_lengths,
-                           cluster_medians, cluster_counts, cellassgn,
+FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
+                           cluster.medians, cluster.counts, cell.assgn,
                            ...)  {
-  object <- list(fullclusters = fullclusters,
-                 table_breaks = table_breaks,
-                 table_lengths = table_lengths,
-                 cluster_medians = cluster_medians,
-                 cluster_counts = cluster_counts,
-                 cellassgn = cellassgn,
+  object <- list(full.clusters = full.clusters,
+                 table.breaks = table.breaks,
+                 table.lengths = table.lengths,
+                 cluster.medians = cluster.medians,
+                 cluster.counts = cluster.counts,
+                 cell.assgn = cell.assgn,
                  ...)
   # use only cluster_medians object and cellassgn ???
   # make method to concatenate cluster_medians into fullclusters
@@ -16,87 +16,82 @@ FLOWMAPcluster <- function(fullclusters, table_breaks, table_lengths,
   return (object)
 }
 
-clusterFCS <- function(fcs_files, channel_cluster, numcluster,
-                       distance_metric, ...) {
-  fullclusters <- data.frame()
-  table_breaks <- c()
-  table_lengths <- c()
-  cluster_medians <- list()
-  cluster_counts <- list()
-  cellassgn <- list()
-  for (i in 1:length(fcs_files)) {
-    currentfile <- fcs_files[[i]]
+ClusterFCS <- function(fcs.files, channel.cluster, numcluster,
+                       distance.metric) {
+  full.clusters <- data.frame()
+  table.breaks <- c()
+  table.lengths <- c()
+  cluster.medians <- list()
+  cluster.counts <- list()
+  cell.assgn <- list()
+  for (i in 1:length(fcs.files)) {
+    current.file <- fcs.files[[i]]
     # print FCS file that is being read
     cat("Clustering data from file", i, "\n")
-    cluster_counts[[i]] <- data.frame()
-    cluster_medians[[i]] <- data.frame()
-    tmp_FCSforCluster <- subset(x = currentfile, select = channel_cluster)
+    cluster.counts[[i]] <- data.frame()
+    cluster.medians[[i]] <- data.frame()
+    tmp.FCS.for.cluster <- subset(x = current.file, select = channel.cluster)
     cat("Subsetting for clustering channels only", "\n")
-    cluster_results <- hclustClustering(currentfile = currentfile, tmp_FCSforCluster = tmp_FCSforCluster,
-                                        distance_metric = distance_metric, numcluster = numcluster)
-    cellassgn[[i]] <- cluster_results$tmp_cellassgn
-    cluster_medians[[i]] <- cluster_results$new_medians
+    cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+                                        distance.metric = distance.metric, numcluster = numcluster)
+    cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
+    cluster.medians[[i]] <- cluster.results$new.medians
     # cat("cluster medians are", dim(cluster_medians[[i]]), "\n")
-    cluster_counts[[i]] <- cluster_results$new_counts
-    colnames(cluster_counts[[i]]) <- c("Counts")
+    cluster.counts[[i]] <- cluster.results$new.counts
+    colnames(cluster.counts[[i]]) <- c("Counts")
     # cat("cluster counts are", dim(cluster_counts[[i]]), "\n")
     # store the number of clusters in the file being read currently
     # used for node numbering/index
-    table_lengths <- append(table_lengths, nrow(cluster_medians[[i]]))
+    table.lengths <- append(table.lengths, nrow(cluster.medians[[i]]))
     # cat("table lengths are", table_lengths, "\n")
     # store the currently read clusters and their median values to a master array
-    fullclusters <- rbind(fullclusters, cluster_medians[[i]])
+    full.clusters <- rbind(full.clusters, cluster.medians[[i]])
     # cat("dim of full clusters are", dim(fullclusters), "\n")
     # store where the array breaks between clusters from one file and those from the next file
     # used for node numbering/index
-    table_breaks <- append(table_breaks, nrow(fullclusters))
+    table.breaks <- append(table.breaks, nrow(full.clusters))
     # cat("table breaks are", table_breaks, "\n")
   }
-  for (i in 1:length(cluster_medians)) {
-    rownames(cluster_medians[[i]]) <- seq(1, table_lengths[i])
+  for (i in 1:length(cluster.medians)) {
+    rownames(cluster.medians[[i]]) <- seq(1, table.lengths[i])
   }    
-  rownames(fullclusters) <- seq(1, dim(fullclusters)[1])
-  FLOWMAPclusters <- FLOWMAPcluster(fullclusters = fullclusters,
-                                    table_breaks = table_breaks,
-                                    table_lengths = table_lengths,
-                                    cluster_medians = cluster_medians,
-                                    cluster_counts = cluster_counts,
-                                    cellassgn = cellassgn)
-  return(FLOWMAPclusters)  
+  rownames(full.clusters) <- seq(1, dim(full.clusters)[1])
+  FLOWMAP.clusters <- FLOWMAPcluster(full.clusters = full.clusters,
+                                    table.breaks = table.breaks,
+                                    table.lengths = table.lengths,
+                                    cluster.medians = cluster.medians,
+                                    cluster.counts = cluster.counts,
+                                    cell.assgn = cell.assgn)
+  return(FLOWMAP.clusters)  
 }
 
 
-multiClusterFCS <- function(listOfTreatFiles, channel_cluster, numcluster,
-                            clustalgorithm = "clara") {
-  listofFLOWMAPclusters <- list()
-  for (treat in names(listOfTreatFiles)) {
+MultiClusterFCS <- function(list.of.treat.files, channel.cluster, numcluster) {
+  list.of.FLOWMAP.clusters <- list()
+  for (treat in names(list.of.treat.files)) {
     cat("Clustering all files from", treat, "\n")
-    fcs_files <- listOfTreatFiles[[treat]]
-    file_clusters <- clusterFCS(fcs_files, channel_cluster,
-                                numcluster, clustalgorithm = "clara")
-    listofFLOWMAPclusters[[treat]] <- file_clusters
+    fcs.files <- list.of.treat.files[[treat]]
+    file.clusters <- clusterFCS(fcs.files, channel.cluster, numcluster)
+    list.of.FLOWMAP.clusters[[treat]] <- file.clusters
   }
-  return(listofFLOWMAPclusters)
+  return(list.of.FLOWMAP.clusters)
 }
 
 
-hclustClustering <- function(currentfile, tmp_FCSforCluster, distance_metric, numcluster) {
+HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {
   # print("currentfile")
   # print(head(currentfile))
   # print(colnames(currentfile))
-  if (distance_metric == "euclidean") {
+  if (distance.metric == "euclidean") {
     method <- "ward"
   } else {
     method <- "single"
   }
-  FCSclusters <- hclust.vector(tmp_FCSforCluster, method = method,
-                               metric = distance_metric)
-  # print("tmp_FCSforCluster")
-  # print(head(tmp_FCSforCluster))
-  # print(colnames(tmp_FCSforCluster))
-  clust <- list(assgn = cutree(FCSclusters, k = numcluster))
-  new_counts <- data.frame()
-  new_medians <- data.frame()
+  FCS.clusters <- hclust.vector(tmp.FCS.for.cluster, method = method,
+                               metric = distance.metric)
+  clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
+  new.counts <- data.frame()
+  new.medians <- data.frame()
   # Invalid clusters have assgn == 0
   is.na(clust$assgn) <- which(clust$assgn == 0)
   for (p in c(1:max(clust$assgn, na.rm = TRUE))) {  
@@ -105,39 +100,33 @@ hclustClustering <- function(currentfile, tmp_FCSforCluster, distance_metric, nu
     if (length(obs) > 1) {
       # Finding clusters containing more than one cell
       # Saving counts and medians of data
-      new_counts <- rbind(new_counts, data.frame(length(obs)))
-      new_median <- colMedians(as.matrix(currentfile[obs, ]))
-      new_median <- as.data.frame(new_median)
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- colMedians(as.matrix(current.file[obs, ]))
+      new.median <- as.data.frame(new.median)
       # print("more than one cell")
-      # print(new_median)
-      if(colnames(new_median) != colnames(currentfile)) {
-        new_median <- t(new_median)
-        colnames(new_median) <- colnames(currentfile)
+      if(colnames(new.median) != colnames(current.file)) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
       }
       # Saving cluster data
     } else {
-      new_counts <- rbind(new_counts, data.frame(length(obs)))
-      new_median <- currentfile[obs, ]
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- current.file[obs, ]
       # print("only one cell")
-      # print(new_median)
-      new_median <- as.data.frame(new_median)
-      if(colnames(new_median) != colnames(currentfile)) {
-        new_median <- t(new_median)
-        colnames(new_median) <- colnames(currentfile)
+      new.median <- as.data.frame(new.median)
+      if(colnames(new.median) != colnames(current.file)) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
       }
     }
-    # print("woof")
-    # cat("colnames(new_medians) is", colnames(new_medians), "\n")
-    # cat("colnames(new_median) is", colnames(new_median), "\n")
-    new_medians <- rbind(new_medians, new_median)
-    # print("meow")
+    new.medians <- rbind(new.medians, new.median)
   }
-  tmp_cellassgn <- data.frame(clust$assgn)
-  tmp_cellassgn <- as.data.frame(tmp_cellassgn[complete.cases(tmp_cellassgn), ])
-  colnames(tmp_cellassgn) <- c("Cluster")
-  return(list(tmp_cellassgn = tmp_cellassgn,
-              new_medians = new_medians,
-              new_counts = new_counts))
+  tmp.cell.assgn <- data.frame(clust$assgn)
+  tmp.cell.assgn <- as.data.frame(tmp.cell.assgn[complete.cases(tmp.cell.assgn), ])
+  colnames(tmp.cell.assgn) <- c("Cluster")
+  return(list(tmp.cell.assgn = tmp.cell.assgn,
+              new.medians = new.medians,
+              new.counts = new.counts))
 }
 
 
