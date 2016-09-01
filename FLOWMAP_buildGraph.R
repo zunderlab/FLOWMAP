@@ -303,7 +303,7 @@ initializeGraph <- function(FLOWMAPclusters) {
   return(initial_graph)
 }
 
-buildFirstFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, ...) {
+buildFirstFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, clustering.var) {
   n <- 1
   output_graph <- initializeGraph(FLOWMAPclusters)
   # This section creates a flowmap for the first time point
@@ -311,7 +311,7 @@ buildFirstFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, .
   table_lengths <- FLOWMAPclusters$table_lengths
   # get distance matrix from clusters
   clusters <- FLOWMAPclusters$fullclusters[1:table_lengths[1], ]
-  clusters <- subset(clusters, select = CLUSTERING_VAR)
+  clusters <- subset(clusters, select = clustering.var)
   cluster_distances <- dist(clusters, method = distance_metric, diag = TRUE, upper = TRUE)
   cluster_distances_matrix <- as.matrix(cluster_distances)
   # set i-i distances to Inf instead of 0 so they aren't the closest neighbors
@@ -351,7 +351,7 @@ buildFirstFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, .
 }
 
 
-buildFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, cellnum, ...) {
+buildFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, cellnum, clustering.var) {
   output_graph <- buildFirstFLOWMAP(FLOWMAPclusters, per, min, max, distance_metric)
   table_breaks <- c(0, FLOWMAPclusters$table_breaks)
   # This section builds the flowmap one timepoint at a time
@@ -362,7 +362,7 @@ buildFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, cellnu
     cat("Build FlowMap from", n, "to", n + 1, "\n")
     # get clusters for time a and a+1
     clusters <- rbind(FLOWMAPclusters$cluster_medians[[n]], FLOWMAPclusters$cluster_medians[[n + 1]])
-    clusters <- subset(clusters, select = CLUSTERING_VAR)
+    clusters <- subset(clusters, select = clustering.var)
     numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
     # if (distance_metric == "cosine") {
@@ -406,7 +406,7 @@ buildFLOWMAP <- function(FLOWMAPclusters, per, min, max, distance_metric, cellnu
 }
 
 
-buildSimpleFLOWMAP <- function(FLOWMAPclusters, top_npercent, distance_metric, cellnum, ...) {
+buildSimpleFLOWMAP <- function(FLOWMAPclusters, top_npercent, distance_metric, cellnum, clustering.var) {
   # SimpleFLOWMAP does not enforce minimum or maximum edges, just 
   # picks the top n% of edges for tn to tn and tn to tn+1
   output_graph <- initializeGraph(FLOWMAPclusters)
@@ -419,7 +419,7 @@ buildSimpleFLOWMAP <- function(FLOWMAPclusters, top_npercent, distance_metric, c
     cat("Build FlowMap from", n, "to", n + 1, "\n")
     # get clusters for time a and a+1
     clusters <- rbind(FLOWMAPclusters$cluster_medians[[n]], FLOWMAPclusters$cluster_medians[[n + 1]])
-    clusters <- subset(clusters, select = CLUSTERING_VAR)
+    clusters <- subset(clusters, select = clustering.var)
     numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
     # if (distance_metric == "cosine") {
@@ -448,7 +448,7 @@ buildSimpleFLOWMAP <- function(FLOWMAPclusters, top_npercent, distance_metric, c
     #     print(is.igraph(output_graph))
   }
   clusters <- FLOWMAPclusters$fullclusters
-  clusters <- subset(clusters, select = CLUSTERING_VAR)
+  clusters <- subset(clusters, select = clustering.var)
   numcluster <- nrow(clusters)
   # if (distance_metric == "cosine") {
   #   cluster_distances <- cosine_similarity_matrix(clusters)
