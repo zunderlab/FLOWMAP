@@ -1,7 +1,11 @@
 rm(list=ls())
 
-# Copyright statement comment
-# Author comment
+# Copyright: Apache License 2.0
+
+# Authors:
+# Melissa Ko (Stanford University)
+# Eli Zunder (University of Virginia)
+
 # File description comment,
 # including purpose of program,
 # inputs, and outputs
@@ -55,16 +59,16 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 200
+subsample <- 10000
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 20
+cluster.number <- 1000
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
-seed.X <- 1
+seed.X <- 2
 set.seed(seed.X)
 # seed.X specifies the seed for a given run, this should
 # lead to reproducible runs of FLOW-MAP and its resulting

@@ -31,7 +31,7 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
       fcs.files[[i]] <- df2
     }
   }
-  file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster = cluster.number,
+  file.clusters <- ClusterFCS(fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
                               distance.metric = distance.metric)
   graph <- BuildFLOWMAP(file.clusters, per = per, min = minimum,
                         max = maximum, distance.metric, cellnum = subsample,
