@@ -40,7 +40,7 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
                         clustering.var = clustering.var)
   file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
-  graph.xy <- ForceDirectedXY(graph = graph, multi.step = TRUE)
+  graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(basename(folder), "original_edge_choice", "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
