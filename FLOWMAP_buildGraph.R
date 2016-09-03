@@ -300,38 +300,3 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   return(output.graph)
 }
 
-
-
-
-# RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
-#   # take FLOWMAP of treats with timeseries and make into one timeseries
-#   # combine FLOWMAP treatments
-#   treatments <- names(list.of.FLOWMAP.clusters)
-#   timepoints <- length(list.of.FLOWMAP.clusters[[treatments[1]]]$cluster.medians)
-#   full.clusters <- data.frame()
-#   table.breaks <- c()
-#   table.lengths <- c()
-#   cluster.medians <- list()
-#   cluster.counts <- list()
-#   cell.assgn <- list()
-#   for (t in 1:timepoints) {
-#     temp.medians <- data.frame()
-#     temp.cellassgn <- data.frame()
-#     temp.counts <- data.frame()
-#     for (treat in treatments) {
-#       temp_medians <- rbind(temp_medians, listOfFLOWMAPclusters[[treat]]$cluster_medians[[t]])
-#       temp_cellassgn <- rbind(temp_cellassgn, listOfFLOWMAPclusters[[treat]]$cellassgn[[t]])
-#       temp_counts <- rbind(temp_counts, listOfFLOWMAPclusters[[treat]]$cluster_counts[[t]])
-#     }
-#     cluster_medians[[t]] <- temp_medians
-#     cluster_counts[[t]] <- temp_counts
-#     cellassgn[[t]] <- temp_cellassgn
-#     table_lengths <- c(table_lengths, dim(temp_medians)[1])
-#     table_breaks <- c(table_breaks, sum(table_lengths))
-#     fullclusters <- rbind(fullclusters, temp_medians)
-#   }
-#   remodeledFLOWMAPclusters <- FLOWMAPcluster(fullclusters, table_breaks, table_lengths,
-#                                              cluster_medians, cluster_counts, cellassgn) 
-#   return(remodeledFLOWMAPclusters)
-# }
-

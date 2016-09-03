@@ -98,7 +98,9 @@ LoadMultiCleanFCS <- function(list.of.treat.file.names, channel.remove, channel.
                               subsample = 10000, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
   list.of.treat.clean.FCS.files <- list()
   for (treat in names(list.of.treat.file.names)) {
+    cat("treat is", treat, "\n")
     fcs.file.names <- list.of.treat.file.names[[treat]]
+    cat("fcs.file.names are", fcs.file.names, "\n")
     list.of.treat.clean.FCS.files[[treat]] <- LoadCleanFCS(fcs.file.names,
                                                            channel.remove,
                                                            channel.annotate,
@@ -109,9 +111,7 @@ LoadMultiCleanFCS <- function(list.of.treat.file.names, channel.remove, channel.
       Treat <- rep(treat, times = dim(list.of.treat.clean.FCS.files[[treat]][[i]])[1])
       list.of.treat.clean.FCS.files[[treat]][[i]] <- cbind(list.of.treat.clean.FCS.files[[treat]][[i]],
                                                            Treat)
-      #       cat("Treatment for file", treat, i, "is:", Treat, "\n")
-      #       print(head(Treat))
-      #       print(colnames(listOfTreatCleanFCSFiles[[treat]][[i]]))
+      print(colnames(listOfTreatCleanFCSFiles[[treat]][[i]]))
       rm(Treat)
     }
   }

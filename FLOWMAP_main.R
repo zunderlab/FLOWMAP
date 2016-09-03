@@ -17,12 +17,13 @@ source(paste(prefolder, "FLOWMAP_saveGraphs.R", sep = ""))
 
 SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
                           clustering.var, cluster.number, subsample, distance.metric,
-                          minimum, maximum, per, shuffle = FALSE) {
+                          minimum, maximum, per, save.folder, shuffle = FALSE) {
   fcs.file.names <- GetFCSNames(folder = folder, file.format = file.format)
+  setwd(save.folder)
   output.folder <- MakeOutFolder(runtype = "singleFLOWMAP")
   setwd(output.folder)
-  save.folder <- getwd()
-  print(save.folder)
+  keep.folder <- getwd()
+  print(keep.folder)
   fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                             channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
   if (shuffle) {
@@ -45,7 +46,7 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
   print(getwd())
-  setwd(save.folder)
+  setwd(keep.folder)
   printSummary()
 }
 
