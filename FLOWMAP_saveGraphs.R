@@ -19,33 +19,19 @@ ConvertToGraphML <- function(output.graph, file.name) {
 ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100, pdf.height = 100,
                          text.color = "black", edge.color = "grey", which.palette = "jet") {
-  # listOfTreatments
-  #                          treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels
-  # visibleChannels should be a vector of strings that are channels to be colored and displayed
-  # with different treatments/times invisible
   pctile.color = c(0.2, 0.98) # PCTILE_COLOR = c(0.25, 0.75)
-  bare = FALSE
-  test = FALSE
   graph <- read.graph(graphml.file, format = "graphml")
   out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
   cat("Making output folder:", out.folder, "\n")
-  cat("out_folder is", out.folder, "\n")
   dir.create(out.folder)
   setwd(out.folder)
   # get matrix/table of all vertex attribute values
   attrs <- c()
   attrs.colnames <- c()
-  if (test) {
-    a <- "percent.total"
-    attrs <- matrix(data = as.numeric(get.vertex.attribute(graph, a, index = V(graph))),
-                    ncol = 1)
-    attrs.colnames <- c(attrs.colnames, a)
-  } else {
-    for (a in list.vertex.attributes(graph)) {
-      if (is.numeric(get.vertex.attribute(graph, a, index = V(graph)))) {
-        attrs <- cbind(attrs, as.numeric(get.vertex.attribute(graph, a, index = V(graph))))
-        attrs.colnames <- c(attrs.colnames, a)
-      }
+  for (a in list.vertex.attributes(graph)) {
+    if (is.numeric(get.vertex.attribute(graph, a, index = V(graph)))) {
+      attrs <- cbind(attrs, as.numeric(get.vertex.attribute(graph, a, index = V(graph))))
+      attrs.colnames <- c(attrs.colnames, a)
     }
   }
   colnames(attrs) <- attrs.colnames
@@ -87,7 +73,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
     my.palette <- colorRampPalette(c("blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red"))
   }
   color.scale <- my.palette(100)
-  #   cat("color scale is", colorSCALE, "\n")
   # set up node size
   vsize <- attrs[, "percent.total"]
   vsize <- (vsize - min(vsize, na.rm = TRUE)) / (max(vsize, na.rm = TRUE) ^ (1 / node.size.scale)) * 
@@ -96,7 +81,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
   
   # print out one pdf for each attribute
   for (name in colnames(attrs)) {
-    #get attribute name and data
+    # get attribute name and data
     attr <- attrs[, name]
     # set up color boundaries
     ifelse (!is.null(scale), 
@@ -108,21 +93,20 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
     )
     ifelse (length(grep("^medians|percent|cvs|Dd|Timepoint|Treatment|Treat", name)), 
             boundary <- c(min(boundary), max(boundary)),
-            #             boundary <- c(-max(abs(boundary)), max(abs(boundary)))
+            # boundary <- c(-max(abs(boundary)), max(abs(boundary)))
             boundary <- c(min(boundary), max(boundary))
     )
     boundary <- round(boundary, 2)
     if (boundary[1] == boundary[2]) {
-      #       print("boop")
       boundary <- c(boundary[1] - 1, boundary[2] + 1)
     }
-    #     cat("boundaries for", name, "are:", boundary, "\n")
+    # cat("boundaries for", name, "are:", boundary, "\n")
     grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
-    #     cat("gradation for", name, "is:", grad, "\n")
+    # cat("gradation for", name, "is:", grad, "\n")
     color <- color.scale[findInterval(attr, grad, all.inside = TRUE)]
-    #     cat("attribute values for", name, "is:", head(sort(attr)), "\n")
-    #     cat("color for", name, "is:\n")
-    #     print(table(color))
+    # cat("attribute values for", name, "is:", head(sort(attr)), "\n")
+    # cat("color for", name, "is:\n")
+    # print(table(color))
     color[is.na(attr) | (attrs[,"percent.total"] == 0)] <- "grey"
     if (grepl("^percenttotalratiolog$", name)) {
       color[is.na(attr) & attrs[,"percent.total"] > 0] <- tail(color.scale, 1)
@@ -141,68 +125,122 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
          vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
          asp = graph.aspect)
     dev.off()
-    
-    #     if (treatInvisible | timeInvisible & name %in% visibleChannels) {
-    #       #       out_folder <- paste(out_folder, "/invisible_pdf/", sep = "")
-    #       #       cat("Making output folder for pdfs with treat or time invisible:", out_folder, "\n")
-    #       #       dir.create(out_folder)
-    #       color_copy <- color
-    #       
-    #       if (treatInvisible) {
-    #         color <- color_copy
-    #         treatments <- unique(attrs[, "Treatment"])
-    #         for (treat in treatments) {
-    #           treatNum <- which(listOfTreatments == treat)
-    #           ind <- which(as.numeric(get.vertex.attribute(graph, "Treatment", index = V(graph))) == treatNum)
-    #           allind <- seq(1:length(V(graph)))
-    #           ind <- length(setdiff(allind, ind))
-    #           color[ind] <- "#FF000000"
-    #           fill_color <- color
-    #           is.na(fill_color) <- is.na(attr)
-    #           frame_color <- color
-    #           pdf(file = paste(out_folder, "/", name, "with treat", treat, "invisble.pdf", sep = ""),
-    #               width = pdf_width, height = pdf_height, pointsize = 12,
-    #               bg = "transparent")
-    #           graph_aspect <- ((max(graph_l[, 2]) - min(graph_l[, 2]))/(max(graph_l[, 1]) - min(graph_l[, 1])))
-    #           par(mar = c(1.5, 0, 0, 0))
-    #           plot(graph, layout = graph_l, vertex.shape = "circle", 
-    #                vertex.color = fill_color, vertex.frame.color = frame_color, 
-    #                edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
-    #                vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
-    #                asp = graph_aspect)
-    #           dev.off()
-    #         }
-    #       }
-    #       
-    #       if (timeInvisible) {
-    #         color <- color_copy
-    #         time <- unique(attrs[, "Timepoint"])
-    #         for (t in time) {
-    #           ind <- which(as.numeric(get.vertex.attribute(graph, "Timepoint", index = V(graph))) == t)
-    #           allind <- seq(1:length(V(graph)))
-    #           ind <- length(setdiff(allind, ind))
-    #           color[ind] <- "#FF000000"
-    #           fill_color <- color
-    #           is.na(fill_color) <- is.na(attr)
-    #           frame_color <- color
-    #           pdf(file = paste(out_folder, "/", name, "with time", t, "invisble.pdf", sep = ""),
-    #               width = pdf_width, height = pdf_height, pointsize = 12,
-    #               bg = "transparent")
-    #           graph_aspect <- ((max(graph_l[, 2]) - min(graph_l[, 2]))/(max(graph_l[, 1]) - min(graph_l[, 1])))
-    #           par(mar = c(1.5, 0, 0, 0))
-    #           plot(graph, layout = graph_l, vertex.shape = "circle", 
-    #                vertex.color = fill_color, vertex.frame.color = frame_color, 
-    #                edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
-    #                vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
-    #                asp = graph_aspect)
-    #           dev.off()
-    #         }
-    #       }
-    #     }
   }
 }
 
 
+printSummary <- function(...) {
+  summary <- matrix()
+  cat("Printing summary.", "\n")
+  if (exists("multi.folder")) {
+    summary["FCS file source folder:"] <- toString(multi.folder)
+  }
+  if (exists("list.of.treatments")) {
+    summary["Multiple treatments include:"] <- toString(list.of.treatments)
+  }
+  if (exists("folder")) {
+    summary["FCS file source folder:"] <- toString(folder)
+  }
+  if (exists("var.annotate")) {
+    summary["annotated variables:"] <- toString(var.annotate)
+  }
+  if (exists("var.remove")) {
+    summary["removed variables:"] <- toString(var.remove)
+  }
+  if (exists("clustering.var")) {
+    summary["clustering variables:"] <- toString(clustering.var)
+  } 
+  if (exists("per")) {
+    summary["distance for calculated density (n percent):"] <- toString(per)
+  } 
+  if (exists("minimum")) {
+    summary["min number of edges:"] <- toString(minimum)
+  } 
+  if (exists("maximum")) {
+    summary["max number of edges:"] <- toString(maximum)
+  } 
+  if (exists("distance.metric")) {
+    summary["distance metric:"] <- toString(distance.metric)
+  } 
+  if (exists("subsample")) {
+    summary["subsample per each FCS file:"] <- toString(subsample)
+  } 
+  if (exists("subsample.rand")) {
+    summary["random subsample:"] <- toString(subsample.rand)
+  } 
+  if (exists("seed.X")) {
+    summary["set seed value:"] <- toString(seed.X)
+  }
+  if (exists("cluster.number")) {
+    summary["number of clusters per each FCS file:"] <- toString(cluster.number)
+  } 
+  summary <- as.data.frame(summary)
+  file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
+  file.name <- paste(file.name, "summary", sep = "_")
+  file.name <- paste(file.name, ".xls", sep = "")
+  write.csv(summary, file = file.name, row.names = TRUE, na = "")
+}
+
+
+
+
+#     if (treatInvisible | timeInvisible & name %in% visibleChannels) {
+#       #       out_folder <- paste(out_folder, "/invisible_pdf/", sep = "")
+#       #       cat("Making output folder for pdfs with treat or time invisible:", out_folder, "\n")
+#       #       dir.create(out_folder)
+#       color_copy <- color
+#       
+#       if (treatInvisible) {
+#         color <- color_copy
+#         treatments <- unique(attrs[, "Treatment"])
+#         for (treat in treatments) {
+#           treatNum <- which(listOfTreatments == treat)
+#           ind <- which(as.numeric(get.vertex.attribute(graph, "Treatment", index = V(graph))) == treatNum)
+#           allind <- seq(1:length(V(graph)))
+#           ind <- length(setdiff(allind, ind))
+#           color[ind] <- "#FF000000"
+#           fill_color <- color
+#           is.na(fill_color) <- is.na(attr)
+#           frame_color <- color
+#           pdf(file = paste(out_folder, "/", name, "with treat", treat, "invisble.pdf", sep = ""),
+#               width = pdf_width, height = pdf_height, pointsize = 12,
+#               bg = "transparent")
+#           graph_aspect <- ((max(graph_l[, 2]) - min(graph_l[, 2]))/(max(graph_l[, 1]) - min(graph_l[, 1])))
+#           par(mar = c(1.5, 0, 0, 0))
+#           plot(graph, layout = graph_l, vertex.shape = "circle", 
+#                vertex.color = fill_color, vertex.frame.color = frame_color, 
+#                edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
+#                vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
+#                asp = graph_aspect)
+#           dev.off()
+#         }
+#       }
+#       
+#       if (timeInvisible) {
+#         color <- color_copy
+#         time <- unique(attrs[, "Timepoint"])
+#         for (t in time) {
+#           ind <- which(as.numeric(get.vertex.attribute(graph, "Timepoint", index = V(graph))) == t)
+#           allind <- seq(1:length(V(graph)))
+#           ind <- length(setdiff(allind, ind))
+#           color[ind] <- "#FF000000"
+#           fill_color <- color
+#           is.na(fill_color) <- is.na(attr)
+#           frame_color <- color
+#           pdf(file = paste(out_folder, "/", name, "with time", t, "invisble.pdf", sep = ""),
+#               width = pdf_width, height = pdf_height, pointsize = 12,
+#               bg = "transparent")
+#           graph_aspect <- ((max(graph_l[, 2]) - min(graph_l[, 2]))/(max(graph_l[, 1]) - min(graph_l[, 1])))
+#           par(mar = c(1.5, 0, 0, 0))
+#           plot(graph, layout = graph_l, vertex.shape = "circle", 
+#                vertex.color = fill_color, vertex.frame.color = frame_color, 
+#                edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
+#                vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
+#                asp = graph_aspect)
+#           dev.off()
+#         }
+#       }
+#     }
 
 #   
 #   if (treatInvisible) {
@@ -347,55 +385,3 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
 #     }
 #   }
 
-
-printSummary <- function(...) {
-  summary <- matrix()
-  cat("Printing summary.", "\n")
-  if (exists("multi.folder")) {
-    summary["FCS file source folder:"] <- toString(multi.folder)
-  }
-  if (exists("list.of.treatments")) {
-    summary["Multiple treatments include:"] <- toString(list.of.treatments)
-  }
-  if (exists("folder")) {
-    summary["FCS file source folder:"] <- toString(folder)
-  }
-  if (exists("var.annotate")) {
-    summary["annotated variables:"] <- toString(var.annotate)
-  }
-  if (exists("var.remove")) {
-    summary["removed variables:"] <- toString(var.remove)
-  }
-  if (exists("clustering.var")) {
-    summary["clustering variables:"] <- toString(clustering.var)
-  } 
-  if (exists("per")) {
-    summary["distance for calculated density (n percent):"] <- toString(per)
-  } 
-  if (exists("minimum")) {
-    summary["min number of edges:"] <- toString(minimum)
-  } 
-  if (exists("maximum")) {
-    summary["max number of edges:"] <- toString(maximum)
-  } 
-  if (exists("distance.metric")) {
-    summary["distance metric:"] <- toString(distance.metric)
-  } 
-  if (exists("subsample")) {
-    summary["subsample per each FCS file:"] <- toString(subsample)
-  } 
-  if (exists("subsample.rand")) {
-    summary["random subsample:"] <- toString(subsample.rand)
-  } 
-  if (exists("seed.X")) {
-    summary["set seed value:"] <- toString(seed.X)
-  }
-  if (exists("cluster.number")) {
-    summary["number of clusters per each FCS file:"] <- toString(cluster.number)
-  } 
-  summary <- as.data.frame(summary)
-  file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
-  file.name <- paste(file.name, "summary", sep = "_")
-  file.name <- paste(file.name, ".xls", sep = "")
-  write.csv(summary, file = file.name, row.names = TRUE, na = "")
-}

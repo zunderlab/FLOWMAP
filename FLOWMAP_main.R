@@ -18,30 +18,32 @@ source(paste(prefolder, "FLOWMAP_saveGraphs.R", sep = ""))
 SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
                           clustering.var, cluster.number, subsample, distance.metric,
                           minimum, maximum, per, shuffle = FALSE) {
-  fcs.file.names <- GetFCSNames(folder, file.format)
+  fcs.file.names <- GetFCSNames(folder = folder, file.format = file.format)
   output.folder <- MakeOutFolder(runtype = "singleFLOWMAP")
   setwd(output.folder)
   save.folder <- getwd()
   print(save.folder)
-  fcs.files <- LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsample = subsample, subsample.rand = TRUE)
+  fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                            channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
   if (shuffle) {
     for (i in 1:length(fcs.files)) {
       df1 <- fcs.files[[i]]
       df2 <- df1[sample(nrow(df1)), ]
       fcs.files[[i]] <- df2
+      rownames(fcs.files[[i]]) <- seq(1:subsample)
     }
   }
-  file.clusters <- ClusterFCS(fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
-                              distance.metric = distance.metric)
-  graph <- BuildFLOWMAP(file.clusters, per = per, min = minimum,
-                        max = maximum, distance.metric, cellnum = subsample,
+  file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
+                              numcluster = cluster.number, distance.metric = distance.metric)
+  graph <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+                        max = maximum, distance.metric = distance.metric, cellnum = subsample,
                         clustering.var = clustering.var)
   file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
-  ConvertToGraphML(graph, file.name)
-  graph.xy <- ForceDirectedXY(graph)
+  ConvertToGraphML(output.graph = graph, file.name = file.name)
+  graph.xy <- ForceDirectedXY(graph = graph, multi.step = TRUE)
   file.name.xy <- paste(basename(folder), "original_edge_choice", "xy", sep = "_")
-  final.file.name <- ConvertToGraphML(graph.xy, file.name.xy)
-  ConvertToPDF(final.file.name, edge.color = "#FF000000")
+  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
+  ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
   print(getwd())
   setwd(save.folder)
   printSummary()
