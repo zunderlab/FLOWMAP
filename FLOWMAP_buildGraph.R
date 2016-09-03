@@ -3,40 +3,12 @@ ConvertIndex <- function(inds, orig.data.frame, keep.names = TRUE) {
   # inds go down through the rows of the first column
   # before starting at the first row of the second column
   # and going back down, etc.
-  # row.inds <- c()
-  # col.inds <- c()
   col.inds <- ceiling(inds / nrow(orig.data.frame))
   row.inds <- (inds %% nrow(orig.data.frame))
   row.inds[which(row.inds == 0)] <- nrow(orig.data.frame)
   if (keep.names == TRUE) {
     row.inds <- as.numeric(rownames(orig.data.frame)[row.inds])
     col.inds <- as.numeric(colnames(orig.data.frame)[col.inds])
-  }
-  arr.inds <- cbind(row.inds, col.inds)
-  return(arr.inds)
-}
-
-ConvertIndex2 <- function(inds, orig.data.frame, keep.names = TRUE) {
-  # inds go down through the rows of the first column
-  # before starting at the first row of the second column
-  # and going back down, etc.
-  row.inds <- c()
-  col.inds <- c()
-  for (i in inds) {
-    # cat("i is", i, "\n")
-    c.i <- ceiling(i / nrow(orig.data.frame))
-    r.i <- (i %% nrow(orig.data.frame))
-    # cat("c.i is", c.i, "\n")
-    # cat("r.i is", r.i, "\n")
-    if (r.i == 0) {
-      r.i <- nrow(orig.data.frame)
-    }
-    if (keep.names == TRUE) {
-      r.i <- as.numeric(rownames(orig.data.frame)[r.i])
-      c.i <- as.numeric(colnames(orig.data.frame)[c.i])
-    }
-    row.inds <- c(row.inds, r.i)
-    col.inds <- c(col.inds, c.i)
   }
   arr.inds <- cbind(row.inds, col.inds)
   return(arr.inds)
@@ -57,202 +29,50 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
                            table.breaks, offset) {
   # make fully connected graph from adjacency list
   # note: "weight" here is really distance, calling it weight for the mst function later needs this
-  print("1")
   arr.inds <- ConvertIndex(inds = order(cluster.distances.matrix), orig.data.frame = cluster.distances.matrix, keep.names = TRUE)
-  print("2")
   edgelist.with.distances <- MergeValues(arr.inds = arr.inds, orig.data.frame = cluster.distances.matrix)
-  # print("edgelist.with.distances")
-  # print(edgelist.with.distances)
-  # removeDuplicateValues <- function(arr.inds.with.values) {
-  #   x <- arr.inds.with.values[!duplicated(arr.inds.with.values[, "values"]),]
-  #   return(x)
-  # }
-  print("3")
   edgelist.with.distances <- removeDuplicateValues(edgelist.with.distances)
-  # print("edgelist.with.distances")
-  # print(edgelist.with.distances)
   # remove last edge with Inf weight
-  print("4")
   edgelist.with.distances <- edgelist.with.distances[1:(nrow(edgelist.with.distances) - 1), ]
-  # print("edgelist.with.distances")
-  # print(edgelist.with.distances)
-  # if (table.lengths[1] == FALSE) {
-  #   first <- rep(as.vector(as.numeric(rownames(cluster.distances.matrix))), times = length(colnames(cluster.distances.matrix)))
-  #   second <- rep(as.vector(as.numeric(colnames(cluster.distances.matrix))), each = length(rownames(cluster.distances.matrix)))
-  #   edgelist.with.distances <- cbind(second, first, as.vector(cluster.distances.matrix))
-  #   # edgelist.with.distances <- cbind(as.vector(as.numeric(rownames(cluster.distances.matrix))),
-  #   #                                  as.vector(as.numeric(colnames(cluster.distances.matrix))),
-  #   #                                  as.vector(cluster.distances.matrix))
-  #   print("edgelist.with.distances")
-  #   print(edgelist.with.distances)
-  #   # take only the upper triangle of the matrix
-  #   edgelist.with.distances <- edgelist.with.distances[upper.tri(matrix(data = 1:length(cluster.distances.matrix),
-  #                                                                       nrow = nrow(cluster.distances.matrix),
-  #                                                                       ncol = ncol(cluster.distances.matrix))),]
-  #   print("edgelist.with.distances")
-  #   print(edgelist.with.distances)
-  # } else {
-  #   n <- 1
-  #   # take the bottom half of the matrix, giving (n to n+1) and (n+1 to n+1) distances
-  #   # as separate matrices
-  #   n_n1 <- cluster.distances.matrix[(table.lengths[n] + 1):(table.lengths[n] + table.lengths[n + 1]),
-  #                                    1:table.lengths[n]]
-  #   n1_n1 <- cluster.distances.matrix[(table.lengths[n] + 1):(table.lengths[n] + table.lengths[n + 1]),
-  #                                     (table.lengths[n] + 1):(table.lengths[n] + table.lengths[n + 1])]
-  #   # cat("dim(n_n1)", dim(n_n1), "\n")
-  #   # cat("dim(n1_n1)", dim(n1_n1), "\n")
-  #   print("n_n1")
-  #   print(n_n1)
-  #   print("n1_n1")
-  #   print(n1_n1)
-  #   # convert the distance matrices to lists of coordinates with distances as the 3rd row
-  #   first <- rep(as.vector(as.numeric(rownames(n_n1))), times = length(colnames(n_n1)))
-  #   second <- rep(as.vector(as.numeric(colnames(n_n1))), each = length(rownames(n_n1)))
-  #   edgelist.with.distances.n_n1 <- cbind(second, first, as.vector(as.matrix(n_n1)))
-  #   # edgelist.with.distances.n_n1 <- cbind(as.vector(row(n_n1) + table.breaks[n]),
-  #   #                                       as.vector(col(n_n1) + table.breaks[n] - table.lengths[n]),
-  #   #                                       as.vector(n_n1))
-  #   # cat("row(n_n1)", row(n_n1), "\n")
-  #   # cat("col(n_n1)", col(n_n1), "\n")
-  #   # print("edgelist.with.distances.n_n1")
-  #   # print(edgelist.with.distances.n_n1)
-  #   first <- rep(as.vector(as.numeric(rownames(n1_n1))), times = length(colnames(n1_n1)))
-  #   second <- rep(as.vector(as.numeric(colnames(n1_n1))), each = length(rownames(n1_n1)))
-  #   edgelist.with.distances.n1_n1 <- cbind(second, first, as.vector(as.matrix(n1_n1)))
-  #   # edgelist.with.distances.n1_n1 <- cbind(as.vector(row(n1_n1) + table.breaks[n]),
-  #   #                                        as.vector(col(n1_n1) + table.breaks[n]),
-  #   #                                        as.vector(n1_n1))
-  #   # print("edgelist.with.distances.n1_n1")
-  #   # print(edgelist.with.distances.n1_n1)
-  #   edgelist.with.distances.n1_n1 <- edgelist.with.distances.n1_n1[upper.tri(matrix(data = 1:length(n1_n1),
-  #                                                                                   nrow = nrow(n1_n1),
-  #                                                                                   ncol = ncol(n1_n1))),]
-  #   # print("edgelist.with.distances.n1_n1")
-  #   # print(edgelist.with.distances.n1_n1)
-  #   # combine n_n1 and n1_n1 distances into a single "edgelist" with distances
-  #   edgelist.with.distances <- rbind(edgelist.with.distances.n_n1, edgelist.with.distances.n1_n1)
-  #   print("edgelist.with.distances")
-  #   print(edgelist.with.distances)
-  # }
-  # convert strings to numeric
-  # class(edgelist.with.distances) <- "numeric"
-  # sort edges by distance (column 3)
-  # edgelist.with.distances <- edgelist.with.distances[order(edgelist.with.distances[, 3]), ]
-  # print("edgelist.with.distances")
-  # print(edgelist.with.distances)
-
-  # unique_edgelist
-  print("5")
   val <- max(floor(length(edgelist.with.distances[, 1]) * per / 100), 1)
-  print("6")
   trim.edgelist.with.distances <- edgelist.with.distances[(1:val), ]
   # calculate "density" for each cluster and normalize
-  # trim.edgelist.with.distances <- as.data.frame(trim.edgelist.with.distances)
   if (val == 1) {
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
   }
-  # trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
-  # print("trim.edgelist.with.distances")
-  # print(trim.edgelist.with.distances)
-  print("7")
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
   # add in zeros for clusters with no edges (table function leaves these out)
-  # print("densities.no.zeros")
-  # print(densities.no.zeros)
-  print("8")
   densities <- rep(0, numcluster)
-  # cat("numcluster", numcluster, "\n")
-  print("9")
   if (table.lengths[1] == FALSE) {
     names(densities) <- (1:numcluster)
   } else {
     n <- 1
     names(densities) <- (offset + 1):(offset + table.lengths[n] + table.lengths[n + 1])
   }
-  print("10")
-  # print("densities")
-  # print(densities)
   table.ind <- which(densities.no.zeros != 0, arr.ind = TRUE)
-  print("11")
   densities.no.zeros <- table(as.numeric(rownames(table.ind)))
-  print("12")
   densities[names(densities.no.zeros)] <- densities.no.zeros
-  print("13")
   normalized.densities <- round(densities/max(densities) * (max - min) + min)
-  # print("normalized.densities")
-  # print(normalized.densities)
-  # cat("length(normalized.densities)", length(normalized.densities), "\n")
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
-  # return(normalized.densities)
 }
 
 
 DrawNormalizedEdges <- function(output.graph, edgelist.with.distances,
                                 normalized.densities, n, offset = FALSE) {
-  print("new mode")
-  # print("edgelist.with.distances")
-  # print(edgelist.with.distances)
-  # print("normalized.densities")
-  # print(normalized.densities)
-  # print("names(normalized.densities)")
-  # print(names(normalized.densities))
   final.edgelist.with.distances <- c()
-  if (!offset) {
-    # print("b")
-    for (i in names(normalized.densities)) {
-      which.ind <- c(which(edgelist.with.distances[, 1] == as.numeric(i)),
-                     which(edgelist.with.distances[, 2] == as.numeric(i)))
-      tmp.edgelist <- edgelist.with.distances[which.ind, ]
-      # print("tmp.edgelist")
-      # print(tmp.edgelist)
-      tmp.edgelist <- tmp.edgelist[order(tmp.edgelist[, "values"]), ]
-      tmp.edgelist <- tmp.edgelist[1:unname(normalized.densities[i]), ]
-      final.edgelist.with.distances <- rbind(final.edgelist.with.distances,
-                                             tmp.edgelist)
-    }
-  } else {
-    # print("c")
-    for (i in names(normalized.densities)) {
-      which.ind <- c(which(edgelist.with.distances[, 1] == as.numeric(i)),
-                     which(edgelist.with.distances[, 2] == as.numeric(i)))
-      tmp.edgelist <- edgelist.with.distances[which.ind, ]
-      tmp.edgelist <- tmp.edgelist[order(tmp.edgelist[, "values"]), ]
-      tmp.edgelist <- tmp.edgelist[1:unname(normalized.densities[i]), ]
-      final.edgelist.with.distances <- rbind(final.edgelist.with.distances,
-                                             tmp.edgelist)
-    }
+  for (i in names(normalized.densities)) {
+    which.ind <- c(which(edgelist.with.distances[, 1] == as.numeric(i)),
+                   which(edgelist.with.distances[, 2] == as.numeric(i)))
+    tmp.edgelist <- edgelist.with.distances[which.ind, ]
+    tmp.edgelist <- tmp.edgelist[order(tmp.edgelist[, "values"]), ]
+    tmp.edgelist <- tmp.edgelist[1:unname(normalized.densities[i]), ]
+    final.edgelist.with.distances <- rbind(final.edgelist.with.distances,
+                                           tmp.edgelist)
   }
-  
-  # PruneEdgelist <- function(edgelist.with.distances) {
-  #   row.n <- table(edgelist.with.distances[, 1])
-  #   col.n <- table(edgelist.with.distances[, 2])
-  #   print("row.n")
-  #   print(row.n)
-  #   print("col.n")
-  #   print(col.n)
-  #   print("row.n + col.n")
-  #   print(row.n + col.n)
-  #   # return(pruned.edgelist)
-  # }
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
   final.edgelist.with.distances <- removeDuplicateValues(final.edgelist.with.distances)
-  # PruneEdgelist(final.edgelist.with.distances)
-  # # remove duplicate edges from edgelist
-  # final.edgelist.with.distances <- unique(cbind(t(apply(final.edgelist.with.distances[, 1:2], 1, sort)),
-  #                                               final.edgelist.with.distances[, 3]))
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
-  # add edges to graph
   # note: weight here is really distance, will be converted to weight after the graph is completed
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
-  # print("vertices.edges")
-  # print(vertices.edges)
-  # print("final.edgelist.with.distances[, 3]")
-  # print(final.edgelist.with.distances[, 3])
   output.graph <- add.edges(output.graph, edges = vertices.edges,
                             weight = final.edgelist.with.distances[, 3],
                             label = "EXTRA", sequence_assignment = n)
@@ -340,62 +160,35 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   # This section creates a flowmap for the first time point
   cat("Building first FLOWMAP:\n")
   table.lengths <- FLOWMAP.clusters$table.lengths
-  print("a")
   # get distance matrix from clusters
   clusters <- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
-  print("b")
   clusters <- subset(clusters, select = clustering.var)
-  print("c")
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
-  print("d")
   cluster.distances.matrix <- as.matrix(cluster.distances)
-  print("e")
   cluster.distances.matrix <- as.data.frame(cluster.distances.matrix)
-  # print("cluster.distances.matrix")
-  # print(cluster.distances.matrix)
-  # cluster.distances.matrix <- as.matrix(cluster.distances)
   # set i-i distances to Inf instead of 0 so they aren't the closest neighbors
   for (i in 1:ncol(cluster.distances.matrix)) {
     cluster.distances.matrix[i, i] <- Inf
   }
-  print("f")
   numcluster <- nrow(clusters)
-  print("g")
   normalized.results <- FindNormalized(cluster.distances.matrix = cluster.distances.matrix,
-                                         per = per, min = min, max = max, numcluster = numcluster,
-                                         table.lengths = FALSE)
-  print("h")
+                                       per = per, min = min, max = max, numcluster = numcluster,
+                                       table.lengths = FALSE)
   normalized.densities <- normalized.results$normalized.densities
-  print("i")
   edgelist.with.distances <- normalized.results$edgelist.with.distances
   # build new edgelist with N edges for each cluster based on normalized density
-  # output.graph <- DrawNormalizedEdges2(output.graph = output.graph,
-  #                                      cluster.distances.matrix = cluster.distances.matrix,
-  #                                      normalized.densities = normalized.densities,
-  #                                      n = n, offset = FALSE)
-  print("j")
   output.graph <- DrawNormalizedEdges(output.graph = output.graph,
                                       edgelist.with.distances = edgelist.with.distances,
                                       normalized.densities = normalized.densities,
                                       n = n, offset = FALSE)
-  print("k")
-  # output.graph <- DrawNormalizedEdges(output.graph = output.graph,
-  #                                     cluster.distances.matrix = cluster.distances.matrix,
-  #                                     normalized.densities = normalized.densities,
-  #                                     n = n, offset = FALSE)
   # now add all MST edges that are not yet included in the graph, and annotate all as "MST"
-  print("l")
   adjacency.graph <- graph.adjacency(as.matrix(cluster.distances.matrix),
                                      mode = "undirected", weighted = "weight", diag = FALSE)
-  print("m")
   mst.graph <- minimum.spanning.tree(adjacency.graph, algorithm = "prim")
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
-  print("n")
   mst.graph.edgelist <- cbind(get.edgelist(mst.graph), E(mst.graph)$weight)
-  print("o")
   class(mst.graph.edgelist) <- "numeric"
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
-  print("p")
   for (i in 1:nrow(mst.graph.edgelist)) {
     if (are.connected(output.graph, mst.graph.edgelist[i, 1], mst.graph.edgelist[i, 2])) {
       E(output.graph, P = c(mst.graph.edgelist[i, 1],
@@ -417,11 +210,7 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                     per = per, min = min, max = max,
                                     distance.metric = distance.metric,
                                     clustering.var = clustering.var)
-  # print("V(output.graph)$name")
-  # print(V(output.graph)$name)
   table.breaks <- c(0, FLOWMAP.clusters$table.breaks)
-  # print("table.breaks")
-  # print(table.breaks)
   # This section builds the flowmap one timepoint at a time
   for (n in 1:(length(FLOWMAP.clusters$cluster.medians) - 1)) {
     # offset value is used to correctly index the edges at each sequential step
@@ -436,15 +225,8 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
     cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
     cluster.distances.matrix <- as.matrix(cluster.distances)
     cluster.distances.matrix <- as.data.frame(cluster.distances.matrix)
-    # print("cluster.distances.matrix")
-    # print(cluster.distances.matrix)
-    # cat("offset", offset, "\n")
-    # print("table.breaks[n + 1]")
-    # print(table.breaks[n + 1])
     rownames(cluster.distances.matrix) <- (offset + 1):table.breaks[n + 2]
     colnames(cluster.distances.matrix) <- (offset + 1):table.breaks[n + 2]
-    # print("cluster.distances.matrix")
-    # print(cluster.distances.matrix)
     # cluster.distances.matrix <- as.matrix(cluster.distances)
     # set i-i distances to Inf instead of 0 so they aren't the closest neighbors
     for (i in 1:ncol(cluster.distances.matrix)) {
@@ -453,39 +235,23 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
     }
     # This section adds the lowest distance n_n+1 and n+1_n+1 edges to the output graph
     n_n1.table.lengths <- FLOWMAP.clusters$table.lengths[n:(n + 1)]
-    # cat("n_n1.table.lengths", n_n1.table.lengths, "\n")
     n_n1.table.breaks <- table.breaks[n:(n + 1)]
-    # cat("n_n1.table.breaks", n_n1.table.breaks, "\n")
-    # cat("offset", offset, "\n")
     normalized.results <- FindNormalized(cluster.distances.matrix = cluster.distances.matrix,
-                                           per = per, min = min, max = max, numcluster = numcluster,
-                                           table.lengths = n_n1.table.lengths,
-                                           table.breaks = n_n1.table.breaks,
-                                           offset = offset)
+                                         per = per, min = min, max = max, numcluster = numcluster,
+                                         table.lengths = n_n1.table.lengths,
+                                         table.breaks = n_n1.table.breaks,
+                                         offset = offset)
     normalized.densities <- normalized.results$normalized.densities
     edgelist.with.distances <- normalized.results$edgelist.with.distances
     # build new edgelist with N edges for each cluster based on normalized density
-    # output.graph <- DrawNormalizedEdges2(output.graph = output.graph,
-    #                                      cluster.distances.matrix = cluster.distances.matrix,
-    #                                      normalized.densities = normalized.densities,
-    #                                      n = n, offset = offset)
     output.graph <- DrawNormalizedEdges(output.graph = output.graph,
                                         edgelist.with.distances = edgelist.with.distances,
                                         normalized.densities = normalized.densities,
                                         n = n, offset = offset)
-    # print("woof")
-    # output.graph <- DrawNormalizedEdges(output.graph = output.graph,
-    #                                     cluster.distances.matrix = cluster.distances.matrix,
-    #                                     normalized.densities = normalized.densities,
-    #                                     n = n, offset = offset)
-    # print("get.edgelist(output.graph)")
-    # print(get.edgelist(output.graph))
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
     output.graph <- CheckMSTEdges(output.graph = output.graph,
                                   cluster.distances.matrix = cluster.distances.matrix, 
                                   table.lengths = n_n1.table.lengths, n = n, offset = offset)
-    # print("get.edgelist(output.graph)")
-    # print(get.edgelist(output.graph))
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
@@ -495,8 +261,6 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   output.graph <- AnnotateGraph(output.graph = output.graph,
                                 FLOWMAP.clusters = FLOWMAP.clusters,
                                 cellnum = cellnum)
-  # print("V(output.graph)$name")
-  # print(V(output.graph)$name)
   return(output.graph)
 }
 
@@ -533,60 +297,6 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   }
   # add name attribute
   V(output.graph)$name <- 1:length(V(output.graph))
-  return(output.graph)
-}
-
-
-
-DrawNormalizedEdges2 <- function(output.graph, cluster.distances.matrix,
-                                normalized.densities, n, offset = FALSE) {
-  print("original mode")
-  final.edgelist.with.distances <- c()
-  # cat("dim(cluster.distances.matrix)", dim(cluster.distances.matrix), "\n")
-  if (!offset) {
-    for (i in 1:length(normalized.densities)) {
-      tmp.final.edgelist.with.distances <- cbind(i, order(cluster.distances.matrix[, i]),
-                                                 sort(cluster.distances.matrix[, i]))[1:normalized.densities[i], ]
-      # print("tmp.final.edgelist.with.distances")
-      # print(tmp.final.edgelist.with.distances)
-      final.edgelist.with.distances <- rbind(final.edgelist.with.distances,
-                                             tmp.final.edgelist.with.distances)
-    }
-  }
-  else {
-    for (i in 1:length(normalized.densities)) {
-      tmp.final.edgelist.with.distances <- cbind((i + offset), (order(cluster.distances.matrix[, i]) + offset),
-                                                 sort(cluster.distances.matrix[, i]))[1:normalized.densities[i], ]
-      # print("tmp.final.edgelist.with.distances")
-      # print(tmp.final.edgelist.with.distances)
-      final.edgelist.with.distances <- rbind(final.edgelist.with.distances,
-                                             tmp.final.edgelist.with.distances)
-    }
-  }
-  # remove duplicate edges from edgelist
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
-  final.edgelist.with.distances <- unique(cbind(t(apply(final.edgelist.with.distances[, 1:2], 1, sort)),
-                                                final.edgelist.with.distances[, 3]))
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
-  # add edges to graph
-  # note: weight here is really distance, will be converted to weight after the graph is completed
-  # print("head(final.edgelist.with.distances)")
-  # print(head(final.edgelist.with.distances))
-  # cat("max(final.edgelist.with.distances[, 1:2])",
-  #     max(final.edgelist.with.distances[, 1:2]), "\n")
-  # cat("min(final.edgelist.with.distances[, 1:2])",
-  #     min(final.edgelist.with.distances[, 1:2]), "\n")
-  # print("final.edgelist.with.distances")
-  # print(final.edgelist.with.distances)
-  # print("final.edgelist.with.distances[, 1:2]")
-  # print(final.edgelist.with.distances[, 1:2])
-  # print("as.vector(t(final.edgelist.with.distances[, 1:2]))")
-  # print(as.vector(t(final.edgelist.with.distances[, 1:2])))
-  output.graph <- add.edges(output.graph, edges = as.vector(t(final.edgelist.with.distances[, 1:2])),
-                            weight = final.edgelist.with.distances[, 3],
-                            label = "EXTRA", sequence_assignment = n)
   return(output.graph)
 }
 
