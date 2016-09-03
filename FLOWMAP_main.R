@@ -54,13 +54,18 @@ MultiFLOWMAP <- function(folder, file.format, var.remove,
                          var.annotate, clustering.var, cluster.number, saveGRAPHML = TRUE,
                          savePDFS = TRUE, subsampleRand = TRUE) {
   fcs.file.names <- GetMultiFCSNames(folder, file.format)
+  setwd(save.folder)
   output.folder <- MakeOutFolder(runtype = "multiFLOWMAP")
   setwd(output.folder)
-  save.folder <- getwd()
-  print(save.folder)
+  keep.folder <- getwd()
+  print(keep.folder)
   fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                  subsample = subsample, subsample.rand)
-  file.clusters <- MultiClusterFCS(fcs.files, channel.cluster = clustering.var, numcluster = cluster.number)
+  fcs.files.conversion <- ConvertNumericLabel(fcs.files)
+  fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
+  label.key <- fcs.files.conversion$label.key
+  file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
+                                   distance.metric = distance.metric)
   graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                              max = maximum, distance.metric = distance.metric, cellnum = subsample)
   file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
@@ -74,7 +79,7 @@ MultiFLOWMAP <- function(folder, file.format, var.remove,
   # convertToPDF(in_folder, file_pattern, listOfTreatments = listOfTreatments,
   #             treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels = visibleChannels) 
   print(getwd())
-  setwd(save.folder)
+  setwd(keep.folder)
   printSummary()
 }
 

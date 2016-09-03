@@ -58,12 +58,12 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 }
 
 
-MultiClusterFCS <- function(list.of.treat.files, clustering.var, numcluster) {
+MultiClusterFCS <- function(list.of.treat.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   for (treat in names(list.of.treat.files)) {
     cat("Clustering all files from", treat, "\n")
     fcs.files <- list.of.treat.files[[treat]]
-    file.clusters <- clusterFCS(fcs.files, clustering.var, numcluster)
+    file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
     list.of.FLOWMAP.clusters[[treat]] <- file.clusters
   }
   return(list.of.FLOWMAP.clusters)
@@ -89,7 +89,17 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       # Finding clusters containing more than one cell
       # Saving counts and medians of data
       new.counts <- rbind(new.counts, data.frame(length(obs)))
+      # print("as.matrix(current.file[obs, ])")
+      # print(as.matrix(current.file[obs, ]))
+      # print("as.numeric(as.matrix(current.file[obs, ]))")
+      # print(as.numeric(as.matrix(current.file[obs, ])))
+      # print("as.numeric(current.file[obs, ])")
+      # print(as.numeric(current.file[obs, ]))
       new.median <- colMedians(as.matrix(current.file[obs, ]))
+      # print("new.median")
+      # print(new.median)
+      # print("as.matrix(current.file[obs, ])")
+      # print(as.matrix(current.file[obs, ]))
       new.median <- as.data.frame(new.median)
       if(colnames(new.median) != colnames(current.file)) {
         new.median <- t(new.median)

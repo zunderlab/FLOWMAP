@@ -174,6 +174,9 @@ printSummary <- function(...) {
   if (exists("cluster.number")) {
     summary["number of clusters per each FCS file:"] <- toString(cluster.number)
   } 
+  if (exists("label.key")) {
+    summary["label key:"] <- toString(label.key)
+  } 
   summary <- as.data.frame(summary)
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "summary", sep = "_")

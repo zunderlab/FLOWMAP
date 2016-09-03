@@ -80,12 +80,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 5000
+subsample <- 20
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 500
+cluster.number <- 2
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -117,58 +117,24 @@ SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remov
 # producing PDFs and graphml files in a new subfolder within
 # the "folder" that contains the FCS files
 
-# fcs.file.names <- GetFCSNames(folder, file.format)
-# output.folder <- MakeOutFolder(runtype = "singleFLOWMAP")
-# setwd(output.folder)
-# save.folder <- getwd()
-# print(save.folder)
-# fcs.files <- LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsample = subsample, subsample.rand = TRUE)
-# for (i in 1:length(fcs.files)) {
-#   df1 <- fcs.files[[i]]
-#   df2 <- df1[sample(nrow(df1)), ]
-#   fcs.files[[i]] <- df2
-# }
-# file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster = cluster.number,
-#                             distance.metric = distance.metric)
-# graph <- BuildFLOWMAP(file.clusters, per = per, min = minimum,
-#                       max = maximum, distance.metric, cellnum = subsample)
-# file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
-# ConvertToGraphML(graph, file.name)
-# graph.xy <- ForceDirectedXY(graph)
-# file.name.xy <- paste(basename(folder), "original_edge_choice", "xy", sep = "_")
-# final.file.name <- ConvertToGraphML(graph.xy, file.name.xy)
-# ConvertToPDF(final.file.name, edge.color = "#FF000000")
-# print(getwd())
-# setwd(save.folder)
-# printSummary()
-
-
-
+# setwd(folder)
 # multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
 #                CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
 #                per, minimum, maximum, saveGRAPHML = TRUE,
 #                savePDFS = TRUE, subsampleRand = TRUE, seedX)
 
 # fcs.file.names <- GetMultiFCSNames(folder, file.format)
+# setwd(save.folder)
 # output.folder <- MakeOutFolder(runtype = "multiFLOWMAP")
 # setwd(output.folder)
-# save.folder <- getwd()
-# print(save.folder)
+# keep.folder <- getwd()
+# print(keep.folder)
 # fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
 #                                subsample = subsample, subsample.rand)
-# file.clusters <- MultiClusterFCS(fcs.files, channel.cluster = clustering.var, numcluster = cluster.number)
-# graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
-#                            max = maximum, distance.metric = distance.metric, cellnum = subsample)
-# file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
-# ConvertToGraphML(graph, file.name)
-# graph.xy <- forceDirectedXY(graph)
-# file.name.xy <- paste(basename(folder), "original_edge_choice", "xy", sep = "_")
-# final.file.name <- ConvertToGraphML(graph.xy, file.name.xy)
-# ConvertToPDF(final.file.name, edge_color = "#FF000000")
-# # visibleChannels <- c("Timepoint", "Treatment")
-# ConvertToPDF(in_folder, file_pattern, listOfTreatments = listOfTreatments) 
-# # convertToPDF(in_folder, file_pattern, listOfTreatments = listOfTreatments,
-# #             treatInvisible = TRUE, timeInvisible = TRUE, visibleChannels = visibleChannels) 
-# print(getwd())
-# setwd(save.folder)
-# printSummary()
+# fcs.files.conversion <- ConvertNumericLabel(fcs.files)
+# fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
+# label.key <- fcs.files.conversion$label.key
+# file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
+#                                  distance.metric = distance.metric)
+# 
+
