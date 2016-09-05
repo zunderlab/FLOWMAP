@@ -147,7 +147,13 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   final.edgelist.with.distances <- c()
   # print("names(normalized.densities)")
   # print(names(normalized.densities))
+  # print("cluster.distances.matrix")
+  # print(cluster.distances.matrix)
+  # print("names(normalized.densities)")
+  # print(names(normalized.densities))
   for (i in names(normalized.densities)) {
+    # print("i")
+    # print(i)
     matches.in.order <- order(cluster.distances.matrix[, i])
     # print("order(cluster.distances.matrix[, i])")
     # print(order(cluster.distances.matrix[, i]))
@@ -258,8 +264,9 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     tmp.min <- min(tmp.matrix) # get the largest weight = shortest distance
     tmp.index <- which(tmp.matrix == tmp.min, arr.ind = TRUE)
     # add new edge to graph with the shortest connection vertices and the weight from linkweights
-    if (are.connected(output.graph, members.x[tmp.index[1]] + offset, 
-                      members.y[tmp.index[2]] + offset)) {
+    v1 <- members.x[tmp.index[1]] + offset
+    v2 <- members.y[tmp.index[2]] + offset
+    if (are.connected(output.graph, v1, v2)) {
       E(output.graph, P = c(members.x[tmp.index[1]] + offset,
                             members.y[tmp.index[2]] + offset))$label <- "MST"
     } else {

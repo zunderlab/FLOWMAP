@@ -28,10 +28,16 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
   # get FCS files
   subfolders <- list.files(folder)
   list.of.treat.file.names <- list()
+  # print("subfolders")
+  # print(subfolders)
   for (treat in subfolders) {
+    # print("treat")
+    # print(treat)
     folder.name <- treat
     setwd(treat)
     x <- getwd()
+    # print("getwd()")
+    # print(x)
     list.of.treat.file.names[[treat]] <- GetFCSNames(x, file.format, sort = TRUE)
     setwd(folder)
   }

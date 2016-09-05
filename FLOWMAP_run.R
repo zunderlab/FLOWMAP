@@ -22,7 +22,7 @@ prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 source(paste(prefolder, "FLOWMAP_main.R", sep = ""))
 
 folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
-# folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
+single.folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
 # folder <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20150728TRAILHeLa"
 # folder <- "~/Desktop/Work/Research/Raw FCS Files/20160721_MM1S_Timecourse3_Live"
 # which.one <- "/WT/L"
@@ -94,11 +94,11 @@ per <- 1
 # between all nodes in graph under consideration for
 # forming edges between
 
-minimum <- 2
+minimum <- 3
 # minimum specifies the minimum number of edges any
 # given node in graph will have
 
-maximum <- 3
+maximum <- 4
 # maximum specifies the maximum number of edges any
 # given node in graph will have
 
@@ -107,12 +107,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 100
+subsample <- 600
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 50
+cluster.number <- 300
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -136,8 +136,8 @@ clustering.var <- c("marker1", "marker2")
 # on the shape of the resulting FLOW-MAP, but will still
 # be seen as a parameter in the final PDFs
 
-# setwd(folder)
-# SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remove,
+# setwd(single.folder)
+# SingleFLOWMAP(folder = single.folder, file.format = file.format, var.remove = var.remove,
 #               var.annotate = var.annotate, clustering.var = clustering.var,
 #               cluster.number = cluster.number, subsample = subsample,
 #               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -149,18 +149,46 @@ clustering.var <- c("marker1", "marker2")
 # producing PDFs and graphml files in a new subfolder within
 # the "folder" that contains the FCS files
 
-# setwd(folder)
-# multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
-#                CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
-#                per, minimum, maximum, saveGRAPHML = TRUE,
-#                savePDFS = TRUE, subsampleRand = TRUE, seedX)
+setwd(folder)
+MultiFLOWMAP(folder, file.format, var.remove,
+             var.annotate, clustering.var, cluster.number,
+             subsample, distance.metric, minimum,
+             maximum, per, save.folder, subsampleRand = TRUE,
+             shuffle = TRUE)
 
-fcs.file.names <- GetMultiFCSNames(folder, file.format)
-fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-                               subsample = subsample, subsample.rand)
-fcs.files.conversion <- ConvertNumericLabel(fcs.files)
-fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
-label.key <- fcs.files.conversion$label.key
-file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
-                                 distance.metric = distance.metric)
+# setwd(folder)
+# fcs.file.names <- GetMultiFCSNames(folder, file.format)
+# fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
+#                                subsample = subsample, subsample.rand)
+# 
+# AddNoise <- function(fcs.file, factor, amount) {
+#   if (!is.na(match("Treat", colnames(fcs.file)))) {
+#     tmp <- fcs.file[, -match("Treat", colnames(fcs.file))]
+#     Treat <- fcs.file[, "Treat"]
+#   }
+#   tmp <- as.matrix(tmp)
+#   tmp <- jitter(tmp, factor = factor, amount = amount)
+#   tmp <- as.data.frame(tmp)
+#   if (!is.na(match("Treat", colnames(fcs.file)))) {
+#     tmp <- cbind(tmp, Treat)
+#   }
+#   return(tmp)
+# }
+# 
+# which.add.noise <- 1
+# for (i in 1:length(fcs.files[[which.add.noise]])) {
+#   tmp <- fcs.files[[which.add.noise]][[i]]
+#   tmp <- AddNoise(tmp, factor = 1, amount = 0)
+#   fcs.files[[which.add.noise]][[i]] <- tmp
+#   rm(tmp)
+# }
+# 
+# fcs.files.conversion <- ConvertNumericLabel(fcs.files)
+# fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
+# label.key <- fcs.files.conversion$label.key
+# file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
+#                                  distance.metric = distance.metric)
+# graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
+#                            max = maximum, distance.metric = distance.metric, cellnum = subsample)
+# graph.xy <- ForceDirectedXY(graph)
 

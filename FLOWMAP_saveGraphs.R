@@ -128,15 +128,11 @@ ConvertToPDF <- function(graphml.file, scale = NULL, normalize = "none", node.si
   }
 }
 
-
-printSummary <- function(...) {
+PrintSummary <- function(...) {
   summary <- matrix()
   cat("Printing summary.", "\n")
-  if (exists("multi.folder")) {
-    summary["FCS file source folder:"] <- toString(multi.folder)
-  }
-  if (exists("list.of.treatments")) {
-    summary["Multiple treatments include:"] <- toString(list.of.treatments)
+  if (exists("subfolders")) {
+    summary["Multiple treatments include:"] <- toString(subfolders)
   }
   if (exists("folder")) {
     summary["FCS file source folder:"] <- toString(folder)
