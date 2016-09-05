@@ -8,6 +8,7 @@ library(Biobase)
 library(huge)
 library(proxy)
 library(scaffold)
+library(spade)
 
 source(paste(prefolder, "FLOWMAP_loadFromFCS.R", sep = ""))
 source(paste(prefolder, "FLOWMAP_clusterCells.R", sep = ""))
@@ -36,9 +37,27 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
   }
   file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                               numcluster = cluster.number, distance.metric = distance.metric)
-  graph <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+  results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                         max = maximum, distance.metric = distance.metric, cellnum = subsample,
                         clustering.var = clustering.var)
+  graph <- results$output.graph
+  edgelist.save <- results$edgelist.save
+  # print("edgelist.save")
+  # print(edgelist.save)
+  total.edges <- 0
+  # cat("length(edgelist.save)", length(edgelist.save), "\n")
+  for (i in 1:length(edgelist.save)) {
+    # cat("i is", i, "\n")
+    # cat("names(edgelist.save)[i] is", names(edgelist.save)[i], "\n")
+    num.edges <- dim(edgelist.save[[i]])[1]
+    total.edges <- total.edges + num.edges
+  }
+  # total.edges <- total.edges + dim(edgelist.save$first)[1]
+  # print("total.edges")
+  # print(total.edges)
+  # graph <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+  #                       max = maximum, distance.metric = distance.metric, cellnum = subsample,
+  #                       clustering.var = clustering.var)
   file.name <- paste(basename(folder), "original_edge_choice", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
@@ -48,6 +67,7 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
   print(getwd())
   setwd(keep.folder)
   printSummary()
+  return(graph.xy)
 }
 
 
