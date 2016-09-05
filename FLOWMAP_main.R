@@ -28,6 +28,8 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
   print(keep.folder)
   fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                             channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
+  # print("colnames(fcs.files[[1]])")
+  # print(colnames(fcs.files[[1]]))
   if (shuffle) {
     for (i in 1:length(fcs.files)) {
       df1 <- fcs.files[[i]]
@@ -36,6 +38,12 @@ SingleFLOWMAP <- function(folder, file.format, var.remove, var.annotate,
       rownames(fcs.files[[i]]) <- seq(1:subsample)
     }
   }
+  # print("clustering.var")
+  # print(clustering.var)
+  # print("setdiff(colnames(fcs.files[[1]]), clustering.var)")
+  # print(setdiff(colnames(fcs.files[[1]]), clustering.var))
+  # print("setdiff(clustering.var, colnames(fcs.files[[1]]))")
+  # print(setdiff(clustering.var, colnames(fcs.files[[1]])))
   file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                               numcluster = cluster.number, distance.metric = distance.metric)
   results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,

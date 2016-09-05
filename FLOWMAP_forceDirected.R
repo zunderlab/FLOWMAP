@@ -1,7 +1,8 @@
 
 ForceDirectedXY <- function(graph) {
-  force.graph1 <- scaffold:::layout.forceatlas2(graph, iter = 10000, stopping_tolerance = 0.001,
-                                    prevent.overlap = FALSE)
+  force.graph1 <- scaffold:::layout.forceatlas2(graph, iter = 10000,
+                                                stopping_tolerance = 0.001,
+                                                prevent.overlap = FALSE)
   graph.with.xy <- graph
   cat("x:", head(force.graph1$lay[, 1]), "\n")
   cat("y:", head(force.graph1$lay[, 2]), "\n")
@@ -12,8 +13,9 @@ ForceDirectedXY <- function(graph) {
   #                                                 prevent.overlap = FALSE)
   #   graph.with.xy <- graph.with.xy2
   # }
-  force.graph2 <- scaffold:::layout.forceatlas2(graph.with.xy, iter = 1000, stopping_tolerance = 0.001,
-                                    prevent.overlap = TRUE)
+  force.graph2 <- scaffold:::layout.forceatlas2(graph.with.xy, iter = 1000,
+                                                stopping_tolerance = 0.001,
+                                                prevent.overlap = TRUE)
   # cat("x:", head(force.graph2$lay[, 1]), "\n")
   # cat("y:", head(force.graph2$lay[, 2]), "\n")
   V(graph.with.xy)$x <- force.graph2$lay[, 1]

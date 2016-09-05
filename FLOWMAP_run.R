@@ -1,6 +1,6 @@
 rm(list=ls())
 
-# Copyright: Apache License 2.0
+# GNU General Public License v3.0
 
 # Authors:
 # Melissa Ko (Stanford University)
@@ -21,13 +21,16 @@ prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 # uses prefolder to load in all FLOW-MAP files/functions
 source(paste(prefolder, "FLOWMAP_main.R", sep = ""))
 
-# folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
-folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
+folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
+# folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
 # folder <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20150728TRAILHeLa"
+# folder <- "~/Desktop/Work/Research/Raw FCS Files/20160721_MM1S_Timecourse3_Live"
+# which.one <- "/WT/L"
+# folder <- paste(folder, which.one, sep = "")
 # folder specifies the folder where the FCS files
 # to be analyzed are saved on your local computer
 
-save.folder <- "/Users/mesako/Desktop"
+save.folder <- paste("/Users/mesako/Desktop", which.one, sep = "")
 # save.folder specifies the folder where the results should be saved
 # a new folder will be made in this directory named with date/time of run
 
@@ -36,7 +39,20 @@ file.format <- "*.fcs"
 # for in "folder," all functions currently only work
 # with FCS files
 
-var.annotate <- list("Marker1" = "Marker1", "Marker2" = "Marker2")
+# var.annotate <- list("Marker1" = "Marker1", "Marker2" = "Marker2")
+var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
+                         "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
+                         "In113Di" = "active_Bax", "La139Di" = "cPARP", "Ce140Di" = "Bak",
+                         "Pr141Di" = "p-p38", "Nd146Di" = "pBcl-2", "Nd148Di" = "pErk",
+                         "Nd150Di" = "pRb", "Sm152Di" = "pAkt", "Eu153Di" = "Bcl-xL",
+                         "Sm154Di" = "Bax", "Gd155Di" = "active_Bak", "Gd156Di" = "CyclinB1",
+                         "Gd157Di" = "Bcl-2", "Gd158Di" = "pSTAT5", "Gd160Di" = "Mcl-1",
+                         "Dy161Di" = "cMyc", "Dy164Di" = "IkBalpha", "Ho165Di" = "Bim",
+                         "Er170Di" = "pBad-S112", "Er167Di" = "CyclinA", "Er168Di" = "pH3",
+                         "Yb172Di" = "Bcl-w", "Yb171Di" = "pZAP70", "Yb174Di" = "p53",
+                         "Lu175Di" = "pS6", "Lu176Di" = "pCREB", "Yb173Di" = "cCaspase3",
+                         "Ir191Di" = "DNA1", "Ir193Di" = "DNA2", "Pt195Di" = "Cisplatin", "Sm149Di" = "APAF")
+
 # var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
 #                      "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
 #                      "In113Di" = "pH3", "I127Di" = "IdU", "La139Di" = "Normbeads1",
@@ -57,6 +73,13 @@ var.annotate <- list("Marker1" = "Marker1", "Marker2" = "Marker2")
 # and renaming them according to marker (e.g. "CD44")
 
 var.remove <- c()
+var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode", "Nd143Di", "Nd145Di",
+                    "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1", "Tb159Di",
+                    "barcode2", "barcode3", "Y89Di", "barcode4", "barcode5", "barcode6", "Eu151Di",
+                    "I127Di", "Gd154Di", "Dy160Di", "Tm169Di", "Dy163Di", "Pt194Di", "Nd142Di",
+                    "normbeads1", "eubeads1", "normbeads3", "FileNum", "Yb172Di", "Bi209Di", "Pm147Di",
+                    "bc_separation_dist", "Er166Di", "mahalanobis_dist", "In115Di", "Dy162Di", "Nd144Di")
+
 # var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode",
 #                 "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1",
 #                 "barcode2", "barcode3", "barcode4", "barcode5", "barcode6",
@@ -76,7 +99,7 @@ minimum <- 2
 # minimum specifies the minimum number of edges any
 # given node in graph will have
 
-maximum <- 5
+maximum <- 3
 # maximum specifies the maximum number of edges any
 # given node in graph will have
 
@@ -85,12 +108,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 500
+subsample <- 2000
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 400
+cluster.number <- 1000
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -100,7 +123,12 @@ set.seed(seed.X)
 # lead to reproducible runs of FLOW-MAP and its resulting
 # figures for the same seed
 
-clustering.var <- c("marker1", "marker2")
+clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
+                    "APAF", "pRb", "pAkt", "Bcl-xL", "Bax", "active_Bak",
+                    "CyclinB1", "Bcl-2", "pSTAT5", "Mcl-1", "cMyc", "IkBalpha",
+                    "Bim", "CyclinA", "pH3", "pBad-S112", "pZAP70", "Bcl-w",
+                    "active_Bax", "cCaspase3", "p53", "pS6", "pCREB")
+# clustering.var <- c("marker1", "marker2")
 # clustering.var <- c("Bid", "cCaspase3", "cPARP",
 #                     "pNFkB", "IkBalpha", "Cisplatin")
 # clustering.var specifies which parameters to use for
@@ -117,133 +145,6 @@ output.graph <- SingleFLOWMAP(folder = folder, file.format = file.format, var.re
                                per = per, save.folder = save.folder, shuffle = TRUE)
 
 
-
-
-# set.seed(seed.X)
-# fcs.file.names <- GetFCSNames(folder = folder, file.format = file.format)
-# fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-#                           channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
-# if (TRUE) {
-#   for (i in 1:length(fcs.files)) {
-#     df1 <- fcs.files[[i]]
-#     df2 <- df1[sample(nrow(df1)), ]
-#     fcs.files[[i]] <- df2
-#     rownames(fcs.files[[i]]) <- seq(1:subsample)
-#   }
-# }
-# file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
-#                             numcluster = cluster.number, distance.metric = distance.metric)
-# 
-# set.seed(seed.X)
-# source(paste(prefolder, "Eli_previous_version.R", sep = ""))
-# 
-# fixed.graph <- output.graph
-# Eli.graph <- output_graph
-# 
-# fixed.graph
-# Eli.graph
-# 
-# get.edgelist(fixed.graph)
-# get.edgelist(Eli.graph)
-# 
-# get.edgelist(fixed.graph) == get.edgelist(Eli.graph)
-
-
-# results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
-#                         max = maximum, distance.metric = distance.metric, cellnum = subsample,
-#                         clustering.var = clustering.var)
-# graph <- results$output.graph
-# edgelist.save <- results$edgelist.save
-# print("edgelist.save")
-# print(edgelist.save)
-# total.edges <- 0
-# cat("length(edgelist.save)", length(edgelist.save), "\n")
-# concat <- data.frame()
-# for (i in 1:length(edgelist.save)) {
-#   concat <- rbind(concat, edgelist.save[[i]])
-# }
-# all.dist <- table(c(concat[, 1], concat[, 2]))
-
-# fixed.graphml.file <-"/Users/mesako/Desktop/MostRecentFix/MostRecentFix.graphml"
-# fixed.graph <- read.graph(fixed.graphml.file, format = "graphml")
-
-# newest.graphml.file <-"/Users/mesako/Desktop/2016-09-04_13.42.01_singleFLOWMAP_run/2016-09-04_SingleFLOWMAP_original_edge_choice_13.42.02.graphml"
-# newest.graph <- read.graph(newest.graphml.file, format = "graphml")
-# # Eli.graphml.file <- "/Users/mesako/Desktop/Zunder Example Runs/SPADE - 20 clusters per file/output_2_5_1.graphml"
-# # Eli.graph <- read.graph(Eli.graphml.file, format = "graphml")
-# # 
-# my.edge.distribution <- table(get.edgelist(newest.graph))
-# Eli.myclus.edge.distribution <- table(get.edgelist(output_graph))
-# # Eli.edge.distribution <- table(get.edgelist(Eli.graph))
-# # 
-# my.edge.median <- median(my.edge.distribution)
-# my.edge.mean <- mean(my.edge.distribution)
-# my.edge.var <- var(my.edge.distribution)
-# Eli.myclus.edge.median <- median(Eli.myclus.edge.distribution)
-# Eli.myclus.edge.mean <- mean(Eli.myclus.edge.distribution)
-# Eli.myclus.edge.var <- var(Eli.myclus.edge.distribution)
-# # Eli.edge.median <- median(Eli.edge.distribution)
-# # Eli.edge.mean <- mean(Eli.edge.distribution)
-# # Eli.edge.var <- var(Eli.edge.distribution)
-# # save.edge.median <- median(all.dist)
-# # save.edge.mean <- mean(all.dist)
-# # save.edge.var <- var(all.dist)
-# # 
-# # my.edge.median
-# # my.edge.mean
-# # my.edge.var
-# # Eli.edge.median
-# # Eli.edge.mean
-# # Eli.edge.var
-# # save.edge.median
-# # save.edge.mean
-# # save.edge.var
-# # 
-# # hist(all.dist)
-# hist(my.edge.distribution)
-# hist(Eli.myclus.edge.distribution)
-# # hist(Eli.edge.distribution)
-# # 
-# x <- names(my.edge.distribution)
-# y <- unname(my.edge.distribution)
-# lo <- loess(y ~ x)
-# plot(x, y, main = "my.edge.distribution")
-# lines(predict(lo), col = 'red', lwd = 2)
-# axis(2, at = y, labels = y, las = 2)
-# 
-# x <- names(Eli.edge.distribution)
-# y <- unname(Eli.edge.distribution)
-# lo <- loess(y ~ x)
-# plot(x, y, main = "Eli.edge.distribution")
-# lines(predict(lo), col = 'red', lwd = 2)
-# axis(2, at = y, labels = y, las = 2)
-# 
-# x <- names(all.dist)
-# y <- unname(all.dist)
-# lo <- loess(y ~ x)
-# plot(x, y, main = "save.edge.distribution")
-# lines(predict(lo), col = 'red', lwd = 2)
-# axis(2, at = y, labels = y, las = 2)
-
-# # pre.fix.graphml.file <- "/Users/mesako/Desktop/2016-09-03_20.27.55_singleFLOWMAP_run/2016-09-03_SingleFLOWMAP_original_edge_choice_20.27.56.graphml"
-# # pre.fix.graph <- read.graph(pre.fix.graphml.file, format = "graphml")
-# # post.fix.graphml.file <- "/Users/mesako/Desktop/2016-09-03_20.29.13_singleFLOWMAP_run/2016-09-03_SingleFLOWMAP_original_edge_choice_20.29.14.graphml"
-# # post.fix.graph <- read.graph(post.fix.graphml.file, format = "graphml")
-# # V(pre.fix.graph)
-# # V(post.fix.graph)
-# # E(pre.fix.graph)
-# # E(post.fix.graph)
-# # pre.graphml.file <- "/Users/mesako/Desktop/2016-09-03_19.16.52_singleFLOWMAP_run/"
-# # graphml.file <- "2016-09-03_SingleFLOWMAP_original_edge_choice_xy_19.16.53.graphml"
-# # my.graph <- read.graph(paste(pre.graphml.file, graphml.file, sep = ""), format = "graphml")
-# # 
-# # V(my.graph)
-# # V(Eli.graph)
-# # E(my.graph)
-# E(Eli.graph)
-# # E(Eli.graph)[from(153)]
-
-
 # SingleFLOWMAP function, with correctly provided folders
 # and variables above, should run from start to finish,
 # producing PDFs and graphml files in a new subfolder within
@@ -256,9 +157,5 @@ output.graph <- SingleFLOWMAP(folder = folder, file.format = file.format, var.re
 #                savePDFS = TRUE, subsampleRand = TRUE, seedX)
 
 # fcs.file.names <- GetMultiFCSNames(folder, file.format)
-# output.folder <- MakeOutFolder(runtype = "multiFLOWMAP")
-# setwd(output.folder)
-# save.folder <- getwd()
-# print(save.folder)
 # fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
 #                                subsample = subsample, subsample.rand)
