@@ -1,6 +1,6 @@
 rm(list=ls())
 
-# Copyright: Apache License 2.0
+# GPL?
 
 # Authors:
 # Melissa Ko (Stanford University)
@@ -21,7 +21,8 @@ prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 # uses prefolder to load in all FLOW-MAP files/functions
 source(paste(prefolder, "FLOWMAP_main.R", sep = ""))
 
-folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
+folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
+# folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
 # folder <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20150728TRAILHeLa"
 # folder specifies the folder where the FCS files
 # to be analyzed are saved on your local computer
@@ -80,12 +81,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 20
+subsample <- 100
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 2
+cluster.number <- 50
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -105,11 +106,11 @@ clustering.var <- c("marker1", "marker2")
 # be seen as a parameter in the final PDFs
 
 setwd(folder)
-SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remove,
-              var.annotate = var.annotate, clustering.var = clustering.var,
-              cluster.number = cluster.number, subsample = subsample,
-              distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-              per = per, shuffle = TRUE)
+# SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remove,
+#               var.annotate = var.annotate, clustering.var = clustering.var,
+#               cluster.number = cluster.number, subsample = subsample,
+#               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+#               per = per, shuffle = TRUE)
 
 
 # SingleFLOWMAP function, with correctly provided folders
@@ -123,18 +124,13 @@ SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remov
 #                per, minimum, maximum, saveGRAPHML = TRUE,
 #                savePDFS = TRUE, subsampleRand = TRUE, seedX)
 
-# fcs.file.names <- GetMultiFCSNames(folder, file.format)
-# setwd(save.folder)
-# output.folder <- MakeOutFolder(runtype = "multiFLOWMAP")
-# setwd(output.folder)
-# keep.folder <- getwd()
-# print(keep.folder)
-# fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-#                                subsample = subsample, subsample.rand)
-# fcs.files.conversion <- ConvertNumericLabel(fcs.files)
-# fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
-# label.key <- fcs.files.conversion$label.key
-# file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
-#                                  distance.metric = distance.metric)
-# 
+fcs.file.names <- GetMultiFCSNames(folder, file.format)
+fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
+                               subsample = subsample, subsample.rand)
+fcs.files.conversion <- ConvertNumericLabel(fcs.files)
+fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
+label.key <- fcs.files.conversion$label.key
+file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
+                                 distance.metric = distance.metric)
+
 
