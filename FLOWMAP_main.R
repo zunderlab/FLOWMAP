@@ -9,6 +9,7 @@ library(huge)
 library(proxy)
 library(scaffold)
 library(spade)
+library(Rclusterpp)
 
 source(paste(prefolder, "FLOWMAP_loadFromFCS.R", sep = ""))
 source(paste(prefolder, "FLOWMAP_clusterCells.R", sep = ""))

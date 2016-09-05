@@ -42,20 +42,20 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   edgelist.with.distances <- removeDuplicateValues(edgelist.with.distances)
   # remove last edge with Inf weight
   edgelist.with.distances <- edgelist.with.distances[1:(nrow(edgelist.with.distances) - 1), ]
-  print("nrow(edgelist.with.distances)")
-  print(nrow(edgelist.with.distances))
-  print("head(edgelist.with.distances)")
-  print(head(edgelist.with.distances))
+  # print("nrow(edgelist.with.distances)")
+  # print(nrow(edgelist.with.distances))
+  # print("head(edgelist.with.distances)")
+  # print(head(edgelist.with.distances))
   if (table.lengths[1] != FALSE) {
     inds.in.n <- (offset + 1):(offset + table.lengths[1])
-    cat("inds.in.n is", inds.in.n, "\n")
+    # cat("inds.in.n is", inds.in.n, "\n")
     edgelist.with.distances <- RemoveWithinNEdges(edgelist.with.distances,
                                                   inds.in.n = inds.in.n)
   }
-  print("nrow(edgelist.with.distances)")
-  print(nrow(edgelist.with.distances))
-  print("head(edgelist.with.distances)")
-  print(head(edgelist.with.distances))
+  # print("nrow(edgelist.with.distances)")
+  # print(nrow(edgelist.with.distances))
+  # print("head(edgelist.with.distances)")
+  # print(head(edgelist.with.distances))
   # val <- max(floor(length(edgelist.with.distances[, 1]) * per / 100), 1)
   num.edges <- length(edgelist.with.distances[, 1])
   val <- max(floor(num.edges * per / 100), 1)
@@ -68,8 +68,8 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   if (val == 1) {
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
   }
-  print("trim.edgelist.with.distances")
-  print(trim.edgelist.with.distances)
+  # print("trim.edgelist.with.distances")
+  # print(trim.edgelist.with.distances)
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
   # print("densities.no.zeros")
   # print(densities.no.zeros)
@@ -90,8 +90,8 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   # print("densities")
   # print(densities)
   normalized.densities <- round(densities/max(densities) * (max - min) + min)
-  print("normalized.densities")
-  print(normalized.densities)
+  # print("normalized.densities")
+  # print(normalized.densities)
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
   
@@ -145,14 +145,14 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
 DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
                                 normalized.densities, n, offset = FALSE) {
   final.edgelist.with.distances <- c()
-  print("names(normalized.densities)")
-  print(names(normalized.densities))
+  # print("names(normalized.densities)")
+  # print(names(normalized.densities))
   for (i in names(normalized.densities)) {
     matches.in.order <- order(cluster.distances.matrix[, i])
-    print("order(cluster.distances.matrix[, i])")
-    print(order(cluster.distances.matrix[, i]))
-    print("rownames(cluster.distances.matrix)[matches.in.order]")
-    print(rownames(cluster.distances.matrix)[matches.in.order])
+    # print("order(cluster.distances.matrix[, i])")
+    # print(order(cluster.distances.matrix[, i]))
+    # print("rownames(cluster.distances.matrix)[matches.in.order]")
+    # print(rownames(cluster.distances.matrix)[matches.in.order])
     tmp.edgelist <- cbind(as.numeric(i), as.numeric(rownames(cluster.distances.matrix)[matches.in.order]),
                                                sort(cluster.distances.matrix[, i]))[1:normalized.densities[i], ]
     final.edgelist.with.distances <- rbind(final.edgelist.with.distances, tmp.edgelist)
@@ -160,10 +160,10 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   colnames(final.edgelist.with.distances) <- c("row.inds", "col.inds", "values")
   final.edgelist.with.distances <- removeDuplicateValues(final.edgelist.with.distances)
   # note: weight here is really distance, will be converted to weight after the graph is completed
-  print("dim(final.edgelist.with.distances)")
-  print(dim(final.edgelist.with.distances))
-  print("head(final.edgelist.with.distances)")
-  print(head(final.edgelist.with.distances))
+  # print("dim(final.edgelist.with.distances)")
+  # print(dim(final.edgelist.with.distances))
+  # print("head(final.edgelist.with.distances)")
+  # print(head(final.edgelist.with.distances))
   # print("final.edgelist.with.distances")
   # print(final.edgelist.with.distances)
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
@@ -335,8 +335,8 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   #                                     edgelist.with.distances = edgelist.with.distances,
   #                                     normalized.densities = normalized.densities,
   #                                     n = n, offset = FALSE)
-  print("E(output.graph) post-normalized, pre-MST")
-  print(E(output.graph))
+  # print("E(output.graph) post-normalized, pre-MST")
+  # print(E(output.graph))
   edgelist.save <- results$final.edgelist.with.distances
   
   # now add all MST edges that are not yet included in the graph, and annotate all as "MST"
@@ -359,8 +359,8 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
     }
   }
   
-  print("E(output.graph) post-MST")
-  print(E(output.graph))
+  # print("E(output.graph) post-MST")
+  # print(E(output.graph))
   
   # # now add all MST edges that are not yet included in the graph, and annotate all as "MST"
   # adjacency.graph <- graph.adjacency(as.matrix(cluster.distances.matrix),
@@ -469,15 +469,15 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
     #                                     edgelist.with.distances = edgelist.with.distances,
     #                                     normalized.densities = normalized.densities,
     #                                     n = n, offset = offset)
-    print("E(output.graph) post-normalized, pre-MST")
-    print(E(output.graph))
+    # print("E(output.graph) post-normalized, pre-MST")
+    # print(E(output.graph))
 
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
     output.graph <- CheckMSTEdges(output.graph = output.graph,
                                   cluster.distances.matrix = cluster.distances.matrix, 
                                   table.lengths = n_n1.table.lengths, n = n, offset = offset)
-    print("E(output.graph) post-MST")
-    print(E(output.graph))
+    # print("E(output.graph) post-MST")
+    # print(E(output.graph))
   }
   
   # convert graph distances to weights (low distance = high weight and vice versa)
@@ -489,8 +489,8 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   E(output.graph)$weight <- weights
   # print("E(output.graph)$weight")
   # print(E(output.graph)$weight)
-  print("final E(output.graph)")
-  print(E(output.graph))
+  # print("final E(output.graph)")
+  # print(E(output.graph))
   output.graph <- AnnotateGraph(output.graph = output.graph,
                                 FLOWMAP.clusters = FLOWMAP.clusters,
                                 cellnum = cellnum)

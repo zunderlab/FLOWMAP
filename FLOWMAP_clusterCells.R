@@ -49,11 +49,11 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
   }    
   rownames(full.clusters) <- seq(1, dim(full.clusters)[1])
   FLOWMAP.clusters <- FLOWMAPcluster(full.clusters = full.clusters,
-                                    table.breaks = table.breaks,
-                                    table.lengths = table.lengths,
-                                    cluster.medians = cluster.medians,
-                                    cluster.counts = cluster.counts,
-                                    cell.assgn = cell.assgn)
+                                     table.breaks = table.breaks,
+                                     table.lengths = table.lengths,
+                                     cluster.medians = cluster.medians,
+                                     cluster.counts = cluster.counts,
+                                     cell.assgn = cell.assgn)
   return(FLOWMAP.clusters)  
 }
 
@@ -76,8 +76,10 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
   } else {
     method <- "single"
   }
-  FCS.clusters <- hclust.vector(tmp.FCS.for.cluster, method = method,
-                               metric = distance.metric)
+  FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
+                                    distance = distance.metric)
+  # FCS.clusters <- hclust.vector(tmp.FCS.for.cluster, method = method,
+  #                              metric = distance.metric)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()

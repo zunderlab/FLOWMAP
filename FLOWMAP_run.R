@@ -85,16 +85,16 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 250
+subsample <- 500
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 25
+cluster.number <- 400
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
-seed.X <- 3
+seed.X <- 1
 set.seed(seed.X)
 # seed.X specifies the seed for a given run, this should
 # lead to reproducible runs of FLOW-MAP and its resulting
@@ -117,39 +117,36 @@ output.graph <- SingleFLOWMAP(folder = folder, file.format = file.format, var.re
                                per = per, save.folder = save.folder, shuffle = TRUE)
 
 
-set.seed(seed.X)
-fcs.file.names <- GetFCSNames(folder = folder, file.format = file.format)
-fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                          channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
-if (TRUE) {
-  for (i in 1:length(fcs.files)) {
-    df1 <- fcs.files[[i]]
-    df2 <- df1[sample(nrow(df1)), ]
-    fcs.files[[i]] <- df2
-    rownames(fcs.files[[i]]) <- seq(1:subsample)
-  }
-}
-file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
-                            numcluster = cluster.number, distance.metric = distance.metric)
-
-set.seed(seed.X)
-source(paste(prefolder, "Eli_previous_version.R", sep = ""))
-
-fixed.graph <- output.graph
-Eli.graph <- output_graph
-
-fixed.graph
-Eli.graph
-
-get.edgelist(fixed.graph)
-get.edgelist(Eli.graph)
-
-get.edgelist(fixed.graph) == get.edgelist(Eli.graph)
 
 
-
-
-
+# set.seed(seed.X)
+# fcs.file.names <- GetFCSNames(folder = folder, file.format = file.format)
+# fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+#                           channel.annotate = var.annotate, subsample = subsample, subsample.rand = TRUE)
+# if (TRUE) {
+#   for (i in 1:length(fcs.files)) {
+#     df1 <- fcs.files[[i]]
+#     df2 <- df1[sample(nrow(df1)), ]
+#     fcs.files[[i]] <- df2
+#     rownames(fcs.files[[i]]) <- seq(1:subsample)
+#   }
+# }
+# file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
+#                             numcluster = cluster.number, distance.metric = distance.metric)
+# 
+# set.seed(seed.X)
+# source(paste(prefolder, "Eli_previous_version.R", sep = ""))
+# 
+# fixed.graph <- output.graph
+# Eli.graph <- output_graph
+# 
+# fixed.graph
+# Eli.graph
+# 
+# get.edgelist(fixed.graph)
+# get.edgelist(Eli.graph)
+# 
+# get.edgelist(fixed.graph) == get.edgelist(Eli.graph)
 
 
 # results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
