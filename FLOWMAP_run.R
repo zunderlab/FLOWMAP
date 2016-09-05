@@ -30,7 +30,8 @@ folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/Mult
 # folder specifies the folder where the FCS files
 # to be analyzed are saved on your local computer
 
-save.folder <- paste("/Users/mesako/Desktop", which.one, sep = "")
+save.folder <- "/Users/mesako/Desktop"
+# save.folder <- paste("/Users/mesako/Desktop", which.one, sep = "")
 # save.folder specifies the folder where the results should be saved
 # a new folder will be made in this directory named with date/time of run
 
@@ -39,20 +40,19 @@ file.format <- "*.fcs"
 # for in "folder," all functions currently only work
 # with FCS files
 
-# var.annotate <- list("Marker1" = "Marker1", "Marker2" = "Marker2")
-var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
-                         "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
-                         "In113Di" = "active_Bax", "La139Di" = "cPARP", "Ce140Di" = "Bak",
-                         "Pr141Di" = "p-p38", "Nd146Di" = "pBcl-2", "Nd148Di" = "pErk",
-                         "Nd150Di" = "pRb", "Sm152Di" = "pAkt", "Eu153Di" = "Bcl-xL",
-                         "Sm154Di" = "Bax", "Gd155Di" = "active_Bak", "Gd156Di" = "CyclinB1",
-                         "Gd157Di" = "Bcl-2", "Gd158Di" = "pSTAT5", "Gd160Di" = "Mcl-1",
-                         "Dy161Di" = "cMyc", "Dy164Di" = "IkBalpha", "Ho165Di" = "Bim",
-                         "Er170Di" = "pBad-S112", "Er167Di" = "CyclinA", "Er168Di" = "pH3",
-                         "Yb172Di" = "Bcl-w", "Yb171Di" = "pZAP70", "Yb174Di" = "p53",
-                         "Lu175Di" = "pS6", "Lu176Di" = "pCREB", "Yb173Di" = "cCaspase3",
-                         "Ir191Di" = "DNA1", "Ir193Di" = "DNA2", "Pt195Di" = "Cisplatin", "Sm149Di" = "APAF")
-
+var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
+# var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
+#                          "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
+#                          "In113Di" = "active_Bax", "La139Di" = "cPARP", "Ce140Di" = "Bak",
+#                          "Pr141Di" = "p-p38", "Nd146Di" = "pBcl-2", "Nd148Di" = "pErk",
+#                          "Nd150Di" = "pRb", "Sm152Di" = "pAkt", "Eu153Di" = "Bcl-xL",
+#                          "Sm154Di" = "Bax", "Gd155Di" = "active_Bak", "Gd156Di" = "CyclinB1",
+#                          "Gd157Di" = "Bcl-2", "Gd158Di" = "pSTAT5", "Gd160Di" = "Mcl-1",
+#                          "Dy161Di" = "cMyc", "Dy164Di" = "IkBalpha", "Ho165Di" = "Bim",
+#                          "Er170Di" = "pBad-S112", "Er167Di" = "CyclinA", "Er168Di" = "pH3",
+#                          "Yb172Di" = "Bcl-w", "Yb171Di" = "pZAP70", "Yb174Di" = "p53",
+#                          "Lu175Di" = "pS6", "Lu176Di" = "pCREB", "Yb173Di" = "cCaspase3",
+#                          "Ir191Di" = "DNA1", "Ir193Di" = "DNA2", "Pt195Di" = "Cisplatin", "Sm149Di" = "APAF")
 # var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
 #                      "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
 #                      "In113Di" = "pH3", "I127Di" = "IdU", "La139Di" = "Normbeads1",
@@ -73,13 +73,12 @@ var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" =
 # and renaming them according to marker (e.g. "CD44")
 
 var.remove <- c()
-var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode", "Nd143Di", "Nd145Di",
-                    "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1", "Tb159Di",
-                    "barcode2", "barcode3", "Y89Di", "barcode4", "barcode5", "barcode6", "Eu151Di",
-                    "I127Di", "Gd154Di", "Dy160Di", "Tm169Di", "Dy163Di", "Pt194Di", "Nd142Di",
-                    "normbeads1", "eubeads1", "normbeads3", "FileNum", "Yb172Di", "Bi209Di", "Pm147Di",
-                    "bc_separation_dist", "Er166Di", "mahalanobis_dist", "In115Di", "Dy162Di", "Nd144Di")
-
+# var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode", "Nd143Di", "Nd145Di",
+#                     "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1", "Tb159Di",
+#                     "barcode2", "barcode3", "Y89Di", "barcode4", "barcode5", "barcode6", "Eu151Di",
+#                     "I127Di", "Gd154Di", "Dy160Di", "Tm169Di", "Dy163Di", "Pt194Di", "Nd142Di",
+#                     "normbeads1", "eubeads1", "normbeads3", "FileNum", "Yb172Di", "Bi209Di", "Pm147Di",
+#                     "bc_separation_dist", "Er166Di", "mahalanobis_dist", "In115Di", "Dy162Di", "Nd144Di")
 # var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode",
 #                 "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1",
 #                 "barcode2", "barcode3", "barcode4", "barcode5", "barcode6",
@@ -108,12 +107,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 2000
+subsample <- 100
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 1000
+cluster.number <- 50
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -123,12 +122,12 @@ set.seed(seed.X)
 # lead to reproducible runs of FLOW-MAP and its resulting
 # figures for the same seed
 
-clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
-                    "APAF", "pRb", "pAkt", "Bcl-xL", "Bax", "active_Bak",
-                    "CyclinB1", "Bcl-2", "pSTAT5", "Mcl-1", "cMyc", "IkBalpha",
-                    "Bim", "CyclinA", "pH3", "pBad-S112", "pZAP70", "Bcl-w",
-                    "active_Bax", "cCaspase3", "p53", "pS6", "pCREB")
-# clustering.var <- c("marker1", "marker2")
+# clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
+#                     "APAF", "pRb", "pAkt", "Bcl-xL", "Bax", "active_Bak",
+#                     "CyclinB1", "Bcl-2", "pSTAT5", "Mcl-1", "cMyc", "IkBalpha",
+#                     "Bim", "CyclinA", "pH3", "pBad-S112", "pZAP70", "Bcl-w",
+#                     "active_Bax", "cCaspase3", "p53", "pS6", "pCREB")
+clustering.var <- c("marker1", "marker2")
 # clustering.var <- c("Bid", "cCaspase3", "cPARP",
 #                     "pNFkB", "IkBalpha", "Cisplatin")
 # clustering.var specifies which parameters to use for
@@ -137,12 +136,12 @@ clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
 # on the shape of the resulting FLOW-MAP, but will still
 # be seen as a parameter in the final PDFs
 
-setwd(folder)
-output.graph <- SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remove,
-                               var.annotate = var.annotate, clustering.var = clustering.var,
-                               cluster.number = cluster.number, subsample = subsample,
-                               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                               per = per, save.folder = save.folder, shuffle = TRUE)
+# setwd(folder)
+# SingleFLOWMAP(folder = folder, file.format = file.format, var.remove = var.remove,
+#               var.annotate = var.annotate, clustering.var = clustering.var,
+#               cluster.number = cluster.number, subsample = subsample,
+#               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+#               per = per, save.folder = save.folder, shuffle = TRUE)
 
 
 # SingleFLOWMAP function, with correctly provided folders
@@ -150,12 +149,18 @@ output.graph <- SingleFLOWMAP(folder = folder, file.format = file.format, var.re
 # producing PDFs and graphml files in a new subfolder within
 # the "folder" that contains the FCS files
 
-
+# setwd(folder)
 # multiFLOWMAP(listOfTreatments, MULTI_FOLDER, FILE_FORMAT, VAR_REMOVE, VAR_ANNOTATE,
 #                CLUSTERING_VAR, CLUSTNUM, SUBSAMPLE, distance_metric = distance_metric,
 #                per, minimum, maximum, saveGRAPHML = TRUE,
 #                savePDFS = TRUE, subsampleRand = TRUE, seedX)
 
-# fcs.file.names <- GetMultiFCSNames(folder, file.format)
-# fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-#                                subsample = subsample, subsample.rand)
+fcs.file.names <- GetMultiFCSNames(folder, file.format)
+fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
+                               subsample = subsample, subsample.rand)
+fcs.files.conversion <- ConvertNumericLabel(fcs.files)
+fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
+label.key <- fcs.files.conversion$label.key
+file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.number,
+                                 distance.metric = distance.metric)
+

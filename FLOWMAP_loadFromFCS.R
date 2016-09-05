@@ -30,7 +30,10 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
   list.of.treat.file.names <- list()
   for (treat in subfolders) {
     folder.name <- treat
-    list.of.treat.file.names[[treat]] <- GetFCSNames(treat, file.format, sort = TRUE)
+    setwd(treat)
+    x <- getwd()
+    list.of.treat.file.names[[treat]] <- GetFCSNames(x, file.format, sort = TRUE)
+    setwd(folder)
   }
   return(list.of.treat.file.names)
 }
@@ -111,10 +114,26 @@ LoadMultiCleanFCS <- function(list.of.treat.file.names, channel.remove, channel.
       Treat <- rep(treat, times = dim(list.of.treat.clean.FCS.files[[treat]][[i]])[1])
       list.of.treat.clean.FCS.files[[treat]][[i]] <- cbind(list.of.treat.clean.FCS.files[[treat]][[i]],
                                                            Treat)
-      print(colnames(listOfTreatCleanFCSFiles[[treat]][[i]]))
       rm(Treat)
     }
   }
   return(list.of.treat.clean.FCS.files)
 }
 
+ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
+  label.key <- list()
+  fixed.list.FCS.files <- list()
+  for (i in 1:length(list.of.clean.FCS.files.with.labels)) {
+    label.key[[i]] <- names(list.of.clean.FCS.files.with.labels)[i]
+    tmp.label.fcs <- list.of.clean.FCS.files.with.labels[[i]]
+    for (n in 1:length(tmp.label.fcs)) {
+      inds <- which(tmp.label.fcs[[n]] == label.key[[i]], arr.ind = TRUE)
+      col.ind <- unname(inds[1, 2])
+      tmp.label.fcs[[n]][, col.ind] <- i
+    }
+    fixed.list.FCS.files[[i]] <- tmp.label.fcs
+  }
+  names(fixed.list.FCS.files) <- names(list.of.clean.FCS.files.with.labels)
+  return(list(fixed.list.FCS.files = fixed.list.FCS.files,
+              label.key = label.key))
+}
