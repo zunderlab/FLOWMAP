@@ -253,6 +253,8 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   components.mst <- minimum.spanning.tree(components.adjacency)
   components.mst.el <- get.edgelist(components.mst, names = FALSE)
   # go from MST edges to the actual edges between individual nodes
+  # print("components.mst.el")
+  # print(components.mst.el)
   for (i in 1:nrow(components.mst.el)) {
     # get index of shortest connection between components
     members.x <- which(members == components.mst.el[i, 1])
@@ -263,9 +265,16 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     }
     tmp.min <- min(tmp.matrix) # get the largest weight = shortest distance
     tmp.index <- which(tmp.matrix == tmp.min, arr.ind = TRUE)
+    # print("tmp.index")
+    # print(tmp.index)
+    # cat("tmp.index[1]", tmp.index[1], "\n")
+    # cat("tmp.index[2]", tmp.index[2], "\n")
     # add new edge to graph with the shortest connection vertices and the weight from linkweights
+    # cat("members.x are", members.y, "\n")
+    # cat("members.y are", members.y, "\n")
     v1 <- members.x[tmp.index[1]] + offset
     v2 <- members.y[tmp.index[2]] + offset
+    # cat("v1 is", v1, "and v2 is", v2, "\n")
     if (are.connected(output.graph, v1, v2)) {
       E(output.graph, P = c(members.x[tmp.index[1]] + offset,
                             members.y[tmp.index[2]] + offset))$label <- "MST"

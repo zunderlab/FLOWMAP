@@ -26,6 +26,19 @@ GetFCSNames <- function(folder, file.format, sort = TRUE) {
 
 GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
   # get FCS files
+  subfolders <- list.files(folder, full.names = TRUE)
+  list.of.treat.file.names <- list()
+  for (folder in subfolders) {
+    fcs.files = list.files(path = folder, pattern = file.format,
+                           recursive = FALSE, full.names = TRUE)
+    treat <- basename(folder)
+    list.of.treat.file.names[[treat]] <- fcs.files
+  }
+  return(list.of.treat.file.names)
+}
+
+GetMultiFCSNames2 <- function(folder, file.format, sort = TRUE) {
+  # get FCS files
   subfolders <- list.files(folder)
   list.of.treat.file.names <- list()
   # print("subfolders")
@@ -34,15 +47,17 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
     # print("treat")
     # print(treat)
     folder.name <- treat
-    setwd(treat)
+    setwd(treat) # work around this?
+    
     x <- getwd()
     # print("getwd()")
     # print(x)
     list.of.treat.file.names[[treat]] <- GetFCSNames(x, file.format, sort = TRUE)
-    setwd(folder)
+    setwd(folder) # work around this?
   }
   return(list.of.treat.file.names)
 }
+
 
 
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,

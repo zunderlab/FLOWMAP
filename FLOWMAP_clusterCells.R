@@ -103,7 +103,11 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       # print("as.matrix(current.file[obs, ])")
       # print(as.matrix(current.file[obs, ]))
       new.median <- as.data.frame(new.median)
-      if(colnames(new.median) != colnames(current.file)) {
+      # matches <- sum(colnames(new.median) != colnames(current.file))
+      # cat("matches is", matches, "\n")
+      # cat("length(colnames(new.median)) is", length(colnames(new.median)), "\n")
+      # if(matches < length(colnames(new.median))) {
+      if (!identical(colnames(new.median), colnames(current.file))) {
         new.median <- t(new.median)
         colnames(new.median) <- colnames(current.file)
       }
@@ -112,7 +116,11 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       new.counts <- rbind(new.counts, data.frame(length(obs)))
       new.median <- current.file[obs, ]
       new.median <- as.data.frame(new.median)
-      if(colnames(new.median) != colnames(current.file)) {
+      # matches <- sum(colnames(new.median) != colnames(current.file))
+      # cat("matches is", matches, "\n")
+      # cat("length(colnames(new.median)) is", length(colnames(new.median)), "\n")
+      # if(matches < length(colnames(new.median))) {
+      if (!identical(colnames(new.median), colnames(current.file))) {
         new.median <- t(new.median)
         colnames(new.median) <- colnames(current.file)
       }
