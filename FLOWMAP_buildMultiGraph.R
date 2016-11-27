@@ -143,13 +143,33 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, treatments,
                                    normalized.densities, offset = offset, n = n)
     output.graph <- results$output.graph
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
+    # print("output.graph")
+    # print(output.graph)
+    print("dim(cluster.distances.matrix)")
+    print(dim(cluster.distances.matrix))
+    print("n_n1.table.lengths")
+    print(n_n1.table.lengths)
+    cat("offset is", offset, "\n")
+    cat("n is", n, "\n")
     output.graph <- CheckMSTEdges(output.graph, cluster.distances.matrix, 
                                   n_n1.table.lengths, offset = offset, n = n)
+    # print("output.graph after MST edges")
+    # print(output.graph)
   }
+  
+  # print("final output.graph")
+  # print(output.graph)
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
+  print("final edge distances")
+  print(distances)
+  print("sum(distances == 0)")
+  print(sum(distances == 0))
   #weights <- -distances+max(distances)+min(distances)
   weights <- 1 / distances
+  # print("final edge weights")
+  # print(weights)
+  
   E(output.graph)$weight <- weights
   output.graph <- AnnotateMultiGraph(output.graph, list.of.FLOWMAP.clusters, cellnum)
   return(output.graph)

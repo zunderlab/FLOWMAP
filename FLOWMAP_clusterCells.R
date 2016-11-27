@@ -22,6 +22,14 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
   cluster.medians <- list()
   cluster.counts <- list()
   cell.assgn <- list()
+  if (length(numcluster) == 1) {
+    cat("Clustering all files to:", numcluster, "\n")
+    numcluster.new <- rep(numcluster, times = length(fcs.files))
+    numcluster <- numcluster.new
+  }
+  if (length(numcluster) != length(fcs.files)) {
+    stop("Cluster number not specified for all FCS files!")
+  }
   for (i in 1:length(fcs.files)) {
     current.file <- fcs.files[[i]]
     cat("Clustering data from file", i, "\n")
@@ -30,7 +38,7 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     tmp.FCS.for.cluster <- subset(x = current.file, select = clustering.var)
     cat("Subsetting for clustering channels only", "\n")
     cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-                                        distance.metric = distance.metric, numcluster = numcluster)
+                                        distance.metric = distance.metric, numcluster = numcluster[i])
     cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
     cluster.medians[[i]] <- cluster.results$new.medians
     cluster.counts[[i]] <- cluster.results$new.counts
@@ -43,10 +51,34 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     # store where the array breaks between clusters from one file and those from the next file
     # used for node numbering/index
     table.breaks <- append(table.breaks, nrow(full.clusters))
+    # print("full.clusters")
+    # print(full.clusters)
+    # print("cluster.medians[[i]]")
+    # print(cluster.medians[[i]])
+    # print("cluster.counts[[i]]")
+    # print(cluster.counts[[i]])
+    # print("cell.assgn[[i]]")
+    # print(cell.assgn[[i]])
+    # print("class of cluster.counts[[i]]")
+    # print(class(cluster.counts[[i]]))
+    # print("class of cell.assgn[[i]]")
+    # print(class(cell.assgn[[i]]))
+    # print("class of cluster.counts[[i]][, 1]")
+    # print(class(cluster.counts[[i]][, 1]))
+    # print("dim of cell.assgn[[i]]")
+    # print(dim(cell.assgn[[i]]))
+    # print("cell.assgn[[i]][, 1]")
+    # print(cell.assgn[[i]][, 1])
+    # print("class of cell.assgn[[i]][, 1]")
+    # print(class(cell.assgn[[i]][, 1]))
   }
   for (i in 1:length(cluster.medians)) {
     rownames(cluster.medians[[i]]) <- seq(1, table.lengths[i])
   }    
+  # print("table.lengths")
+  # print(table.lengths)
+  # print("table.breaks")
+  # print(table.breaks)
   rownames(full.clusters) <- seq(1, dim(full.clusters)[1])
   FLOWMAP.clusters <- FLOWMAPcluster(full.clusters = full.clusters,
                                      table.breaks = table.breaks,
@@ -60,9 +92,24 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 
 MultiClusterFCS <- function(list.of.treat.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
+  numcluster.orig <- numcluster
+  if (length(numcluster.orig) == 1) {
+    cat("Clustering all files to:", numcluster, "\n")
+  } 
   for (treat in names(list.of.treat.files)) {
     cat("Clustering all files from", treat, "\n")
     fcs.files <- list.of.treat.files[[treat]]
+    if (length(numcluster.orig) == 1) {
+      numcluster.new <- rep(numcluster.orig, times = length(fcs.files))
+      numcluster <- numcluster.new
+    } else {
+      numcluster <- numcluster.orig[[treat]]
+    }
+    # print("numcluster")
+    # print(numcluster)
+    if (length(numcluster) != length(fcs.files)) {
+      stop("Cluster number not specified for all FCS files!")
+    }
     file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
     list.of.FLOWMAP.clusters[[treat]] <- file.clusters
   }

@@ -1,5 +1,3 @@
-rm(list=ls())
-
 # GNU General Public License v3.0
 
 # Authors:
@@ -94,11 +92,11 @@ per <- 1
 # between all nodes in graph under consideration for
 # forming edges between
 
-minimum <- 1
+minimum <- 2
 # minimum specifies the minimum number of edges any
 # given node in graph will have
 
-maximum <- 3
+maximum <- 5
 # maximum specifies the maximum number of edges any
 # given node in graph will have
 
@@ -107,12 +105,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 50
+subsample <- 1000
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 25
+cluster.number <- 500
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -136,41 +134,29 @@ clustering.var <- c("marker1", "marker2")
 # on the shape of the resulting FLOW-MAP, but will still
 # be seen as a parameter in the final PDFs
 
-# files <- list.files(folder, full.names = TRUE)
+# files <- list.files(folder, pattern = ".fcs", full.names = TRUE)
 # one.file <- files[1]
 # shuffled.files <- files[sample(x = length(files),
 #                                size = length(files),
 #                                replace = FALSE)]
 # f <- "/Users/mesako/Desktop"
 
-FLOWMAP(files = folder, file.format = file.format, var.remove = var.remove,
-        var.annotate = var.annotate, clustering.var = clustering.var,
-        cluster.number = cluster.number, subsample = subsample,
-        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-        per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
+x <- FLOWMAP(files = folder, file.format = file.format, var.remove = var.remove,
+             var.annotate = var.annotate, clustering.var = clustering.var,
+             cluster.number = cluster.number, subsample = subsample,
+             distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+             per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
 
-# SingleFLOWMAP(files = folder, file.format = file.format, var.remove = var.remove,
-#               var.annotate = var.annotate, clustering.var = clustering.var,
-#               cluster.number = cluster.number, subsample = subsample,
-#               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-#               per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
 
-# 1. Make code work for single sample/timepoint
-# 2. Make work for different sample numbers at
-#    different time points
-# remove alphanumeric sorting of FCS files in folder X
-# skip specifying conditions from subfolders, go straight to list
-
-# SingleFLOWMAP function, with correctly provided folders
+# FLOWMAP function, with correctly provided folders
 # and variables above, should run from start to finish,
 # producing PDFs and graphml files in a new subfolder within
 # the "folder" that contains the FCS files
 
-# MultiFLOWMAP(folder, file.format, var.remove,
-#              var.annotate, clustering.var, cluster.number,
-#              subsample, distance.metric, minimum,
-#              maximum, per, save.folder, subsampleRand = TRUE,
-#              shuffle = TRUE)
+
+# 2. Make work for different sample numbers at
+#    different time points
+
 
 
 # B.files <- list.files(list.files(folder, full.names = TRUE)[2], full.names = TRUE)

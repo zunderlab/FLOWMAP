@@ -64,6 +64,11 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsample = 10000, subsample.rand = FALSE,
                          transform = TRUE, scale = FALSE) {
   clean.fcs.files <- list()
+  if (length(subsample) == 1 & subsample != FALSE) {
+    cat("Subsampling all files to:", subsample, "\n")
+    subsample.new <- rep(subsample, times = length(fcs.file.names))
+    subsample <- subsample.new
+  }
   for (i in 1:length(fcs.file.names)) {
     # print FCS file that is being read
     current.file <- tail(strsplit(fcs.file.names[i],"/")[[1]],n=1)
@@ -77,20 +82,21 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
       tmp.FCS1 <- head(tmp.FCS1, n = unname(dim(tmp.FCS1)[1]))
     }
     else { 
-      cat("Subsampling", current.file, "to", subsample, "cells\n")
+      cat("Subsampling", current.file, "to", subsample[i], "cells\n")
       if (subsample.rand) {
-        subsamp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = subsample,
+        subsamp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize",
+                                 which.lines = subsample[i],
                                  alter.names = FALSE, column.pattern = NULL,
                                  invert.pattern = FALSE, decades = 0, ncdf = FALSE,
                                  min.limit = NULL, dataset = NULL, emptyValue = TRUE)
-        tmp.FCS1 <- head(subsamp.FCS1, n = subsample)
+        tmp.FCS1 <- head(subsamp.FCS1, n = subsample[i])
       }
       else {
         full.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = NULL,
                               alter.names = FALSE, column.pattern = NULL,
                               invert.pattern = FALSE, decades = 0, ncdf = FALSE,
                               min.limit = NULL, dataset = NULL, emptyValue = TRUE)
-        tmp.FCS1 <- head(full.FCS1, n = subsample)
+        tmp.FCS1 <- head(full.FCS1, n = subsample[i])
       }
     }
     # rename variables with protein marker measured instead of metal channel
@@ -121,10 +127,21 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 LoadMultiCleanFCS <- function(list.of.treat.file.names, channel.remove, channel.annotate,
                               subsample = 10000, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
   list.of.treat.clean.FCS.files <- list()
+  subsamp.orig <- subsample
+  print("subsamp.orig")
+  print(subsamp.orig)
   for (treat in names(list.of.treat.file.names)) {
     cat("treat is", treat, "\n")
     fcs.file.names <- list.of.treat.file.names[[treat]]
-    cat("fcs.file.names are", fcs.file.names, "\n")
+    cat("fcs.file.names are", basename(fcs.file.names), "\n")
+    if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
+      cat("Subsampling all files to:", subsamp.orig, "\n")
+      subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
+      subsample <- subsample.new
+    } else {
+      print("boop")
+      subsample <- subsamp.orig[[treat]]
+    }
     list.of.treat.clean.FCS.files[[treat]] <- LoadCleanFCS(fcs.file.names,
                                                            channel.remove,
                                                            channel.annotate,
