@@ -238,7 +238,9 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     each.edge <- t(each.edge)
     dist.match <- which((original.n1n.closest[, "Distance"] == each.edge[, "Distance"]), arr.ind = TRUE)
     if ((length(dist.match) > 1) & (is.vector(dist.match)) & is.null(names(dist.match))) {
-      print("MORE THAN ONE MATCH BY DISTANCE!!!")
+      # print("MORE THAN ONE MATCH BY DISTANCE!!!")
+      # print("dist.match")
+      # print(dist.match)
       save.match <- dist.match
       dist.match <- dist.match[1]
       fixed.vertices <- save.name[save.match]
@@ -261,13 +263,13 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     if (are.connected(output.graph, v1, v2)) {
       E(output.graph, P = c(v1, v2))$label <- "MST"
       if ((v2 == fixed.vertex) & (fixed.vertices != FALSE)) {
-        print("other options possible for v2")
+        # print("other options possible for v2")
         for (i in 2:length(fixed.vertices)) {
           v2 <- fixed.vertices[i]
           if (are.connected(output.graph, v1, v2)) {
             E(output.graph, P = c(v1, v2))$label <- "MST"
           } else {
-            print("extra edge added")
+            # print("extra edge added")
             output.graph <- add.edges(output.graph, c(v1, v2),
                                       weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                       sequence_assignment = n)
@@ -401,6 +403,20 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
+  
+  # print("sum(distances == 0)")
+  # print(sum(distances == 0))
+  
+  #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
+  fix.identical.dist <- which(distances == 0)
+  distances.no.identical <- distances[-fix.identical.dist]
+  # print("min(distances.no.identical)")
+  # print(min(distances.no.identical))
+  distances[fix.identical.dist] <- min(distances.no.identical)
+  # print("distances")
+  # print(distances)
+  ####
+  
   weights <- (1 / distances)
   E(output.graph)$weight <- weights
   output.graph <- AnnotateGraph(output.graph = output.graph,

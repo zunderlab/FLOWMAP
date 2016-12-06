@@ -19,17 +19,18 @@ prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 # uses prefolder to load in all FLOW-MAP files/functions
 source(paste(prefolder, "FLOWMAP_main.R", sep = ""))
 
-# folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
-folder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
-# folder <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20150728TRAILHeLaDup"
-# folder <- "~/Desktop/Work/Research/Raw FCS Files/20160721_MM1S_Timecourse3_Live/WT/Modified"
-# which.one <- "/WT/L"
-# folder <- paste(folder, which.one, sep = "")
-# folder specifies the folder where the FCS files
-# to be analyzed are saved on your local computer
+# files <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
+files <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
+# "files" variable could be one of the following:
+# a single fcs file path
+# a single folder path containing 2+ fcs files
+# a vector of fcs file paths
+# a single folder path, containing subfolders,
+# which each contain 2+ fcs files
+# a list name by treatment/conditions, each element is a 
+# vector of 2+ fcs file paths
 
 save.folder <- "/Users/mesako/Desktop"
-# save.folder <- paste("/Users/mesako/Desktop", which.one, sep = "")
 # save.folder specifies the folder where the results should be saved
 # a new folder will be made in this directory named with date/time of run
 
@@ -105,12 +106,14 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsample <- 1000
+# subsamples <- 1000
+subsamples <- c(500, 490, 510, 510, 490, 500)
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.number <- 500
+# cluster.numbers <- 500
+cluster.numbers <- c(250, 240, 255, 245, 250, 255)
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -120,12 +123,12 @@ set.seed(seed.X)
 # lead to reproducible runs of FLOW-MAP and its resulting
 # figures for the same seed
 
+clustering.var <- c("marker1", "marker2")
 # clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
 #                     "APAF", "pRb", "pAkt", "Bcl-xL", "Bax", "active_Bak",
 #                     "CyclinB1", "Bcl-2", "pSTAT5", "Mcl-1", "cMyc", "IkBalpha",
 #                     "Bim", "CyclinA", "pH3", "pBad-S112", "pZAP70", "Bcl-w",
 #                     "active_Bax", "cCaspase3", "p53", "pS6", "pCREB")
-clustering.var <- c("marker1", "marker2")
 # clustering.var <- c("Bid", "cCaspase3", "cPARP",
 #                     "pNFkB", "IkBalpha", "Cisplatin")
 # clustering.var specifies which parameters to use for
@@ -141,36 +144,13 @@ clustering.var <- c("marker1", "marker2")
 #                                replace = FALSE)]
 # f <- "/Users/mesako/Desktop"
 
-x <- FLOWMAP(files = folder, file.format = file.format, var.remove = var.remove,
-             var.annotate = var.annotate, clustering.var = clustering.var,
-             cluster.number = cluster.number, subsample = subsample,
-             distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-             per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
-
-
+FLOWMAP.results <- FLOWMAP(files = files, file.format = file.format, var.remove = var.remove,
+                           var.annotate = var.annotate, clustering.var = clustering.var,
+                           cluster.numbers = cluster.numbers, subsamples = subsamples,
+                           distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                           per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
 # FLOWMAP function, with correctly provided folders
 # and variables above, should run from start to finish,
 # producing PDFs and graphml files in a new subfolder within
 # the "folder" that contains the FCS files
 
-
-# 2. Make work for different sample numbers at
-#    different time points
-
-
-
-# B.files <- list.files(list.files(folder, full.names = TRUE)[2], full.names = TRUE)
-# for (f in B.files) {
-#   f.frame <- read.FCS(f)
-#   l.trans <- linearTransform(a = 0.001, b = 1) 
-#   my.trans <- transformList('marker1', l.trans)
-#   transform(f.frame, my.trans)
-#   my.trans <- transformList('marker2', l.trans)
-#   transform(f.frame, my.trans)
-#   pre.fix <- strsplit(x = basename(f), split = "\\.")[[1]][1]
-#   f.file.name <- paste(pre.fix, "-modified.fcs", sep = "")
-#   print(f.file.name)
-#   write.FCS(f.frame, filename = paste(dirname(f), f.file.name, sep = "/"),
-#             what = "numeric", delimiter = "\\")
-#   
-# }

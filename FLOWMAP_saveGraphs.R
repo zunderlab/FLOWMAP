@@ -132,7 +132,7 @@ PrintSummary <- function(...) {
   summary <- matrix()
   cat("Printing summary.", "\n")
   if (exists("subfolders")) {
-    summary["Multiple treatments include:"] <- toString(subfolders)
+    summary["Multiple conditions include:"] <- toString(subfolders)
   }
   if (exists("folder")) {
     summary["FCS file source folder:"] <- toString(folder)
@@ -158,6 +158,9 @@ PrintSummary <- function(...) {
   if (exists("distance.metric")) {
     summary["distance metric:"] <- toString(distance.metric)
   } 
+  if (exists("subsamples")) {
+    summary["subsamples for all FCS file:"] <- toString(subsamples)
+  } 
   if (exists("subsample")) {
     summary["subsample per each FCS file:"] <- toString(subsample)
   } 
@@ -169,6 +172,9 @@ PrintSummary <- function(...) {
   }
   if (exists("cluster.number")) {
     summary["number of clusters per each FCS file:"] <- toString(cluster.number)
+  } 
+  if (exists("cluster.numbers")) {
+    summary["number of clusters for all FCS file:"] <- toString(cluster.numbers)
   } 
   if (exists("label.key")) {
     summary["label key:"] <- toString(label.key)

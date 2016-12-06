@@ -90,20 +90,20 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 }
 
 
-MultiClusterFCS <- function(list.of.treat.files, clustering.var, numcluster, distance.metric) {
+MultiClusterFCS <- function(list.of.condition.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
   if (length(numcluster.orig) == 1) {
     cat("Clustering all files to:", numcluster, "\n")
   } 
-  for (treat in names(list.of.treat.files)) {
-    cat("Clustering all files from", treat, "\n")
-    fcs.files <- list.of.treat.files[[treat]]
+  for (condition in names(list.of.condition.files)) {
+    cat("Clustering all files from", condition, "\n")
+    fcs.files <- list.of.condition.files[[condition]]
     if (length(numcluster.orig) == 1) {
       numcluster.new <- rep(numcluster.orig, times = length(fcs.files))
       numcluster <- numcluster.new
     } else {
-      numcluster <- numcluster.orig[[treat]]
+      numcluster <- numcluster.orig[[condition]]
     }
     # print("numcluster")
     # print(numcluster)
@@ -111,7 +111,7 @@ MultiClusterFCS <- function(list.of.treat.files, clustering.var, numcluster, dis
       stop("Cluster number not specified for all FCS files!")
     }
     file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
-    list.of.FLOWMAP.clusters[[treat]] <- file.clusters
+    list.of.FLOWMAP.clusters[[condition]] <- file.clusters
   }
   return(list.of.FLOWMAP.clusters)
 }

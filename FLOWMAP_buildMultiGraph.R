@@ -1,9 +1,9 @@
 
 RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
-  # take FLOWMAP of treats with timeseries and make into one timeseries
-  # combine FLOWMAP treatments
-  treatments <- names(list.of.FLOWMAP.clusters)
-  timepoints <- length(list.of.FLOWMAP.clusters[[treatments[1]]]$cluster.medians)
+  # take FLOWMAP of conditions with timeseries and make into one timeseries
+  # combine FLOWMAP conditions
+  conditions <- names(list.of.FLOWMAP.clusters)
+  timepoints <- length(list.of.FLOWMAP.clusters[[conditions[1]]]$cluster.medians)
   full.clusters <- data.frame()
   table.breaks <- c()
   table.lengths <- c()
@@ -14,10 +14,10 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
     temp.medians <- data.frame()
     temp.cell.assgn <- data.frame()
     temp.counts <- data.frame()
-    for (treat in treatments) {
-      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[treat]]$cluster.medians[[t]])
-      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[treat]]$cell.assgn[[t]])
-      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[treat]]$cluster.counts[[t]])
+    for (condition in conditions) {
+      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[condition]]$cluster.medians[[t]])
+      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[condition]]$cell.assgn[[t]])
+      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[condition]]$cluster.counts[[t]])
     }
     cluster.medians[[t]] <- temp.medians
     cluster.counts[[t]] <- temp.counts
@@ -35,8 +35,8 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
 InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   # This section initializes the graph
   total.nodes <- 0
-  for (treat in names(list.of.FLOWMAP.clusters)) {
-    FLOWMAP.clusters <- list.of.FLOWMAP.clusters[[treat]]
+  for (condition in names(list.of.FLOWMAP.clusters)) {
+    FLOWMAP.clusters <- list.of.FLOWMAP.clusters[[condition]]
     total.nodes <- total.nodes + length(FLOWMAP.clusters$full.clusters[, 1])
     # create empty graph with the right number of nodes - will fill in the edges later
   }
@@ -51,17 +51,15 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   # This section creates a flowmap for the first time point
   cat("Building first FLOWMAP\n")
   clusters <- c()
-  for (treat in names(list.of.FLOWMAP.clusters)) {
-    table.length <- list.of.FLOWMAP.clusters[[treat]]$table.lengths[1]
-    current.clusters <- list.of.FLOWMAP.clusters[[treat]]
+  for (condition in names(list.of.FLOWMAP.clusters)) {
+    table.length <- list.of.FLOWMAP.clusters[[condition]]$table.lengths[1]
+    current.clusters <- list.of.FLOWMAP.clusters[[condition]]
     clusters <- rbind(clusters, current.clusters$full.clusters[1:table.length, ])
   }
   # get distance matrix from clusters
   clusters <- subset(clusters, select = clustering.var)
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
-  # print("cluster.distances.matrix")
-  # print(cluster.distances.matrix)
   # set i-i distances to Inf instead of 0 so they aren't the closest neighbors
   for (i in 1:ncol(cluster.distances.matrix)) {
     cluster.distances.matrix[i, i] <- Inf
@@ -73,8 +71,6 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   normalized.densities <- results$normalized.densities
   # build new edgelist with N edges for each cluster based on normalized density
   cat("Building first edgelist\n")
-  # print("normalized.densities")
-  # print(normalized.densities)
   results <- DrawNormalizedEdges(output.graph, cluster.distances.matrix,
                                  normalized.densities, n = n)
   output.graph <- results$output.graph
@@ -103,12 +99,12 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
 }
 
 
-BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, treatments,
+BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, conditions,
                               per, min, max, distance.metric, cellnum) {
   output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters, per,
                                          min, max, distance.metric = distance.metric)
   remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(list.of.FLOWMAP.clusters)
-  # put each treatments clusters together into one timepoint
+  # put each conditions clusters together into one timepoint
   table.breaks <- c(0, remodel.FLOWMAP.clusters$table.breaks)
   # This section builds the flowmap one timepoint at a time
   for (n in 1:(length(remodel.FLOWMAP.clusters$cluster.medians) - 1)) {
@@ -143,34 +139,28 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, treatments,
                                    normalized.densities, offset = offset, n = n)
     output.graph <- results$output.graph
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
-    # print("output.graph")
-    # print(output.graph)
-    print("dim(cluster.distances.matrix)")
-    print(dim(cluster.distances.matrix))
-    print("n_n1.table.lengths")
-    print(n_n1.table.lengths)
-    cat("offset is", offset, "\n")
-    cat("n is", n, "\n")
     output.graph <- CheckMSTEdges(output.graph, cluster.distances.matrix, 
                                   n_n1.table.lengths, offset = offset, n = n)
-    # print("output.graph after MST edges")
-    # print(output.graph)
   }
   
-  # print("final output.graph")
-  # print(output.graph)
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
-  print("final edge distances")
-  print(distances)
-  print("sum(distances == 0)")
-  print(sum(distances == 0))
-  #weights <- -distances+max(distances)+min(distances)
-  weights <- 1 / distances
-  # print("final edge weights")
-  # print(weights)
+  # print("sum(distances == 0)")
+  # print(sum(distances == 0))
   
+  #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
+  fix.identical.dist <- which(distances == 0)
+  distances.no.identical <- distances[-fix.identical.dist]
+  # print("min(distances.no.identical)")
+  # print(min(distances.no.identical))
+  distances[fix.identical.dist] <- min(distances.no.identical)
+  # print("distances")
+  # print(distances)
+  ####
+  
+  weights <- 1 / distances
   E(output.graph)$weight <- weights
+  
   output.graph <- AnnotateMultiGraph(output.graph, list.of.FLOWMAP.clusters, cellnum)
   return(output.graph)
 }
@@ -183,20 +173,20 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters, cellnum) 
   # iterate through all times and annotate
   x <- names(list.of.FLOWMAP.clusters)[1]
   for (f in 1:length(list.of.FLOWMAP.clusters[[x]]$cluster.medians)) {
-    for (treat in names(list.of.FLOWMAP.clusters)) {
+    for (condition in names(list.of.FLOWMAP.clusters)) {
       cat("Annotating graph for file", f, "\n")
       # get medians for all parameters and counts for all clusters
-      counts <- list.of.FLOWMAP.clusters[[treat]]$cluster.counts[[f]]$Counts
+      counts <- list.of.FLOWMAP.clusters[[condition]]$cluster.counts[[f]]$Counts
       anno$count <- counts
       anno$percent.total <- data.frame(percent.total = c(counts / cellnum))
-      anno$medians  <- list.of.FLOWMAP.clusters[[treat]]$cluster.medians[[f]]
+      anno$medians  <- list.of.FLOWMAP.clusters[[condition]]$cluster.medians[[f]]
       # add time information column
       time.matrix <- matrix(f, nrow = length(anno$count))
       colnames(time.matrix) <- c("Timepoint")
-      # add treat information column
-      treat.matrix <- matrix(treat, nrow = length(anno$count))
-      colnames(treat.matrix) <- c("Treatment")
-      anno$medians <- cbind(anno$medians, time.matrix, treat.matrix)
+      # add condition information column
+      condition.matrix <- matrix(condition, nrow = length(anno$count))
+      colnames(condition.matrix) <- c("Condition")
+      anno$medians <- cbind(anno$medians, time.matrix, condition.matrix)
       # add median and percent values
       for (a in c("medians", "percent.total")) {
         # anno_cat is all the annos concatenated, will be
@@ -206,8 +196,6 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters, cellnum) 
     }
   }
   # combine anno_cat matrices
-  # print("anno.cat")
-  # print(anno.cat)
   output.anno <- cbind(anno.cat[[1]], anno.cat[[2]])
   for (c in colnames(output.anno)) {
     output.graph <- set.vertex.attribute(output.graph, c,
