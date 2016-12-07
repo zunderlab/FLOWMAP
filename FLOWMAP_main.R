@@ -213,6 +213,13 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   } else if (runtype == "MultiFLOWMAP") {
     fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                    subsamples = subsamples, subsample.rand)
+    # for (i in 1:length(fcs.files)) {
+    #   cat("i is", i, "\n")
+    #   print("length(fcs.files[[i]])")
+    #   print(length(fcs.files[[i]]))
+    #   print("names(fcs.files[[i]])")
+    #   print(names(fcs.files[[i]]))
+    # }
     if (shuffle) {
       for (n in 1:length(fcs.files)) {
         for (i in 1:length(fcs.files[[n]])) {
@@ -231,22 +238,29 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
+    print("label.key")
+    print(label.key)
+    # print("label.key")
+    # print(label.key)
+    # for (i in 1:length(fixed.fcs.files)) {
+    #   for (n in 1:length(fixed.fcs.files[[i]])) {
+    #     print("head(fixed.fcs.files[[i]][[n]])")
+    #     print(head(fixed.fcs.files[[i]][[n]]))
+    #   }
+    # }
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
-      # full.clusters
-      # table.breaks
-      # table.lengths
-      # cluster.medians
-      # cluster.counts
-      # cell.assgn
       # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
       #                                 cluster.medians, cluster.counts, cell.assgn)
     } else {
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                        distance.metric = distance.metric)
     }
+    # print("file.clusters")
+    # print(file.clusters)
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
-                               max = maximum, distance.metric = distance.metric, cellnum = subsamples)
+                               max = maximum, distance.metric = distance.metric, cellnum = subsamples,
+                               label.key = label.key)
   } else if (runtype == "SingleTimepoint") {
     fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                              channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)

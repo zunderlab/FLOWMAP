@@ -51,34 +51,10 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     # store where the array breaks between clusters from one file and those from the next file
     # used for node numbering/index
     table.breaks <- append(table.breaks, nrow(full.clusters))
-    # print("full.clusters")
-    # print(full.clusters)
-    # print("cluster.medians[[i]]")
-    # print(cluster.medians[[i]])
-    # print("cluster.counts[[i]]")
-    # print(cluster.counts[[i]])
-    # print("cell.assgn[[i]]")
-    # print(cell.assgn[[i]])
-    # print("class of cluster.counts[[i]]")
-    # print(class(cluster.counts[[i]]))
-    # print("class of cell.assgn[[i]]")
-    # print(class(cell.assgn[[i]]))
-    # print("class of cluster.counts[[i]][, 1]")
-    # print(class(cluster.counts[[i]][, 1]))
-    # print("dim of cell.assgn[[i]]")
-    # print(dim(cell.assgn[[i]]))
-    # print("cell.assgn[[i]][, 1]")
-    # print(cell.assgn[[i]][, 1])
-    # print("class of cell.assgn[[i]][, 1]")
-    # print(class(cell.assgn[[i]][, 1]))
   }
   for (i in 1:length(cluster.medians)) {
     rownames(cluster.medians[[i]]) <- seq(1, table.lengths[i])
   }    
-  # print("table.lengths")
-  # print(table.lengths)
-  # print("table.breaks")
-  # print(table.breaks)
   rownames(full.clusters) <- seq(1, dim(full.clusters)[1])
   FLOWMAP.clusters <- FLOWMAPcluster(full.clusters = full.clusters,
                                      table.breaks = table.breaks,
@@ -90,7 +66,7 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 }
 
 
-MultiClusterFCS <- function(list.of.condition.files, clustering.var, numcluster, distance.metric) {
+MultiClusterFCSOLD <- function(list.of.condition.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
   if (length(numcluster.orig) == 1) {
@@ -117,12 +93,47 @@ MultiClusterFCS <- function(list.of.condition.files, clustering.var, numcluster,
 }
 
 
+MultiClusterFCS <- function(list.of.time.files, clustering.var, numcluster, distance.metric) {
+  list.of.FLOWMAP.clusters <- list()
+  numcluster.orig <- numcluster
+  if (length(numcluster.orig) == 1) {
+    cat("Clustering all files to:", numcluster, "\n")
+  } 
+  for (time in names(list.of.time.files)) {
+    cat("Clustering all files from time", time, "\n")
+    fcs.files <- list.of.time.files[[time]]
+    if (length(numcluster.orig) == 1) {
+      numcluster.new <- rep(numcluster.orig, times = length(fcs.files))
+      numcluster <- numcluster.new
+    } else {
+      numcluster <- numcluster.orig[[time]]
+    }
+    if (length(numcluster) != length(fcs.files)) {
+      stop("Cluster number not specified for all FCS files!")
+    }
+    file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
+    # print(file.clusters)
+    list.of.FLOWMAP.clusters[[time]] <- file.clusters
+  }
+  return(list.of.FLOWMAP.clusters)
+}
+
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {
   if (distance.metric == "euclidean") {
     method <- "ward"
   } else {
     method <- "single"
   }
+  # for (i in 1:ncol(tmp.FCS.for.cluster)) {
+  #   print(head(tmp.FCS.for.cluster[, i]))
+  #   print("class(tmp.FCS.for.cluster[, i])")
+  #   print(class(tmp.FCS.for.cluster[, i]))
+  # }
+  # for (i in 1:ncol(current.file)) {
+  #   print(head(current.file[, i]))
+  #   print("class(current.file[, i])")
+  #   print(class(current.file[, i]))
+  # }
   FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
                                     distance = distance.metric)
   # FCS.clusters <- hclust.vector(tmp.FCS.for.cluster, method = method,
@@ -144,6 +155,10 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       # print(as.numeric(as.matrix(current.file[obs, ])))
       # print("as.numeric(current.file[obs, ])")
       # print(as.numeric(current.file[obs, ]))
+      # for (i in 1:ncol(as.matrix(current.file[obs, ]))) {
+      #   print("class(as.matrix(current.file[obs, ])[, i])")
+      #   print(class(as.matrix(current.file[obs, ])[, i]))
+      # }
       new.median <- colMedians(as.matrix(current.file[obs, ]))
       # print("new.median")
       # print(new.median)

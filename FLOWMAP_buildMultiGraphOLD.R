@@ -1,20 +1,23 @@
+
 RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
   # take FLOWMAP of conditions with timeseries and make into one timeseries
   # combine FLOWMAP conditions
+  conditions <- names(list.of.FLOWMAP.clusters)
+  timepoints <- length(list.of.FLOWMAP.clusters[[conditions[1]]]$cluster.medians)
   full.clusters <- data.frame()
   table.breaks <- c()
   table.lengths <- c()
   cluster.medians <- list()
   cluster.counts <- list()
   cell.assgn <- list()
-  for (t in names(list.of.FLOWMAP.clusters)) {
+  for (t in 1:timepoints) {
     temp.medians <- data.frame()
     temp.cell.assgn <- data.frame()
     temp.counts <- data.frame()
-    for (c in 1:length(list.of.FLOWMAP.clusters[[t]]$cluster.medians)) {
-      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[t]]$cluster.medians[[c]])
-      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[t]]$cell.assgn[[c]])
-      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]])
+    for (condition in conditions) {
+      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[condition]]$cluster.medians[[t]])
+      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[condition]]$cell.assgn[[t]])
+      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[condition]]$cluster.counts[[t]])
     }
     cluster.medians[[t]] <- temp.medians
     cluster.counts[[t]] <- temp.counts
@@ -24,7 +27,7 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
     full.clusters <- rbind(full.clusters, temp.medians)
   }
   remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
-                                               cluster.medians, cluster.counts, cell.assgn)
+                                               cluster.medians, cluster.counts, cell.assgn) 
   return(remodeled.FLOWMAP.clusters)
 }
 
@@ -32,8 +35,8 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
 InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   # This section initializes the graph
   total.nodes <- 0
-  for (time in names(list.of.FLOWMAP.clusters)) {
-    FLOWMAP.clusters <- list.of.FLOWMAP.clusters[[time]]
+  for (condition in names(list.of.FLOWMAP.clusters)) {
+    FLOWMAP.clusters <- list.of.FLOWMAP.clusters[[condition]]
     total.nodes <- total.nodes + length(FLOWMAP.clusters$full.clusters[, 1])
     # create empty graph with the right number of nodes - will fill in the edges later
   }
@@ -48,9 +51,9 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   # This section creates a flowmap for the first time point
   cat("Building first FLOWMAP\n")
   clusters <- c()
-  for (time in names(list.of.FLOWMAP.clusters)) {
-    table.length <- list.of.FLOWMAP.clusters[[time]]$table.lengths[1]
-    current.clusters <- list.of.FLOWMAP.clusters[[time]]
+  for (condition in names(list.of.FLOWMAP.clusters)) {
+    table.length <- list.of.FLOWMAP.clusters[[condition]]$table.lengths[1]
+    current.clusters <- list.of.FLOWMAP.clusters[[condition]]
     clusters <- rbind(clusters, current.clusters$full.clusters[1:table.length, ])
   }
   # get distance matrix from clusters
@@ -95,17 +98,14 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   return(output.graph)
 }
 
-# BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, conditions,
-#                               per, min, max, distance.metric, cellnum) {
-BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
-                              max, distance.metric, cellnum, label.key) {
+
+BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, conditions,
+                              per, min, max, distance.metric, cellnum) {
   output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters, per,
                                          min, max, distance.metric = distance.metric)
   remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(list.of.FLOWMAP.clusters)
   # put each conditions clusters together into one timepoint
   table.breaks <- c(0, remodel.FLOWMAP.clusters$table.breaks)
-  # print("table.breaks")
-  # print(table.breaks)
   # This section builds the flowmap one timepoint at a time
   for (n in 1:(length(remodel.FLOWMAP.clusters$cluster.medians) - 1)) {
     # offset value is used to correctly index the edges at each sequential step
@@ -114,8 +114,6 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
     cat("Build FLOWMAP from", n, "to", n + 1, "\n")
     # get clusters for time a and a+1
     clusters <- rbind(remodel.FLOWMAP.clusters$cluster.medians[[n]], remodel.FLOWMAP.clusters$cluster.medians[[n + 1]])
-    # print("clusters")
-    # print(clusters)
     clusters <- subset(clusters, select = clustering.var)
     numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
@@ -162,55 +160,48 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
   
   weights <- 1 / distances
   E(output.graph)$weight <- weights
-  output.graph <- AnnotateMultiGraph(output.graph, remodel.FLOWMAP.clusters, cellnum, label.key)
+  
+  output.graph <- AnnotateMultiGraph(output.graph, list.of.FLOWMAP.clusters, cellnum)
   return(output.graph)
 }
 
 
-AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
-                               cellnum, label.key) {
-  # print("Time")
-  # print(get.vertex.attribute(output.graph, "Time",
-  #                            index = V(output.graph)))
+AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters, cellnum) {
   # This section annotates the graph
+  anno.cat <- c()
   anno <- list()
   # iterate through all times and annotate
-  times <- 1:length(list.of.FLOWMAP.clusters$cluster.medians)
-  if (length(cellnum) != 1) {
-    stop("CODE NOT IMPLEMENTED")
+  x <- names(list.of.FLOWMAP.clusters)[1]
+  for (f in 1:length(list.of.FLOWMAP.clusters[[x]]$cluster.medians)) {
+    for (condition in names(list.of.FLOWMAP.clusters)) {
+      cat("Annotating graph for file", f, "\n")
+      # get medians for all parameters and counts for all clusters
+      counts <- list.of.FLOWMAP.clusters[[condition]]$cluster.counts[[f]]$Counts
+      anno$count <- counts
+      anno$percent.total <- data.frame(percent.total = c(counts / cellnum))
+      anno$medians  <- list.of.FLOWMAP.clusters[[condition]]$cluster.medians[[f]]
+      # add time information column
+      time.matrix <- matrix(f, nrow = length(anno$count))
+      colnames(time.matrix) <- c("Timepoint")
+      # add condition information column
+      condition.matrix <- matrix(condition, nrow = length(anno$count))
+      colnames(condition.matrix) <- c("Condition")
+      anno$medians <- cbind(anno$medians, time.matrix, condition.matrix)
+      # add median and percent values
+      for (a in c("medians", "percent.total")) {
+        # anno_cat is all the annos concatenated, will be
+        # used to make "anno.Rsave" file
+        anno.cat[[a]] <- rbind(anno.cat[[a]], anno[[a]])
+      }
+    }
   }
-  anno$medians <- data.frame()
-  anno$count <- data.frame()
-  anno$percent.total <- data.frame()
-  for (t in times) {
-    cat("Annotating graph for file", t, "\n")
-    # get medians for all parameters and counts for all clusters
-    anno$medians <- rbind(anno$medians, list.of.FLOWMAP.clusters$cluster.medians[[t]])
-    anno$medians[, "Condition"]
-    anno$count <- rbind(anno$count, list.of.FLOWMAP.clusters$cluster.counts[[t]])
-    percent.total <- data.frame(list.of.FLOWMAP.clusters$cluster.counts[[t]] / cellnum)
-    colnames(percent.total) <- "percent.total"
-    anno$percent.total <- rbind(anno$percent.total,
-                                percent.total)
-  }
-  output.anno <- cbind(anno$medians, anno$count, anno$percent.total)
-  output.anno <- ConvertCharacterLabel(output.anno, label.key)
-  # print("head(output.anno)")
-  # print(head(output.anno))
-  # print("tail(output.anno)")
-  # print(tail(output.anno))
-  # print("unique(output.anno[, 'Condition'])")
-  # print(unique(output.anno[, "Condition"]))
+  # combine anno_cat matrices
+  output.anno <- cbind(anno.cat[[1]], anno.cat[[2]])
   for (c in colnames(output.anno)) {
-    cat("c is", c, "\n")
     output.graph <- set.vertex.attribute(output.graph, c,
-                                         index = as.numeric(1:dim(output.anno)[1]),
+                                         index = as.numeric(rownames(output.anno)),
                                          value = output.anno[, c])
   }
-  # print("get.vertex.attribute(output.graph, Condition,
-  #                            index = V(output.graph))")
-  # print(get.vertex.attribute(output.graph, "Condition",
-  #                      index = V(output.graph)))
   # add name attribute
   V(output.graph)$name <- 1:length(V(output.graph))
   return(output.graph)

@@ -26,7 +26,7 @@ GetFCSNames <- function(folder, file.format, sort = TRUE) {
 ######################
 #### FIX THIS???? ####
 ######################
-GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
+GetMultiFCSNamesOLD <- function(folder, file.format, sort = TRUE) {
   # get FCS files
   subfolders <- list.files(folder, full.names = TRUE)
   list.of.condition.file.names <- list()
@@ -37,6 +37,20 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
     list.of.condition.file.names[[condition]] <- fcs.files
   }
   return(list.of.condition.file.names)
+}
+
+
+GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
+  # get FCS files
+  subfolders <- list.files(folder, full.names = TRUE)
+  list.of.time.file.names <- list()
+  for (folder in subfolders) {
+    fcs.files = list.files(path = folder, pattern = file.format,
+                           recursive = FALSE, full.names = TRUE)
+    time <- basename(folder)
+    list.of.time.file.names[[time]] <- fcs.files
+  }
+  return(list.of.time.file.names)
 }
 
 
@@ -104,12 +118,12 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 }
 
 
-LoadMultiCleanFCS <- function(list.of.condition.file.names, channel.remove, channel.annotate,
-                              subsamples, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
+LoadMultiCleanFCSOLD <- function(list.of.condition.file.names, channel.remove, channel.annotate,
+                                 subsamples, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
   list.of.condition.clean.FCS.files <- list()
   subsamp.orig <- subsamples
-  print("subsamp.orig")
-  print(subsamp.orig)
+  # print("subsamp.orig")
+  # print(subsamp.orig)
   for (condition in names(list.of.condition.file.names)) {
     cat("condition is", condition, "\n")
     fcs.file.names <- list.of.condition.file.names[[condition]]
@@ -122,15 +136,15 @@ LoadMultiCleanFCS <- function(list.of.condition.file.names, channel.remove, chan
       subsamples <- subsamp.orig[[condition]]
     }
     list.of.condition.clean.FCS.files[[condition]] <- LoadCleanFCS(fcs.file.names,
-                                                           channel.remove,
-                                                           channel.annotate,
-                                                           subsample,
-                                                           subsample.rand = FALSE,
-                                                           transform, scale)
+                                                                   channel.remove,
+                                                                   channel.annotate,
+                                                                   subsamples,
+                                                                   subsample.rand = FALSE,
+                                                                   transform, scale)
     for (i in 1:length(list.of.condition.clean.FCS.files[[condition]])) {
       Condition <- rep(condition, times = dim(list.of.condition.clean.FCS.files[[condition]][[i]])[1])
       list.of.condition.clean.FCS.files[[condition]][[i]] <- cbind(list.of.condition.clean.FCS.files[[condition]][[i]],
-                                                           Condition)
+                                                                   Condition)
       rm(Condition)
     }
   }
@@ -138,7 +152,60 @@ LoadMultiCleanFCS <- function(list.of.condition.file.names, channel.remove, chan
 }
 
 
-ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
+LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.annotate,
+                              subsamples, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
+  list.of.time.clean.FCS.files <- list()
+  subsamp.orig <- subsamples
+  # print("subsamp.orig")
+  # print(subsamp.orig)
+  for (time in names(list.of.time.file.names)) {
+    cat("time is", time, "\n")
+    fcs.file.names <- list.of.time.file.names[[time]]
+    cat("fcs.file.names are", basename(fcs.file.names), "\n")
+    if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
+      cat("Subsampling all files to:", subsamp.orig, "\n")
+      subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
+      subsamples <- subsample.new
+    } else {
+      subsamples <- subsamp.orig[[time]]
+    }
+    list.of.time.clean.FCS.files[[time]] <- LoadCleanFCS(fcs.file.names,
+                                                         channel.remove,
+                                                         channel.annotate,
+                                                         subsamples,
+                                                         subsample.rand = FALSE,
+                                                         transform, scale)
+    f.names <- c() 
+    for (i in 1:length(list.of.time.clean.FCS.files[[time]])) {
+      Time <- rep(as.numeric(time), times = dim(list.of.time.clean.FCS.files[[time]][[i]])[1])
+      list.of.time.clean.FCS.files[[time]][[i]] <- cbind.data.frame(list.of.time.clean.FCS.files[[time]][[i]],
+                                                                    Time, stringsAsFactors = FALSE)
+      this.name <- basename(fcs.file.names[i])
+      this.name <- gsub(".fcs", "", this.name)
+      if (grepl("-", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "-"))[1]
+      }
+      if (grepl("\\.", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+      }
+      Condition <- rep(this.name, times = dim(list.of.time.clean.FCS.files[[time]][[i]])[1])
+      # print("class(Condition)")
+      # print(class(Condition))
+      # print("class(Time)")
+      # print(class(Time))
+      list.of.time.clean.FCS.files[[time]][[i]] <- cbind.data.frame(list.of.time.clean.FCS.files[[time]][[i]],
+                                                                    Condition, stringsAsFactors = FALSE)
+      f.names <- c(f.names, this.name)
+      rm(Time, Condition)
+    }
+    names(list.of.time.clean.FCS.files[[time]]) <- f.names
+  }
+  return(list.of.time.clean.FCS.files)
+}
+
+
+
+ConvertNumericLabelOLD <- function(list.of.clean.FCS.files.with.labels) {
   label.key <- list()
   fixed.list.FCS.files <- list()
   for (i in 1:length(list.of.clean.FCS.files.with.labels)) {
@@ -152,6 +219,95 @@ ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
     fixed.list.FCS.files[[i]] <- tmp.label.fcs
   }
   names(fixed.list.FCS.files) <- names(list.of.clean.FCS.files.with.labels)
+  return(list(fixed.list.FCS.files = fixed.list.FCS.files,
+              label.key = label.key))
+}
+
+ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
+  label.key <- list()
+  fixed.list.FCS.files <- list()
+  for (i in 1:length(list.of.clean.FCS.files.with.labels)) {
+    label.key[[i]] <- names(list.of.clean.FCS.files.with.labels[[i]])
+    tmp.label.fcs <- list.of.clean.FCS.files.with.labels[[i]]
+    for (n in 1:length(tmp.label.fcs)) {
+      inds <- which(tmp.label.fcs[[n]] == label.key[[i]], arr.ind = TRUE)
+      col.ind <- unname(inds[1, 2])
+      # tmp.label.fcs[[n]][, col.ind] <- i
+      tmp.label.fcs[[n]][, col.ind] <- as.numeric(n)
+      # print(head())
+      # for (i in 1:ncol(tmp.label.fcs[[n]])) {
+      #   print(colnames(tmp.label.fcs[[n]])[i])
+      #   print(head(tmp.label.fcs[[n]][, i]))
+      #   print("class(tmp.label.fcs[[n]][, i])")
+      #   print(class(tmp.label.fcs[[n]][, i]))
+      # }
+    }
+    fixed.list.FCS.files[[i]] <- tmp.label.fcs
+  }
+  names(fixed.list.FCS.files) <- names(list.of.clean.FCS.files.with.labels)
+  return(list(fixed.list.FCS.files = fixed.list.FCS.files,
+              label.key = label.key))
+}
+
+
+
+ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
+  # print("head(data.frame.with.numeric.labels)")
+  # print(head(data.frame.with.numeric.labels))
+  data.frame.with.character.labels <- data.frame.with.numeric.labels
+  # print("label.key")
+  # print(label.key)
+  times <- unique(data.frame.with.numeric.labels[, "Time"])
+  # cat("times are", times, "\n")
+  for (t in times) {
+    this.label <- label.key[[t]]
+    this.ind <- which(data.frame.with.character.labels[, "Time"] == t)
+    # cat("this.label is", this.label, "\n")
+    for (i in length(this.label)) {
+      # cat("i is", i, "and this.label[i] is", this.label[i], "\n")
+      fix.ind <- which(data.frame.with.character.labels[, "Condition"] == i)
+      fix.ind <- union(this.ind, fix.ind)
+      # print("fix.ind")
+      # print(fix.ind)
+      data.frame.with.character.labels[fix.ind, "Condition"] <- this.label[i]
+    }
+  }
+  # print("head(data.frame.with.character.labels)")
+  # print(head(data.frame.with.character.labels))
+  # print("tail(data.frame.with.character.labels)")
+  # print(tail(data.frame.with.character.labels))
+  return(data.frame.with.character.labels)
+}
+
+
+ConvertNumericLabel2 <- function(list.of.clean.FCS.files.with.labels) {
+  label.key <- list()
+  fixed.list.FCS.files <- list()
+  for (i in 1:length(list.of.clean.FCS.files.with.labels)) {
+    label.key[[i]] <- names(list.of.clean.FCS.files.with.labels)[i]
+    # print("label.key[[i]]")
+    # print(label.key[[i]])
+    tmp.label.fcs <- list.of.clean.FCS.files.with.labels[[i]]
+    # print("names(tmp.label.fcs)")
+    # print(names(tmp.label.fcs))
+    for (n in 1:length(tmp.label.fcs)) {
+      inds <- which(tmp.label.fcs[[n]] == label.key[[i]], arr.ind = TRUE)
+      col.ind <- unname(inds[1, 2])
+      tmp.label.fcs[[n]][, col.ind] <- i
+      # print("head(tmp.label.fcs[[n]])")
+      # print(head(tmp.label.fcs[[n]]))
+    }
+    # print("names(tmp.label.fcs)")
+    # print(names(tmp.label.fcs))
+    fixed.list.FCS.files[[i]] <- tmp.label.fcs
+    # print("names(fixed.list.FCS.files[[i]])")
+    # print(names(fixed.list.FCS.files[[i]]))
+  }
+  names(fixed.list.FCS.files) <- names(list.of.clean.FCS.files.with.labels)
+  # print("names(fixed.list.FCS.files)")
+  # print(names(fixed.list.FCS.files))
+  # print("label.key")
+  # print(label.key)
   return(list(fixed.list.FCS.files = fixed.list.FCS.files,
               label.key = label.key))
 }
