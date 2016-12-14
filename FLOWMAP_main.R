@@ -238,16 +238,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
-    print("label.key")
-    print(label.key)
-    # print("label.key")
-    # print(label.key)
-    # for (i in 1:length(fixed.fcs.files)) {
-    #   for (n in 1:length(fixed.fcs.files[[i]])) {
-    #     print("head(fixed.fcs.files[[i]][[n]])")
-    #     print(head(fixed.fcs.files[[i]][[n]]))
-    #   }
-    # }
+
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
       # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
@@ -288,11 +279,12 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                   cellnum = subsamples)
     graph <- output.graph
   }
+  # stop("DEBUGGING")
   file.name <- paste(basename(files), "FLOW-MAP", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
-  print("graph.xy")
-  print(graph.xy)
+  # print("graph.xy")
+  # print(graph.xy)
   file.name.xy <- paste(basename(files), "FLOW-MAP", "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   PrintSummary()

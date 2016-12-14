@@ -31,28 +31,17 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
 
 InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   # This section initializes the graph
-  total.nodes <- 0
-  for (time in names(list.of.FLOWMAP.clusters)) {
-    FLOWMAP.clusters <- list.of.FLOWMAP.clusters[[time]]
-    total.nodes <- total.nodes + length(FLOWMAP.clusters$full.clusters[, 1])
-    # create empty graph with the right number of nodes - will fill in the edges later
-  }
+  total.nodes <- dim(list.of.FLOWMAP.clusters$full.clusters)[1]
   initial.graph <- graph.empty(n = total.nodes, directed = FALSE)
   return(initial.graph)
 }
 
 
 BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, distance.metric) {
-  n <- 1
   output.graph <- InitializeMultiGraph(list.of.FLOWMAP.clusters)
-  # This section creates a flowmap for the first time point
   cat("Building first FLOWMAP\n")
-  clusters <- c()
-  for (time in names(list.of.FLOWMAP.clusters)) {
-    table.length <- list.of.FLOWMAP.clusters[[time]]$table.lengths[1]
-    current.clusters <- list.of.FLOWMAP.clusters[[time]]
-    clusters <- rbind(clusters, current.clusters$full.clusters[1:table.length, ])
-  }
+  # This section creates a flowmap for the first time point
+  clusters <- list.of.FLOWMAP.clusters$cluster.medians[[1]]
   # get distance matrix from clusters
   clusters <- subset(clusters, select = clustering.var)
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
@@ -69,7 +58,7 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   # build new edgelist with N edges for each cluster based on normalized density
   cat("Building first edgelist\n")
   results <- DrawNormalizedEdges(output.graph, cluster.distances.matrix,
-                                 normalized.densities, n = n)
+                                 normalized.densities, n = 1)
   output.graph <- results$output.graph
   # now add all MST edges that are not yet included in the graph, and annotate all as "MST"
   adjacency.graph <- graph.adjacency(cluster.distances.matrix,
@@ -95,17 +84,14 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   return(output.graph)
 }
 
-# BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, conditions,
-#                               per, min, max, distance.metric, cellnum) {
+
 BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
                               max, distance.metric, cellnum, label.key) {
-  output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters, per,
-                                         min, max, distance.metric = distance.metric)
   remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(list.of.FLOWMAP.clusters)
+  output.graph <- BuildFirstMultiFLOWMAP(remodel.FLOWMAP.clusters, per,
+                                         min, max, distance.metric = distance.metric)
   # put each conditions clusters together into one timepoint
   table.breaks <- c(0, remodel.FLOWMAP.clusters$table.breaks)
-  # print("table.breaks")
-  # print(table.breaks)
   # This section builds the flowmap one timepoint at a time
   for (n in 1:(length(remodel.FLOWMAP.clusters$cluster.medians) - 1)) {
     # offset value is used to correctly index the edges at each sequential step
@@ -114,8 +100,6 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
     cat("Build FLOWMAP from", n, "to", n + 1, "\n")
     # get clusters for time a and a+1
     clusters <- rbind(remodel.FLOWMAP.clusters$cluster.medians[[n]], remodel.FLOWMAP.clusters$cluster.medians[[n + 1]])
-    # print("clusters")
-    # print(clusters)
     clusters <- subset(clusters, select = clustering.var)
     numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
@@ -144,22 +128,13 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
     output.graph <- CheckMSTEdges(output.graph, cluster.distances.matrix, 
                                   n_n1.table.lengths, offset = offset, n = n)
   }
-  
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
-  # print("sum(distances == 0)")
-  # print(sum(distances == 0))
-  
   #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
   fix.identical.dist <- which(distances == 0)
   distances.no.identical <- distances[-fix.identical.dist]
-  # print("min(distances.no.identical)")
-  # print(min(distances.no.identical))
   distances[fix.identical.dist] <- min(distances.no.identical)
-  # print("distances")
-  # print(distances)
   ####
-  
   weights <- 1 / distances
   E(output.graph)$weight <- weights
   output.graph <- AnnotateMultiGraph(output.graph, remodel.FLOWMAP.clusters, cellnum, label.key)
@@ -169,9 +144,6 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
 
 AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
                                cellnum, label.key) {
-  # print("Time")
-  # print(get.vertex.attribute(output.graph, "Time",
-  #                            index = V(output.graph)))
   # This section annotates the graph
   anno <- list()
   # iterate through all times and annotate
@@ -195,26 +167,13 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
   }
   output.anno <- cbind(anno$medians, anno$count, anno$percent.total)
   output.anno <- ConvertCharacterLabel(output.anno, label.key)
-  # print("head(output.anno)")
-  # print(head(output.anno))
-  # print("tail(output.anno)")
-  # print(tail(output.anno))
-  # print("unique(output.anno[, 'Condition'])")
-  # print(unique(output.anno[, "Condition"]))
   for (c in colnames(output.anno)) {
-    cat("c is", c, "\n")
     output.graph <- set.vertex.attribute(output.graph, c,
                                          index = as.numeric(1:dim(output.anno)[1]),
                                          value = output.anno[, c])
   }
-  # print("get.vertex.attribute(output.graph, Condition,
-  #                            index = V(output.graph))")
-  # print(get.vertex.attribute(output.graph, "Condition",
-  #                      index = V(output.graph)))
   # add name attribute
   V(output.graph)$name <- 1:length(V(output.graph))
   return(output.graph)
 }
-
-
 

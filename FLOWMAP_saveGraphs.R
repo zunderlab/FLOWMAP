@@ -97,6 +97,9 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       cat("categorical attribute is", name, "\n")
       # get attribute name and data
       attribute <- get.vertex.attribute(graph, name, index = V(graph))
+      # print(head(attribute))
+      # print(tail(attribute))
+      cat("options are", unique(attribute), "\n")
       num.unique <- length(unique(attribute))
       color.scale <- my.palette(num.unique)
       color <- rep(NA, times = length(attribute))

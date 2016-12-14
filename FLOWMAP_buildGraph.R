@@ -1,4 +1,3 @@
-
 ConvertIndex <- function(inds, orig.data.frame, keep.names = TRUE) {
   # inds go down through the rows of the first column
   # before starting at the first row of the second column
@@ -14,10 +13,12 @@ ConvertIndex <- function(inds, orig.data.frame, keep.names = TRUE) {
   return(arr.inds)
 }
 
+
 MergeValues <- function(arr.inds, orig.data.frame) {
   merged <- cbind(arr.inds, values = sort(as.matrix(orig.data.frame)))
   return(merged)
 }
+
 
 RemoveDuplicateValues <- function(arr.inds.with.values) {
   x <- arr.inds.with.values[!duplicated(arr.inds.with.values[, "values"]),]
@@ -35,6 +36,7 @@ RemoveWithinNEdges <- function(arr.inds.with.values, inds.in.n) {
   inds.no.n_n <- d
   return(inds.no.n_n)
 }
+
 
 FindNormalized <- function(cluster.distances.matrix, per, min,
                            max, numcluster, table.lengths,
@@ -170,7 +172,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     el.n1n.with.dist.closest[x, ] <- closest.edge.i
     x <- x + 1
   }
-  
   #   3. add these new n edges to the edgelist, with all n points
   #      given the same unique name/index "tmp.same.name" to distinguish them
   #   - "new n edges" means edges between n+1 and n whereas
@@ -196,8 +197,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   dummy.graph <- add.edges(dummy.graph,
                            edges = (as.vector(t(full.edgelist[, 1:2])) - table.lengths[1] - offset),
                            weight = full.edgelist[, 3])
-  # new.distance.matrix <- matrix(NA, ncol = (length(unique(full.edgelist[, 1])) + 1),
-  #                               nrow = (length(unique(full.edgelist[, 1])) + 1))
   # has all timepoint n + 1 distances to each other, plus an added
   # row or column that is the one timepoint n entity
   # with its shortest distances to the timepoint n + 1 cells
@@ -219,7 +218,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                                          "weight", index = E(mst.dummy.graph))
   mst.edgelist.fixed <- cbind(mst.edgelist.fixed, mst.edge.weights)
   colnames(mst.edgelist.fixed) <- c("Vertex 1", "Vertex 2", "Distance")
-  
   # fix vertex IDs back based on offset/table lengths
   mst.edgelist.fixed[, 1:2] <- mst.edgelist.fixed[, 1:2] + table.lengths[1] + offset
   
@@ -231,16 +229,12 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   } else {
     stop("Abort! fix.needed.ind is only 1 row or different colnames")
   }
-  
   for (i in 1:nrow(temp.el)) {
     each.edge <- temp.el[i, ]
     each.edge <- as.matrix(each.edge)
     each.edge <- t(each.edge)
     dist.match <- which((original.n1n.closest[, "Distance"] == each.edge[, "Distance"]), arr.ind = TRUE)
     if ((length(dist.match) > 1) & (is.vector(dist.match)) & is.null(names(dist.match))) {
-      # print("MORE THAN ONE MATCH BY DISTANCE!!!")
-      # print("dist.match")
-      # print(dist.match)
       save.match <- dist.match
       dist.match <- dist.match[1]
       fixed.vertices <- save.name[save.match]
@@ -252,7 +246,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     # that need to be correctd
     mst.edgelist.fixed[fix.needed.ind[i, 1], "Vertex 2"] <- fixed.vertex
   }
-  
   # 6. add edges to actual FLOW-MAP graph
   # if they exist, label them as MST
   # if not, add them and label them as MST
@@ -263,13 +256,11 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
     if (are.connected(output.graph, v1, v2)) {
       E(output.graph, P = c(v1, v2))$label <- "MST"
       if ((v2 == fixed.vertex) & (fixed.vertices != FALSE)) {
-        # print("other options possible for v2")
         for (i in 2:length(fixed.vertices)) {
           v2 <- fixed.vertices[i]
           if (are.connected(output.graph, v1, v2)) {
             E(output.graph, P = c(v1, v2))$label <- "MST"
           } else {
-            # print("extra edge added")
             output.graph <- add.edges(output.graph, c(v1, v2),
                                       weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                       sequence_assignment = n)
@@ -286,7 +277,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
 }
 
 
-
 InitializeGraph <- function(FLOWMAP.clusters) {
   # This section initializes the graph
   total.nodes <- length(FLOWMAP.clusters$full.clusters[, 1])
@@ -294,6 +284,7 @@ InitializeGraph <- function(FLOWMAP.clusters) {
   initial.graph <- graph.empty(n = total.nodes, directed = FALSE)
   return(initial.graph)
 }
+
 
 BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                               clustering.var) {
@@ -403,18 +394,11 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
-  
-  # print("sum(distances == 0)")
-  # print(sum(distances == 0))
-  
+
   #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
   fix.identical.dist <- which(distances == 0)
   distances.no.identical <- distances[-fix.identical.dist]
-  # print("min(distances.no.identical)")
-  # print(min(distances.no.identical))
   distances[fix.identical.dist] <- min(distances.no.identical)
-  # print("distances")
-  # print(distances)
   ####
   
   weights <- (1 / distances)
@@ -461,5 +445,3 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   V(output.graph)$name <- 1:length(V(output.graph))
   return(output.graph)
 }
-
-

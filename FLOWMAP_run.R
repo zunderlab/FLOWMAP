@@ -1,4 +1,4 @@
-# GNU General Public License v3.0
+# GNU General Public License v3.0 (GPL-3.0)
 
 # Authors:
 # Melissa Ko (Stanford University)
@@ -8,10 +8,6 @@
 # including purpose of program,
 # inputs, and outputs
 
-# source() and library() statements
-# Function definitions
-# Executed statements, if applicable (e.g., print, plot)
-
 prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 # prefolder specifies the folder where all FLOW-MAP
 # code is saved on your local computer
@@ -20,6 +16,8 @@ prefolder <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/"
 source(paste(prefolder, "FLOWMAP_main.R", sep = ""))
 
 files <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/MultiFLOWMAP"
+# files <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20161209JunoCAR-T_Live_CD8only_5to1"
+# files <- "/Users/mesako/Desktop/Work/Research/Raw FCS Files/20160721_MM1S_Timecourse3_Live/WT/Together2"
 # files <- "/Users/mesako/Desktop/Work/Research/Code/FLOW-MAP/Synthetic Data/SingleFLOWMAP"
 # "files" variable could be one of the following:
 # a single fcs file path
@@ -40,6 +38,20 @@ file.format <- "*.fcs"
 # with FCS files
 
 var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
+# Shih-Yu's panel
+# var.annotate <- list( "Y89Di" = "CD45", "Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3" ,
+#                       "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
+#                       "In113Di" = "CD57", "In115Di" = "CXCR4", "La139Di" = "CD11a", "Ce140Di" = "CD3",
+#                       "Pr141Di" = "CD49d", "Nd142Di" = "pPLCg1", "Nd143Di" = "CD127", "Nd144Di" = "CD27", "Nd145Di" = "CD4",
+#                       "Nd146Di" = "CD8", "Pm147Di" = "pZAP70", "Nd148Di" = "pErk", "Sm149Di" = "CD25",
+#                       "Nd150Di" = "LAG3", "Eu151Di" = "ICOS", "Sm152Di" = "pAkt", "Eu153Di" = "CD45RA",
+#                       "Sm154Di" = "eomes", "Gd155Di" = "pCD3z", "Gd156Di" = "pp38",
+#                       "Gd157Di" = "CD28", "Gd158Di" = "pTbk", "Tb159Di" = "CCR7","Gd160Di" = "CD95",
+#                       "Dy161Di" = "Tbet", "Dy162Di" = "pLck", "Dy163Di" = "CXCR3" ,"Dy164Di" = "pSlp76", "Ho165Di" = "pNFkB", "Er166Di" = "IkB",
+#                       "Er170Di" = "CD122", "Er167Di" = "gata3", "Er168Di" = "Rorc", "Tm169Di" = "TIM3",
+#                       "Yb172Di" = "pS6", "Yb171Di" = "blimp1", "Yb174Di" = "TIGIT",
+#                       "Lu175Di" = "PD1", "Lu176Di" = "ID", "Yb173Di" = "cPARP",
+#                       "Ir191Di" = "DNA1", "Ir193Di" = "DNA2", "Pt195Di" = "Cisplatin", "Bi209Di" = "pLat")
 # var.annotate <- list("Pd102Di" = "barcode1", "Pd104Di" = "barcode2", "Pd105Di" = "barcode3",
 #                      "Pd106Di" = "barcode4", "Pd108Di" = "barcode5", "Pd110Di" = "barcode6",
 #                      "In113Di" = "active_Bax", "La139Di" = "cPARP", "Ce140Di" = "Bak",
@@ -72,6 +84,9 @@ var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
 # and renaming them according to marker (e.g. "CD44")
 
 var.remove <- c()
+# var.remove <- c("Time", "Event_length", "barcode1", "barcode2",
+#                 "barcode3", "barcode4", "barcode5", "barcode6",
+#                 "I127Di", "DNA1", "DNA2")
 # var.remove <- c("Time", "Event_length", "Cell_length", "beadDist", "barcode", "Nd143Di", "Nd145Di",
 #                 "Normbeads1", "Normbeads2", "Eubeads", "DNA1", "DNA2", "barcode1", "Tb159Di",
 #                 "barcode2", "barcode3", "Y89Di", "barcode4", "barcode5", "barcode6", "Eu151Di",
@@ -97,7 +112,7 @@ minimum <- 2
 # minimum specifies the minimum number of edges any
 # given node in graph will have
 
-maximum <- 5
+maximum <- 3
 # maximum specifies the maximum number of edges any
 # given node in graph will have
 
@@ -107,13 +122,11 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # which edges are assigned and what is their weight
 
 subsamples <- 500
-# subsamples <- c(500, 490, 510, 510, 490, 500)
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
 cluster.numbers <- 250
-# cluster.numbers <- c(250, 240, 255, 245, 250, 255)
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
@@ -124,6 +137,16 @@ set.seed(seed.X)
 # figures for the same seed
 
 clustering.var <- c("marker1", "marker2")
+# Shih-Yu's analysis
+# clustering.var <- c("pErk", "pAkt", "pp38", "pTbk", "pAkt", "pLck",
+#                     "pNFkB", "IkB", "pS6", "pLat", "cPARP")
+# clustering.var <- c("pPLCg1", "pZAP70", "pErk", "pAkt", "pCD3z",
+#                     "pp38", "pTbk", "pAkt", "pLck", "pSlp76", "pNFkB",
+#                     "IkB", "pS6", "pLat")
+# clustering.var <- c("pPLCg1", "pZAP70", "pErk", "pAkt", "pCD3z",
+#                     "pp38", "pTbk", "pAkt", "pLck", "pSlp76", "pNFkB",
+#                     "IkB", "pS6", "pLat", "gata3", "eomes", "Tbet",
+#                     "CD28", "blimp1", "ICOS")
 # clustering.var <- c("cPARP", "Bak", "p-p38", "pBcl-2", "pErk",
 #                     "APAF", "pRb", "pAkt", "Bcl-xL", "Bax", "active_Bak",
 #                     "CyclinB1", "Bcl-2", "pSTAT5", "Mcl-1", "cMyc", "IkBalpha",
@@ -149,6 +172,17 @@ FLOWMAP.results <- FLOWMAP(files = files, file.format = file.format, var.remove 
                            cluster.numbers = cluster.numbers, subsamples = subsamples,
                            distance.metric = distance.metric, minimum = minimum, maximum = maximum,
                            per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
+
+# Edge Distribution Diagnostics
+# num.edges <- c()
+# for (i in 1:length(V(FLOWMAP.results))) {
+#   num.edges <- c(num.edges, length(E(FLOWMAP.results)[from(i)]))
+# }
+# plot(num.edges)
+# hist(num.edges)
+# head(order(num.edges, decreasing = T), n = 5)
+# tail(order(num.edges, decreasing = T), n = 5)
+
 # FLOWMAP function, with correctly provided folders
 # and variables above, should run from start to finish,
 # producing PDFs and graphml files in a new subfolder within

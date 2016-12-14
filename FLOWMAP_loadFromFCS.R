@@ -255,23 +255,34 @@ ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
   # print("head(data.frame.with.numeric.labels)")
   # print(head(data.frame.with.numeric.labels))
   data.frame.with.character.labels <- data.frame.with.numeric.labels
-  # print("label.key")
-  # print(label.key)
+  print("label.key")
+  print(label.key)
   times <- unique(data.frame.with.numeric.labels[, "Time"])
   # cat("times are", times, "\n")
+  # print("head(data.frame.with.numeric.labels)")
+  # print(head(data.frame.with.numeric.labels))
+  # print("tail(data.frame.with.numeric.labels)")
+  # print(tail(data.frame.with.numeric.labels))
   for (t in times) {
     this.label <- label.key[[t]]
-    this.ind <- which(data.frame.with.character.labels[, "Time"] == t)
+    # cat("t is", t, "\n")
+    this.ind <- which(data.frame.with.numeric.labels[, "Time"] == t)
+    # print("this.ind")
+    # print(this.ind)
     # cat("this.label is", this.label, "\n")
-    for (i in length(this.label)) {
+    for (i in 1:length(this.label)) {
       # cat("i is", i, "and this.label[i] is", this.label[i], "\n")
-      fix.ind <- which(data.frame.with.character.labels[, "Condition"] == i)
-      fix.ind <- union(this.ind, fix.ind)
+      fix.ind <- which(data.frame.with.numeric.labels[, "Condition"] == i)
       # print("fix.ind")
       # print(fix.ind)
-      data.frame.with.character.labels[fix.ind, "Condition"] <- this.label[i]
+      use.ind <- intersect(fix.ind, this.ind)
+      # print("use.ind")
+      # print(use.ind)
+      data.frame.with.character.labels[use.ind, "Condition"] <- this.label[i]
     }
   }
+  # print("unique(data.frame.with.character.labels[fix.ind, 'Condition'])")
+  # print(unique(data.frame.with.character.labels[fix.ind, "Condition"]))
   # print("head(data.frame.with.character.labels)")
   # print(head(data.frame.with.character.labels))
   # print("tail(data.frame.with.character.labels)")
