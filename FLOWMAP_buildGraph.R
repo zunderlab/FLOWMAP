@@ -224,7 +224,9 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   
   # find what is the vertex from timepoint n, based on distance
   fix.needed.ind <- which(mst.edgelist.fixed[, 1:2] == tmp.same.name, arr.ind = TRUE)
-  if ((colnames(fix.needed.ind) == c("row", "col")) & (nrow(fix.needed.ind) > 1)) {
+  correct.names <- c("row", "col")
+  # if ((colnames(fix.needed.ind) == c("row", "col")) & (nrow(fix.needed.ind) > 1)) {
+  if (all.equal(colnames(fix.needed.ind), correct.names) & (nrow(fix.needed.ind) > 1)) {
     # print("more than one edge needs to be renamed")
     temp.el <- mst.edgelist.fixed[fix.needed.ind[, 1], ]
   } else {
@@ -395,13 +397,13 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
-
   #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
   fix.identical.dist <- which(distances == 0)
-  distances.no.identical <- distances[-fix.identical.dist]
-  distances[fix.identical.dist] <- min(distances.no.identical)
+  if (length(fix.identical.dist) != 0) {
+    distances.no.identical <- distances[-fix.identical.dist]
+    distances[fix.identical.dist] <- min(distances.no.identical)
+  }
   ####
-  
   weights <- (1 / distances)
   E(output.graph)$weight <- weights
   output.graph <- AnnotateGraph(output.graph = output.graph,

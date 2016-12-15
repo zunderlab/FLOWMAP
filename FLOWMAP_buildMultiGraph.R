@@ -132,8 +132,10 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
   distances <- E(output.graph)$weight
   #### TEMPORARY FIX FOR IDENTICAL CELLS WITH DIST = 0, WEIGHT = INF
   fix.identical.dist <- which(distances == 0)
-  distances.no.identical <- distances[-fix.identical.dist]
-  distances[fix.identical.dist] <- min(distances.no.identical)
+  if (length(fix.identical.dist) != 0) {
+    distances.no.identical <- distances[-fix.identical.dist]
+    distances[fix.identical.dist] <- min(distances.no.identical)
+  }
   ####
   weights <- 1 / distances
   E(output.graph)$weight <- weights

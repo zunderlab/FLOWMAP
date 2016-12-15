@@ -121,12 +121,12 @@ distance.metric <- "manhattan" # other option is "euclidean"
 # between nodes will be calculated, in order to determine
 # which edges are assigned and what is their weight
 
-subsamples <- 500
+subsamples <- 400
 # subsample specifies how many measurements/events/cells
 # to take from each FCS file, each file must contain at
 # least this many events for analysis to proceed
 
-cluster.numbers <- 250
+cluster.numbers <- 200
 # cluster.number specifies how many clusters to identify
 # for the subsampled events from each separate FCS file
 
