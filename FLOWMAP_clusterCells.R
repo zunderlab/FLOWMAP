@@ -66,33 +66,6 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 }
 
 
-MultiClusterFCSOLD <- function(list.of.condition.files, clustering.var, numcluster, distance.metric) {
-  list.of.FLOWMAP.clusters <- list()
-  numcluster.orig <- numcluster
-  if (length(numcluster.orig) == 1) {
-    cat("Clustering all files to:", numcluster, "\n")
-  } 
-  for (condition in names(list.of.condition.files)) {
-    cat("Clustering all files from", condition, "\n")
-    fcs.files <- list.of.condition.files[[condition]]
-    if (length(numcluster.orig) == 1) {
-      numcluster.new <- rep(numcluster.orig, times = length(fcs.files))
-      numcluster <- numcluster.new
-    } else {
-      numcluster <- numcluster.orig[[condition]]
-    }
-    # print("numcluster")
-    # print(numcluster)
-    if (length(numcluster) != length(fcs.files)) {
-      stop("Cluster number not specified for all FCS files!")
-    }
-    file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
-    list.of.FLOWMAP.clusters[[condition]] <- file.clusters
-  }
-  return(list.of.FLOWMAP.clusters)
-}
-
-
 MultiClusterFCS <- function(list.of.time.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
@@ -112,11 +85,11 @@ MultiClusterFCS <- function(list.of.time.files, clustering.var, numcluster, dist
       stop("Cluster number not specified for all FCS files!")
     }
     file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
-    # print(file.clusters)
     list.of.FLOWMAP.clusters[[time]] <- file.clusters
   }
   return(list.of.FLOWMAP.clusters)
 }
+
 
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {
   if (distance.metric == "euclidean") {
@@ -124,20 +97,8 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
   } else {
     method <- "single"
   }
-  # for (i in 1:ncol(tmp.FCS.for.cluster)) {
-  #   print(head(tmp.FCS.for.cluster[, i]))
-  #   print("class(tmp.FCS.for.cluster[, i])")
-  #   print(class(tmp.FCS.for.cluster[, i]))
-  # }
-  # for (i in 1:ncol(current.file)) {
-  #   print(head(current.file[, i]))
-  #   print("class(current.file[, i])")
-  #   print(class(current.file[, i]))
-  # }
   FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
                                     distance = distance.metric)
-  # FCS.clusters <- hclust.vector(tmp.FCS.for.cluster, method = method,
-  #                              metric = distance.metric)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
@@ -149,26 +110,8 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       # Finding clusters containing more than one cell
       # Saving counts and medians of data
       new.counts <- rbind(new.counts, data.frame(length(obs)))
-      # print("as.matrix(current.file[obs, ])")
-      # print(as.matrix(current.file[obs, ]))
-      # print("as.numeric(as.matrix(current.file[obs, ]))")
-      # print(as.numeric(as.matrix(current.file[obs, ])))
-      # print("as.numeric(current.file[obs, ])")
-      # print(as.numeric(current.file[obs, ]))
-      # for (i in 1:ncol(as.matrix(current.file[obs, ]))) {
-      #   print("class(as.matrix(current.file[obs, ])[, i])")
-      #   print(class(as.matrix(current.file[obs, ])[, i]))
-      # }
       new.median <- colMedians(as.matrix(current.file[obs, ]))
-      # print("new.median")
-      # print(new.median)
-      # print("as.matrix(current.file[obs, ])")
-      # print(as.matrix(current.file[obs, ]))
       new.median <- as.data.frame(new.median)
-      # matches <- sum(colnames(new.median) != colnames(current.file))
-      # cat("matches is", matches, "\n")
-      # cat("length(colnames(new.median)) is", length(colnames(new.median)), "\n")
-      # if(matches < length(colnames(new.median))) {
       if (!identical(colnames(new.median), colnames(current.file))) {
         new.median <- t(new.median)
         colnames(new.median) <- colnames(current.file)
@@ -178,10 +121,6 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
       new.counts <- rbind(new.counts, data.frame(length(obs)))
       new.median <- current.file[obs, ]
       new.median <- as.data.frame(new.median)
-      # matches <- sum(colnames(new.median) != colnames(current.file))
-      # cat("matches is", matches, "\n")
-      # cat("length(colnames(new.median)) is", length(colnames(new.median)), "\n")
-      # if(matches < length(colnames(new.median))) {
       if (!identical(colnames(new.median), colnames(current.file))) {
         new.median <- t(new.median)
         colnames(new.median) <- colnames(current.file)
@@ -196,4 +135,3 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
               new.medians = new.medians,
               new.counts = new.counts))
 }
-

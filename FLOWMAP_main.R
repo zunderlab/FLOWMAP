@@ -10,6 +10,7 @@ library(proxy)
 library(scaffold)
 library(spade)
 library(Rclusterpp)
+library(SDMTools)
 
 source(paste(prefolder, "FLOWMAP_loadFromFCS.R", sep = ""))
 source(paste(prefolder, "FLOWMAP_clusterCells.R", sep = ""))
@@ -24,62 +25,43 @@ DefineRuntype <- function(files, file.format, name.sort) {
   fcs.file.flag <- length(grep(pattern = file.format, x = files)) > 0
   vector.flag <- is.vector(files)
   list.flag <- is.list(files)
-  # cat("single.flag is", single.flag, "\n")
-  # cat("fcs.file.flag is", fcs.file.flag, "\n")
-  # cat("vector.flag is", vector.flag, "\n")
-  # cat("list.flag is", list.flag, "\n")
-  
   if (!fcs.file.flag & single.flag) {
     temp.files <- list.files(files, full.names = TRUE)
     temp.file <- temp.files[1]
     deeper.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
-    # cat("deeper.fcs.file.flag is", deeper.fcs.file.flag, "\n")
     if (!deeper.fcs.file.flag) {
       temp.folder <- temp.file
-      # print("temp.folder")
-      # print(temp.folder)
       temp.files <- list.files(temp.folder, full.names = TRUE)
       temp.file <- temp.files[1]
-      # print("temp.file")
-      # print(temp.file)
       deepest.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
-      # cat("deepest.fcs.file.flag is", deepest.fcs.file.flag, "\n")
       if (deepest.fcs.file.flag) {
         for (i in (1:length(temp.files))) {
           temp.folder <- temp.files[i]
           num.files <- num.files + length(list.files(temp.folder, pattern = file.format))
         }
-        # cat("number of FCS files is", num.files, "\n")
       }
     } else {
       num.files <- length(list.files(files, pattern = file.format))
-      # cat("number of FCS files is", num.files, "\n")
     }
   } else if (!fcs.file.flag & list.flag) {
     temp.files <- files[[1]]
     temp.file <- temp.files[1]
     deeper.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
-    # cat("deeper.fcs.file.flag is", deeper.fcs.file.flag, "\n")
     if (deeper.fcs.file.flag) {
       for (i in length(files)) {
         num.files <- num.files + length(files[[i]])
       }
-      # cat("number of FCS files is", num.files, "\n")
     }
   }
-  
   if (single.flag) {
     if (fcs.file.flag) {
       fcs.file.names <- files # only one FCS file given
       runtype <- "SingleTimepoint"
       num.files <- 1
-      # cat("number of FCS files is", num.files, "\n")
     } else if (deeper.fcs.file.flag) {
-      # folder containing FCS files provided, load FCS file paths
       fcs.file.names <- GetFCSNames(folder = files, file.format = file.format, sort = name.sort)
       runtype <- "SingleFLOWMAP"
       num.files <- length(fcs.file.names)
-      # cat("number of FCS files is", num.files, "\n")
     } else if (deepest.fcs.file.flag) {
       # folder containing subfolders which contain 
       # FCS files provided, load FCS file paths
@@ -89,7 +71,6 @@ DefineRuntype <- function(files, file.format, name.sort) {
       for (i in 1:length(fcs.file.names)) {
         num.files <- num.files + length(fcs.file.names[[i]])
       }
-      # cat("number of FCS files is", num.files, "\n")
     } else {
       stop("Unknown 'files' variable type provided!")
     }
@@ -97,7 +78,6 @@ DefineRuntype <- function(files, file.format, name.sort) {
     fcs.file.names <- files # FCS file paths provided by user
     num.files <- length(files)
     runtype <- "SingleFLOWMAP"
-    # cat("number of FCS files is", num.files, "\n")
   } else if (list.flag & deeper.fcs.file.flag) {
     # a list of FCS file paths provided by user for MultiFLOWMAP 
     fcs.file.names <- files # FCS file paths provided by user
@@ -105,7 +85,6 @@ DefineRuntype <- function(files, file.format, name.sort) {
       num.files <- num.files + length(fcs.file.names[[i]])
     }
     runtype <- "MultiFLOWMAP"
-    # cat("number of FCS files is", num.files, "\n")
   } else {
     stop("Unknown 'files' variable type provided!")
   }
@@ -135,8 +114,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   setwd(save.folder)
   output.folder <- MakeOutFolder(runtype = runtype)
   setwd(output.folder)
-  
-  # cat("number of FCS files is", num.files, "\n")
   if (length(subsamples) > 1 & length(subsamples) != num.files & subsamples != FALSE) {
     stop("Number to subsample not specified for all files!")
   } else if (length(subsamples) == 1) {
@@ -213,13 +190,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   } else if (runtype == "MultiFLOWMAP") {
     fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                    subsamples = subsamples, subsample.rand)
-    # for (i in 1:length(fcs.files)) {
-    #   cat("i is", i, "\n")
-    #   print("length(fcs.files[[i]])")
-    #   print(length(fcs.files[[i]]))
-    #   print("names(fcs.files[[i]])")
-    #   print(names(fcs.files[[i]]))
-    # }
     if (shuffle) {
       for (n in 1:length(fcs.files)) {
         for (i in 1:length(fcs.files[[n]])) {
@@ -247,8 +217,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                        distance.metric = distance.metric)
     }
-    # print("file.clusters")
-    # print(file.clusters)
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric, cellnum = subsamples,
                                label.key = label.key)
@@ -257,14 +225,8 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                              channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
-      # full.clusters
-      # table.breaks
-      # table.lengths
-      # cluster.medians
-      # cluster.counts
-      # cell.assgn
-      file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
-                                      cluster.medians, cluster.counts, cell.assgn)
+      # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
+      #                                 cluster.medians, cluster.counts, cell.assgn)
     } else {
       file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -279,17 +241,12 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                   cellnum = subsamples)
     graph <- output.graph
   }
-  # stop("DEBUGGING")
   file.name <- paste(basename(files), "FLOW-MAP", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
-  # print("graph.xy")
-  # print(graph.xy)
   file.name.xy <- paste(basename(files), "FLOW-MAP", "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   PrintSummary()
   ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
   return(graph.xy)
 }
-
-

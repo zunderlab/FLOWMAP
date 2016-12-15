@@ -1,4 +1,3 @@
-library(SDMTools)
 
 MakeOutFolder <- function(runtype) {
   name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
@@ -9,6 +8,7 @@ MakeOutFolder <- function(runtype) {
   return (output.folder)
 }
 
+
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")
   file.name <- paste(Sys.Date(), file.name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
@@ -16,6 +16,7 @@ ConvertToGraphML <- function(output.graph, file.name) {
   write.graph(output.graph, file.name, format = "graphml")
   return(file.name)
 }
+
 
 ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100,
@@ -97,8 +98,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       cat("categorical attribute is", name, "\n")
       # get attribute name and data
       attribute <- get.vertex.attribute(graph, name, index = V(graph))
-      # print(head(attribute))
-      # print(tail(attribute))
       cat("options are", unique(attribute), "\n")
       num.unique <- length(unique(attribute))
       color.scale <- my.palette(num.unique)
@@ -126,6 +125,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
     }
   }
 }
+
 
 PrintSummary <- function(...) {
   summary <- matrix()
