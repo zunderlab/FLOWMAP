@@ -6,13 +6,13 @@ Authors@R: c(person("Eli", "Zunder", email = "ezunder@virginia.edu", role = "cre
 Description: What the package does (one paragraph).
 Depends: R (>= 3.3.0)
 Imports:
-  robustbase (>= 0.92-6)
-  SDMTools (>= 1.1-221)
-  scaffold (>= 0.1)  
-  flowCore (>= 1.38.2)
-  Rclusterpp (>= 0.2.3)
-  RcppEigen (>= 0.3.2.9.0)
-  Rcpp (>= 0.12.6)
+  robustbase (>= 0.92-6),
+  SDMTools (>= 1.1-221),
+  scaffold (>= 0.1),
+  flowCore (>= 1.38.2),
+  Rclusterpp (>= 0.2.3),
+  RcppEigen (>= 0.3.2.9.0),
+  Rcpp (>= 0.12.6),
   igraph (>= 1.0.1)
 License: GNU General Public License v3 (GPL-3)
 Encoding: UTF-8
