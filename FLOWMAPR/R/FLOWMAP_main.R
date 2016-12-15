@@ -88,6 +88,7 @@ DefineRuntype <- function(files, file.format, name.sort) {
 }
 
 
+#' @export
 FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                     clustering.var, cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, shuffle = FALSE,
