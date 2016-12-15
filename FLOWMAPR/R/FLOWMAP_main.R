@@ -1,16 +1,12 @@
-# library(igraph)
-# library(Rclusterpp)
-# library(flowCore)
-# library(robustbase)
-# library(scaffold)
-# library(SDMTools)
-
-# source(paste(prefolder, "FLOWMAP_loadFromFCS.R", sep = ""))
-# source(paste(prefolder, "FLOWMAP_clusterCells.R", sep = ""))
-# source(paste(prefolder, "FLOWMAP_buildGraph.R", sep = ""))
-# source(paste(prefolder, "FLOWMAP_forceDirected.R", sep = ""))
-# source(paste(prefolder, "FLOWMAP_saveGraphs.R", sep = ""))
-# source(paste(prefolder, "FLOWMAP_buildMultiGraph.R", sep = ""))
+#' FLOWMAPR
+#' @name FLOWMAPR
+#' @docType package
+#' @import flowCore
+#' @import Rclusterpp
+#' @import robustbase
+#' @import igraph
+#' @import scaffold
+#' @import SDMTools
 
 DefineRuntype <- function(files, file.format, name.sort) {
   num.files <- 0
