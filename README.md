@@ -53,11 +53,11 @@ cluster.numbers <- 100
 seed.X <- 1
 clustering.var <- c("marker1", "marker2")
 set.seed(seed.X)
-FLOWMAP.results <- FLOWMAPR::FLOWMAP(files = files, file.format = file.format, var.remove = var.remove,
-var.annotate = var.annotate, clustering.var = clustering.var,
-cluster.numbers = cluster.numbers, subsamples = subsamples,
-distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
+FLOWMAPR::FLOWMAP(files = files, file.format = file.format, var.remove = var.remove,
+                  var.annotate = var.annotate, clustering.var = clustering.var,
+                  cluster.numbers = cluster.numbers, subsamples = subsamples,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
 ```
 
 ## Contributing
