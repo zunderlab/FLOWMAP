@@ -4,28 +4,38 @@ This repository is to clean up (and hopefully improve) the FLOWMAP algorithm cod
 
 ## Getting Started
 
-???
+To get the FLOWMAPR R package up and working on your computer:
+
+1. Make a github account if you haven't already.
+2. Get access to repo zunderlab/FLOWMAP for your github account.
+3. Create a token by going to this site when logged into your github account: https://github.com/settings/tokens/new
+4. Check off "repo" in the settings for your token.
+5. Click generate token and copy/save the provided code (your PAT) somewhere.
+6. Open R studio and load devtools using library(devtools). If you don't have devtools you may have to install it with install.packages("devtools") and then use library(devtools).
+7. Type the following into R studio: '''install_github(repo = "zunderlab/FLOWMAP", auth_token = “PAT”)''' but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
 ## Running FLOW-MAP
 
-To execute the FLOW-MAP analysis, download a clone of the current commit.
+To run a FLOWMAP analysis on your data set or an example data set (INSTRUCTIONS INCOMING):
 
-Open the FLOWMAP_run.R in RStudio and tweak all variables as needed within that file including:
-- prefolder
-- files
-- save.folder
-- var.annotate
-- var.remove
-- per
-- minimum
-- maximum
-- distance.metric
-- subsamples
-- cluster.numbers
-- seed.X
-- clustering.var
+0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters.
+1. Once you have successfully loaded FLOWMAPR, if you are working in R Studio, you should see '''FLOWMAPR::FLOWMAP()''' autocomplete if you type it into the command line.
+2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
+* files - the directory where you can find the FCS files to be used
+* save.folder - where you want the output files to be saved to
+* var.annotate - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
+* var.remove - any channels you want completely excluded from analysis
+* per - affects connectivity, recommended default is 1
+* minimum - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
+* maximum - maximum number of edges allotted based on density, affects connectivity, recommended default is 3
+* distance.metric - choose manhattan or euclidean
+* subsamples - how many cells to randomly subsample from each FCS file, RECOMMENDATION PENDING
+* cluster.numbers - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500)
+* seed.X - set this for reproducibility
+* clustering.var - which channels to use to influence the graph shape
 
-Then run the entire FLOWMAP_run.R file. You will not need to run any of the other R scripts in the directory as run.R should call them as needed.
+3. Run '''FLOWMAPR::FLOWMAP()''' as a command in R Studio, but pass the variables that you assigned into FLOWMAP function.
+4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
 
 ## Contributing
 
