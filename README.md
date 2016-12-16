@@ -34,8 +34,31 @@ To run a FLOWMAP analysis on your data set or an example data set (INSTRUCTIONS 
   * seed.X - set this for reproducibility
   * clustering.var - which channels to use to influence the graph shape
 
-3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function.
+3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
+
+Example Code:
+```
+files <- "/Users/mesako/Desktop/FLOWMAP-Synthetic-Data-20161216/SingleFLOWMAP"
+save.folder <- "/Users/mesako/Desktop"
+file.format <- "*.fcs"
+var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
+var.remove <- c()
+per <- 1
+minimum <- 2
+maximum <- 3
+distance.metric <- "manhattan"
+subsamples <- 200
+cluster.numbers <- 100
+seed.X <- 1
+clustering.var <- c("marker1", "marker2")
+set.seed(seed.X)
+FLOWMAP.results <- FLOWMAP(files = files, file.format = file.format, var.remove = var.remove,
+                           var.annotate = var.annotate, clustering.var = clustering.var,
+                           cluster.numbers = cluster.numbers, subsamples = subsamples,
+                           distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                           per = per, save.folder = save.folder, shuffle = TRUE, name.sort = FALSE)
+```
 
 ## Contributing
 
