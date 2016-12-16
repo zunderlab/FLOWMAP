@@ -37,7 +37,8 @@ To run a FLOWMAP analysis on your data set or an example data set (INSTRUCTIONS 
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
 
-Example Code:
+### Example Code:
+
 ```
 files <- "/Users/mesako/Desktop/FLOWMAP-Synthetic-Data-20161216/SingleFLOWMAP"
 save.folder <- "/Users/mesako/Desktop"
