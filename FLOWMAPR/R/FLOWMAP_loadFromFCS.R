@@ -15,7 +15,7 @@ Asinh <- function(value) {
 
 GetFCSNames <- function(folder, file.format, sort = TRUE) {
   # get FCS files
-  fcs.files = list.files(path = folder, pattern = file.format,
+  fcs.files <- list.files(path = folder, pattern = file.format,
                          recursive = FALSE, full.names = TRUE)
   if (sort) {
     # sort to organize by hour
@@ -30,7 +30,7 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
   subfolders <- list.files(folder, full.names = TRUE)
   list.of.time.file.names <- list()
   for (folder in subfolders) {
-    fcs.files = list.files(path = folder, pattern = file.format,
+    fcs.files <- list.files(path = folder, pattern = file.format,
                            recursive = FALSE, full.names = TRUE)
     time <- basename(folder)
     list.of.time.file.names[[time]] <- fcs.files
@@ -49,7 +49,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     subsamples <- subsample.new
   }
   for (i in 1:length(fcs.file.names)) {
-    current.file <- tail(strsplit(fcs.file.names[i],"/")[[1]],n=1)
+    current.file <- tail(strsplit(fcs.file.names[i], "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
     # store currently read FCS file
     if (!subsamples) {
@@ -58,8 +58,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                            decades = 0, ncdf = FALSE, min.limit = NULL, dataset = NULL,
                            emptyValue = TRUE)  
       tmp.FCS1 <- head(tmp.FCS1, n = unname(dim(tmp.FCS1)[1]))
-    }
-    else { 
+    } else { 
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
       if (subsample.rand) {
         subsamp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize",

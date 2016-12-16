@@ -1,5 +1,5 @@
 
-ConvertIndex <- function(inds, orig.data.frame, keep.names = TRUE) {
+ConvertIndex <- function(inds, od orig.data.frame, keep.names = TRUE) {
   # inds go down through the rows of the first column
   # before starting at the first row of the second column
   # and going back down, etc.
@@ -70,7 +70,7 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
     names(densities) <- (offset + 1):(offset + table.lengths[1] + table.lengths[2])
   }
   densities[names(densities.no.zeros)] <- densities.no.zeros
-  normalized.densities <- round(densities/max(densities) * (max - min) + min)
+  normalized.densities <- round(densities / max(densities) * (max - min) + min)
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
 }
@@ -108,9 +108,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   # if two cells are identical in all measurements, they should
   # either be clustered together beforehand or excluded (keep one)
   # to avoid Inf edge weights, set their distance to Inf
-  # Inf.ind <- which(cluster.distances.matrix == 0, arr.ind = TRUE)
-  # cluster.distances.matrix[Inf.ind] <- Inf
-  
+
   # For each timepoint:
   #   1. make a complete weighted edgelist (this is standard for building
   #      a regular MST)
@@ -123,7 +121,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   # matrix of their distances to each other)
   el.n1n1.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
                              (as.vector(col(adjacency.n1n1)) + table.lengths[1] + offset), 
-                             as.vector(adjacency.n1n1))
+                              as.vector(adjacency.n1n1))
   colnames(el.n1n1.with.dist) <- c("Vertex 1", "Vertex 2", "Distance")
   # remove permutations (order does not matter)
   # AKA take out edges that are node 1 --- node 3
@@ -154,7 +152,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                                             1:table.lengths[1]]
   el.n1n.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
                             (as.vector(col(adjacency.n1n1)) + offset), 
-                            as.vector(adjacency.n1n))
+                             as.vector(adjacency.n1n))
   # rows are n+1 so add offset
   colnames(el.n1n.with.dist) <- c("Vertex 1", "Vertex 2", "Distance")
   # convert row and col to match correct indexing

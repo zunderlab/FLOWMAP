@@ -15,4 +15,3 @@ ForceDirectedXY <- function(graph) {
   V(graph.with.xy)$y <- force.graph2$lay[, 2]
   return(graph.with.xy)
 }
-

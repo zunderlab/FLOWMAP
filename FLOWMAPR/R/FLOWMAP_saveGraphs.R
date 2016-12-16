@@ -46,16 +46,16 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   graph.l <- matrix(data = c(V(graph)$x, V(graph)$y), nrow = length(V(graph)$x), ncol = 2)
   # set up color scale
   if (which.palette == "jet") {
-    my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))
+    my.palette <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
   }
   if (which.palette == "bluered") {
-    my.palette <- colorRampPalette(c("blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red"))
+    my.palette <- colorRampPalette(c("blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red"))
   }
   color.scale <- my.palette(100)
   # set up node size
   vsize <- all.attributes[, "percent.total"]
   vsize <- (vsize - min(vsize, na.rm = TRUE)) / (max(vsize, na.rm = TRUE) ^ (1 / node.size.scale)) * 
-    ((max.node.size) ^ 0.5/pi) + ((min.node.size) ^ (0.5 / pi))
+    ((max.node.size) ^ 0.5 / pi) + ((min.node.size) ^ (0.5 / pi))
   vsize[is.na(vsize) | (all.attributes[, "percent.total"] == 0)] <- (min.node.size) ^ (0.5 / pi)
   # print out one pdf for each attribute
   for (name in colnames(all.attributes)) {
@@ -73,7 +73,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
     }
     grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
     color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
-    color[is.na(attribute) | (all.attributes[,"percent.total"] == 0)] <- "grey"
+    color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
     fill.color <- color
     is.na(fill.color) <- is.na(attribute)
     frame.color <- color
@@ -87,7 +87,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
          edge.color = edge.color, vertex.size = vsize, edge.label = NA, 
          vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
          asp = graph.aspect)
-    pnts <- cbind(x = c(0.80,0.875,0.875,0.80), y = c(1.1,1.1,0.8,0.8))
+    pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
     legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
     dev.off()
   }

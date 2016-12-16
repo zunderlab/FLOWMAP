@@ -72,8 +72,8 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
     if (are.connected(output.graph,
                       mst.graph.edgelist[i, 1],
                       mst.graph.edgelist[i, 2])) {
-      E(output.graph,P = c(mst.graph.edgelist[i, 1],
-                           mst.graph.edgelist[i, 2]))$label <- "MST"
+      E(output.graph, P = c(mst.graph.edgelist[i, 1],
+                            mst.graph.edgelist[i, 2]))$label <- "MST"
     } else {
       output.graph <- add.edges(output.graph,
                                 as.numeric(mst.graph.edgelist[i, 1:2]),
