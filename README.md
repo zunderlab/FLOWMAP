@@ -74,7 +74,7 @@ FLOWMAPR::FLOWMAP(files = files, file.format = file.format, var.remove = var.rem
 * **Eli Zunder** - *Initial work*
 * **Melissa Ko** - *???*
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/zunderlab/FLOWMAP/graphs/contributors) who participated in this project.
 
 ## License
 
