@@ -21,18 +21,18 @@ To run a FLOWMAP analysis on your data set or an example data set (INSTRUCTIONS 
 0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters.
 1. Once you have successfully loaded FLOWMAPR, if you are working in R Studio, you should see '''FLOWMAPR::FLOWMAP()''' autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
-* files - the directory where you can find the FCS files to be used
-* save.folder - where you want the output files to be saved to
-* var.annotate - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
-* var.remove - any channels you want completely excluded from analysis
-* per - affects connectivity, recommended default is 1
-* minimum - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
-* maximum - maximum number of edges allotted based on density, affects connectivity, recommended default is 3
-* distance.metric - choose manhattan or euclidean
-* subsamples - how many cells to randomly subsample from each FCS file, RECOMMENDATION PENDING
-* cluster.numbers - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500)
-* seed.X - set this for reproducibility
-* clustering.var - which channels to use to influence the graph shape
+  * files - the directory where you can find the FCS files to be used
+  * save.folder - where you want the output files to be saved to
+  * var.annotate - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
+  * var.remove - any channels you want completely excluded from analysis
+  * per - affects connectivity, recommended default is 1
+  * minimum - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
+  * maximum - maximum number of edges allotted based on density, affects connectivity, recommended default is 3
+  * distance.metric - choose manhattan or euclidean
+  * subsamples - how many cells to randomly subsample from each FCS file, RECOMMENDATION PENDING
+  * cluster.numbers - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500)
+  * seed.X - set this for reproducibility
+  * clustering.var - which channels to use to influence the graph shape
 
 3. Run '''FLOWMAPR::FLOWMAP()''' as a command in R Studio, but pass the variables that you assigned into FLOWMAP function.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
