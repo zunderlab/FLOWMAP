@@ -19,7 +19,7 @@ To get the FLOWMAPR R package up and working on your computer:
 To run a FLOWMAP analysis on your data set or an example data set (INSTRUCTIONS INCOMING):
 
 0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters.
-1. Once you have successfully loaded FLOWMAPR, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
+1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
   * files - the directory where you can find the FCS files to be used
   * save.folder - where you want the output files to be saved to
