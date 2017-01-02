@@ -61,22 +61,29 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   for (name in colnames(all.attributes)) {
     # get attribute name and data
     attribute <- all.attributes[, name]
-    # set up color boundaries
-    ifelse (!is.null(scale), 
-            boundary <- scale,
-            boundary <- quantile(attribute, probs = pctile.color, na.rm = TRUE)
-    )
-    boundary <- c(min(boundary), max(boundary))
-    boundary <- round(boundary, 2)
-    if (boundary[1] == boundary[2]) {
-      boundary <- c(boundary[1] - 1, boundary[2] + 1)
+    if (name == "Time") {
+      num.unique <- length(unique(attribute))
+      color.scale <- my.palette(num.unique)
+      color <- color.scale[attribute]
+    } else {
+      # set up color boundaries
+      ifelse (!is.null(scale), 
+              boundary <- scale,
+              boundary <- quantile(attribute, probs = pctile.color, na.rm = TRUE)
+      )
+      boundary <- c(min(boundary), max(boundary))
+      boundary <- round(boundary, 2)
+      if (boundary[1] == boundary[2]) {
+        boundary <- c(boundary[1] - 1, boundary[2] + 1)
+      }
+      grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
+      color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
+      color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
     }
-    grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
-    color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
-    color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
     fill.color <- color
     is.na(fill.color) <- is.na(attribute)
     frame.color <- color
+    
     pdf(file = paste(name, ".pdf", sep = ""),
         width = pdf.width, height = pdf.height, pointsize = 12,
         bg = "transparent")
