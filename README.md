@@ -1,10 +1,42 @@
 # FLOWMAP
 
-This repository is to clean up (and hopefully improve) the FLOWMAP algorithm code, which was developed in R and published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
+This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
 ## Getting Started
 
-To get the FLOWMAPR R package up and working on your computer:
+The instructions below demonstrate how to install this package directly from Github to get the latest release.
+
+### Software and Package Prerequisites:
+Install version 3.3.0 or later of R. As of this release, we recommend using version 3.3.0.
+
+In order to install a package from github, you will need the devtools package. You can install this package with the following commands:
+
+```
+install.packages("devtools")
+library(devtools)
+```
+
+FLOWMAPR package depends on several packages, which can be installed using the below commands:
+
+```
+install.packages("Rclusterpp") 
+install.packages("SDMTools") 
+install.packages("igraph")
+install.packages("robustbase")
+source("http://bioconductor.org/biocLite.R")
+biocLite("flowCore")
+```
+
+Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the NOlan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
+
+```
+library(devtools)
+install_github("nolanlab/scaffold")
+```
+
+### Installing FLOWMAPR:
+
+To currently get the FLOWMAPR R package up and working on your computer:
 
 1. Make a github account if you haven't already.
 2. Get access to repo zunderlab/FLOWMAP for your github account.
