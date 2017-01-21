@@ -9,6 +9,7 @@ MakeOutFolder <- function(runtype) {
 }
 
 
+#' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")
   file.name <- paste(Sys.Date(), file.name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
