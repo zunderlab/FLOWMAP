@@ -6,17 +6,17 @@ Asinh <- function(value) {
     if ((value[i] < 0) | is.na(value[i])) {
       value[i] <- rnorm(1, mean = 0, sd = 0.01)
     }
-    value <- value / 5
-    value <- asinh(value) # value <- log(value + sqrt(value^2 + 1))  
-    return(value)
   }
+  value <- value / 5
+  value <- asinh(value) # value <- log(value + sqrt(value^2 + 1))  
+  return(value)
 }
 
 
 GetFCSNames <- function(folder, file.format, sort = TRUE) {
   # get FCS files
   fcs.files <- list.files(path = folder, pattern = file.format,
-                         recursive = FALSE, full.names = TRUE)
+                          recursive = FALSE, full.names = TRUE)
   if (sort) {
     # sort to organize by hour
     fcs.files <- sort(fcs.files)
@@ -31,7 +31,7 @@ GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
   list.of.time.file.names <- list()
   for (folder in subfolders) {
     fcs.files <- list.files(path = folder, pattern = file.format,
-                           recursive = FALSE, full.names = TRUE)
+                            recursive = FALSE, full.names = TRUE)
     time <- basename(folder)
     list.of.time.file.names[[time]] <- fcs.files
   }

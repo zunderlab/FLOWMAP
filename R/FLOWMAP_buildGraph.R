@@ -91,6 +91,13 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   # try removing edges with 0 distance (Inf weight)
   # if cells are identical in all measurements, distance is 0
   # remove these edges
+  print("head(final.edgelist.with.distances)")
+  print(head(final.edgelist.with.distances))
+  print("tail(final.edgelist.with.distances)")
+  print(tail(final.edgelist.with.distances))
+  print("dim(final.edgelist.with.distances)")
+  print(dim(final.edgelist.with.distances))
+  
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
   output.graph <- add.edges(output.graph, edges = vertices.edges,
                             weight = final.edgelist.with.distances[, 3],
@@ -311,11 +318,19 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   normalized.densities <- normalized.results$normalized.densities
   edgelist.with.distances <- normalized.results$edgelist.with.distances
   # build new edgelist with N edges for each cluster based on normalized density
+  
+  print("unname(normalized.densities)")
+  print(unname(normalized.densities))
+  
   results <- DrawNormalizedEdges(output.graph = output.graph,
                                  cluster.distances.matrix = cluster.distances.matrix,
                                  normalized.densities = normalized.densities,
                                  n = n, offset = FALSE)
   output.graph <- results$output.graph
+  
+  print("output.graph")
+  print(output.graph)
+  
   edgelist.save <- results$final.edgelist.with.distances
   # now add all MST edges that are not yet included in the graph, and annotate all as "MST"
   adjacency.graph <- graph.adjacency(as.matrix(cluster.distances.matrix),
@@ -324,6 +339,9 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
   mst.graph.edgelist <- cbind(get.edgelist(mst.graph), E(mst.graph)$weight)
   class(mst.graph.edgelist) <- "numeric"
+  
+  print("mst.graph.edgelist")
+  print(mst.graph.edgelist)
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
   for (i in 1:nrow(mst.graph.edgelist)) {
     if (are.connected(output.graph, mst.graph.edgelist[i, 1], mst.graph.edgelist[i, 2])) {
@@ -336,6 +354,10 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                                 label = "MST", sequence_assignment = n)
     }
   }
+  
+  print("output.graph")
+  print(output.graph)
+  
   return(list(output.graph = output.graph,
               edgelist.save = edgelist.save))
 }

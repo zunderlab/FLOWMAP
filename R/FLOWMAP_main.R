@@ -110,10 +110,13 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     cat("Subsampling all files to:", subsamples, "\n")
   } 
   # if not the above, then length(subsample) = length(num.files)
+  # NOTE(Jordan): Separate function for each different runtype.
+  # NOTE(Jordan): Can SingleFLOWMAP be a special case of MultiFLOWMAP? Some of the code is the same.
   if (runtype == "SingleFLOWMAP") {
     fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                               channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)
     if (shuffle) {
+      # NOTE(Jordan): Helper function.
       for (i in 1:length(fcs.files)) {
         if (length(subsamples) > 1) {
           subsamp <- subsamples[i]
