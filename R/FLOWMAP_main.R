@@ -106,7 +106,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   setwd(output.folder)
   
   if (downsample) {
-    print("Downsampling all files using SPADE functions")
+    cat("Downsampling all files using SPADE functions")
     fcs.files <- DownsampleFCS(fcs.file.names, clustering.var,
                                distance.metric, exclude.pctile = 0.01,
                                target.pctile = NULL,
