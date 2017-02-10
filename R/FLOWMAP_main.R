@@ -112,12 +112,11 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                target.pctile = NULL,
                                target.number = NULL,
                                target.percent = 0.1)
+    subsamples <- FALSE
   }
   
   if (length(subsamples) > 1 & length(subsamples) != num.files & subsamples != FALSE) {
     stop("Number to subsample not specified for all files!")
-  } else if (length(subsamples) == 1) {
-    cat("Subsampling all files to:", subsamples, "\n")
   } 
   # if not the above, then length(subsample) = length(num.files)
   # NOTE(Jordan): Separate function for each different runtype.
