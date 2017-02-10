@@ -232,7 +232,14 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                   cellnum = subsamples)
     graph <- output.graph
   }
+  print("files")
+  print(files)
   file.name <- paste(basename(files), "FLOW-MAP", sep = "_")
+  if (length(files) > 1) {
+    file.name <- file.name[1]
+  }
+  print("file.name")
+  print(file.name)
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(basename(files), "FLOW-MAP", "xy", sep = "_")
