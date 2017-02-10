@@ -234,15 +234,17 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   }
   print("files")
   print(files)
-  file.name <- paste(basename(files), "FLOW-MAP", sep = "_")
   if (length(files) > 1) {
-    file.name <- file.name[1]
+    file.name <- files[1]
   }
+  print("file.name")
+  print(file.name)
+  file.name <- paste(unlist(strsplit(basename(files), "\\."))[1], "FLOW-MAP", sep = "_")
   print("file.name")
   print(file.name)
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
-  file.name.xy <- paste(basename(files), "FLOW-MAP", "xy", sep = "_")
+  file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   PrintSummary()
   ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
