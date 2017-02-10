@@ -2,5 +2,6 @@
 Synthetic Data/
 *_singleFLOWMAP_run/
 .Rproj.user
+.Rapp.history
 FLOWMAP_run.R
 OldFLOWMAP/

@@ -143,8 +143,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
         # they can't be clustered together.
         cat("Cannot use all cells as individual nodes due to duplicate values, clustering to eliminate these", "\n")
         cluster.numbers <- nrow(fcs.files[[1]]) - inf.flag
-        print("cluster.numbers")
-        print(cluster.numbers)
         file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                     numcluster = cluster.numbers, distance.metric = distance.metric)
       } else {
