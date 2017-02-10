@@ -88,7 +88,7 @@ DefineRuntype <- function(files, file.format, name.sort) {
 FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                     clustering.var, cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, shuffle = FALSE,
-                    name.sort = TRUE) {
+                    name.sort = TRUE, downsample = TRUE) {
   # "files" variable could be one of the following:
   # a single fcs file path
   # a single folder path containing 2+ fcs files
@@ -104,6 +104,16 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   setwd(save.folder)
   output.folder <- MakeOutFolder(runtype = runtype)
   setwd(output.folder)
+  
+  if (downsample) {
+    print("Downsampling all files using SPADE functions")
+    fcs.files <- DownsampleFCS(fcs.file.names, clustering.var,
+                               distance.metric, exclude.pctile = 0.01,
+                               target.pctile = NULL,
+                               target.number = NULL,
+                               target.percent = 0.1)
+  }
+  
   if (length(subsamples) > 1 & length(subsamples) != num.files & subsamples != FALSE) {
     stop("Number to subsample not specified for all files!")
   } else if (length(subsamples) == 1) {
@@ -199,7 +209,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
-
+    
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
       # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
@@ -232,16 +242,10 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                   cellnum = subsamples)
     graph <- output.graph
   }
-  print("files")
-  print(files)
   if (length(files) > 1) {
     file.name <- files[1]
   }
-  print("file.name")
-  print(file.name)
   file.name <- paste(unlist(strsplit(basename(files), "\\."))[1], "FLOW-MAP", sep = "_")
-  print("file.name")
-  print(file.name)
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")

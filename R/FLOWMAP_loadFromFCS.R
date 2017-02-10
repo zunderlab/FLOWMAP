@@ -146,6 +146,37 @@ LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.a
   return(list.of.time.clean.FCS.files)
 }
 
+# SPADE
+# density-dependent downsampling
+
+DownsampleFCS <- function(fcs.files, clustering.var,
+                          distance.metric, exclude.pctile = 0.01,
+                          target.pctile = NULL,
+                          target.number = NULL,
+                          target.percent = 0.1) {
+  downsample.files <- c()
+  for (f in fcs.files) {
+    base.name <- unlist(strsplit(f, "\\."))[1]
+    infilename <- paste(base.name, "density.fcs", sep = "_")
+    transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
+    spade::SPADE.addDensityToFCS(file.name, infilename,
+                                 cols = clustering.var, comp = TRUE,
+                                 transforms = transforms)
+    outfilename <- paste(base.name, "downsample.fcs", sep = "_")
+    spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
+                               exclude_pctile = exclude.pctile,
+                               target_pctile = target.pctile,
+                               target_number = target.number,
+                               target_percent = target.percent)
+    downsample.files <- c(downsample.files, outfilename)
+  }
+  return(downsample.files)
+}
+
+
+# PseudoClusterFCS
+# how to deal with NO clustering
+
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
   label.key <- list()

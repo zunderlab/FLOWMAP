@@ -15,6 +15,7 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
   return (object)
 }
 
+
 ClusterFCS <- function(fcs.files, clustering.var, numcluster,
                        distance.metric) {
   full.clusters <- data.frame()
