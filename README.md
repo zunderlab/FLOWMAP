@@ -2,6 +2,22 @@
 
 This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
+## Code Status
+### Known Issues (“Bugs”)
+* fix percent/count after SPADE downsampling in final graph
+
+### Planned Features
+* introduce SPADE downsampling variables to specify by user
+* update summary print method to include new variables
+* improve specifying mode “single” or “multi” type of FLOW-MAP
+* fix “detecting type” method to instead test inputs and throw error if not correct type for provided data
+* improve “load” to allow loading cluster tables/matrix 
+
+### Requested Features
+* adjust ratio of edges within same time point to edges between time points
+* save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
+
+
 ## Getting Started
 
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
