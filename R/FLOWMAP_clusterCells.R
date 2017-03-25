@@ -17,7 +17,7 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
 
 
 ClusterFCS <- function(fcs.files, clustering.var, numcluster,
-                       distance.metric) {
+                       distance.metric, cluster.type = "hclust") {
   full.clusters <- data.frame()
   table.breaks <- c()
   table.lengths <- c()
@@ -39,8 +39,17 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     cluster.medians[[i]] <- data.frame()
     tmp.FCS.for.cluster <- subset(x = current.file, select = clustering.var)
     cat("Subsetting for clustering channels only", "\n")
-    cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-                                        distance.metric = distance.metric, numcluster = numcluster[i])
+    if (cluster.type == "hclust") {
+      cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+                                          distance.metric = distance.metric, numcluster = numcluster[i])
+    } else if (cluster.type == "spade") {
+      cluster.results <- SPADE.cluster(tbl = tmp.FCS.for.cluster, k = numcluster)
+    } else {
+      stop("Do not recognize cluster type!")
+    }
+    
+    # cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+    #                                     distance.metric = distance.metric, numcluster = numcluster[i])
     cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
     cluster.medians[[i]] <- cluster.results$new.medians
     cluster.counts[[i]] <- cluster.results$new.counts
@@ -91,6 +100,11 @@ MultiClusterFCS <- function(list.of.time.files, clustering.var, numcluster, dist
   }
   return(list.of.FLOWMAP.clusters)
 }
+
+# SPADEClustering <- function(data, transforms, k) {
+#   clust <- spade::SPADE.cluster(SPADE.transform.matrix(data, transforms), k)
+#   return(clust$centers)
+# }
 
 
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {

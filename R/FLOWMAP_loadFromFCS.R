@@ -43,6 +43,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 10000, subsample.rand = FALSE,
                          transform = TRUE, scale = FALSE) {
   clean.fcs.files <- list()
+  print(subsamples)
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
     subsample.new <- rep(subsamples, times = length(fcs.file.names))
@@ -151,9 +152,17 @@ LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.a
 
 DownsampleFCS <- function(fcs.files, clustering.var,
                           distance.metric, exclude.pctile = 0.01,
-                          target.pctile = NULL,
+                          target.pctile = 0.99,
                           target.number = NULL,
                           target.percent = 0.1) {
+  
+  # In this study, the SPADE package was used
+  # to perform density-dependent downsampling and hierarchical
+  # clustering as previously described (Linderman et al., 2012;
+  # Qiu et al., 2011). Parameters used for clustering were
+  # Downsampling Exclude Percentile = 0.01, Downsampling Target
+  # Percentile = 0.99, and Target Clusters = 200. 
+  
   downsample.files <- c()
   for (file.name in fcs.files) {
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]

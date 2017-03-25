@@ -77,6 +77,10 @@ DefineRuntype <- function(files, file.format, name.sort) {
   } else {
     stop("Unknown 'files' variable type provided!")
   }
+  cat("single.flag", single.flag, "\n")
+  cat("fcs.file.flag", fcs.file.flag, "\n")
+  cat("vector.flag", vector.flag, "\n")
+  cat("list.flag", list.flag, "\n")
   cat("runtype is", runtype, "\n")
   return(list(runtype = runtype,
               num.files = num.files,
@@ -89,6 +93,8 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                     clustering.var, cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, shuffle = FALSE,
                     name.sort = TRUE, downsample = TRUE) {
+  print("subsamples")
+  print(subsamples)
   # "files" variable could be one of the following:
   # a single fcs file path
   # a single folder path containing 2+ fcs files
@@ -106,14 +112,17 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   setwd(output.folder)
   
   if (downsample) {
-    cat("Downsampling all files using SPADE functions")
-    fcs.files <- DownsampleFCS(fcs.file.names, clustering.var,
-                               distance.metric, exclude.pctile = 0.01,
-                               target.pctile = NULL,
-                               target.number = NULL,
-                               target.percent = 0.1)
+    cat("Downsampling all files using SPADE functions", "\n")
+    fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
+                                    distance.metric, exclude.pctile = 0.01,
+                                    target.pctile = NULL,
+                                    target.number = NULL,
+                                    target.percent = 0.1)
     subsamples <- FALSE
   }
+  
+  print("fcs.file.names")
+  print(fcs.file.names)
   
   if (length(subsamples) > 1 & length(subsamples) != num.files & subsamples != FALSE) {
     stop("Number to subsample not specified for all files!")
@@ -125,18 +134,24 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                               channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)
     if (shuffle) {
+      x <- c()
       # NOTE(Jordan): Helper function.
       for (i in 1:length(fcs.files)) {
         if (length(subsamples) > 1) {
           subsamp <- subsamples[i]
+        } else if (subsamples == FALSE) {
+          subsamp <- nrow(fcs.files[[i]])
         } else {
           subsamp <- subsamples
         }
         df1 <- fcs.files[[i]]
+        x <- c(x, nrow(df1))
         df2 <- df1[sample(nrow(df1)), ]
         fcs.files[[i]] <- df2
         rownames(fcs.files[[i]]) <- seq(1:subsamp)
       }
+      print("x")
+      print(x)
     }
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       all.cells <- data.frame()
@@ -154,6 +169,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
         cluster.numbers <- nrow(fcs.files[[1]]) - inf.flag
         file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                     numcluster = cluster.numbers, distance.metric = distance.metric)
+                                    # cluster.type = "hclust")
       } else {
         cat("Use all cells as individual nodes, no clustering", "\n")
         full.clusters <- data.frame()
@@ -191,19 +207,25 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                    subsamples = subsamples, subsample.rand)
     if (shuffle) {
+      x <- c()
       for (n in 1:length(fcs.files)) {
         for (i in 1:length(fcs.files[[n]])) {
           if (length(subsamples) > 1) {
             subsamp <- subsamples[[n]][i]
+          } else if (subsamples == FALSE) {
+            subsamp <- nrow(fcs.files[[n]][i])
           } else {
             subsamp <- subsamples
           }
           df1 <- fcs.files[[n]][[i]]
+          x <- c(x, nrow(df1))
           df2 <- df1[sample(nrow(df1)), ]
           fcs.files[[n]][[i]] <- df2
           rownames(fcs.files[[n]][[i]]) <- seq(1:subsamp)
         }
       }
+      print("x")
+      print(x)
     }
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files

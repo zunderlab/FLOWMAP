@@ -62,6 +62,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   for (name in colnames(all.attributes)) {
     # get attribute name and data
     attribute <- all.attributes[, name]
+    print(name)
     if (name == "Time") {
       num.unique <- length(unique(attribute))
       color.scale <- my.palette(num.unique)
@@ -77,6 +78,8 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       if (boundary[1] == boundary[2]) {
         boundary <- c(boundary[1] - 1, boundary[2] + 1)
       }
+      print("boundary")
+      print(boundary)
       grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
       color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
       color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"

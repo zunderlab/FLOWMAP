@@ -422,13 +422,17 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   # This section annotates the graph
   anno.cat <- c()
   anno <- list()
+  
+  # handle different numbers of cellnum
+  
+  
   # iterate through all times and annotate
   for (f in 1:length(FLOWMAP.clusters$cluster.medians)) {
     cat("Annotating graph for file", f, "\n")
     # get medians for all parameters and counts for all clusters
     counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
     anno$count <- counts
-    anno$percent.total <- data.frame(percent.total = c(counts / cellnum))
+    anno$percent.total <- data.frame(percent.total = c(counts / cellnum[f]))
     anno$medians  <- FLOWMAP.clusters$cluster.medians[[f]]
     # add time information column
     time.matrix <- matrix(f, nrow = length(anno$count))
