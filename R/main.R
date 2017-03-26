@@ -139,23 +139,10 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
                     starting.files = c("FCS", "cluster_matrix"),
                     shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...) {
-  # "files" variable could be one of the following:
-  # a single fcs file path
-  # a single folder path containing 1+ fcs files
-  # a vector of fcs file paths
-  # a single folder path, containing subfolders,
-  # which each contain 2+ fcs files
-  # a list name by time, each element is a vector
-  # of 1+ fcs file paths from each treatment/condition
-  
   # optional variables
   # transform 
   # scale
   # subsample.rand
-  # exclude.pctile
-  # target.pctile 
-  # target.number 
-  # target.percent
   # starting.files = c("FCS", "cluster_matrix")
   
   setwd(save.folder)
