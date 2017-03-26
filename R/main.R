@@ -111,9 +111,8 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   # target.pctile = 0.99
   # target.number = NULL
   # target.percent = 0.1
-  
-  starting.files = c("FCS", "cluster_matrix")
-  save.folder, mode = c("single", "multi")
+  # starting.files = c("FCS", "cluster_matrix")
+  # save.folder, mode = c("single", "multi")
   
   runtype.results <- DefineRuntype(files, name.sort)
   runtype <- runtype.results$runtype
