@@ -44,7 +44,6 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, subsample.rand = TRUE,
                          transform = TRUE, scale = FALSE) {
   clean.fcs.files <- list()
-  print(subsamples)
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
     subsample.new <- rep(subsamples, times = length(fcs.file.names))
