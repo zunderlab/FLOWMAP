@@ -75,6 +75,9 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       if (boundary[1] == boundary[2]) {
         boundary <- c(boundary[1] - 1, boundary[2] + 1)
       }
+      if (Inf %in% boundary) {
+        next()
+      }
       grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
       color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
       color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
@@ -147,7 +150,7 @@ PrintPanel <- function(var.annotate) {
   return(panel)
 }
 
-PrintSummary <- function(...) {
+PrintSummary <- function() {
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
   # files, var.remove, var.annotate, clustering.var,
@@ -155,6 +158,9 @@ PrintSummary <- function(...) {
   # minimum, maximum, per, save.folder, mode = c("single", "multi"),
   # starting.files = c("FCS", "cluster_matrix"),
   # shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...
+  
+  print(ls())
+  print(objects())
   
   # if (exists("mode")) {
   #   print("mode")
@@ -205,6 +211,42 @@ PrintSummary <- function(...) {
   if (exists("distance.metric")) {
     summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
                                           "distance metric")
+  }
+  if (exists("exclude.pctile")) {
+    if (is.null(exclude.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", "NULL",
+                                            "exclude percentile for downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", exclude.pctile,
+                                            "exclude percentile for downsampling")
+    }
+  }
+  if (exists("target.pctile")) {
+    if (is.null(target.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", "NULL",
+                                            "target percentile for downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", target.pctile,
+                                            "target percentile for downsampling")
+    }
+  }
+  if (exists("target.number")) {
+    if (is.null(target.number)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.number", "NULL",
+                                            "target number for downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.number", target.number,
+                                            "target number for downsampling")
+    }
+  }
+  if (exists("target.percent")) {
+    if (is.null(target.percent)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.percent", "NULL",
+                                            "target percent for downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.percent", target.percent,
+                                            "target percent for downsampling")
+    }
   }
   if (exists("per")) {
     summary[(dim(summary)[1] + 1), ] <- c("per", per,

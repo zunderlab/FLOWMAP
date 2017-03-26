@@ -147,6 +147,12 @@ LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.a
   return(list.of.time.clean.FCS.files)
 }
 
+ConvertVariables <- function(clustering.var, var.annotate) {
+  ind <- match(clustering.var, var.annotate)
+  fixed.clustering.var <- names(var.annotate)[ind]
+  return(fixed.clustering.var)
+}
+
 # SPADE
 # density-dependent downsampling
 
@@ -170,7 +176,7 @@ DownsampleFCS <- function(fcs.files, clustering.var, distance.metric,
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
     infilename <- paste(base.name, "density.fcs", sep = "_")
     spade::SPADE.addDensityToFCS(file.name, infilename,
-                                 cols = clustering.var, comp = TRUE,
+                                 cols = ConvertVariables(clustering.var, var.annotate), comp = TRUE,
                                  transforms = flowCore::arcsinhTransform(a = 0, b = 0.2))
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     spade::SPADE.downsampleFCS(infilename = infilename, outfilename,

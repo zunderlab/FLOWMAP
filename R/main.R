@@ -140,7 +140,7 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   # NOTE(Jordan): Can SingleFLOWMAP be a special case of MultiFLOWMAP? Some of the code is the same.
   if (runtype == "SingleFLOWMAP") {
     fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                              channel.annotate = var.annotate, subsamples = subsamples, ...)
+                              channel.annotate = var.annotate, subsamples = subsamples)
     if (shuffle) {
       x <- c()
       # NOTE(Jordan): Helper function.
@@ -211,7 +211,7 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
     graph <- results$output.graph
   } else if (runtype == "MultiFLOWMAP") {
     fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-                                   subsamples = subsamples, ...)
+                                   subsamples = subsamples)
     if (shuffle) {
       x <- c()
       for (n in 1:length(fcs.files)) {
@@ -248,7 +248,7 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
                                label.key = label.key)
   } else if (runtype == "SingleTimepoint") {
     fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                             channel.annotate = var.annotate, subsamples = subsamples, ...)
+                             channel.annotate = var.annotate, subsamples = subsamples)
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
       # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
