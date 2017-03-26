@@ -232,7 +232,12 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
     if (check[1]) {
       stop("Unknown 'files' format provided for specified mode!")
     }
-    fcs.file.names <- files # only one FCS file given
+    if (check[2] == "FCS") {
+      fcs.file.names <- files
+    }
+    if (check[2] == "folder") {
+      fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
+    }
     file.name <- fcs.file.names
     runtype <- "SingleTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
@@ -253,7 +258,6 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   } else {
     stop("Unknown mode!")
   }
-  
   file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)

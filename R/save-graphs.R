@@ -153,11 +153,7 @@ PrintPanel <- function(var.annotate) {
 PrintSummary <- function() {
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
-  # files, var.remove, var.annotate, clustering.var,
-  # cluster.numbers, subsamples, distance.metric,
-  # minimum, maximum, per, save.folder, mode = c("single", "multi"),
-  # starting.files = c("FCS", "cluster_matrix"),
-  # shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...
+  # starting.files = c("FCS", "cluster_matrix")
   
   if (exists("mode")) {
     summary[(dim(summary)[1] + 1), ] <- c("mode", toString(mode),
