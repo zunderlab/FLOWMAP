@@ -8,34 +8,34 @@
 #' @import scaffold
 #' @import SDMTools
 
-DefineRuntype <- function(files, file.format, name.sort) {
+DefineRuntype <- function(files, name.sort) {
   num.files <- 0
   single.flag <- length(files) <= 1
-  fcs.file.flag <- length(grep(pattern = file.format, x = files)) > 0
+  fcs.file.flag <- length(grep(pattern = "\\.fcs", x = files)) > 0
   vector.flag <- is.vector(files)
   list.flag <- is.list(files)
   if (!fcs.file.flag & single.flag) {
     temp.files <- list.files(files, full.names = TRUE)
     temp.file <- temp.files[1]
-    deeper.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
+    deeper.fcs.file.flag <- length(grep(pattern = "\\.fcs", x = temp.file)) > 0
     if (!deeper.fcs.file.flag) {
       temp.folder <- temp.file
       temp.files <- list.files(temp.folder, full.names = TRUE)
       temp.file <- temp.files[1]
-      deepest.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
+      deepest.fcs.file.flag <- length(grep(pattern = "\\.fcs", x = temp.file)) > 0
       if (deepest.fcs.file.flag) {
         for (i in (1:length(temp.files))) {
           temp.folder <- temp.files[i]
-          num.files <- num.files + length(list.files(temp.folder, pattern = file.format))
+          num.files <- num.files + length(list.files(temp.folder, pattern = "\\.fcs"))
         }
       }
     } else {
-      num.files <- length(list.files(files, pattern = file.format))
+      num.files <- length(list.files(files, pattern = "\\.fcs"))
     }
   } else if (!fcs.file.flag & list.flag) {
     temp.files <- files[[1]]
     temp.file <- temp.files[1]
-    deeper.fcs.file.flag <- length(grep(pattern = file.format, x = temp.file)) > 0
+    deeper.fcs.file.flag <- length(grep(pattern = "\\.fcs", x = temp.file)) > 0
     if (deeper.fcs.file.flag) {
       for (i in length(files)) {
         num.files <- num.files + length(files[[i]])
@@ -48,13 +48,13 @@ DefineRuntype <- function(files, file.format, name.sort) {
       runtype <- "SingleTimepoint"
       num.files <- 1
     } else if (deeper.fcs.file.flag) {
-      fcs.file.names <- GetFCSNames(folder = files, file.format = file.format, sort = name.sort)
+      fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
       runtype <- "SingleFLOWMAP"
       num.files <- length(fcs.file.names)
     } else if (deepest.fcs.file.flag) {
       # folder containing subfolders which contain 
       # FCS files provided, load FCS file paths
-      fcs.file.names <- GetMultiFCSNames(folder = files, file.format = file.format, sort = name.sort)
+      fcs.file.names <- GetMultiFCSNames(folder = files, sort = name.sort)
       runtype <- "MultiFLOWMAP"
       num.files <- 0
       for (i in 1:length(fcs.file.names)) {
@@ -89,12 +89,11 @@ DefineRuntype <- function(files, file.format, name.sort) {
 
 
 #' @export
-FLOWMAP <- function(files, file.format, var.remove, var.annotate,
-                    clustering.var, cluster.numbers, subsamples, distance.metric,
-                    minimum, maximum, per, save.folder, shuffle = FALSE,
-                    name.sort = TRUE, downsample = TRUE) {
-  print("subsamples")
-  print(subsamples)
+FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
+                    cluster.numbers, subsamples, distance.metric,
+                    minimum, maximum, per, save.folder, mode = c("single", "multi"),
+                    starting.files = c("FCS", "cluster_matrix"),
+                    shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...) {
   # "files" variable could be one of the following:
   # a single fcs file path
   # a single folder path containing 2+ fcs files
@@ -103,7 +102,20 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   # which each contain 2+ fcs files
   # a list name by treatment/conditions, each element is a 
   # vector of 2+ fcs file paths
-  runtype.results <- DefineRuntype(files, file.format, name.sort)
+  
+  # optional variables
+  # transform = TRUE
+  # scale = FALSE
+  # subsample.rand
+  # exclude.pctile = 0.01
+  # target.pctile = 0.99
+  # target.number = NULL
+  # target.percent = 0.1
+  
+  starting.files = c("FCS", "cluster_matrix")
+  save.folder, mode = c("single", "multi")
+  
+  runtype.results <- DefineRuntype(files, name.sort)
   runtype <- runtype.results$runtype
   num.files <- runtype.results$num.files
   fcs.file.names <- runtype.results$fcs.file.names
@@ -132,7 +144,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
   # NOTE(Jordan): Can SingleFLOWMAP be a special case of MultiFLOWMAP? Some of the code is the same.
   if (runtype == "SingleFLOWMAP") {
     fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                              channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)
+                              channel.annotate = var.annotate, subsamples = subsamples, ...)
     if (shuffle) {
       x <- c()
       # NOTE(Jordan): Helper function.
@@ -150,8 +162,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
         fcs.files[[i]] <- df2
         rownames(fcs.files[[i]]) <- seq(1:subsamp)
       }
-      print("x")
-      print(x)
     }
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       all.cells <- data.frame()
@@ -205,7 +215,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
     graph <- results$output.graph
   } else if (runtype == "MultiFLOWMAP") {
     fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-                                   subsamples = subsamples, subsample.rand)
+                                   subsamples = subsamples, ...)
     if (shuffle) {
       x <- c()
       for (n in 1:length(fcs.files)) {
@@ -224,8 +234,6 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
           rownames(fcs.files[[n]][[i]]) <- seq(1:subsamp)
         }
       }
-      print("x")
-      print(x)
     }
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
@@ -244,7 +252,7 @@ FLOWMAP <- function(files, file.format, var.remove, var.annotate,
                                label.key = label.key)
   } else if (runtype == "SingleTimepoint") {
     fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                             channel.annotate = var.annotate, subsamples = subsamples, subsample.rand = TRUE)
+                             channel.annotate = var.annotate, subsamples = subsamples, ...)
     if (cluster.numbers <= 0 || cluster.numbers == FALSE) {
       stop("Not implemented yet!")
       # file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,

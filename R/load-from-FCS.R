@@ -12,10 +12,9 @@ Asinh <- function(value) {
   return(value)
 }
 
-
-GetFCSNames <- function(folder, file.format, sort = TRUE) {
+GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
-  fcs.files <- list.files(path = folder, pattern = file.format,
+  fcs.files <- list.files(path = folder, pattern = "\\.fcs",
                           recursive = FALSE, full.names = TRUE)
   if (sort) {
     # sort to organize by hour
@@ -24,23 +23,25 @@ GetFCSNames <- function(folder, file.format, sort = TRUE) {
   return(fcs.files)
 }
 
-
-GetMultiFCSNames <- function(folder, file.format, sort = TRUE) {
+GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
   subfolders <- list.files(folder, full.names = TRUE)
   list.of.time.file.names <- list()
   for (folder in subfolders) {
-    fcs.files <- list.files(path = folder, pattern = file.format,
+    fcs.files <- list.files(path = folder, pattern = "\\.fcs",
                             recursive = FALSE, full.names = TRUE)
     time <- basename(folder)
+    if (sort) {
+      # sort to organize by hour
+      fcs.files <- sort(fcs.files)
+    }
     list.of.time.file.names[[time]] <- fcs.files
   }
   return(list.of.time.file.names)
 }
 
-
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
-                         subsamples = 10000, subsample.rand = FALSE,
+                         subsamples = 1000, subsample.rand = TRUE,
                          transform = TRUE, scale = FALSE) {
   clean.fcs.files <- list()
   print(subsamples)
@@ -101,9 +102,8 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   return(clean.fcs.files)
 }
 
-
 LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.annotate,
-                              subsamples, subsample.rand = FALSE, transform = TRUE, scale = FALSE) {
+                              subsamples = 1000, subsample.rand = TRUE, transform = TRUE, scale = FALSE) {
   list.of.time.clean.FCS.files <- list()
   subsamp.orig <- subsamples
   for (time in names(list.of.time.file.names)) {
@@ -121,7 +121,7 @@ LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.a
                                                          channel.remove,
                                                          channel.annotate,
                                                          subsamples,
-                                                         subsample.rand = FALSE,
+                                                         subsample.rand,
                                                          transform, scale)
     f.names <- c() 
     for (i in 1:length(list.of.time.clean.FCS.files[[time]])) {
@@ -150,27 +150,28 @@ LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.a
 # SPADE
 # density-dependent downsampling
 
-DownsampleFCS <- function(fcs.files, clustering.var,
-                          distance.metric, exclude.pctile = 0.01,
-                          target.pctile = 0.99,
-                          target.number = NULL,
-                          target.percent = 0.1) {
+DownsampleFCS <- function(fcs.files, clustering.var, distance.metric,
+                          exclude.pctile = 0.01, target.pctile = 0.99,
+                          target.number = NULL, target.percent = 0.1,
+                          ...) {
   
-  # In this study, the SPADE package was used
+  # Eli: In this study, the SPADE package was used
   # to perform density-dependent downsampling and hierarchical
   # clustering as previously described (Linderman et al., 2012;
   # Qiu et al., 2011). Parameters used for clustering were
   # Downsampling Exclude Percentile = 0.01, Downsampling Target
   # Percentile = 0.99, and Target Clusters = 200. 
   
+  # optional variables
+  # transforms
+  
   downsample.files <- c()
   for (file.name in fcs.files) {
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
     infilename <- paste(base.name, "density.fcs", sep = "_")
-    transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
     spade::SPADE.addDensityToFCS(file.name, infilename,
                                  cols = clustering.var, comp = TRUE,
-                                 transforms = transforms)
+                                 transforms = flowCore::arcsinhTransform(a = 0, b = 0.2))
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
                                exclude_pctile = exclude.pctile,
@@ -181,11 +182,6 @@ DownsampleFCS <- function(fcs.files, clustering.var,
   }
   return(downsample.files)
 }
-
-
-# PseudoClusterFCS
-# how to deal with NO clustering
-
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
   label.key <- list()
@@ -204,7 +200,6 @@ ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
   return(list(fixed.list.FCS.files = fixed.list.FCS.files,
               label.key = label.key))
 }
-
 
 ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
   data.frame.with.character.labels <- data.frame.with.numeric.labels

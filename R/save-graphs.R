@@ -8,7 +8,6 @@ MakeOutFolder <- function(runtype) {
   return (output.folder)
 }
 
-
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")
@@ -17,7 +16,6 @@ ConvertToGraphML <- function(output.graph, file.name) {
   write.graph(output.graph, file.name, format = "graphml")
   return(file.name)
 }
-
 
 ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100,
@@ -137,49 +135,106 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   }
 }
 
-
 PrintSummary <- function(...) {
-  summary <- matrix()
+  # summary <- matrix()
+  summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
+  # files, var.remove, var.annotate, clustering.var,
+  # cluster.numbers, subsamples, distance.metric,
+  # minimum, maximum, per, save.folder, mode = c("single", "multi"),
+  # starting.files = c("FCS", "cluster_matrix"),
+  # shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...
+  
+  if (exists("output.folder")) {
+    summary[(dim(summary)[1] + 1), ] <- c("output.folder", toString(output.folder),
+                                          "output folder")
+  }  
+  if (exists("final.file.name")) {
+    summary[(dim(summary)[1] + 1), ] <- c("final.file.name", toString(final.file.name),
+                                          "final file name")
+  }  
+  if (exists("fcs.file.names")) {
+    summary[(dim(summary)[1] + 1), ] <- c("fcs.file.names", toString(fcs.file.names),
+                                          "selected files")
+  }  
+  if (exists("num.files")) {
+    summary[(dim(summary)[1] + 1), ] <- c("num.files", num.files,
+                                          "number of selected files")
+  }  
+  if (exists("mode")) {
+    summary[(dim(summary)[1] + 1), ] <- c("mode", toString(mode),
+                                          "selected FLOW-MAP mode")
+  }
+  if (exists("starting.files")) {
+    summary[(dim(summary)[1] + 1), ] <- c("starting.files", toString(starting.files),
+                                          "selected starting file types")
+  }
   if (exists("var.annotate")) {
-    summary["annotated variables:"] <- toString(var.annotate)
+    # summary["annotated variables:"] <- toString(var.annotate)
+    summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(var.annotate),
+                                          "annotated variables")
   }
   if (exists("var.remove")) {
-    summary["removed variables:"] <- toString(var.remove)
+    # summary["removed variables:"] <- toString(var.remove)
+    summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(var.remove),
+                                          "removed variables")
   }
   if (exists("clustering.var")) {
-    summary["clustering variables:"] <- toString(clustering.var)
+    # summary["clustering variables:"] <- toString(clustering.var)
+    summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(clustering.var),
+                                          "clustering variables")
   } 
   if (exists("per")) {
-    summary["distance for calculated density (n percent):"] <- toString(per)
+    # summary["distance for calculated density (n percent):"] <- toString(per)
+    summary[(dim(summary)[1] + 1), ] <- c("per", per,
+                                          "distance for calculated density (n percent)")
   } 
   if (exists("minimum")) {
-    summary["min number of edges:"] <- toString(minimum)
+    # summary["min number of edges:"] <- toString(minimum)
+    summary[(dim(summary)[1] + 1), ] <- c("minimum", minimum,
+                                          "min number of edges")
   } 
   if (exists("maximum")) {
-    summary["max number of edges:"] <- toString(maximum)
+    # summary["max number of edges:"] <- toString(maximum)
+    summary[(dim(summary)[1] + 1), ] <- c("maximum", maximum,
+                                          "max number of edges")
   } 
   if (exists("distance.metric")) {
-    summary["distance metric:"] <- toString(distance.metric)
+    # summary["distance metric:"] <- toString(distance.metric)
+    summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
+                                          "distance metric")
   } 
   if (exists("subsamples")) {
-    summary["subsamples for all FCS file:"] <- toString(subsamples)
+    # summary["subsamples for all FCS files:"] <- toString(subsamples)
+    summary[(dim(summary)[1] + 1), ] <- c("subsamples", subsamples,
+                                          "subsamples for all FCS files")
   } 
   if (exists("subsample.rand")) {
-    summary["random subsample:"] <- toString(subsample.rand)
+    # summary["random subsample:"] <- toString(subsample.rand)
+    summary[(dim(summary)[1] + 1), ] <- c("subsample.rand", toString(subsample.rand),
+                                          "random subsample setting")
   } 
   if (exists("seed.X")) {
-    summary["set seed value:"] <- toString(seed.X)
+    # summary["set seed value:"] <- toString(seed.X)
+    summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
+                                          "set seed value")
   }
   if (exists("cluster.numbers")) {
-    summary["number of clusters for all FCS file:"] <- toString(cluster.numbers)
+    # summary["number of clusters for all FCS files:"] <- toString(cluster.numbers)
+    summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", cluster.numbers,
+                                          "number of clusters for all FCS files")
   } 
-  if (exists("label.key")) {
-    summary["label key:"] <- toString(label.key)
-  } 
-  summary <- as.data.frame(summary)
+  # if (exists("label.key")) {
+  #   summary["label key:"] <- toString(label.key)
+  #   summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
+  #                                         "set seed value")
+  # } 
+  # summary <- as.data.frame(summary)
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
-  file.name <- paste(file.name, "summary", sep = "_")
-  file.name <- paste(file.name, ".xls", sep = "")
-  write.csv(summary, file = file.name, row.names = TRUE, na = "")
+  file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
+  file.name1 <- paste(file.name, ".xls", sep = "")
+  file.name2 <- paste(file.name, ".txt", sep = "")
+  write.csv(summary, file = file.name1, row.names = FALSE, na = "")
+  # capture.output(summary, file = file.name1) 
+  capture.output(summary, file = file.name2)
 }
