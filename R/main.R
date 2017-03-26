@@ -104,13 +104,13 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   # vector of 2+ fcs file paths
   
   # optional variables
-  # transform = TRUE
-  # scale = FALSE
+  # transform 
+  # scale
   # subsample.rand
-  # exclude.pctile = 0.01
-  # target.pctile = 0.99
-  # target.number = NULL
-  # target.percent = 0.1
+  # exclude.pctile
+  # target.pctile 
+  # target.number 
+  # target.percent
   # starting.files = c("FCS", "cluster_matrix")
   # save.folder, mode = c("single", "multi")
   
@@ -125,10 +125,7 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   if (downsample) {
     cat("Downsampling all files using SPADE functions", "\n")
     fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
-                                    distance.metric, exclude.pctile = 0.01,
-                                    target.pctile = NULL,
-                                    target.number = NULL,
-                                    target.percent = 0.1)
+                                    distance.metric, ...)
     subsamples <- FALSE
   }
   
