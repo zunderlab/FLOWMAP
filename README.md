@@ -7,9 +7,9 @@ This repository houses the FLOWMAP algorithm code, which was developed in R and 
 * fix percent/count after SPADE downsampling in final graph
 
 ### Planned Features
-* improve specifying mode “single” or “multi” type of FLOW-MAP
-* fix “detecting type” method to instead test inputs and throw error if not correct type for provided data
 * improve “load” to allow loading cluster tables/matrix 
+* ~~improve specifying mode “single” or “multi” type of FLOW-MAP~~
+* ~~fix “detecting type” method to instead test inputs and throw error if not correct type for provided data~~
 * ~~introduce SPADE downsampling variables to specify by user~~
 * ~~update summary print method to include new variables~~
 
