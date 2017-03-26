@@ -239,7 +239,7 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
       fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
     }
     file.name <- fcs.file.names
-    runtype <- "SingleTimepoint"
+    runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
     fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
