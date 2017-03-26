@@ -60,7 +60,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   for (name in colnames(all.attributes)) {
     # get attribute name and data
     attribute <- all.attributes[, name]
-    print(name)
     if (name == "Time") {
       num.unique <- length(unique(attribute))
       color.scale <- my.palette(num.unique)
@@ -76,8 +75,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       if (boundary[1] == boundary[2]) {
         boundary <- c(boundary[1] - 1, boundary[2] + 1)
       }
-      print("boundary")
-      print(boundary)
       grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
       color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
       color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
@@ -135,8 +132,22 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   }
 }
 
+PrintPanel <- function(var.annotate) {
+  level1 <- names(unlist(var.annotate))
+  level2 <- unname(unlist(var.annotate))
+  arrange.ind <- order(c(seq_along(level1), seq_along(level2)))
+  old.panel <- c(level1, level2)[arrange.ind]
+  panel <- c()
+  for (i in seq.int(from = 2, to = length(old.panel), by = 2)) {
+    first <- paste("'", old.panel[(i - 1)], "'", sep = "")
+    second <- paste("'", old.panel[i], "'", sep = "")
+    next.i <- paste(first, second, sep = " = ")
+    panel <- c(panel, next.i)
+  }
+  return(panel)
+}
+
 PrintSummary <- function(...) {
-  # summary <- matrix()
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
   # files, var.remove, var.annotate, clustering.var,
@@ -145,6 +156,15 @@ PrintSummary <- function(...) {
   # starting.files = c("FCS", "cluster_matrix"),
   # shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...
   
+  # if (exists("mode")) {
+  #   print("mode")
+  #   summary[(dim(summary)[1] + 1), ] <- c("mode", toString(mode),
+  #                                         "selected FLOW-MAP mode")
+  # }
+  if (exists("files")) {
+    summary[(dim(summary)[1] + 1), ] <- c("files", toString(files),
+                                          "files")
+  }  
   if (exists("output.folder")) {
     summary[(dim(summary)[1] + 1), ] <- c("output.folder", toString(output.folder),
                                           "output folder")
@@ -161,80 +181,58 @@ PrintSummary <- function(...) {
     summary[(dim(summary)[1] + 1), ] <- c("num.files", num.files,
                                           "number of selected files")
   }  
-  if (exists("mode")) {
-    summary[(dim(summary)[1] + 1), ] <- c("mode", toString(mode),
-                                          "selected FLOW-MAP mode")
-  }
   if (exists("starting.files")) {
     summary[(dim(summary)[1] + 1), ] <- c("starting.files", toString(starting.files),
                                           "selected starting file types")
   }
   if (exists("var.annotate")) {
-    # summary["annotated variables:"] <- toString(var.annotate)
     summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(var.annotate),
-                                          "annotated variables")
+                                          "markers included in this analysis")
+  }
+  if (exists("var.annotate")) {
+    panel <- PrintPanel(var.annotate)
+    summary[(dim(summary)[1] + 1), ] <- c("panel", toString(panel),
+                                          "full panel including metals and corresponding marker")
   }
   if (exists("var.remove")) {
-    # summary["removed variables:"] <- toString(var.remove)
     summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(var.remove),
-                                          "removed variables")
+                                          "removed markers")
   }
   if (exists("clustering.var")) {
-    # summary["clustering variables:"] <- toString(clustering.var)
     summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(clustering.var),
-                                          "clustering variables")
+                                          "markers used for clustering and distance calculation")
   } 
+  if (exists("distance.metric")) {
+    summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
+                                          "distance metric")
+  }
   if (exists("per")) {
-    # summary["distance for calculated density (n percent):"] <- toString(per)
     summary[(dim(summary)[1] + 1), ] <- c("per", per,
                                           "distance for calculated density (n percent)")
   } 
   if (exists("minimum")) {
-    # summary["min number of edges:"] <- toString(minimum)
     summary[(dim(summary)[1] + 1), ] <- c("minimum", minimum,
                                           "min number of edges")
   } 
   if (exists("maximum")) {
-    # summary["max number of edges:"] <- toString(maximum)
     summary[(dim(summary)[1] + 1), ] <- c("maximum", maximum,
                                           "max number of edges")
   } 
-  if (exists("distance.metric")) {
-    # summary["distance metric:"] <- toString(distance.metric)
-    summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
-                                          "distance metric")
-  } 
   if (exists("subsamples")) {
-    # summary["subsamples for all FCS files:"] <- toString(subsamples)
     summary[(dim(summary)[1] + 1), ] <- c("subsamples", subsamples,
                                           "subsamples for all FCS files")
   } 
-  if (exists("subsample.rand")) {
-    # summary["random subsample:"] <- toString(subsample.rand)
-    summary[(dim(summary)[1] + 1), ] <- c("subsample.rand", toString(subsample.rand),
-                                          "random subsample setting")
-  } 
-  if (exists("seed.X")) {
-    # summary["set seed value:"] <- toString(seed.X)
-    summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
-                                          "set seed value")
-  }
   if (exists("cluster.numbers")) {
-    # summary["number of clusters for all FCS files:"] <- toString(cluster.numbers)
     summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", cluster.numbers,
                                           "number of clusters for all FCS files")
   } 
-  # if (exists("label.key")) {
-  #   summary["label key:"] <- toString(label.key)
-  #   summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
-  #                                         "set seed value")
-  # } 
-  # summary <- as.data.frame(summary)
+  if (exists("seed.X")) {
+    summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
+                                          "set seed value")
+  }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
-  file.name1 <- paste(file.name, ".xls", sep = "")
-  file.name2 <- paste(file.name, ".txt", sep = "")
-  write.csv(summary, file = file.name1, row.names = FALSE, na = "")
-  # capture.output(summary, file = file.name1) 
-  capture.output(summary, file = file.name2)
+  file.name <- paste(file.name, ".txt", sep = "")
+  cat("file.name", file.name, "\n")
+  write.table(summary, file = file.name, row.names = FALSE, na = "")
 }
