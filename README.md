@@ -7,16 +7,18 @@ This repository houses the FLOWMAP algorithm code, which was developed in R and 
 * fix percent/count after SPADE downsampling in final graph
 
 ### Planned Features
-* introduce SPADE downsampling variables to specify by user
-* update summary print method to include new variables
 * improve specifying mode “single” or “multi” type of FLOW-MAP
 * fix “detecting type” method to instead test inputs and throw error if not correct type for provided data
 * improve “load” to allow loading cluster tables/matrix 
+~~* introduce SPADE downsampling variables to specify by user~~
+~~* update summary print method to include new variables~~
 
 ### Requested Features
+* edges ranked within Gephi to remove/add to scale connectivity as we go
+* add density rank of the vertices to nodes so that amount of downsampling can be changed, to remove/add nodes
+* density rank can also be used to change amount of outlier removal
 * adjust ratio of edges within same time point to edges between time points
 * save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
-
 
 ## Getting Started
 
