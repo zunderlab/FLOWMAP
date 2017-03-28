@@ -155,10 +155,10 @@ PrintSummary <- function() {
   cat("Printing summary.", "\n")
   # starting.files = c("FCS", "cluster_matrix")
   
-  if (exists("mode")) {
-    summary[(dim(summary)[1] + 1), ] <- c("mode", mode,
-                                          "selected FLOW-MAP mode")
-  }
+  # if (exists("mode")) {
+  #   summary[(dim(summary)[1] + 1), ] <- c("mode", mode,
+  #                                         "selected FLOW-MAP mode")
+  # }
   if (exists("files")) {
     summary[(dim(summary)[1] + 1), ] <- c("files", toString(files),
                                           "files")
