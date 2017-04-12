@@ -154,7 +154,7 @@ shinyServer(function(input, output, session) {
     #writes the file
     flowfile = (hot_to_r(input$table))
     # inputhello <<- input$table
-    write.csv(flowfile, paste0(gsub("/", "//", globe_resdir2), "//", globe_proj, ".csv"))
+    # write.csv(flowfile, paste0(gsub("/", "//", globe_resdir2), "//", globe_proj, ".csv"))
     rm(final_new_same)
     rm(count)
     rm(final_new_diff)
