@@ -1,5 +1,6 @@
 require(flowCore)
 require(shiny)
+require(rhandsontable)
 
 shinyServer(function(input, output, session) {
   # FLOW

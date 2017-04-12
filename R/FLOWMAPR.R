@@ -9,4 +9,5 @@
 #' @import SDMTools
 #' @import tcltk
 #' @import rhandsontable
+#' @import shiny
 NULL
