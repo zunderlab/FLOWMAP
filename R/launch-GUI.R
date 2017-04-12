@@ -1,7 +1,14 @@
-# library(cytofkit)
-# library(tcltk)
-# library(flowCore)
 
+#' GUI for launching shiny APP
+#' 
+#' A shiny APP for interactive exploration of the analysis results
+#' 
+#' @param message A message to determine if open the shiny APP
+#' @param dir Result direcroty.
+#' 
+#' @export
+#' @examples
+#' # launch_GUI()
 launch_GUI <- function() {
   
   ##--------------------------##
@@ -436,16 +443,6 @@ launch_GUI <- function() {
 }
 
 
-#' GUI for launching shiny APP
-#' 
-#' A shiny APP for interactive exploration of the analysis results
-#' 
-#' @param message A message to determine if open the shiny APP
-#' @param dir Result direcroty.
-#' 
-#' @export
-#' @examples
-#' # launchShinyAPP_GUI()
 # launchShinyAPP_GUI <- function(message="cytofkit", dir = getwd()){
 #   ifAPP <- tclVar("n")
 #   ss <- tktoplevel(borderwidth = 10)
@@ -486,6 +483,8 @@ launch_GUI <- function() {
 # }
 
 ## function for opening the results directory
+
+
 opendir <- function(dir = getwd()){
   if (.Platform['OS.type'] == "windows"){
     shell.exec(dir)
