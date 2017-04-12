@@ -180,18 +180,18 @@ shinyServer(function(input, output, session) {
     distance.metric = globe_input[["distanceMetric"]]
     subsamples = globe_input[["subsampleNum"]]
     cluster.numbers = globe_input[["clusterNum"]]
-    print(files)
-    print(var.remove)
-    print(var.annotate)
-    print(clustering.var)
-    print(cluster.numbers)
-    print(subsamples)
-    print(distance.metric)
-    print(minimum)
-    print(maximum)
-    print(per)
-    print(save.folder)
-    print(mode)
+    cat("files", files, "\n")
+    cat("var.remove", var.remove, "\n")
+    cat("var.annotate", var.annotate, "\n")
+    cat("clustering.var", clustering.var, "\n")
+    cat("cluster.numbers", cluster.numbers, "\n")
+    cat("subsamples", subsamples, "\n")
+    cat("distance.metric", distance.metric, "\n")
+    cat("minimum", minimum, "\n")
+    cat("maximum", maximum, "\n")
+    cat("per", per, "\n")
+    cat("save.folder", save.folder, "\n")
+    cat("mode", mode, "\n")
     FLOWMAPR::FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
                       clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                       subsamples = subsamples, distance.metric = distance.metric,
