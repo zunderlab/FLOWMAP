@@ -189,30 +189,22 @@ shinyServer(function(input, output, session) {
     # cat(final)
     # sink()
     
-    #writes the file
+    # writes the file
     print(unlist(input$table))
     inputhello <<- input$table
     write.csv(unlist(input$table), paste0(gsub("/", "//", globe_resdir), "//", globe_proj, ".csv"))
-    rm(final_new_same)
-    rm(count)
-    rm(final_new_diff)
-    #removes most global variables
     print(folder_now)
-    # set.seed(input$seed_num)
+    set.seed(input$seed_num)
     print("works")
     setwd(dir_now)
-    # SingleFLOWMAP(folder = dir_now, file.format = "*.fcs", var.remove = c(),
-    #               var.annotate = list("marker1" = "marker1", "marker2" = "marker2"), clustering.var = input$checkGroup_sim,
-    #               cluster.number = input$cluster_num, subsample = input$sample_num,
-    #               distance.metric = input$radio_dist, minimum = input$slider_maxmin[1], maximum = input$slider_maxmin[2],
-    #               per = input$slider_pct, save.folder = dir, shuffle = TRUE)
-    # Run FLOW_Map
     
-    # order_while <<- 1
-    try(rm(operating_system), silent = TRUE)
-    try(rm(dir_now), silent = TRUE)
-    try(rm(len_filenames), silent = TRUE)
-    #remove final global variables
+    # Run FLOW-MAP
+    # suppressWarnings(FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
+    #                          clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+    #                          subsamples = subsamples, distance.metric = distance.metric,
+    #                          minimum = minimum, maximum = maximum, per = per, save.folder = save.folder,
+    #                          mode = mode, shuffle = TRUE, name.sort = FALSE, downsample = FALSE))
+    
   })
   output$stuff = renderText({
     write_file()
