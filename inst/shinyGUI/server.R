@@ -1,20 +1,21 @@
 require(flowCore)
+require(shiny)
 
 shinyServer(function(input, output, session) {
   # FLOW
-  options(shiny.maxRequestSize = 1000*1024^2)
-  try(rm(count), silent = TRUE)
-  try(rm(final_new_diff), silent = TRUE)
-  try(rm(final_new_same), silent = TRUE)
-  try(rm(folder_now), silent = TRUE)
-  try(rm(FCS_filepath), silent = TRUE)
-  try(rm(order_sim), silent = TRUE)
-  try(rm(order_sim_list), silent = TRUE)
-  try(rm(order_while), silent = TRUE)
-  try(rm(operating_system), silent = TRUE)
-  try(rm(dir_now), silent = TRUE)
-  try(rm(len_filenames), silent = TRUE)
-  # DELETE ALL GLOBAL
+  options(shiny.maxRequestSize = 1000 * 1024^2)
+  # try(rm(count), silent = TRUE)
+  # try(rm(final_new_diff), silent = TRUE)
+  # try(rm(final_new_same), silent = TRUE)
+  # try(rm(folder_now), silent = TRUE)
+  # try(rm(FCS_filepath), silent = TRUE)
+  # try(rm(order_sim), silent = TRUE)
+  # try(rm(order_sim_list), silent = TRUE)
+  # try(rm(order_while), silent = TRUE)
+  # try(rm(operating_system), silent = TRUE)
+  # try(rm(dir_now), silent = TRUE)
+  # try(rm(len_filenames), silent = TRUE)
+  # # DELETE ALL GLOBAL
   DF = data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   # order_while <<- 0
   operating_system <<- Sys.info()[1]
@@ -24,7 +25,7 @@ shinyServer(function(input, output, session) {
   if (operating_system == "Windows"){
     folder_now <<- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
   } else{
-    paste(getwd(), "/", sep = "")
+    folder_now <<- paste(getwd(), "/", sep = "")
   }
   #get directory for where all flowmap function files are located
   # count <<- 0

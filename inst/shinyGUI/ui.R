@@ -1,3 +1,4 @@
+require(shiny)
 
 shinyUI(
   fluidPage(
