@@ -64,6 +64,16 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   }
   num.edges <- length(edgelist.with.distances[, 1])
   print("i")
+  print("num.edges")
+  print(num.edges)
+  print("per")
+  print(per)
+  print("1 + 1")
+  print(1 + 1)
+  a_var <- 1
+  b_var <- 2
+  print("a_var + b_var")
+  print(a_var + b_var)
   val <- max(floor(num.edges * per / 100), 1)
   print("j")
   trim.edgelist.with.distances <- edgelist.with.distances[(1:val), ]
