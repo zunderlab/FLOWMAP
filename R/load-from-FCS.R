@@ -44,13 +44,6 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, subsample.rand = TRUE,
                          transform = TRUE, scale = FALSE) {
   clean.fcs.files <- list()
-  print("subsamples")
-  print(subsamples)
-  print("T")
-  print(T)
-  print("class(T)")
-  print(class(T))
-  
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
     subsample.new <- rep(subsamples, times = length(fcs.file.names))
@@ -60,11 +53,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     current.file <- tail(strsplit(fcs.file.names[i], "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
     # store currently read FCS file
-    print("a")
-    print("!subsamples")
-    print(!subsamples)
-    if (!subsamples) {
-      print("b")
+    if (subsamples == FALSE) {
       tmp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = NULL,
                            alter.names = FALSE, column.pattern = NULL, invert.pattern = FALSE,
                            decades = 0, ncdf = FALSE, min.limit = NULL, dataset = NULL,

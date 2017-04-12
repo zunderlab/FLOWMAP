@@ -345,41 +345,9 @@ launch_GUI <- function() {
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-
+  
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-  print("in launch-GUI.R")
-  print("files")
-  print(files)
-  print("var.remove")
-  print(var.remove)
-  print("var.annotate")
-  print(var.annotate)
-  print("clustering.var")
-  print(clustering.var)
-  print("cluster.numbers")
-  print(cluster.numbers)
-  print("subsamples")
-  print(subsamples)
-  print("distance.metric")
-  print(distance.metric)
-  print("minimum")
-  print(minimum)
-  print("maximum")
-  print(maximum)
-  print("per")
-  print(per)
-  print("save.folder")
-  print(save.folder)
-  print("mode")
-  print(mode)
-  FLOWMAPR::FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
-                    clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                    subsamples = subsamples, distance.metric = distance.metric,
-                    minimum = minimum, maximum = maximum, per = per,
-                    save.folder = save.folder, mode = mode,
-                    shuffle = TRUE, name.sort = FALSE, downsample = FALSE)
-  print("ending app")
-  stopApp()
+  
 }
 
 
