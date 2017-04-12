@@ -340,7 +340,7 @@ launch_GUI <- function() {
     
     timeNow = gsub("[:]","-", timeNow) 
     
-    write.csv(inputs, paste0(inputs[["resultDir"]], "/", inputs[["projectName"]], timeNow, ".csv"))
+    # write.csv(inputs, paste0(inputs[["resultDir"]], "/", inputs[["projectName"]], timeNow, ".csv"))
     
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])

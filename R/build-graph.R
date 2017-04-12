@@ -44,33 +44,54 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
                            table.breaks, offset) {
   # make fully connected graph from adjacency list
   # note: "weight" here is really distance, calling it weight for the mst function later needs this
+  print("a")
   arr.inds <- ConvertIndex(inds = order(cluster.distances.matrix), orig.data.frame = cluster.distances.matrix, keep.names = TRUE)
+  print("b")
   edgelist.with.distances <- MergeValues(arr.inds = arr.inds, orig.data.frame = cluster.distances.matrix)
+  print("c")
   edgelist.with.distances <- RemoveDuplicateValues(edgelist.with.distances)
+  print("d")
   # remove last edge with Inf weight
   edgelist.with.distances <- edgelist.with.distances[1:(nrow(edgelist.with.distances) - 1), ]
+  print("e")
   if (table.lengths[1] != FALSE) {
+    print("f")
     inds.in.n <- (offset + 1):(offset + table.lengths[1])
+    print("g")
     edgelist.with.distances <- RemoveWithinNEdges(edgelist.with.distances,
                                                   inds.in.n = inds.in.n)
+    print("h")
   }
   num.edges <- length(edgelist.with.distances[, 1])
+  print("i")
   val <- max(floor(num.edges * per / 100), 1)
+  print("j")
   trim.edgelist.with.distances <- edgelist.with.distances[(1:val), ]
+  print("k")
   # calculate "density" for each cluster and normalize
   if (val == 1) {
+    print("l")
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
+    print("m")
   }
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
+  print("n")
   # add in zeros for clusters with no edges (table function leaves these out)
   densities <- rep(0, numcluster)
+  print("o")
   if (table.lengths[1] == FALSE) {
+    print("p")
     names(densities) <- (1:numcluster)
+    print("q")
   } else {
+    print("r")
     names(densities) <- (offset + 1):(offset + table.lengths[1] + table.lengths[2])
   }
+  print("s")
   densities[names(densities.no.zeros)] <- densities.no.zeros
+  print("t")
   normalized.densities <- round(densities / max(densities) * (max - min) + min)
+  print("u")
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
 }
