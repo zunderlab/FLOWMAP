@@ -174,12 +174,12 @@ shinyServer(function(input, output, session) {
     }
     var.remove = flowfile[flowfile$removal == T, 1]
     clustering.var = flowfile[flowfile$cluster == T, 1]
-    per = globe_input[["edgepctNum"]]
-    maximum = globe_input[["edgeMaxNum"]]
-    minimum = globe_input[["edgeminNum"]]
+    per = as.numeric(globe_input[["edgepctNum"]])
+    maximum = as.numeric(globe_input[["edgeMaxNum"]])
+    minimum = as.numeric(globe_input[["edgeminNum"]])
     distance.metric = globe_input[["distanceMetric"]]
-    subsamples = globe_input[["subsampleNum"]]
-    cluster.numbers = globe_input[["clusterNum"]]
+    subsamples = as.numeric(globe_input[["subsampleNum"]])
+    cluster.numbers = as.numeric(globe_input[["clusterNum"]])
     print("in server.R")
     print("files")
     print(files)

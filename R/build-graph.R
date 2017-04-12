@@ -44,26 +44,17 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
                            table.breaks, offset) {
   # make fully connected graph from adjacency list
   # note: "weight" here is really distance, calling it weight for the mst function later needs this
-  print("a")
   arr.inds <- ConvertIndex(inds = order(cluster.distances.matrix), orig.data.frame = cluster.distances.matrix, keep.names = TRUE)
-  print("b")
   edgelist.with.distances <- MergeValues(arr.inds = arr.inds, orig.data.frame = cluster.distances.matrix)
-  print("c")
   edgelist.with.distances <- RemoveDuplicateValues(edgelist.with.distances)
-  print("d")
   # remove last edge with Inf weight
   edgelist.with.distances <- edgelist.with.distances[1:(nrow(edgelist.with.distances) - 1), ]
-  print("e")
   if (table.lengths[1] != FALSE) {
-    print("f")
     inds.in.n <- (offset + 1):(offset + table.lengths[1])
-    print("g")
     edgelist.with.distances <- RemoveWithinNEdges(edgelist.with.distances,
                                                   inds.in.n = inds.in.n)
-    print("h")
   }
   num.edges <- length(edgelist.with.distances[, 1])
-  print("i")
   print("num.edges")
   print(num.edges)
   print("per")
