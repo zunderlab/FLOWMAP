@@ -4,17 +4,6 @@ require(shiny)
 shinyServer(function(input, output, session) {
   # FLOW
   options(shiny.maxRequestSize = 1000 * 1024^2)
-  # try(rm(count), silent = TRUE)
-  # try(rm(final_new_diff), silent = TRUE)
-  # try(rm(final_new_same), silent = TRUE)
-  # try(rm(folder_now), silent = TRUE)
-  # try(rm(FCS_filepath), silent = TRUE)
-  # try(rm(order_sim), silent = TRUE)
-  # try(rm(order_sim_list), silent = TRUE)
-  # try(rm(order_while), silent = TRUE)
-  # try(rm(operating_system), silent = TRUE)
-  # try(rm(dir_now), silent = TRUE)
-  # try(rm(len_filenames), silent = TRUE)
   # # DELETE ALL GLOBAL
   DF = data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   # order_while <<- 0
@@ -161,57 +150,69 @@ shinyServer(function(input, output, session) {
       dir = globe_resdir
     }
     setwd(dir)
-    
-    # Chooses export directory
-    # COME BACK TO THIS
-    # files_name = input$file_name
-    # same_stuff = input$checkGroup_sim
-    # diff_stuff = input$checkGroup_diff
-    # if(files_name == ""){
-    #   files_name = Sys.Date()
-    #   files_name = paste("file", files_name, sep = "_")
-    # }
-    #creates file name
-    # file_name_txt = paste(files_name, "txt", sep = ".")
-    # sink(file_name_txt)
-    # for(x in 1:length(same_stuff)){
-    #   cat(same_stuff[x], "\n")
-    # }
-    # for(y in 1:length(diff_stuff)){
-    #   cat(diff_stuff[y], "\n")
-    # }
-    #created the file to have same then different parameters
-    # sink()
-    # vec_name = paste(files_name, "vector", sep = "_")
-    # vec_name_txt = paste(vec_name, "txt", sep = ".")
-    # final = c(same_stuff, diff_stuff)
-    # sink(vec_name_txt)
-    # cat(final)
-    # sink()
-    
-    # writes the file
-    print(unlist(input$table))
-    inputhello <<- input$table
-    write.csv(unlist(input$table), paste0(gsub("/", "//", globe_resdir), "//", globe_proj, ".csv"))
+    #writes the file
+    flowfile = (hot_to_r(input$table))
+    # inputhello <<- input$table
+    write.csv(flowfile, paste0(gsub("/", "//", globe_resdir2), "//", globe_proj, ".csv"))
+    rm(final_new_same)
+    rm(count)
+    rm(final_new_diff)
+    #removes most global variables
     print(folder_now)
-    set.seed(input$seed_num)
+    # set.seed(input$seed_num)
     print("works")
     setwd(dir_now)
-    
-    # Run FLOW-MAP
-    # suppressWarnings(FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
-    #                          clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-    #                          subsamples = subsamples, distance.metric = distance.metric,
-    #                          minimum = minimum, maximum = maximum, per = per, save.folder = save.folder,
-    #                          mode = mode, shuffle = TRUE, name.sort = FALSE, downsample = FALSE))
-    
+    set.seed(globe_input[["seedNum"]])
+    files = c()
+    files = globe_resdir
+    mode = globe_input[["multiSingle"]]
+    save.folder = globe_resdir2
+    var.annotate = list()
+    for(j in 1:nrow(flowfile)){
+      var.annotate[[flowfile[j, 1]]] = flowfile[j,4]
+    }
+    var.remove = flowfile[flowfile$removal == T, 1]
+    clustering.var = flowfile[flowfile$cluster == T, 1]
+    per = globe_input[["edgepctNum"]]
+    maximum = globe_input[["edgeMaxNum"]]
+    minimum = globe_input[["edgeminNum"]]
+    distance.metric = globe_input[["distanceMetric"]]
+    subsamples = globe_input[["subsampleNum"]]
+    cluster.numbers = globe_input[["clusterNum"]]
+    print(files)
+    print(var.remove)
+    print(var.annotate)
+    print(clustering.var)
+    print(cluster.numbers)
+    print(subsamples)
+    print(distance.metric)
+    print(minimum)
+    print(maximum)
+    print(per)
+    print(save.folder)
+    print(mode)
+    FLOWMAPR::FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
+                      clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                      subsamples = subsamples, distance.metric = distance.metric,
+                      minimum = minimum, maximum = maximum, per = per,
+                      save.folder = save.folder, mode = mode,
+                      shuffle = TRUE, name.sort = FALSE, downsample = FALSE)
+    #Run FLOW_Map
+    try(rm(operating_system), silent = TRUE)
+    try(rm(dir_now), silent = TRUE)
+    try(rm(len_filenames), silent = TRUE)
+    try(rm(globe_input), silent = T)
+    try(rm(globe_resdir), silent = T)
+    try(rm(globe_proj), silent = T)
+    try(rm(globe_resdir2), silent = T)
+    try(rm(fcs_global), silent = T)
+    #remove final global variables
   })
   output$stuff = renderText({
     write_file()
     NULL
   })
   output$stuff3 = renderText({
-    # foldern()
     tablecreate()
     NULL
   })
@@ -223,7 +224,3 @@ shinyServer(function(input, output, session) {
     fcs_order()
   })
 })
-
-#############################################################################################################
-########## I STILL NEED TO FIGURE OUT HOW TO CHANGE FCS FILE, AND COPY OLD ONE AND CHANGE THE COPY ##########
-#############################################################################################################

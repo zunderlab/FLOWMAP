@@ -7,7 +7,6 @@
 #' @import igraph
 #' @import scaffold
 #' @import SDMTools
-#' @import cytofkit
 #' @import tcltk
 #' @import rhandsontable
 NULL

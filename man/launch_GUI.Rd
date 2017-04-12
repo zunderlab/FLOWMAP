@@ -2,17 +2,27 @@
 % Please edit documentation in R/launch-GUI.R
 \name{launch_GUI}
 \alias{launch_GUI}
-\title{GUI for launching shiny APP}
+\title{GUI for launching shiny Application}
 \usage{
 launch_GUI()
 }
 \arguments{
-\item{message}{A message to determine if open the shiny APP}
+\item{message}{A message to determine if open the shiny Application}
 
 \item{dir}{Result direcroty.}
 }
 \description{
-A shiny APP for interactive exploration of the analysis results
+This code was adapted from the cytofkit R package,
+available here: https://github.com/JinmiaoChenLab/cytofkit/.
+}
+\details{
+Specifically, the code in this file is adapted from cytofkit_GUI.R, but
+modified to take user-specified inputs for FLOW-MAP runs and
+then interface with the FLOWMAPR library back-end.
+
+This code, authored and maintained by Jinmiao Chen and Hao Chen,
+was used under the Artistic License 2.0 or Artistic-2.0 available
+here: https://opensource.org/licenses/Artistic-2.0.
 }
 \examples{
 # launch_GUI()

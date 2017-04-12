@@ -51,11 +51,11 @@ shinyUI(
                          size = 10
              )
       ),
-      column(width = 3,
+      column(width = 5,
+             actionButton("button", "Write File"),
+             br(),
              rHandsontableOutput("table", width = 600)
-      ),
-      column(width = 3,
-             actionButton("button", "Write File")
+             
       )
     )
   ))
