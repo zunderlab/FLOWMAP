@@ -1,3 +1,4 @@
+require(flowCore)
 
 shinyServer(function(input, output, session) {
   # FLOW
