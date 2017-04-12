@@ -180,6 +180,7 @@ shinyServer(function(input, output, session) {
     distance.metric = globe_input[["distanceMetric"]]
     subsamples = globe_input[["subsampleNum"]]
     cluster.numbers = globe_input[["clusterNum"]]
+    print("in server.R")
     print("files")
     print(files)
     print("var.remove")
