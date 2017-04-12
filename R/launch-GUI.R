@@ -1,8 +1,8 @@
-library(cytofkit)
-library(tcltk)
-library(flowCore)
-try(rm(globe_resdir), silent = TRUE)
-FLOWMAP_GUI <- function() {
+# library(cytofkit)
+# library(tcltk)
+# library(flowCore)
+
+launch_GUI <- function() {
   
   ##--------------------------##
   ## parameter initialization ##
@@ -429,9 +429,10 @@ FLOWMAP_GUI <- function() {
    # launchShinyAPP_GUI(message = okMessage, dir = inputs[["resultDir"]])
    # source("C://Users//Rohit//Documents//ui.R")
    # source("C://Users//Rohit//Documents//server.R")
-  GUIUI()
-  GUISERVER()
-  runApp()
+  # GUIUI()
+  # GUISERVER()
+  # runApp()
+  runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
 
 
