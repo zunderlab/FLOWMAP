@@ -9,4 +9,5 @@
 #' @import SDMTools
 #' @import cytofkit
 #' @import tcltk
+#' @import rhandsontable
 NULL

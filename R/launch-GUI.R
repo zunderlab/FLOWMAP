@@ -1,48 +1,45 @@
 
-#' GUI for launching shiny APP
+#' GUI for launching shiny Application
 #' 
-#' A shiny APP for interactive exploration of the analysis results
+#' This code was adapted from the cytofkit R package,
+#' available here: https://github.com/JinmiaoChenLab/cytofkit/.
 #' 
-#' @param message A message to determine if open the shiny APP
+#' Specifically, the code in this file is adapted from cytofkit_GUI.R, but
+#' modified to take user-specified inputs for FLOW-MAP runs and
+#' then interface with the FLOWMAPR library back-end.
+#' 
+#' This code, authored and maintained by Jinmiao Chen and Hao Chen,
+#' was used under the Artistic License 2.0 or Artistic-2.0 available
+#' here: https://opensource.org/licenses/Artistic-2.0.
+#' 
+#' @param message A message to determine if open the shiny Application
 #' @param dir Result direcroty.
 #' 
 #' @export
 #' @examples
 #' # launch_GUI()
+
 launch_GUI <- function() {
-  
-  ##--------------------------##
-  ## parameter initialization ##
-  ##--------------------------##
-  
-  # fcsFiles <- ""
+  # parameter initialization
   cur_dir <- getwd()
   distanceMetrics <- c("manhattan", "euclidean")
+  # multiSingles <- c("multi", "single", "one")
   multiSingles <- c("multi", "single")
-  #vizMethods <- c("pca", "isomap", "tsne", "NULL")
-  #clusterMethods <- c("Rphenograph", "ClusterX", "DensVM", "NULL")
-  #progressionMethods <- c("diffusionmap", "isomap", "NULL")
   
   rawFCSdir <- tclVar(cur_dir)
-  # fcsFile <- tclVar("")
   resDir <- tclVar(cur_dir)
-  projectName <- tclVar("FlowMap")
+  projectName <- tclVar("FLOWMAP")
   distanceMetric <- tclVar("manhattan")
-  #fixedNum <- tclVar("10000")
   multiSingle = tclVar("single")
-  subsampleNum = tclVar("600")
-  clusterNum = tclVar("300")
+  subsampleNum = tclVar("200")
+  clusterNum = tclVar("100")
   seedNum = tclVar("1")
   edgepctNum = tclVar("1")
-  edgeNumMin = tclVar("3")
-  edgeNumMax = tclVar("4")
-  # markers <- tclVar("")
+  edgeNumMin = tclVar("2")
+  edgeNumMax = tclVar("5")
   ret_var <- tclVar("")
   
-  ##-------------------##
-  ##  button functions ##
-  ##-------------------##
-  
+  #  button functions
   reset_rawFCS_dir <- function() {
     rawFCS_dir <- ""
     rawFCS_dir <- tclvalue(tkchooseDirectory(title = "Choose your rawFCS dircetory ..."))
@@ -69,27 +66,8 @@ launch_GUI <- function() {
     if (length(fnames) >= 1) {
       fnames <- fnames[!(grepl(paste0(.Platform$file.sep, 
                                       "fcs$"), fnames))]  # remove empty .fcs files
-      # tclvalue(fcsFile) <- paste(fnames, collapse = "}{")
     }
   }
-  
-  # reset_para_data <- function() {
-  #   
-  #   if (tclvalue(fcsFile) == "" && tclvalue(rawFCSdir) == "") {
-  #     tkmessageBox(title = "cytofkit: an integrated mass cytometry data analysis pipeline", 
-  #                  message = "Please input your \"rawFCSdirectory\" or \"fcsFile\".", 
-  #                  icon = "info", type = "ok")
-  #   }
-  #   if (tclvalue(fcsFile) != "") {
-  #     fcsFiles <- strsplit(tclvalue(fcsFile), "}{", fixed = TRUE)[[1]]
-  #   }
-  #   fcsDir <- tclvalue(rawFCSdir)
-  #   # selectMarkers <- getParameters_GUI(fcsFiles, fcsDir)
-  #   
-  #   # if (length(selectMarkers) > 0) {
-  #   #   tclvalue(markers) <- paste(selectMarkers, collapse = "}{")
-  #   # }
-  # }
   
   reset_num2null <- function() {
     tclvalue(fixedNum) <- "NULL"
@@ -104,16 +82,6 @@ launch_GUI <- function() {
                  icon = "info", type = "ok")
   }
   
-  # fcsFile_help <- function() {
-  #   tkmessageBox(title = "fcsFiles", message = "The fcs files to be analyzed. One or multiple fcs files are allowed. When multiple fcs files are selected, cells from each fcs file are combined for analysis.", 
-  #                icon = "info", type = "ok")
-  # }
-  
-  # para_help <- function() {
-  #   tkmessageBox(title = "markers", message = "Select the list of makers to be used for analysis.",
-  #                 icon = "info", type = "ok")
-  # }
-  
   projectName_help <- function() {
     tkmessageBox(title = "projectName", message = "A prefix that will be added to the names of result files.", 
                  icon = "info", type = "ok")
@@ -123,12 +91,6 @@ launch_GUI <- function() {
     tkmessageBox(title = "distanceMetric", message = "Select the appropriate distance metric.", 
                  icon = "info", type = "ok")
   }
-  
-  # fixedNum_help <- function() {
-  #   tkmessageBox(title = "fixedNum", message = "Up to fixedNum of cells from each fcs file are used for analysis.", 
-  #                icon = "info", type = "ok")
-  # }
-  
   
   multiSingle_help <- function() {
     tkmessageBox(title = "multiSingle", message = "Method of analysis via multiple FCS files or via one.", 
@@ -172,29 +134,20 @@ launch_GUI <- function() {
   
   reset <- function() {
     tclvalue(rawFCSdir) = cur_dir
-    # tclvalue(fcsFile) = ""
     tclvalue(resDir) = cur_dir
-    tclvalue(projectName) = "FlowMap"
+    tclvalue(projectName) = "FLOWMAP"
     tclvalue(distanceMetric) = distanceMetrics[1]
-    # tclvalue(markers) = ""
     tclvalue(multiSingle) = multiSingles[2]
-    tclvalue(subsampleNum) = "600"
-    tclvalue(clusterNum) = "300"
+    tclvalue(subsampleNum) = "200"
+    tclvalue(clusterNum) = "100"
     tclvalue(seedNum) = "1"
     tclvalue(edgepctNum) = "1"
-    tclvalue(edgeNumMin) = "3"
-    tclvalue(edgeNumMax) = "4"
+    tclvalue(edgeNumMin) = "2"
+    tclvalue(edgeNumMax) = "5"
   }
   
   submit <- function() {
     has_error = FALSE
-    # if (tclvalue(fcsFile) == "") {
-    #   tkmessageBox(title = "FLOW-Map", 
-    #                message = "Please select FCS files for analysis.", 
-    #                icon = "info", type = "ok")
-    #   has_error = TRUE
-    # }
-    
     if (has_error == FALSE) {
       tclvalue(ret_var) <- "OK"
       tkdestroy(tt)
@@ -205,12 +158,8 @@ launch_GUI <- function() {
     tkdestroy(tt)
   }
   
-  
-  ##----------------##
-  ##  build the GUI ##
-  ##--------------- ##
-  
-  ## head line
+  # build the GUI
+  # head line
   tt <- tktoplevel(borderwidth = 20)
   tkwm.title(tt, "FLOWMAP")
   
@@ -229,69 +178,55 @@ launch_GUI <- function() {
   tkimage.create("photo", image2)
   tcl(image2, "copy", image1, subsample = 6)
   
-  ## rawFCSdir
+  # rawFCSdir
   rawFCSdir_label <- tklabel(tt, text = "Raw FCS Directory :")
   rawFCSdir_entry <- tkentry(tt, textvariable = rawFCSdir, width = box_length)
   rawFCSdir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, command = reset_rawFCS_dir)
   rawFCSdir_hBut <- tkbutton(tt, image = image2, command = rawFCSdir_help)
   
-  ##subsampleNum
+  # subsampleNum
   subsampleNum_label = tklabel(tt, text = "Subsample Number :")
   subsampleNum_entry = tkentry(tt, textvariable = subsampleNum, width = 9)
   subsampleNum_hBut = tkbutton(tt, image = image2, command = subsampleNum_help)
   
-  ##clusterNum
+  # clusterNum
   clusterNum_label = tklabel(tt, text = "Clustering Number :")
   clusterNum_entry = tkentry(tt, textvariable = clusterNum, width = 9)
   clusterNum_hBut = tkbutton(tt, image = image2, command = clusterNum_help)
   
-  ##seedNum
+  # seedNum
   seedNum_label = tklabel(tt, text = "Seed number :")
   seedNum_entry = tkentry(tt, textvariable = seedNum, width = 9)
   seedNum_hBut = tkbutton(tt, image = image2, command = seedNum_help)
   
-  ##edgepctNum
+  # edgepctNum
   edgepctNum_label = tklabel(tt, text = "Edge Percentile Number :")
   edgepctNum_entry = tkentry(tt, textvariable = edgepctNum, width = 9)
   edgepctNum_hBut = tkbutton(tt, image = image2, command = edgepctNum_help)
   
-  ##edgeNumMin
+  # edgeNumMin
   edgeNumMin_label = tklabel(tt, text = "Minimum Number of Edges :")
   edgeNumMin_entry = tkentry(tt, textvariable = edgeNumMin, width = 9)
   edgeNumMin_hBut = tkbutton(tt, image = image2, command = edgeNumMin_help)
   
-  ##edgeNumMax
+  # edgeNumMax
   edgeNumMax_label = tklabel(tt, text = "Maximum Number of Edges :")
   edgeNumMax_entry = tkentry(tt, textvariable = edgeNumMax, width = 9)
   edgeNumMax_hBut = tkbutton(tt, image = image2, command = edgeNumMax_help)
   
-  ## resDir
+  # resDir
   resDir_label <- tklabel(tt, text = "Result Directory :")
   resDir_entry <- tkentry(tt, textvariable = resDir, width = box_length)
   resDir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, 
                             command = reset_res_dir)
   resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
   
-  ## fcsFiles
-  # fcsFile_label <- tklabel(tt, text = "FCS File(s) :")
-  # fcsFile_entry <- tkentry(tt, textvariable = fcsFile, width = box_length)
-  # fcsFile_button <- tkbutton(tt, text = " Select... ", width = bt_width, 
-  #                            command = reset_fcs_data)
-  # fcsFile_hBut <- tkbutton(tt, image = image2, command = fcsFile_help)
-  
-  # markers
-  # markers_label <- tklabel(tt, text = "Markers :")
-  # markers_entry <- tkentry(tt, textvariable = markers, width = box_length)
-  # markers_button <- tkbutton(tt, text = " Select... ", width = bt_width, 
-  #                             command = reset_para_data)
-  # markers_hBut <- tkbutton(tt, image = image2, command = para_help)
-  
-  ## projectName
+  # projectName
   projectName_label <- tklabel(tt, text = "Project Name :")
   projectName_entry <- tkentry(tt, textvariable = projectName, width = box_length)
   projectName_hBut <- tkbutton(tt, image = image2, command = projectName_help)
   
-  ## distanceMetric
+  # distanceMetric
   distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
   distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
   distanceMetric_rbuts <- tkframe(tt)
@@ -303,8 +238,8 @@ launch_GUI <- function() {
                        variable = distanceMetric, value = distanceMetrics[2]), 
          side = "left")
   
-  ## transformMethod
-  multiSingle_label <- tklabel(tt, text = "FLOW-Map method: ")
+  # transformMethod
+  multiSingle_label <- tklabel(tt, text = "FLOW-MAP method: ")
   multiSingle_hBut <- tkbutton(tt, image = image2,
                                command = multiSingle_help)
   multiSingle_rbuts <- tkframe(tt)
@@ -314,29 +249,17 @@ launch_GUI <- function() {
   tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[2],
                        variable = multiSingle, value = multiSingles[2]), side = "left")
   
-  ## submit / reset / quit
+  # submit / reset / quit
   submit_button <- tkbutton(tt, text = "Submit", command = submit)
   reset_button <- tkbutton(tt, text = "Reset", command = reset)
   quit_button <- tkbutton(tt, text = "Quit", command = quit)
   
-  ## display GUI
+  # display GUI
   tkgrid(rawFCSdir_label, rawFCSdir_hBut, rawFCSdir_entry, rawFCSdir_button, 
          padx = cell_width)
   tkgrid.configure(rawFCSdir_label, rawFCSdir_entry, rawFCSdir_button, 
                    sticky = "e")
   tkgrid.configure(rawFCSdir_hBut, sticky = "e")
-  
-  # tkgrid(fcsFile_label, fcsFile_hBut, fcsFile_entry, fcsFile_button, 
-  #        padx = cell_width)
-  # tkgrid.configure(fcsFile_label, fcsFile_entry, fcsFile_button, 
-  #                  sticky = "e")
-  # tkgrid.configure(fcsFile_hBut, sticky = "e")
-  
-  # tkgrid(markers_label, markers_hBut, markers_entry, markers_button, 
-  #        padx = cell_width)
-  # tkgrid.configure(markers_label, markers_entry, markers_button, 
-  #                  sticky = "e")
-  # tkgrid.configure(markers_hBut, sticky = "e")
   
   tkgrid(resDir_label, resDir_hBut, resDir_entry, resDir_button, 
          padx = cell_width)
@@ -353,14 +276,12 @@ launch_GUI <- function() {
   tkgrid.configure(distanceMetric_label, sticky = "e")
   tkgrid.configure(distanceMetric_hBut, sticky = "e")
   tkgrid.configure(distanceMetric_rbuts, sticky = "w")
-  # tkgrid.configure(fixedNum_hBut, sticky = "w")
   
   tkgrid(multiSingle_label, multiSingle_hBut, multiSingle_rbuts,
          padx = cell_width)
   tkgrid.configure(multiSingle_label, sticky = "e")
   tkgrid.configure(multiSingle_rbuts, sticky = "w")
   tkgrid.configure(multiSingle_hBut, sticky = "e")
-  
   
   tkgrid(subsampleNum_label, subsampleNum_hBut, subsampleNum_entry, padx = cell_width)
   tkgrid.configure(subsampleNum_hBut, sticky = "w")
@@ -395,19 +316,11 @@ launch_GUI <- function() {
   
   tkwait.window(tt)
   
-  ##-------------------##
-  ## Return parameters ##
-  ##-------------------##
-  
+  # Return parameters
   if (tclvalue(ret_var) != "OK") {
     okMessage <- "Analysis is cancelled."
   }else{
-    # fcsFiles <- strsplit(tclvalue(fcsFile), "}{", fixed = TRUE)[[1]]
-    # parameters <- strsplit(tclvalue(markers), "}{", fixed = TRUE)[[1]]
-    
     inputs <- list()
-    # inputs[["fcsFiles"]] <- fcsFiles
-    # inputs[["markers"]] <- parameters
     inputs[["multiSingle"]] = tclvalue(multiSingle)
     inputs[["subsampleNum"]] = tclvalue(subsampleNum)
     inputs[["distanceMetric"]] = tclvalue(distanceMetric)
@@ -433,56 +346,8 @@ launch_GUI <- function() {
                         inputs[["resultDir"]])
   }
 
-   # launchShinyAPP_GUI(message = okMessage, dir = inputs[["resultDir"]])
-   # source("C://Users//Rohit//Documents//ui.R")
-   # source("C://Users//Rohit//Documents//server.R")
-  # GUIUI()
-  # GUISERVER()
-  # runApp()
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
-
-
-# launchShinyAPP_GUI <- function(message="cytofkit", dir = getwd()){
-#   ifAPP <- tclVar("n")
-#   ss <- tktoplevel(borderwidth = 10)
-#   tkwm.title(ss, "cytofkit: Analysis Done")
-#   
-#   onYes <- function() {
-#     tclvalue(ifAPP) <- "y"
-#     tkdestroy(ss)
-#   }
-#   
-#   onNo <- function() {
-#     tclvalue(ifAPP) <- "n"
-#     tkdestroy(ss)
-#   }
-#   yesBut <- tkbutton(ss, text = " YES ", command = onYes)
-#   noBut <- tkbutton(ss, text = " NO ", command = onNo)
-#   openDirBut <- tkbutton(ss, text = "Open", command = function(){opendir(dir)})
-#   okBut <- tkbutton(ss, text = "OK", command = function(){tkdestroy(ss)})
-#   tkgrid(tklabel(ss, text = message))
-#   
-#   if(message != "Analysis is cancelled."){
-#     tkgrid(openDirBut)
-#     tkgrid(tklabel(ss, text = "\n"))
-#     tkgrid(tklabel(ss, text = "Launch Shiny APP to check your reuslts:"))
-#     tkgrid(noBut, tklabel(ss, text = "    "), yesBut)
-#     tkgrid.configure(noBut, sticky = "e")
-#     tkgrid.configure(yesBut, sticky = "e")
-#   }else{
-#     tkgrid(tklabel(ss, text = "\n"))
-#     tkgrid(okBut)
-#   }
-#   
-#   tkwait.window(ss)
-#   
-#   if(tclvalue(ifAPP) == "y"){
-#     cytofkitShinyAPP()
-#   }
-# }
-
-## function for opening the results directory
 
 
 opendir <- function(dir = getwd()){
@@ -492,55 +357,3 @@ opendir <- function(dir = getwd()){
     system(paste(Sys.getenv("R_BROWSER"), dir))
   }
 }
-
-
-#' GUI for marker selection 
-#' 
-#' Extract the markers from the fcsfiles
-#' 
-#' @param fcsFile The name of the FCS file
-#' @param rawFCSdir The path of the FCS file
-#' @examples 
-#' #getParameters_GUI()
-# getParameters_GUI <- function(fcsFile, rawFCSdir) {
-#   
-#   if (missing(fcsFile)) {
-#     fcsFile <- list.files(path = rawFCSdir, pattern = ".fcs$", full.names = TRUE)
-#   }
-#   
-#   fcs <- suppressWarnings(read.FCS(fcsFile[1]))
-#   pd <- fcs@parameters@data
-#   markers <- paste("<", pd$name, ">:", pd$desc, sep = "")
-#   channels <- pd$name
-#   
-#   if (length(markers) == 0) {
-#     stop("No markers found in the FCS file!")
-#   }
-
-# GUI
-# markerChoice <- tclVar("")
-# mm <- tktoplevel()
-# tkwm.title(mm, "cytofkit: marker selection")
-# scr <- tkscrollbar(mm, repeatinterval = 5, command = function(...) tkyview(tl, 
-#                                                                            ...))
-# tl <- tklistbox(mm, height = 30, width = 40, selectmode = "multiple", yscrollcommand = function(...) tkset(scr, 
-#                                                                                                            ...), background = "white")
-# OnOK <- function() {
-#   tclvalue(markerChoice) <- paste(markers[as.numeric(tkcurselection(tl)) + 
-#                                             1], collapse = "}{")
-#   tkdestroy(mm)
-# }
-# OK.but <- tkbutton(mm, text = " OK ", command = OnOK)
-# tkgrid(tklabel(mm, text = "Please select your markers:"))
-# tkgrid(tl, scr)
-# tkgrid.configure(scr, rowspan = 4, sticky = "nsw")
-# for (i in (1:length(markers))) {
-#   tkinsert(tl, "end", markers[i])
-# }
-# tkgrid(OK.but)
-# tkwait.window(mm)
-# 
-# # return parameters
-# paras <- strsplit(tclvalue(markerChoice), "}{", fixed = TRUE)[[1]]
-# paras <- channels[match(paras, markers)]
-# return(paras)
