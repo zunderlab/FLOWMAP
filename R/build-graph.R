@@ -55,44 +55,22 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
                                                   inds.in.n = inds.in.n)
   }
   num.edges <- length(edgelist.with.distances[, 1])
-  print("num.edges")
-  print(num.edges)
-  print("per")
-  print(per)
-  print("1 + 1")
-  print(1 + 1)
-  a_var <- 1
-  b_var <- 2
-  print("a_var + b_var")
-  print(a_var + b_var)
   val <- max(floor(num.edges * per / 100), 1)
-  print("j")
   trim.edgelist.with.distances <- edgelist.with.distances[(1:val), ]
-  print("k")
   # calculate "density" for each cluster and normalize
   if (val == 1) {
-    print("l")
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
-    print("m")
   }
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
-  print("n")
   # add in zeros for clusters with no edges (table function leaves these out)
   densities <- rep(0, numcluster)
-  print("o")
   if (table.lengths[1] == FALSE) {
-    print("p")
     names(densities) <- (1:numcluster)
-    print("q")
   } else {
-    print("r")
     names(densities) <- (offset + 1):(offset + table.lengths[1] + table.lengths[2])
   }
-  print("s")
   densities[names(densities.no.zeros)] <- densities.no.zeros
-  print("t")
   normalized.densities <- round(densities / max(densities) * (max - min) + min)
-  print("u")
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
 }

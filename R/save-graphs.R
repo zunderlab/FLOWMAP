@@ -150,7 +150,49 @@ PrintPanel <- function(var.annotate) {
   return(panel)
 }
 
-PrintSummary <- function() {
+
+PrintSummary <- function(mode, files, var.annotate, var.remove,
+                         clustering.var, distance.metric, per, minimum,
+                         maximum, subsamples, cluster.numbers, seed.X) {
+  summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
+  cat("Printing summary.", "\n")
+  # starting.files = c("FCS", "cluster_matrix")
+  summary[(dim(summary)[1] + 1), ] <- c("mode", mode,
+                                        "selected FLOW-MAP mode")
+  summary[(dim(summary)[1] + 1), ] <- c("files", toString(files),
+                                        "files")
+  summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(var.annotate),
+                                        "markers included in this analysis")
+  panel <- PrintPanel(var.annotate)
+  summary[(dim(summary)[1] + 1), ] <- c("panel", toString(panel),
+                                        "full panel including metals and corresponding marker")
+  summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(var.remove),
+                                        "removed markers")
+  summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(clustering.var),
+                                        "markers used for clustering and distance calculation")
+  summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
+                                        "distance metric")
+  summary[(dim(summary)[1] + 1), ] <- c("per", per,
+                                        "distance for calculated density (n percent)")
+  summary[(dim(summary)[1] + 1), ] <- c("minimum", minimum,
+                                        "min number of edges")
+  summary[(dim(summary)[1] + 1), ] <- c("maximum", maximum,
+                                        "max number of edges")
+  summary[(dim(summary)[1] + 1), ] <- c("subsamples", subsamples,
+                                        "subsamples for all FCS files")
+  summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", cluster.numbers,
+                                        "number of clusters for all FCS files")
+  summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
+                                        "set seed value")
+  file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
+  file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
+  file.name <- paste(file.name, ".txt", sep = "")
+  cat("file.name", file.name, "\n")
+  write.table(summary, file = file.name, row.names = FALSE, na = "")
+}
+
+
+PrintSummaryOLD <- function() {
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
   # starting.files = c("FCS", "cluster_matrix")

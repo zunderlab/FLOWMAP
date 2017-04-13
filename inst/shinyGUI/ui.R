@@ -17,7 +17,7 @@ shinyUI(
                          selectize = FALSE,
                          size = 10
              ),
-             textInput("fileorder", label = h3("Write the FCS File Order, if none, leave blank"), placeholder = "Ex: 4,2,7,5,3,1,6"),
+             textInput("fileorder", label = h3("Write the FCS File Order"), placeholder = "Ex: 4,2,7,5,3,1,6"),
              actionButton("generbutton2", "Generate Parameters"),
              textOutput(
                "stuff"

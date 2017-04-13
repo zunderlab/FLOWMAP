@@ -125,7 +125,7 @@ CheckModeMulti <- function(files) {
 }
 
 #' @export
-FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
+FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                     cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
                     starting.files = c("FCS", "cluster_matrix"),
@@ -241,7 +241,10 @@ FLOWMAP <- function(files, var.remove, var.annotate, clustering.var,
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  PrintSummary()
+  PrintSummary(mode, files, var.annotate, var.remove,
+               clustering.var, distance.metric, per, minimum,
+               maximum, subsamples, cluster.numbers, seed.X)
+  # PrintSummary()
   ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
   return(graph.xy)
 }
