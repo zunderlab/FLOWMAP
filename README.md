@@ -147,16 +147,16 @@ files <- system.file("extdata/MultiFLOWMAP", package = "FLOWMAPR")
 Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()` command.
 
 ## Using the GUI
-0. Make sure all FSC files that are to be tested are within one folder
+0. Make sure all FSC files that are to be tested are within one folder.
 1. When `FLOWMAPR::launch_GUI()` is run, a dialogue box of the header "FLOWMAP" should appear. 
 2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed.
-3. When "Submit" is pressed, a new window should appear which runs with Shiny
-4. Press "Generate Order List", which will display all the FCS files in the folder
-5. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown
-6. Press "Generate Parameters"
-7. Two things will now happen, an interactive table will appear with all the paramters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
-8. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can by clicking on the name under "annotate" and type a new name. 
-9. Press "Write File" once the appropriate parameters have been checked and renamed to run FLOWMAP and write the resulting data.
+3. When "Submit" is pressed, a new window should appear which runs with Shiny.
+4. Press "Generate Order List", which will display all the FCS files in the folder.
+5. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown.
+6. Press "Generate Parameters."
+7. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
+8. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
+9. Press "Write File" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
 
 ## Contributing
 
