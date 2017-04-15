@@ -79,11 +79,21 @@ install.packages("rhandsontable")
 FLOWMAPR::launch_GUI()
 ```
 
+### Updating FLOWMAPR:
+
+To quickly update your FLOWMAPR R package up and get the latest version from GitHub:
+
+1. Open R studio and load devtools using `library(devtools)`.
+2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations.
+3. Load FLOWMAPR using `library(FLOWMAPR)`.
+
+If the above commands run without error, you should have the latest version of FLOWMAPR.
+
 ## Running FLOW-MAP
 
 To run a FLOWMAP analysis on your data set or an example data set:
 
-0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters.
+0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. **Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
   * `files` - the directory where you can find the FCS files to be used
