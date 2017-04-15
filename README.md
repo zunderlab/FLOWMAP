@@ -3,6 +3,8 @@
 This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
 ## Code Status
+Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and wrte your bugs/issues/suggestions there until public code release.
+
 ### Known Issues (“Bugs”)
 * fix percent/count after SPADE downsampling in final graph
 
