@@ -20,6 +20,7 @@
 #' # launch_GUI()
 
 launch_GUI <- function() {
+  require(shiny)
   # parameter initialization
   cur_dir <- getwd()
   distanceMetrics <- c("manhattan", "euclidean")
