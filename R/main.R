@@ -128,17 +128,23 @@ CheckModeMulti <- function(files) {
 FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                     cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
-                    starting.files = c("FCS", "cluster_matrix"),
                     shuffle = TRUE, name.sort = TRUE, downsample = TRUE,
                     savePDFs = TRUE, ...) {
+  # starting.files = c("FCS", "cluster_matrix"),
   # optional variables
   # transform 
   # scale
   # subsample.rand
   # starting.files = c("FCS", "cluster_matrix")
   
+  print("downsample")
+  print(downsample)
+  print("shuffle")
+  print(shuffle)
   print("savePDFs")
   print(savePDFs)
+  print("name.sort")
+  print(name.sort)
   
   setwd(save.folder)
   if (mode == "single") {
