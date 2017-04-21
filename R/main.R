@@ -129,7 +129,8 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                     cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
                     starting.files = c("FCS", "cluster_matrix"),
-                    shuffle = TRUE, name.sort = TRUE, downsample = TRUE, ...) {
+                    shuffle = TRUE, name.sort = TRUE, downsample = TRUE,
+                    savePDFs = TRUE, ...) {
   # optional variables
   # transform 
   # scale
@@ -244,7 +245,8 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   PrintSummary(mode, files, var.annotate, var.remove,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
-  # PrintSummary()
-  ConvertToPDF(graphml.file = final.file.name, edge.color = "#FF000000")
+  if (savePDFs) {
+    ConvertToPDF(graphml.file = final.file.name)
+  }
   return(graph.xy)
 }

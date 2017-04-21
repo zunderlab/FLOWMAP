@@ -19,8 +19,7 @@ ConvertToGraphML <- function(output.graph, file.name) {
 
 ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100,
-                         pdf.height = 100, text.color = "black",
-                         edge.color = "grey", which.palette = "jet") {
+                         pdf.height = 100, which.palette = "bluered") {
   pctile.color = c(0.2, 0.98)
   graph <- read.graph(graphml.file, format = "graphml")
   out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
@@ -46,9 +45,15 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   # set up color scale
   if (which.palette == "jet") {
     my.palette <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-  }
-  if (which.palette == "bluered") {
-    my.palette <- colorRampPalette(c("blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red"))
+    time.palette <- my.palette
+  } else if (which.palette == "bluered") {
+    my.palette <- colorRampPalette(c("#1500FB", "#C3C3C7", "#D10100"))
+    time.palette <- rev(colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000")))
+  } else if (which.palette = "CB") {
+    my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
+    time.palette <- my.palette
+  } else {
+    stop("Unknown color palette!")
   }
   color.scale <- my.palette(100)
   # set up node size
@@ -60,9 +65,11 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   for (name in colnames(all.attributes)) {
     # get attribute name and data
     attribute <- all.attributes[, name]
-    if (name == "Time") {
+    if (name = "name") {
+      next
+    } else if (name == "Time") {
       num.unique <- length(unique(attribute))
-      color.scale <- my.palette(num.unique)
+      color.scale <- time.palette(num.unique)
       color <- color.scale[attribute]
     } else {
       # set up color boundaries
@@ -93,7 +100,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
     par(mar = c(1.5, 0, 0, 0))
     plot(graph, layout = graph.l, vertex.shape = "circle", 
          vertex.color = fill.color, vertex.frame.color = frame.color, 
-         edge.color = edge.color, vertex.size = vsize, edge.label = NA, 
+         edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
          vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
          asp = graph.aspect)
     pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
@@ -102,7 +109,11 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   }
   remember.attr <- setdiff(remember.attr, "id")
   if (length(remember.attr) > 0) {
-    my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))
+    if (which.palette = "CB") {
+      my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
+    } else {
+      my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))
+    }
     for (name in remember.attr) {
       cat("categorical attribute is", name, "\n")
       # get attribute name and data
@@ -125,7 +136,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       par(mar = c(1.5, 0, 0, 0))
       plot(graph, layout = graph.l, vertex.shape = "circle", 
            vertex.color = fill.color, vertex.frame.color = frame.color, 
-           edge.color = edge.color, vertex.size = vsize, edge.label = NA, 
+           edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
            vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
            asp = graph.aspect)
       legend(0.75, 1, legend = unique(attribute),
@@ -184,128 +195,6 @@ PrintSummary <- function(mode, files, var.annotate, var.remove,
                                         "number of clusters for all FCS files")
   summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
                                         "set seed value")
-  file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
-  file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
-  file.name <- paste(file.name, ".txt", sep = "")
-  cat("file.name", file.name, "\n")
-  write.table(summary, file = file.name, row.names = FALSE, na = "")
-}
-
-
-PrintSummaryOLD <- function() {
-  summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
-  cat("Printing summary.", "\n")
-  # starting.files = c("FCS", "cluster_matrix")
-  
-  # if (exists("mode")) {
-  #   summary[(dim(summary)[1] + 1), ] <- c("mode", mode,
-  #                                         "selected FLOW-MAP mode")
-  # }
-  if (exists("files")) {
-    summary[(dim(summary)[1] + 1), ] <- c("files", toString(files),
-                                          "files")
-  }  
-  if (exists("output.folder")) {
-    summary[(dim(summary)[1] + 1), ] <- c("output.folder", toString(output.folder),
-                                          "output folder")
-  }  
-  if (exists("final.file.name")) {
-    summary[(dim(summary)[1] + 1), ] <- c("final.file.name", toString(final.file.name),
-                                          "final file name")
-  }  
-  if (exists("fcs.file.names")) {
-    summary[(dim(summary)[1] + 1), ] <- c("fcs.file.names", toString(fcs.file.names),
-                                          "selected files")
-  }  
-  if (exists("num.files")) {
-    summary[(dim(summary)[1] + 1), ] <- c("num.files", num.files,
-                                          "number of selected files")
-  }  
-  if (exists("starting.files")) {
-    summary[(dim(summary)[1] + 1), ] <- c("starting.files", toString(starting.files),
-                                          "selected starting file types")
-  }
-  if (exists("var.annotate")) {
-    summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(var.annotate),
-                                          "markers included in this analysis")
-  }
-  if (exists("var.annotate")) {
-    panel <- PrintPanel(var.annotate)
-    summary[(dim(summary)[1] + 1), ] <- c("panel", toString(panel),
-                                          "full panel including metals and corresponding marker")
-  }
-  if (exists("var.remove")) {
-    summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(var.remove),
-                                          "removed markers")
-  }
-  if (exists("clustering.var")) {
-    summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(clustering.var),
-                                          "markers used for clustering and distance calculation")
-  } 
-  if (exists("distance.metric")) {
-    summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
-                                          "distance metric")
-  }
-  if (exists("exclude.pctile")) {
-    if (is.null(exclude.pctile)) {
-      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", "NULL",
-                                            "exclude percentile for downsampling")
-    } else {
-      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", exclude.pctile,
-                                            "exclude percentile for downsampling")
-    }
-  }
-  if (exists("target.pctile")) {
-    if (is.null(target.pctile)) {
-      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", "NULL",
-                                            "target percentile for downsampling")
-    } else {
-      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", target.pctile,
-                                            "target percentile for downsampling")
-    }
-  }
-  if (exists("target.number")) {
-    if (is.null(target.number)) {
-      summary[(dim(summary)[1] + 1), ] <- c("target.number", "NULL",
-                                            "target number for downsampling")
-    } else {
-      summary[(dim(summary)[1] + 1), ] <- c("target.number", target.number,
-                                            "target number for downsampling")
-    }
-  }
-  if (exists("target.percent")) {
-    if (is.null(target.percent)) {
-      summary[(dim(summary)[1] + 1), ] <- c("target.percent", "NULL",
-                                            "target percent for downsampling")
-    } else {
-      summary[(dim(summary)[1] + 1), ] <- c("target.percent", target.percent,
-                                            "target percent for downsampling")
-    }
-  }
-  if (exists("per")) {
-    summary[(dim(summary)[1] + 1), ] <- c("per", per,
-                                          "distance for calculated density (n percent)")
-  } 
-  if (exists("minimum")) {
-    summary[(dim(summary)[1] + 1), ] <- c("minimum", minimum,
-                                          "min number of edges")
-  } 
-  if (exists("maximum")) {
-    summary[(dim(summary)[1] + 1), ] <- c("maximum", maximum,
-                                          "max number of edges")
-  } 
-  if (exists("subsamples")) {
-    summary[(dim(summary)[1] + 1), ] <- c("subsamples", subsamples,
-                                          "subsamples for all FCS files")
-  } 
-  if (exists("cluster.numbers")) {
-    summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", cluster.numbers,
-                                          "number of clusters for all FCS files")
-  } 
-  if (exists("seed.X")) {
-    summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
-                                          "set seed value")
-  }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
   file.name <- paste(file.name, ".txt", sep = "")
