@@ -19,7 +19,16 @@ shinyServer(function(input, output, session) {
   final_new_same <<- NULL
   final_new_diff <<- NULL
   #Set GLobal Variables
-  dir_now = globe_resdir
+  dir_now <<- globe_resdir
+  fileorder = function(){
+      file_names <<- list.files(dir_now, pattern = ".fcs")
+      name_vec <- c()
+      for (i in 1:length(file_names)){
+        name_vec <- c(name_vec, i)
+      }
+      len_filenames <<- name_vec
+      file_names
+  }
   file_names <<- list.files(dir_now, pattern = ".fcs")
   name_vec = c()
   for (i in 1:length(file_names)){
