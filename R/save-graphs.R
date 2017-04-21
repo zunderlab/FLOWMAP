@@ -49,7 +49,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   } else if (which.palette == "bluered") {
     my.palette <- colorRampPalette(c("#1500FB", "#C3C3C7", "#D10100"))
     time.palette <- rev(colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000")))
-  } else if (which.palette = "CB") {
+  } else if (which.palette == "CB") {
     my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
     time.palette <- my.palette
   } else {
@@ -65,7 +65,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   for (name in colnames(all.attributes)) {
     # get attribute name and data
     attribute <- all.attributes[, name]
-    if (name = "name") {
+    if (name == "name") {
       next
     } else if (name == "Time") {
       num.unique <- length(unique(attribute))
@@ -109,7 +109,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
   }
   remember.attr <- setdiff(remember.attr, "id")
   if (length(remember.attr) > 0) {
-    if (which.palette = "CB") {
+    if (which.palette == "CB") {
       my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
     } else {
       my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))

@@ -137,15 +137,6 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   # subsample.rand
   # starting.files = c("FCS", "cluster_matrix")
   
-  print("downsample")
-  print(downsample)
-  print("shuffle")
-  print(shuffle)
-  print("savePDFs")
-  print(savePDFs)
-  print("name.sort")
-  print(name.sort)
-  
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)
