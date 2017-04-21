@@ -163,13 +163,12 @@ Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()`
 1. When `FLOWMAPR::launch_GUI()` is run, a dialogue box of the header "FLOWMAP" should appear. 
 2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed.
 3. When "Submit" is pressed, a new window should appear which runs with Shiny.
-4. Press "Generate Order List", which will display all the FCS files in the folder.
-5. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown.
-6. Press "Generate Parameters."
-7. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
-8. If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
-9. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
-10. Press "Write File" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+4. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown.
+5. Press "Generate Parameters."
+6. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
+7. If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
+8. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
+9. Press "Write File" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
 
 ## Contributing
 
