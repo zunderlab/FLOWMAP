@@ -20,20 +20,24 @@ shinyServer(function(input, output, session) {
   final_new_diff <<- NULL
   #Set GLobal Variables
   dir_now <<- globe_resdir
-  file_names <<- list.files(dir_now, pattern = ".fcs")
-  name_vec = c()
-  for (i in 1:length(file_names)){
-    name_vec = c(name_vec, i)
+  fileorder = function(){
+    file_names <<- list.files(dir_now, pattern = ".fcs")
+    name_vec = c()
+    for (i in 1:length(file_names)){
+      name_vec = c(name_vec, i)
+    }
+    len_filenames <<- name_vec
+    file_names
   }
-  len_filenames <<- name_vec
-  file_names
-  file_names <<- list.files(dir_now, pattern = ".fcs")
-  name_vec = c()
-  for (i in 1:length(file_names)){
-    name_vec = c(name_vec, i)
+  len_filen = function(){
+    file_names <<- list.files(dir_now, pattern = ".fcs")
+    name_vec = c()
+    for (i in 1:length(file_names)){
+      name_vec = c(name_vec, i)
+    }
+    len_filenames <<- name_vec
+    len_filenames
   }
-  len_filenames <<- name_vec
-  len_filenames
   observe({
     updateSelectInput(session, "checkGroup_files", choices = paste(len_filenames, file_names, sep = " "))
   })
