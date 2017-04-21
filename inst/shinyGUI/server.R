@@ -20,15 +20,6 @@ shinyServer(function(input, output, session) {
   final_new_diff <<- NULL
   #Set GLobal Variables
   dir_now <<- globe_resdir
-  fileorder = function(){
-      file_names <<- list.files(dir_now, pattern = ".fcs")
-      name_vec <- c()
-      for (i in 1:length(file_names)){
-        name_vec <- c(name_vec, i)
-      }
-      len_filenames <<- name_vec
-      file_names
-  }
   file_names <<- list.files(dir_now, pattern = ".fcs")
   name_vec = c()
   for (i in 1:length(file_names)){
@@ -53,7 +44,7 @@ shinyServer(function(input, output, session) {
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     fcs_list <- c()
     for(i in order){
-      fcs_list <- c(fcs_list, fileorder()[i])
+      fcs_list <- c(fcs_list, file_names[i])
       fcs_list
     }
   })
@@ -68,7 +59,7 @@ shinyServer(function(input, output, session) {
     for(i in order)
     {
       setwd(dir_now)
-      files <- read.FCS(fileorder()[i], emptyValue = FALSE)
+      files <- read.FCS(file_names[i], emptyValue = FALSE)
       filed <- pData(parameters(files))[,c("name")]
       name_desc <- do.call(paste, as.data.frame(filed, stringsAsFactors=FALSE))
       fcs_list[[(count + 1)]] <- name_desc
@@ -99,7 +90,7 @@ shinyServer(function(input, output, session) {
     for(i in order)
     {
       setwd(dir_now)
-      files <- read.FCS(fileorder()[i], emptyValue = FALSE)
+      files <- read.FCS(file_names[i], emptyValue = FALSE)
       filed <- pData(parameters(files))[,c("name")]
       name_desc <- do.call(paste, as.data.frame(filed, stringsAsFactors=FALSE))
       fcs_list[[(count + 1)]] <- name_desc
