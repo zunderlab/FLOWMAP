@@ -162,6 +162,7 @@ shinyServer(function(input, output, session) {
     for(i in files_tbm){
       print("round")
       new_df[new_df$channels == i, "annotate"] = input$filemerge
+      DF_edit <<- new_df
     }
     print("NEW DF MADE")
     output$table <- renderRHandsontable({
