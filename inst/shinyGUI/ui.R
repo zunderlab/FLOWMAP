@@ -4,8 +4,6 @@ require(rhandsontable)
 shinyUI(
   fluidPage(
     titlePanel("File Uploader"),
-    br(),
-    br(),
     fluidRow(
       column(width = 3,
              selectInput("checkGroup_files",
@@ -32,8 +30,6 @@ shinyUI(
              )
       ),
       column(width = 3,
-             br(),
-             br(),
              selectInput("checkGroup_sim",
                          label = h5("Similar Fields"),
                          choices = "Pending Upload",
