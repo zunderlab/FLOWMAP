@@ -246,7 +246,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
   if (savePDFs) {
-    ConvertToPDF(graphml.file = final.file.name)
+    ConvertToPDF(graphml.file = final.file.name, ...)
   }
   return(graph.xy)
 }
