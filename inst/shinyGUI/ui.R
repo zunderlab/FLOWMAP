@@ -10,14 +10,14 @@ shinyUI(
       column(width = 3,
              actionButton("generbutton", "Generate Order List"),
              selectInput("checkGroup_files",
-                         label = h3("Uploaded Order"),
+                         label = h5("Uploaded Order"),
                          choices = "Pending Upload",
                          selected = NULL,
                          multiple = TRUE,
                          selectize = FALSE,
                          size = 10
              ),
-             textInput("fileorder", label = h3("Write the FCS File Order"), placeholder = "Ex: 4,2,7,5,3,1,6"),
+             textInput("fileorder", label = h5("Write the FCS File Order"), placeholder = "Ex: 4,2,7,5,3,1,6"),
              actionButton("generbutton2", "Generate Parameters"),
              textOutput(
                "stuff"
@@ -36,7 +36,7 @@ shinyUI(
              br(),
              br(),
              selectInput("checkGroup_sim",
-                         label = h3("Similar Fields"),
+                         label = h5("Similar Fields"),
                          choices = "Pending Upload",
                          selected = NULL,
                          multiple = TRUE,
@@ -44,16 +44,18 @@ shinyUI(
                          size = 10
              ),
              selectInput("checkGroup_diff",
-                         label = h3("Different Fields"),
+                         label = h5("Different Fields"),
                          choices = "Pending upload",
                          selected = NULL,
                          multiple = TRUE,
                          selectize = FALSE,
                          size = 10
-             )
+             ),
+             textInput("filemerge", label = h5("Select New Merge Name"), placeholder = "New Name"),
+             actionButton("mbutton", "Merge Selected Diff")
       ),
       column(width = 5,
-             actionButton("button", "Write File"),
+             actionButton("button", "Run FLOWMAP"),
              br(),
              rHandsontableOutput("table", width = 600)
              
