@@ -8,7 +8,6 @@ shinyUI(
     br(),
     fluidRow(
       column(width = 3,
-             actionButton("generbutton", "Generate Order List"),
              selectInput("checkGroup_files",
                          label = h5("Uploaded Order"),
                          choices = "Pending Upload",
