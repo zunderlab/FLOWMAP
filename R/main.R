@@ -137,6 +137,9 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   # subsample.rand
   # starting.files = c("FCS", "cluster_matrix")
   
+  print("savePDFs")
+  print(savePDFs)
+  
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)
@@ -246,6 +249,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
   if (savePDFs) {
+    cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = final.file.name, ...)
   }
   return(graph.xy)
