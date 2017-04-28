@@ -136,7 +136,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   # scale
   # subsample.rand
   # starting.files = c("FCS", "cluster_matrix")
-
+  set.seed(seed.X)
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)
@@ -156,17 +156,22 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
     file.name <- fcs.file.names[1]
     # file.name <- fcs.file.names[1]
     if (downsample) {
-      cat("Downsampling all files using SPADE functions", "\n")
-      fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
-                                      distance.metric, ...)
+      cat("Downsampling all files using SPADE downsampling", "\n")
+      fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
+                                 channel.remove, ...)
+    } else {
+      fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                                channel.annotate = var.annotate, subsamples = subsamples)
     }
-    fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                              channel.annotate = var.annotate, subsamples = subsamples)
     if (shuffle) {
       fcs.files <- ShuffleCells(fcs.files, subsamples)
     }
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
+    # if (downsample) {
+    #   cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
+    #   file.clusters <- Upsample(file.clusters, ...)
+    # }
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric, cellnum = subsamples,
                             clustering.var = clustering.var)
@@ -188,12 +193,13 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
     }
     file.name <- fcs.file.names[[1]][1]
     if (downsample) {
-      cat("Downsampling all files using SPADE functions", "\n")
-      fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
-                                      distance.metric, ...)
+      cat("Downsampling all files using SPADE downsampling", "\n")
+      fcs.files <- MultiDownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
+                                      channel.remove, ...)
+    } else {
+      fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
+                                     subsamples = subsamples)
     }
-    fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-                                   subsamples = subsamples)
     if (shuffle) {
       fcs.files <- MultiShuffleCells(fcs.files, subsamples)
     }
@@ -202,6 +208,10 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
     label.key <- fcs.files.conversion$label.key
     file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                      distance.metric = distance.metric)
+    # if (downsample) {
+    #   cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
+    #   file.clusters <- MultiUpsample(file.clusters, ...)
+    # }
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric, cellnum = subsamples,
                                label.key = label.key)

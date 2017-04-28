@@ -417,6 +417,16 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
               edgelist.save = edgelist.save))
 }
 
+# NOT FINISHED IMPLEMENTING
+Upsample <- function(FLOWMAP.clusters) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (f in 1:length(FLOWMAP.clusters$cluster.counts)) {
+    counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
+    fixed.counts <- counts
+    fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
+  }
+  return(fixed.FLOWMAP.clusters)
+}
 
 AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   # This section annotates the graph
@@ -424,7 +434,7 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
   anno <- list()
   # handle different numbers of cellnum?
   if (length(cellnum) == 1) {
-    cellnum <- rep(cellnum, times = length(FLOWMAP.clusters))
+    cellnum <- rep(cellnum, times = length(FLOWMAP.clusters$cluster.medians))
   }
   # iterate through all times and annotate
   for (f in 1:length(FLOWMAP.clusters$cluster.medians)) {

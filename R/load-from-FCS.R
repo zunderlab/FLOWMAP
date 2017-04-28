@@ -152,38 +152,80 @@ ConvertVariables <- function(clustering.var, var.annotate) {
   return(fixed.clustering.var)
 }
 
-# SPADE
-# density-dependent downsampling
+# SPADE: density-dependent downsampling
 
-DownsampleFCS <- function(fcs.files, clustering.var, distance.metric,
-                          exclude.pctile = 0.01, target.pctile = 0.99,
+DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
+                          channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
-                          ...) {
-  
-  # Eli: In this study, the SPADE package was used
-  # to perform density-dependent downsampling and hierarchical
-  # clustering as previously described (Linderman et al., 2012;
-  # Qiu et al., 2011). Parameters used for clustering were
-  # Downsampling Exclude Percentile = 0.01, Downsampling Target
-  # Percentile = 0.99, and Target Clusters = 200. 
-  
-  # optional variables
-  # transforms
-  
-  downsample.files <- c()
-  for (file.name in fcs.files) {
-    base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
-    infilename <- paste(base.name, "density.fcs", sep = "_")
-    spade::SPADE.addDensityToFCS(file.name, infilename,
-                                 cols = ConvertVariables(clustering.var, var.annotate), comp = TRUE,
-                                 transforms = flowCore::arcsinhTransform(a = 0, b = 0.2))
-    outfilename <- paste(base.name, "downsample.fcs", sep = "_")
-    spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
-                               exclude_pctile = exclude.pctile,
-                               target_pctile = target.pctile,
-                               target_number = target.number,
-                               target_percent = target.percent)
-    downsample.files <- c(downsample.files, outfilename)
+                          transform = TRUE) {
+  # kernel_mult = kernel_mult,
+  # apprx_mult = apprx_mult, med_samples = med_samples
+  downsample.files <- list()
+  cat("Downsampling FCS files.", "\n")
+  for (i in 1:length(fcs.file.names)) {
+    out.file <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = NULL,
+                         alter.names = FALSE, column.pattern = NULL,
+                         invert.pattern = FALSE, decades = 0, ncdf = FALSE,
+                         min.limit = NULL, dataset = NULL, emptyValue = TRUE)
+    out.file <- head(out.file, n = dim(out.file)[1])
+    # rename variables with protein marker measured instead of metal channel
+    for (x in 1:length(colnames(out.file))) {
+      if (exists(colnames(out.file)[x], where = channel.annotate)) {
+        colnames(out.file)[x] <- channel.annotate[[colnames(out.file)[x]]]
+      }
+    }
+    # remove unneeded variables
+    out.file <- subset(out.file, select = colnames(out.file)[!colnames(out.file) %in% channel.remove])
+    # Compute the density
+    idxs <- match(clustering.var, colnames(out.file))
+    # density <- spade::SPADE.density(out.file[, idxs], ...)
+    density <- spade::SPADE.density(out.file[, idxs])
+    if (max(density) == 0.0) { stop("File has degenerate densities, possibly due to many identical observations!") }
+    # Add column named "density" to the FCS file
+    if (transform) {
+      out.file <- apply(out.file, 2, Asinh) 
+    }
+    out.file <- cbind(out.file, density = density)
+    boundary <- quantile(density, c(exclude.pctile, target.pctile), names = FALSE)
+    out.file <- subset(out.file, out.file[, "density"] > boundary[1]) # Exclusion
+    if (!is.null(target.percent)) {
+      target.number = round(target.percent * nrow(out.file))
+      cat("Targeting", target.number, "events for file", i, "\n")
+    }
+    if (is.null(target.number)) {
+      boundary <- boundary[2]
+      out.file <- subset(out.file, ((boundary / out.file[, "density"]) > runif(nrow(out.file))))
+    } else if (target.number < nrow(out.file)) {
+      density.sort <- sort(out.file[, "density"])
+      cdf <- rev(cumsum(1.0 / rev(density.sort)))
+      # Default solution if target density smaller than any present
+      boundary <- target.number/cdf[1]
+      if (boundary > density.sort[1]) {  # Boundary actually falls amongst densities present
+        targets <- (target.number-1:length(density.sort)) / cdf
+        boundary <- targets[which.min(targets - density.sort > 0)]
+      }
+      out.file  <- subset(out.file, ((boundary / out.file[, "density"]) > runif(length(out.file[, "density"]))))
+    } else if (target.number > nrow(out.file)) {
+      stop("More events requested than present in file!")
+    }
+    downsample.files[[i]] <- out.file
+  }
+  return(downsample.files)
+}
+
+MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
+                               channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                               target.number = NULL, target.percent = 0.1,
+                               transform = TRUE) {
+  print("fcs.file.names")
+  print(fcs.file.names)
+  downsample.files <- list()
+  for (i in 1:length(fcs.file.names)) {
+    f.names <- fcs.file.names[[i]]
+    fcs.files <- DownsampleFCS(f.names, clustering.var, channel.annotate,
+                               channel.remove, exclude.pctile, target.pctile,
+                               target.number, target.percent, transform) 
+    downsample.files[[i]] <- fcs.files
   }
   return(downsample.files)
 }
