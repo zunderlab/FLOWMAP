@@ -48,7 +48,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
     time.palette <- my.palette
   } else if (which.palette == "bluered") {
     my.palette <- colorRampPalette(c("#1500FB", "#C3C3C7", "#D10100"))
-    time.palette <- rev(colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000")))
+    time.palette <- colorRampPalette(rev(c("#00007F", "blue", "#007FFF", "cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000")))
   } else if (which.palette == "CB") {
     my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
     time.palette <- my.palette
@@ -67,10 +67,11 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
     attribute <- all.attributes[, name]
     if (name == "name") {
       next
-    } else if (name == "Time") {
+    } else if (name == "Time" | grepl(pattern = "Time", x = name)) {
       num.unique <- length(unique(attribute))
       color.scale <- time.palette(num.unique)
       color <- color.scale[attribute]
+      save.time.scale <- color.scale
     } else {
       # set up color boundaries
       ifelse (!is.null(scale), 
@@ -83,16 +84,16 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
         boundary <- c(boundary[1] - 1, boundary[2] + 1)
       }
       if (Inf %in% boundary) {
-        next()
+        next
       }
       grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
       color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
-      color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
+      color[is.na(attribute)] <- "grey"
+      # color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
     }
     fill.color <- color
     is.na(fill.color) <- is.na(attribute)
     frame.color <- color
-    
     pdf(file = paste(name, ".pdf", sep = ""),
         width = pdf.width, height = pdf.height, pointsize = 12,
         bg = "transparent")
@@ -104,8 +105,14 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
          vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
          asp = graph.aspect)
     pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
-    legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
+    if (grepl(name, pattern = "Time")) {
+      legend.gradient(pnts = pnts, cols = save.time.scale, title = name, c(min(attribute), max(attribute)), cex = 10)
+      color.scale <- my.palette(100)
+    } else {
+      legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
+    }
     dev.off()
+    rm
   }
   remember.attr <- setdiff(remember.attr, "id")
   if (length(remember.attr) > 0) {
@@ -115,7 +122,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))
     }
     for (name in remember.attr) {
-      cat("categorical attribute is", name, "\n")
       # get attribute name and data
       attribute <- get.vertex.attribute(graph, name, index = V(graph))
       cat("options are", unique(attribute), "\n")
