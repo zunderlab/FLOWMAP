@@ -152,7 +152,20 @@ ConvertVariables <- function(clustering.var, var.annotate) {
   return(fixed.clustering.var)
 }
 
-# SPADE: density-dependent downsampling
+#' SPADE: density-dependent downsampling
+#' 
+#' This code was adapted from the spade R package,
+#' available here: https://github.com/nolanlab/spade.
+#' 
+#' Specifically, the code in this file is adapted from downsample.R, but
+#' has been modified to not produce FCS files as a result.
+#' 
+#' This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
+#' and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
+#' was used under the GNU General Public License v. 2.0
+#' (https://github.com/nolanlab/spade/blob/master/LICENSE) available
+#' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
+#' license rules, our code is available under GPL-3.0.
 
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
