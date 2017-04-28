@@ -431,11 +431,6 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
     cat("Annotating graph for file", f, "\n")
     # get medians for all parameters and counts for all clusters
     counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
-    print("counts")
-    print(counts)
-    print("cellnum[f]")
-    print(cellnum[f])
-    
     anno$count <- counts
     anno$percent.total <- data.frame(percent.total = c(counts / cellnum[f]))
     anno$medians  <- FLOWMAP.clusters$cluster.medians[[f]]
