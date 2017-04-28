@@ -96,6 +96,7 @@ To run a FLOWMAP analysis on your data set or an example data set:
 0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. **Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
+  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results
   * `files` - the directory where you can find the FCS files to be used
   * `save.folder` - where you want the output files to be saved to
   * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
@@ -112,7 +113,8 @@ To run a FLOWMAP analysis on your data set or an example data set:
   * `shuffle` - shuffle cells used in each sample
   * `name.sort` - sort FCS files according to name in alphabetical/numerical order
   * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`
-
+  * `savePDFs` - produce PDF files or only produce graphml files
+  * `which.palette` - optional argument for savePDFs functionality, can do colorblind-friendly option with "CB"
 
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
