@@ -226,19 +226,37 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   return(downsample.files)
 }
 
-MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
+MultiDownsampleFCS <- function(list.of.time.file.names, clustering.var, channel.annotate,
                                channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                                target.number = NULL, target.percent = 0.1,
                                transform = TRUE) {
-  print("fcs.file.names")
-  print(fcs.file.names)
   downsample.files <- list()
-  for (i in 1:length(fcs.file.names)) {
-    f.names <- fcs.file.names[[i]]
-    fcs.files <- DownsampleFCS(f.names, clustering.var, channel.annotate,
+  for (time in names(list.of.time.file.names)) {
+    fcs.file.names <- list.of.time.file.names[[time]]
+    fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
                                channel.remove, exclude.pctile, target.pctile,
                                target.number, target.percent, transform) 
-    downsample.files[[i]] <- fcs.files
+    downsample.files[[time]] <- fcs.files
+    f.names <- c() 
+    for (i in 1:length(downsample.files[[time]])) {
+      Time <- rep(as.numeric(time), times = dim(downsample.files[[time]][[i]])[1])
+      downsample.files[[time]][[i]] <- cbind.data.frame(downsample.files[[time]][[i]],
+                                                        Time, stringsAsFactors = FALSE)
+      this.name <- basename(fcs.file.names[i])
+      this.name <- gsub(".fcs", "", this.name)
+      if (grepl("-", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "-"))[1]
+      }
+      if (grepl("\\.", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+      }
+      Condition <- rep(this.name, times = dim(downsample.files[[time]][[i]])[1])
+      downsample.files[[time]][[i]] <- cbind.data.frame(downsample.files[[time]][[i]],
+                                                        Condition, stringsAsFactors = FALSE)
+      f.names <- c(f.names, this.name)
+      rm(Time, Condition)
+    }
+    names(downsample.files[[time]]) <- f.names
   }
   return(downsample.files)
 }

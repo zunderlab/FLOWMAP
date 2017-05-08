@@ -109,7 +109,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   # if two cells are identical in all measurements, they should
   # either be clustered together beforehand or excluded (keep one)
   # to avoid Inf edge weights, set their distance to Inf
-
+  
   # For each timepoint:
   #   1. make a complete weighted edgelist (this is standard for building
   #      a regular MST)
@@ -122,7 +122,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   # matrix of their distances to each other)
   el.n1n1.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
                              (as.vector(col(adjacency.n1n1)) + table.lengths[1] + offset), 
-                              as.vector(adjacency.n1n1))
+                             as.vector(adjacency.n1n1))
   colnames(el.n1n1.with.dist) <- c("Vertex 1", "Vertex 2", "Distance")
   # remove permutations (order does not matter)
   # AKA take out edges that are node 1 --- node 3
@@ -153,7 +153,7 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                                             1:table.lengths[1]]
   el.n1n.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
                             (as.vector(col(adjacency.n1n1)) + offset), 
-                             as.vector(adjacency.n1n))
+                            as.vector(adjacency.n1n))
   # rows are n+1 so add offset
   colnames(el.n1n.with.dist) <- c("Vertex 1", "Vertex 2", "Distance")
   # convert row and col to match correct indexing
@@ -411,38 +411,47 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
   weights <- (1 / distances)
   E(output.graph)$weight <- weights
   output.graph <- AnnotateGraph(output.graph = output.graph,
-                                FLOWMAP.clusters = FLOWMAP.clusters,
-                                cellnum = cellnum)
+                                FLOWMAP.clusters = FLOWMAP.clusters)
   return(list(output.graph = output.graph,
               edgelist.save = edgelist.save))
 }
 
-# NOT FINISHED IMPLEMENTING
 Upsample <- function(FLOWMAP.clusters) {
   fixed.FLOWMAP.clusters <- FLOWMAP.clusters
   for (f in 1:length(FLOWMAP.clusters$cluster.counts)) {
     counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
-    fixed.counts <- counts
+    densities <- FLOWMAP.clusters$cluster.medians[[f]]$density
+    fixed.counts <- round((counts * densities))
     fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
   }
   return(fixed.FLOWMAP.clusters)
 }
 
-AnnotateGraph <- function(output.graph, FLOWMAP.clusters, cellnum) {
+MultiUpsample <- function(FLOWMAP.clusters) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (t in 1:length(FLOWMAP.clusters)) {
+    for (f in 1:length(FLOWMAP.clusters[[t]]$cluster.counts)) {
+      counts <- FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts
+      densities <- FLOWMAP.clusters[[t]]$cluster.medians[[f]]$density
+      fixed.counts <- round((counts * densities))
+      fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
+    }
+  }
+  return(fixed.FLOWMAP.clusters)
+}
+
+AnnotateGraph <- function(output.graph, FLOWMAP.clusters) {
   # This section annotates the graph
   anno.cat <- c()
   anno <- list()
-  # handle different numbers of cellnum?
-  if (length(cellnum) == 1) {
-    cellnum <- rep(cellnum, times = length(FLOWMAP.clusters$cluster.medians))
-  }
   # iterate through all times and annotate
   for (f in 1:length(FLOWMAP.clusters$cluster.medians)) {
     cat("Annotating graph for file", f, "\n")
     # get medians for all parameters and counts for all clusters
     counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
     anno$count <- counts
-    anno$percent.total <- data.frame(percent.total = c(counts / cellnum[f]))
+    total.cell <- sum(counts)
+    anno$percent.total <- data.frame(percent.total = c(counts / total.cell))
     anno$medians  <- FLOWMAP.clusters$cluster.medians[[f]]
     # add time information column
     time.matrix <- matrix(f, nrow = length(anno$count))
