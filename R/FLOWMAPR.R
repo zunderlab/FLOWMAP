@@ -6,6 +6,7 @@
 #' @import robustbase
 #' @import igraph
 #' @import scaffold
+#' @import spade
 #' @import SDMTools
 #' @import tcltk
 #' @import rhandsontable
