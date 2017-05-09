@@ -198,10 +198,6 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
       fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
     }
     orig.times <- ParseTimes(fcs.file.names, name.sort = name.sort)
-    print("fcs.file.names")
-    print(fcs.file.names)
-    print("orig.times")
-    print(orig.times)
     file.name <- fcs.file.names[1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -243,10 +239,6 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
       fcs.file.names <- GetMultiFCSNames(folder = files, sort = name.sort)
       orig.times <- MultiFolderParseTimes(files, fcs.file.names, name.sort = name.sort)
     }
-    print("fcs.file.names")
-    print(fcs.file.names)
-    print("orig.times")
-    print(orig.times)
     file.name <- fcs.file.names[[1]][1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -310,12 +302,21 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
+  if (keep.times) {
+    fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+    graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
+    fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
+  }
   PrintSummary(mode, files, var.annotate, var.remove,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette)
+    if (keep.times) {
+      ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
+    } else {
+      ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette)
+    }
   }
   return(graph.xy)
 }

@@ -17,9 +17,40 @@ ConvertToGraphML <- function(output.graph, file.name) {
   return(file.name)
 }
 
+ChangeTimes <- function(num, time.convert) {
+  # ind <- match(num, as.numeric(names(time.convert)))
+  convert.num <- time.convert[[num]]
+  return(convert.num)
+}
+
+ConvertOrigTime <- function(graph, orig.times) {
+  which.ind <- grep(pattern = "Time", list.vertex.attributes(graph))
+  if (length(which.ind) > 1) {
+    stop("Too many time attributes in graph!")
+  }
+  time.attr <- list.vertex.attributes(graph)[which.ind]
+  to.fix <- get.vertex.attribute(graph, name = time.attr, index = V(graph))
+  if (length(unique(to.fix)) != length(orig.times)) {
+    stop("Number of original time points does not match number of distinct time points in final graphml!")
+  }
+  times.to.fix <- sort(unique(to.fix))
+  time.convert <- list()
+  for (i in 1:length(times.to.fix)) {
+    time.convert[times.to.fix[i]] <- orig.times[i]
+  }
+  print("time.convert")
+  print(time.convert)
+  fixed.times <- c()
+  for (i in 1:length(to.fix)) {
+    fixed.times <- c(fixed.times, ChangeTimes(to.fix[i], time.convert))
+  }
+  fixed.graph <- set.vertex.attribute(graph, name = time.attr, index = V(graph), fixed.times)
+  return(fixed.graph)
+}
+
 ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100,
-                         pdf.height = 100, which.palette = "bluered") {
+                         pdf.height = 100, which.palette = "bluered", orig.times = FALSE) {
   pctile.color = c(0.2, 0.98)
   graph <- read.graph(graphml.file, format = "graphml")
   out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
@@ -106,7 +137,14 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
          asp = graph.aspect)
     pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
     if (grepl(name, pattern = "Time")) {
-      legend.gradient(pnts = pnts, cols = save.time.scale, title = name, c(min(attribute), max(attribute)), cex = 10)
+      if (orig.times != FALSE) {
+        time.labels <- orig.times
+      } else {
+        time.labels <- sort(unique(as.numeric(attribute)))
+      }
+      # legend.gradient(pnts = pnts, cols = save.time.scale, title = name, sort(unique(as.numeric(attribute))), cex = 10)
+      legend("topright", legend = time.labels, fill = save.time.scale, cex = 10)
+      # legend.gradient(pnts = pnts, cols = save.time.scale, title = name, c(min(as.numeric(attribute)), max(as.numeric(attribute))), cex = 10)
       color.scale <- my.palette(100)
     } else {
       legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
@@ -165,7 +203,6 @@ PrintPanel <- function(var.annotate) {
   }
   return(panel)
 }
-
 
 PrintSummary <- function(mode, files, var.annotate, var.remove,
                          clustering.var, distance.metric, per, minimum,
