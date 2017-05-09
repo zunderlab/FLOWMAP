@@ -281,8 +281,6 @@ ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
 
 ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
   data.frame.with.character.labels <- data.frame.with.numeric.labels
-  print("label.key")
-  print(label.key)
   times <- unique(data.frame.with.numeric.labels[, "Time"])
   for (t in times) {
     this.label <- label.key[[t]]

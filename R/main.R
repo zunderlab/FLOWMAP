@@ -82,7 +82,6 @@ CheckModeSingle <- function(files) {
   return(c(fail.flag, guide))
 }
 
-
 CheckModeMulti <- function(files) {
   fail.flag <- TRUE
   guide <- NULL
@@ -124,17 +123,62 @@ CheckModeMulti <- function(files) {
   return(c(fail.flag, guide))
 }
 
+ParseTimes <- function(fcs.file.names, name.sort) {
+  times <- c()
+  for (i in 1:length(fcs.file.names)) {
+    this.name <- fcs.file.names[i]
+    this.name <- basename(this.name)
+    this.name <- gsub("\\.fcs", "", this.name)
+    this.name <- unlist(strsplit(this.name, ""))
+    this.name <- this.name[suppressWarnings(!is.na(as.numeric(this.name)))]
+    if (length(this.name) > 1) {
+      this.name <- paste(this.name, collapse = "") 
+    }
+    times <- c(times, this.name)
+    rm(this.name)
+  }
+  if (name.sort) {
+    times <- times[order(as.numeric(times))]
+  }
+  return(times)
+}
+
+MultiFolderParseTimes <- function(files, fcs.file.names, name.sort) {
+  times <- c()
+  for (i in 1:length(fcs.file.names)) {
+    times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
+  }
+  alt.times <- ParseTimes(list.files(files), name.sort)
+  if (!identical(alt.times, times)) {
+    warning("Times from subfolder names do not match times from FCS file names! Using times from FCS file names.")
+  }
+  return(times)
+}
+
+MultiListParseTimes <- function(fcs.file.names, name.sort) {
+  times <- c()
+  for (i in 1:length(fcs.file.names)) {
+    times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
+  }
+  alt.times <- names(files)
+  if (name.sort) {
+    alt.times <- alt.times[order(as.numeric(alt.times))]
+  }
+  if (!identical(alt.times, times)) {
+    warning("Times from list names do not match times from FCS file names! Using times from FCS file names.")
+  }
+  return(times)
+}
+
 #' @export
 FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                     cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
                     shuffle = TRUE, name.sort = TRUE, downsample = TRUE,
-                    savePDFs = TRUE, which.palette = "bluered", ...) {
-  # starting.files = c("FCS", "cluster_matrix"),
+                    savePDFs = TRUE, which.palette = "bluered", keep.times = FALSE, ...) {
   # optional variables
   # transform 
   # scale
-  # subsample.rand
   # starting.files = c("FCS", "cluster_matrix")
   set.seed(seed.X)
   setwd(save.folder)
@@ -153,6 +197,11 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
     if (check[2] == "folder") {
       fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
     }
+    orig.times <- ParseTimes(fcs.file.names, name.sort = name.sort)
+    print("fcs.file.names")
+    print(fcs.file.names)
+    print("orig.times")
+    print(orig.times)
     file.name <- fcs.file.names[1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -188,10 +237,16 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
     setwd(output.folder)
     if (check[2] == "list") {
       fcs.file.names <- files
+      orig.times <- MultiListParseTimes(fcs.file.names, name.sort)
     }
     if (check[2] == "subfolder") {
       fcs.file.names <- GetMultiFCSNames(folder = files, sort = name.sort)
+      orig.times <- MultiFolderParseTimes(files, fcs.file.names, name.sort = name.sort)
     }
+    print("fcs.file.names")
+    print(fcs.file.names)
+    print("orig.times")
+    print(orig.times)
     file.name <- fcs.file.names[[1]][1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
