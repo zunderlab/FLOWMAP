@@ -3,17 +3,12 @@
 This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
 ## Code Status
-Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and wrte your bugs/issues/suggestions there until public code release.
+Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
 
 ### Known Issues (“Bugs”)
-* fix percent/count after SPADE downsampling in final graph
 
 ### Planned Features
 * improve “load” to allow loading cluster tables/matrix 
-* ~~improve specifying mode “single” or “multi” type of FLOW-MAP~~
-* ~~fix “detecting type” method to instead test inputs and throw error if not correct type for provided data~~
-* ~~introduce SPADE downsampling variables to specify by user~~
-* ~~update summary print method to include new variables~~
 
 ### Requested Features
 * edges ranked within Gephi to remove/add to scale connectivity as we go
@@ -115,6 +110,7 @@ To run a FLOWMAP analysis on your data set or an example data set:
   * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`
   * `savePDFs` - produce PDF files or only produce graphml files
   * `which.palette` - optional argument for savePDFs functionality, can do colorblind-friendly option with "CB"
+  * `keep.times` - set to TRUE to use original time settings parsed from FCS file names or folder/subfolders where FCS files are located
 
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
@@ -139,9 +135,9 @@ set.seed(seed.X)
 FLOWMAPR::FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   subsamples = subsamples, distance.metric = distance.metric,
-                  minimum = minimum, maximum = maximum, per = per,
-                  save.folder = save.folder, mode = mode,
-                  shuffle = TRUE, name.sort = FALSE, downsample = FALSE)
+                  minimum = minimum, maximum = maximum, per = per, save.folder = save.folder,
+                  mode = mode, which.palette = "bluered", shuffle = TRUE,
+                  name.sort = FALSE, downsample = FALSE, savePDFs = TRUE, keep.names = TRUE)
 ```
 
 ### Example Data:
