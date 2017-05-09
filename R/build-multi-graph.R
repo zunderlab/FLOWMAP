@@ -1,33 +1,3 @@
-RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
-  # take FLOWMAP of conditions with timeseries and make into one timeseries
-  # combine FLOWMAP conditions
-  full.clusters <- data.frame()
-  table.breaks <- c()
-  table.lengths <- c()
-  cluster.medians <- list()
-  cluster.counts <- list()
-  cell.assgn <- list()
-  for (t in names(list.of.FLOWMAP.clusters)) {
-    temp.medians <- data.frame()
-    temp.cell.assgn <- data.frame()
-    temp.counts <- data.frame()
-    for (c in 1:length(list.of.FLOWMAP.clusters[[t]]$cluster.medians)) {
-      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[t]]$cluster.medians[[c]])
-      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[t]]$cell.assgn[[c]])
-      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]])
-    }
-    cluster.medians[[t]] <- temp.medians
-    cluster.counts[[t]] <- temp.counts
-    cell.assgn[[t]] <- temp.cell.assgn
-    table.lengths <- c(table.lengths, dim(temp.medians)[1])
-    table.breaks <- c(table.breaks, sum(table.lengths))
-    full.clusters <- rbind(full.clusters, temp.medians)
-  }
-  remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
-                                               cluster.medians, cluster.counts, cell.assgn)
-  return(remodeled.FLOWMAP.clusters)
-}
-
 
 InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   # This section initializes the graph
@@ -35,7 +5,6 @@ InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   initial.graph <- graph.empty(n = total.nodes, directed = FALSE)
   return(initial.graph)
 }
-
 
 BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, distance.metric) {
   output.graph <- InitializeMultiGraph(list.of.FLOWMAP.clusters)
@@ -83,7 +52,6 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   }
   return(output.graph)
 }
-
 
 BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
                               max, distance.metric, cellnum, label.key) {
@@ -178,6 +146,8 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
                                 percent.total)
   }
   output.anno <- cbind(anno$medians, anno$count, anno$percent.total)
+  print("label.key")
+  print(label.key)
   output.anno <- ConvertCharacterLabel(output.anno, label.key)
   for (c in colnames(output.anno)) {
     output.graph <- set.vertex.attribute(output.graph, c,
@@ -188,4 +158,3 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
   V(output.graph)$name <- 1:length(V(output.graph))
   return(output.graph)
 }
-

@@ -1,6 +1,6 @@
 Package: FLOWMAPR
 Title: An Implementation of FLOW-MAP Algorithm
-Version: 1.0.3
+Version: 1.1.0
 Authors@R: c(person("Eli", "Zunder", email = "ezunder@virginia.edu", role = "cre"),
   person("Melissa", "Ko", email = "mesako@stanford.edu", role = "aut"),
   person("Rohit", "Rustagi", role = "ctb"))

@@ -146,7 +146,12 @@ ParseTimes <- function(fcs.file.names, name.sort) {
 MultiFolderParseTimes <- function(files, fcs.file.names, name.sort) {
   times <- c()
   for (i in 1:length(fcs.file.names)) {
-    times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
+    if (length(fcs.file.names[[i]]) > 1) {
+      warning("Multiple FCS files per timepoint, only using the first for time label!")
+      times <- c(times, ParseTimes(fcs.file.names[[i]][1], name.sort))
+    } else {
+      times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
+    }
   }
   alt.times <- ParseTimes(list.files(files), name.sort)
   if (!identical(alt.times, times)) {

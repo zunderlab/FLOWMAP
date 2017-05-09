@@ -101,8 +101,51 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   return(clean.fcs.files)
 }
 
-LoadMultiCleanFCS <- function(list.of.time.file.names, channel.remove, channel.annotate,
+LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, subsample.rand = TRUE, transform = TRUE, scale = FALSE) {
+  list.of.FCS.files <- list()
+  subsamp.orig <- subsamples
+  for (t in 1:length(list.of.file.names)) {
+    fcs.file.names <- list.of.file.names[[t]]
+    if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
+      cat("Subsampling all files to:", subsamp.orig, "\n")
+      subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
+      subsamples <- subsample.new
+    } else {
+      subsamples <- subsamp.orig[[t]]
+    }
+    list.of.FCS.files[[t]] <- LoadCleanFCS(fcs.file.names,
+                                           channel.remove,
+                                           channel.annotate,
+                                           subsamples,
+                                           subsample.rand,
+                                           transform, scale)
+    f.names <- c() 
+    for (i in 1:length(list.of.FCS.files[[t]])) {
+      Time <- rep(as.numeric(t), times = dim(list.of.FCS.files[[t]][[i]])[1])
+      list.of.FCS.files[[t]][[i]] <- cbind.data.frame(list.of.FCS.files[[t]][[i]],
+                                                      Time, stringsAsFactors = FALSE)
+      this.name <- basename(fcs.file.names[i])
+      this.name <- gsub(".fcs", "", this.name)
+      if (grepl("-", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "-"))[1]
+      }
+      if (grepl("\\.", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+      }
+      Condition <- rep(this.name, times = dim(list.of.FCS.files[[t]][[i]])[1])
+      list.of.FCS.files[[t]][[i]] <- cbind.data.frame(list.of.FCS.files[[t]][[i]],
+                                                      Condition, stringsAsFactors = FALSE)
+      f.names <- c(f.names, this.name)
+      rm(Time, Condition)
+    }
+    names(list.of.FCS.files[[t]]) <- f.names
+  }
+  return(list.of.FCS.files)
+}
+
+LoadMultiCleanFCSOLD <- function(list.of.time.file.names, channel.remove, channel.annotate,
+                                 subsamples = 1000, subsample.rand = TRUE, transform = TRUE, scale = FALSE) {
   list.of.time.clean.FCS.files <- list()
   subsamp.orig <- subsamples
   for (time in names(list.of.time.file.names)) {
@@ -226,10 +269,45 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   return(downsample.files)
 }
 
-MultiDownsampleFCS <- function(list.of.time.file.names, clustering.var, channel.annotate,
+MultiDownsampleFCS <- function(list.of.file.names, clustering.var, channel.annotate,
                                channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                                target.number = NULL, target.percent = 0.1,
                                transform = TRUE) {
+  list.of.downsample.files <- list()
+  for (t in 1:length(list.of.file.names)) {
+    fcs.file.names <- list.of.file.names[[t]]
+    fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
+                               channel.remove, exclude.pctile, target.pctile,
+                               target.number, target.percent, transform) 
+    list.of.downsample.files[[t]] <- fcs.files
+    f.names <- c() 
+    for (i in 1:length(list.of.downsample.files[[t]])) {
+      Time <- rep(as.numeric(t), times = dim(list.of.downsample.files[[t]][[i]])[1])
+      list.of.downsample.files[[t]][[i]] <- cbind.data.frame(list.of.downsample.files[[t]][[i]],
+                                                             Time, stringsAsFactors = FALSE)
+      this.name <- basename(fcs.file.names[i])
+      this.name <- gsub(".fcs", "", this.name)
+      if (grepl("-", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "-"))[1]
+      }
+      if (grepl("\\.", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+      }
+      Condition <- rep(this.name, times = dim(list.of.downsample.files[[t]][[i]])[1])
+      list.of.downsample.files[[t]][[i]] <- cbind.data.frame(list.of.downsample.files[[t]][[i]],
+                                                             Condition, stringsAsFactors = FALSE)
+      f.names <- c(f.names, this.name)
+      rm(Time, Condition)
+    }
+    names(list.of.downsample.files[[t]]) <- f.names
+  }
+  return(list.of.downsample.files)
+}
+
+MultiDownsampleFCSOLD <- function(list.of.time.file.names, clustering.var, channel.annotate,
+                                  channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                                  target.number = NULL, target.percent = 0.1,
+                                  transform = TRUE) {
   downsample.files <- list()
   for (time in names(list.of.time.file.names)) {
     fcs.file.names <- list.of.time.file.names[[time]]

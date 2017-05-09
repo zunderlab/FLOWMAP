@@ -15,6 +15,35 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
   return (object)
 }
 
+RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
+  # take FLOWMAP of conditions with timeseries and make into one timeseries
+  # combine FLOWMAP conditions
+  full.clusters <- data.frame()
+  table.breaks <- c()
+  table.lengths <- c()
+  cluster.medians <- list()
+  cluster.counts <- list()
+  cell.assgn <- list()
+  for (t in 1:length(list.of.FLOWMAP.clusters)) {
+    temp.medians <- data.frame()
+    temp.cell.assgn <- data.frame()
+    temp.counts <- data.frame()
+    for (c in 1:length(list.of.FLOWMAP.clusters[[t]]$cluster.medians)) {
+      temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[t]]$cluster.medians[[c]])
+      temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[t]]$cell.assgn[[c]])
+      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]])
+    }
+    cluster.medians[[t]] <- temp.medians
+    cluster.counts[[t]] <- temp.counts
+    cell.assgn[[t]] <- temp.cell.assgn
+    table.lengths <- c(table.lengths, dim(temp.medians)[1])
+    table.breaks <- c(table.breaks, sum(table.lengths))
+    full.clusters <- rbind(full.clusters, temp.medians)
+  }
+  remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
+                                               cluster.medians, cluster.counts, cell.assgn)
+  return(remodeled.FLOWMAP.clusters)
+}
 
 ClusterFCS <- function(fcs.files, clustering.var, numcluster,
                        distance.metric, cluster.type = "hclust") {
@@ -77,26 +106,26 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
 }
 
 
-MultiClusterFCS <- function(list.of.time.files, clustering.var, numcluster, distance.metric) {
+MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
   if (length(numcluster.orig) == 1) {
     cat("Clustering all files to:", numcluster, "\n")
   } 
-  for (time in names(list.of.time.files)) {
-    cat("Clustering all files from time", time, "\n")
-    fcs.files <- list.of.time.files[[time]]
+  for (t in 1:length(list.of.files)) {
+    cat("Clustering all files from time", t, "\n")
+    fcs.files <- list.of.files[[t]]
     if (length(numcluster.orig) == 1) {
       numcluster.new <- rep(numcluster.orig, times = length(fcs.files))
       numcluster <- numcluster.new
     } else {
-      numcluster <- numcluster.orig[[time]]
+      numcluster <- numcluster.orig[[t]]
     }
     if (length(numcluster) != length(fcs.files)) {
       stop("Cluster number not specified for all FCS files!")
     }
     file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
-    list.of.FLOWMAP.clusters[[time]] <- file.clusters
+    list.of.FLOWMAP.clusters[[t]] <- file.clusters
   }
   return(list.of.FLOWMAP.clusters)
 }
@@ -151,5 +180,3 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric,
               new.medians = new.medians,
               new.counts = new.counts))
 }
-
-
