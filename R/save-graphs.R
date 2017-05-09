@@ -112,7 +112,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
       legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
     }
     dev.off()
-    rm
   }
   remember.attr <- setdiff(remember.attr, "id")
   if (length(remember.attr) > 0) {

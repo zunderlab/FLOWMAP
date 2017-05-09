@@ -139,20 +139,29 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
   ####
   weights <- 1 / distances
   E(output.graph)$weight <- weights
-  output.graph <- AnnotateMultiGraph(output.graph, remodel.FLOWMAP.clusters, cellnum, label.key)
+  output.graph <- AnnotateMultiGraph(output.graph, remodel.FLOWMAP.clusters, label.key)
   return(output.graph)
 }
 
+MultiUpsample <- function(FLOWMAP.clusters) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (t in 1:length(FLOWMAP.clusters)) {
+    for (f in 1:length(FLOWMAP.clusters[[t]]$cluster.counts)) {
+      counts <- FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts
+      densities <- FLOWMAP.clusters[[t]]$cluster.medians[[f]]$density
+      fixed.counts <- round((counts * densities))
+      fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
+    }
+  }
+  return(fixed.FLOWMAP.clusters)
+}
 
 AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
-                               cellnum, label.key) {
+                               label.key) {
   # This section annotates the graph
   anno <- list()
   # iterate through all times and annotate
   times <- 1:length(list.of.FLOWMAP.clusters$cluster.medians)
-  if (length(cellnum) != 1) {
-    stop("CODE NOT IMPLEMENTED")
-  }
   anno$medians <- data.frame()
   anno$count <- data.frame()
   anno$percent.total <- data.frame()
@@ -162,7 +171,8 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
     anno$medians <- rbind(anno$medians, list.of.FLOWMAP.clusters$cluster.medians[[t]])
     anno$medians[, "Condition"]
     anno$count <- rbind(anno$count, list.of.FLOWMAP.clusters$cluster.counts[[t]])
-    percent.total <- data.frame(list.of.FLOWMAP.clusters$cluster.counts[[t]] / cellnum)
+    total.cell <- sum(list.of.FLOWMAP.clusters$cluster.counts[[t]])
+    percent.total <- data.frame(list.of.FLOWMAP.clusters$cluster.counts[[t]] / total.cell)
     colnames(percent.total) <- "percent.total"
     anno$percent.total <- rbind(anno$percent.total,
                                 percent.total)
