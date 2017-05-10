@@ -175,12 +175,18 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   return(times)
 }
 
+
+OutputRFile <- function() {
+  
+}
+
+
 #' @export
 FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
                     cluster.numbers, subsamples, distance.metric,
                     minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
-                    shuffle = TRUE, name.sort = TRUE, downsample = TRUE,
-                    savePDFs = TRUE, which.palette = "bluered", keep.times = FALSE, ...) {
+                    name.sort = TRUE, downsample = TRUE,
+                    savePDFs = TRUE, which.palette = "bluered", ...) {
   # optional variables
   # transform 
   # scale
@@ -214,9 +220,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
       fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
     }
-    if (shuffle) {
-      fcs.files <- ShuffleCells(fcs.files, subsamples)
-    }
+    fcs.files <- ShuffleCells(fcs.files, subsamples)
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
@@ -255,9 +259,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
       fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                      subsamples = subsamples)
     }
-    if (shuffle) {
-      fcs.files <- MultiShuffleCells(fcs.files, subsamples)
-    }
+    fcs.files <- MultiShuffleCells(fcs.files, subsamples)
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
@@ -307,21 +309,16 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  if (keep.times) {
-    fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-    graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
-    fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
-  }
+  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+  graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
+  fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
   PrintSummary(mode, files, var.annotate, var.remove,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
+  MakeFLOWMAPRFile(...)
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
-    if (keep.times) {
-      ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
-    } else {
-      ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette)
-    }
+    ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
   }
   return(graph.xy)
 }

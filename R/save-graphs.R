@@ -50,7 +50,7 @@ ConvertOrigTime <- function(graph, orig.times) {
 
 ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
                          min.node.size = 12, max.node.size = 24, pdf.width = 100,
-                         pdf.height = 100, which.palette = "bluered", orig.times = FALSE) {
+                         pdf.height = 100, which.palette = "bluered", orig.times) {
   pctile.color = c(0.2, 0.98)
   graph <- read.graph(graphml.file, format = "graphml")
   out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
@@ -137,14 +137,8 @@ ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
          asp = graph.aspect)
     pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
     if (grepl(name, pattern = "Time")) {
-      if (orig.times != FALSE) {
-        time.labels <- orig.times
-      } else {
-        time.labels <- sort(unique(as.numeric(attribute)))
-      }
-      # legend.gradient(pnts = pnts, cols = save.time.scale, title = name, sort(unique(as.numeric(attribute))), cex = 10)
+      time.labels <- orig.times
       legend("topright", legend = time.labels, fill = save.time.scale, cex = 10)
-      # legend.gradient(pnts = pnts, cols = save.time.scale, title = name, c(min(as.numeric(attribute)), max(as.numeric(attribute))), cex = 10)
       color.scale <- my.palette(100)
     } else {
       legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
