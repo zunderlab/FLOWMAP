@@ -44,7 +44,7 @@ MakePrintChar <- function(var.assgn, char) {
   return(p.char)
 }
 
-MakeFLOWMAPRFile <- function(...) {
+MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.files <- MakePrintChar("files", files)
   p.mode <- MakePrintChar("mode", mode)
   p.save.folder <- MakePrintChar("save.folder", save.folder)

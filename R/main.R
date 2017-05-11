@@ -315,7 +315,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   PrintSummary(mode, files, var.annotate, var.remove,
                clustering.var, distance.metric, per, minimum,
                maximum, subsamples, cluster.numbers, seed.X)
-  MakeFLOWMAPRFile(...)
+  MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
