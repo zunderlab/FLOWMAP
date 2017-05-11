@@ -198,38 +198,36 @@ PrintPanel <- function(var.annotate) {
   return(panel)
 }
 
-PrintSummary <- function(mode, files, var.annotate, var.remove,
-                         clustering.var, distance.metric, per, minimum,
-                         maximum, subsamples, cluster.numbers, seed.X) {
+PrintSummary <- function(env = parent.frame()) {
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
   cat("Printing summary.", "\n")
   # starting.files = c("FCS", "cluster_matrix")
-  summary[(dim(summary)[1] + 1), ] <- c("mode", mode,
+  summary[(dim(summary)[1] + 1), ] <- c("mode", env$mode,
                                         "selected FLOW-MAP mode")
-  summary[(dim(summary)[1] + 1), ] <- c("files", toString(files),
+  summary[(dim(summary)[1] + 1), ] <- c("files", toString(env$files),
                                         "files")
-  summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(var.annotate),
+  summary[(dim(summary)[1] + 1), ] <- c("var.annotate", toString(env$var.annotate),
                                         "markers included in this analysis")
-  panel <- PrintPanel(var.annotate)
-  summary[(dim(summary)[1] + 1), ] <- c("panel", toString(panel),
+  panel <- PrintPanel(env$var.annotate)
+  summary[(dim(summary)[1] + 1), ] <- c("panel", toString(env$panel),
                                         "full panel including metals and corresponding marker")
-  summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(var.remove),
+  summary[(dim(summary)[1] + 1), ] <- c("var.remove", toString(env$var.remove),
                                         "removed markers")
-  summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(clustering.var),
+  summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(env$clustering.var),
                                         "markers used for clustering and distance calculation")
-  summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(distance.metric),
+  summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(env$distance.metric),
                                         "distance metric")
-  summary[(dim(summary)[1] + 1), ] <- c("per", per,
+  summary[(dim(summary)[1] + 1), ] <- c("per", env$per,
                                         "distance for calculated density (n percent)")
-  summary[(dim(summary)[1] + 1), ] <- c("minimum", minimum,
+  summary[(dim(summary)[1] + 1), ] <- c("minimum", env$minimum,
                                         "min number of edges")
-  summary[(dim(summary)[1] + 1), ] <- c("maximum", maximum,
+  summary[(dim(summary)[1] + 1), ] <- c("maximum", env$maximum,
                                         "max number of edges")
-  summary[(dim(summary)[1] + 1), ] <- c("subsamples", subsamples,
+  summary[(dim(summary)[1] + 1), ] <- c("subsamples", env$subsamples,
                                         "subsamples for all FCS files")
-  summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", cluster.numbers,
+  summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", env$cluster.numbers,
                                         "number of clusters for all FCS files")
-  summary[(dim(summary)[1] + 1), ] <- c("seed.X", seed.X,
+  summary[(dim(summary)[1] + 1), ] <- c("seed.X", env$seed.X,
                                         "set seed value")
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")

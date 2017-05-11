@@ -312,9 +312,7 @@ FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
   graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
   fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
-  PrintSummary(mode, files, var.annotate, var.remove,
-               clustering.var, distance.metric, per, minimum,
-               maximum, subsamples, cluster.numbers, seed.X)
+  PrintSummary(env = parent.frame())
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
