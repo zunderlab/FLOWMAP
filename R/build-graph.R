@@ -14,12 +14,10 @@ ConvertIndex <- function(inds, orig.data.frame, keep.names = TRUE) {
   return(arr.inds)
 }
 
-
 MergeValues <- function(arr.inds, orig.data.frame) {
   merged <- cbind(arr.inds, values = sort(as.matrix(orig.data.frame)))
   return(merged)
 }
-
 
 RemoveDuplicateValues <- function(arr.inds.with.values) {
   x <- arr.inds.with.values[!duplicated(arr.inds.with.values[, "values"]),]
@@ -75,7 +73,6 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
               edgelist.with.distances = edgelist.with.distances))
 }
 
-
 DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
                                 normalized.densities, n, offset = FALSE) {
   final.edgelist.with.distances <- c()
@@ -99,7 +96,6 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   return(list(output.graph = output.graph,
               final.edgelist.with.distances = final.edgelist.with.distances))
 }
-
 
 CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
@@ -278,7 +274,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   return(output.graph)
 }
 
-
 InitializeGraph <- function(FLOWMAP.clusters) {
   # This section initializes the graph
   total.nodes <- length(FLOWMAP.clusters$full.clusters[, 1])
@@ -286,7 +281,6 @@ InitializeGraph <- function(FLOWMAP.clusters) {
   initial.graph <- graph.empty(n = total.nodes, directed = FALSE)
   return(initial.graph)
 }
-
 
 BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                               clustering.var) {
@@ -344,7 +338,6 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   return(list(output.graph = output.graph,
               edgelist.save = edgelist.save))
 }
-
 
 #' @export
 BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,

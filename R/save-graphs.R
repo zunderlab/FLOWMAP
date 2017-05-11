@@ -48,10 +48,14 @@ ConvertOrigTime <- function(graph, orig.times) {
   return(fixed.graph)
 }
 
-ConvertToPDF <- function(graphml.file, scale = NULL, node.size.scale = 2,
-                         min.node.size = 12, max.node.size = 24, pdf.width = 100,
-                         pdf.height = 100, which.palette = "bluered", orig.times) {
-  pctile.color = c(0.2, 0.98)
+ConvertToPDF <- function(graphml.file, scale = NULL,
+                         which.palette = "bluered", orig.times) {
+  pctile.color <- c(0.2, 0.98)
+  node.size.scale <- 2
+  min.node.size <- 12
+  max.node.size <- 24
+  pdf.width <- 100
+  pdf.height <- 100
   graph <- read.graph(graphml.file, format = "graphml")
   out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
   cat("Making output folder:", out.folder, "\n")

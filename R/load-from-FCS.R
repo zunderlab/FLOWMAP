@@ -41,8 +41,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 }
 
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
-                         subsamples = 1000, subsample.rand = TRUE,
-                         transform = TRUE, scale = FALSE) {
+                         subsamples = 1000, transform = TRUE) {
   clean.fcs.files <- list()
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
@@ -54,55 +53,36 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     cat("Reading FCS file data from:", current.file, "\n")
     # store currently read FCS file
     if (subsamples == FALSE) {
-      tmp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = NULL,
-                           alter.names = FALSE, column.pattern = NULL, invert.pattern = FALSE,
-                           decades = 0, ncdf = FALSE, min.limit = NULL, dataset = NULL,
-                           emptyValue = TRUE)  
-      tmp.FCS1 <- head(tmp.FCS1, n = unname(dim(tmp.FCS1)[1]))
+      fcs.file <- read.FCS(fcs.file.names[i])  
+      fcs.file <- as.data.frame(exprs(fcs.file))
     } else { 
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
-      if (subsample.rand) {
-        subsamp.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize",
-                                 which.lines = subsamples[i],
-                                 alter.names = FALSE, column.pattern = NULL,
-                                 invert.pattern = FALSE, decades = 0, ncdf = FALSE,
-                                 min.limit = NULL, dataset = NULL, emptyValue = TRUE)
-        tmp.FCS1 <- head(subsamp.FCS1, n = subsamples[i])
-      }
-      else {
-        full.FCS1 <- read.FCS(fcs.file.names[i], transformation = "linearize", which.lines = NULL,
-                              alter.names = FALSE, column.pattern = NULL,
-                              invert.pattern = FALSE, decades = 0, ncdf = FALSE,
-                              min.limit = NULL, dataset = NULL, emptyValue = TRUE)
-        tmp.FCS1 <- head(full.FCS1, n = subsamples[i])
-      }
+      fcs.file <- read.FCS(fcs.file.names[i], which.lines = subsamples[i])
+      fcs.file <- as.data.frame(exprs(fcs.file))
     }
     # rename variables with protein marker measured instead of metal channel
     cat("Fixing channel names from:", current.file, "\n")
-    for (x in 1:length(colnames(tmp.FCS1))) {
-      if (exists(colnames(tmp.FCS1)[x], where = channel.annotate)) {
-        colnames(tmp.FCS1)[x] <- channel.annotate[[colnames(tmp.FCS1)[x]]]
+    for (x in 1:length(colnames(fcs.file))) {
+      if (exists(colnames(fcs.file)[x], where = channel.annotate)) {
+        colnames(fcs.file)[x] <- channel.annotate[[colnames(fcs.file)[x]]]
       }
     }
     # remove unneeded variables
     cat("Removing unnecessary channel names from:", current.file, "\n")
-    tmp.FCS2 <- subset(tmp.FCS1, select = colnames(tmp.FCS1)[!colnames(tmp.FCS1) %in% channel.remove])
+    fcs.file <- subset(fcs.file, select = colnames(fcs.file)[!colnames(fcs.file) %in% channel.remove])
     if (transform) {
-      cat("Transforming data from:",current.file,"\n")
-      tmp.FCS3 <- apply(tmp.FCS2, 2, Asinh) 
+      cat("Transforming data from:", current.file, "\n")
+      fcs.file <- apply(fcs.file, 2, Asinh) 
     }
-    if (scale) {
-      print("no scale implemented yet")
-    }
-    tmp.FCS4 <- as.data.frame(tmp.FCS3)
-    clean.fcs.files[[i]] <- tmp.FCS4
-    rm(tmp.FCS1, tmp.FCS2, tmp.FCS3, tmp.FCS4)
+    fcs.file <- as.data.frame(fcs.file)
+    clean.fcs.files[[i]] <- fcs.file
+    rm(fcs.file)
   }  
   return(clean.fcs.files)
 }
 
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
-                              subsamples = 1000, subsample.rand = TRUE, transform = TRUE, scale = FALSE) {
+                              subsamples = 1000, transform = TRUE) {
   list.of.FCS.files <- list()
   subsamp.orig <- subsamples
   for (t in 1:length(list.of.file.names)) {
@@ -118,8 +98,7 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
                                            channel.remove,
                                            channel.annotate,
                                            subsamples,
-                                           subsample.rand,
-                                           transform, scale)
+                                           transform)
     f.names <- c() 
     for (i in 1:length(list.of.FCS.files[[t]])) {
       Time <- rep(as.numeric(t), times = dim(list.of.FCS.files[[t]][[i]])[1])
@@ -142,51 +121,6 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
     names(list.of.FCS.files[[t]]) <- f.names
   }
   return(list.of.FCS.files)
-}
-
-LoadMultiCleanFCSOLD <- function(list.of.time.file.names, channel.remove, channel.annotate,
-                                 subsamples = 1000, subsample.rand = TRUE, transform = TRUE, scale = FALSE) {
-  list.of.time.clean.FCS.files <- list()
-  subsamp.orig <- subsamples
-  for (time in names(list.of.time.file.names)) {
-    # cat("time is", time, "\n")
-    fcs.file.names <- list.of.time.file.names[[time]]
-    # cat("fcs.file.names are", basename(fcs.file.names), "\n")
-    if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
-      cat("Subsampling all files to:", subsamp.orig, "\n")
-      subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
-      subsamples <- subsample.new
-    } else {
-      subsamples <- subsamp.orig[[time]]
-    }
-    list.of.time.clean.FCS.files[[time]] <- LoadCleanFCS(fcs.file.names,
-                                                         channel.remove,
-                                                         channel.annotate,
-                                                         subsamples,
-                                                         subsample.rand,
-                                                         transform, scale)
-    f.names <- c() 
-    for (i in 1:length(list.of.time.clean.FCS.files[[time]])) {
-      Time <- rep(as.numeric(time), times = dim(list.of.time.clean.FCS.files[[time]][[i]])[1])
-      list.of.time.clean.FCS.files[[time]][[i]] <- cbind.data.frame(list.of.time.clean.FCS.files[[time]][[i]],
-                                                                    Time, stringsAsFactors = FALSE)
-      this.name <- basename(fcs.file.names[i])
-      this.name <- gsub(".fcs", "", this.name)
-      if (grepl("-", this.name)) {
-        this.name <- unlist(strsplit(this.name, split = "-"))[1]
-      }
-      if (grepl("\\.", this.name)) {
-        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
-      }
-      Condition <- rep(this.name, times = dim(list.of.time.clean.FCS.files[[time]][[i]])[1])
-      list.of.time.clean.FCS.files[[time]][[i]] <- cbind.data.frame(list.of.time.clean.FCS.files[[time]][[i]],
-                                                                    Condition, stringsAsFactors = FALSE)
-      f.names <- c(f.names, this.name)
-      rm(Time, Condition)
-    }
-    names(list.of.time.clean.FCS.files[[time]]) <- f.names
-  }
-  return(list.of.time.clean.FCS.files)
 }
 
 ConvertVariables <- function(clustering.var, var.annotate) {
@@ -302,41 +236,6 @@ MultiDownsampleFCS <- function(list.of.file.names, clustering.var, channel.annot
     names(list.of.downsample.files[[t]]) <- f.names
   }
   return(list.of.downsample.files)
-}
-
-MultiDownsampleFCSOLD <- function(list.of.time.file.names, clustering.var, channel.annotate,
-                                  channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
-                                  target.number = NULL, target.percent = 0.1,
-                                  transform = TRUE) {
-  downsample.files <- list()
-  for (time in names(list.of.time.file.names)) {
-    fcs.file.names <- list.of.time.file.names[[time]]
-    fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
-                               channel.remove, exclude.pctile, target.pctile,
-                               target.number, target.percent, transform) 
-    downsample.files[[time]] <- fcs.files
-    f.names <- c() 
-    for (i in 1:length(downsample.files[[time]])) {
-      Time <- rep(as.numeric(time), times = dim(downsample.files[[time]][[i]])[1])
-      downsample.files[[time]][[i]] <- cbind.data.frame(downsample.files[[time]][[i]],
-                                                        Time, stringsAsFactors = FALSE)
-      this.name <- basename(fcs.file.names[i])
-      this.name <- gsub(".fcs", "", this.name)
-      if (grepl("-", this.name)) {
-        this.name <- unlist(strsplit(this.name, split = "-"))[1]
-      }
-      if (grepl("\\.", this.name)) {
-        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
-      }
-      Condition <- rep(this.name, times = dim(downsample.files[[time]][[i]])[1])
-      downsample.files[[time]][[i]] <- cbind.data.frame(downsample.files[[time]][[i]],
-                                                        Condition, stringsAsFactors = FALSE)
-      f.names <- c(f.names, this.name)
-      rm(Time, Condition)
-    }
-    names(downsample.files[[time]]) <- f.names
-  }
-  return(downsample.files)
 }
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {

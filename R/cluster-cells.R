@@ -8,9 +8,6 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
                  cluster.medians = cluster.medians,
                  cluster.counts = cluster.counts,
                  cell.assgn = cell.assgn)
-  # use only cluster_medians object and cellassgn ???
-  # make method to concatenate cluster_medians into fullclusters
-  # make method to get table breaks and table lengths from cluster_medians
   class(object) <- "FLOWMAPcluster"
   return (object)
 }
@@ -46,7 +43,7 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
 }
 
 ClusterFCS <- function(fcs.files, clustering.var, numcluster,
-                       distance.metric, cluster.type = "hclust") {
+                       distance.metric) {
   full.clusters <- data.frame()
   table.breaks <- c()
   table.lengths <- c()
@@ -68,17 +65,8 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     cluster.medians[[i]] <- data.frame()
     tmp.FCS.for.cluster <- subset(x = current.file, select = clustering.var)
     cat("Subsetting for clustering channels only", "\n")
-    if (cluster.type == "hclust") {
-      cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-                                          distance.metric = distance.metric, numcluster = numcluster[i])
-    } else if (cluster.type == "spade") {
-      cluster.results <- SPADE.cluster(tbl = tmp.FCS.for.cluster, k = numcluster)
-    } else {
-      stop("Do not recognize cluster type!")
-    }
-    
-    # cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-    #                                     distance.metric = distance.metric, numcluster = numcluster[i])
+    cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+                                        distance.metric = distance.metric, numcluster = numcluster[i])
     cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
     cluster.medians[[i]] <- cluster.results$new.medians
     cluster.counts[[i]] <- cluster.results$new.counts
@@ -129,12 +117,6 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.
   }
   return(list.of.FLOWMAP.clusters)
 }
-
-# SPADEClustering <- function(data, transforms, k) {
-#   clust <- spade::SPADE.cluster(SPADE.transform.matrix(data, transforms), k)
-#   return(clust$centers)
-# }
-
 
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {
   if (distance.metric == "euclidean") {
