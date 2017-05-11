@@ -45,42 +45,45 @@ MakePrintChar <- function(var.assgn, char) {
 }
 
 MakeFLOWMAPRFile <- function(env = parent.frame()) {
-  p.files <- MakePrintChar("files", files)
-  p.mode <- MakePrintChar("mode", mode)
-  p.save.folder <- MakePrintChar("save.folder", save.folder)
-  p.per <- MakePrintNum("per", per)
-  p.minimum <- MakePrintNum("minimum", minimum)
-  p.maximum <- MakePrintNum("maximum", maximum)
-  p.distance.metric <- MakePrintChar("distance.metric", distance.metric)
-  p.cluster.numbers <- MakePrintNum("cluster.numbers", cluster.numbers)
-  p.var.annotate <- MakePrintVarAnnotate(var.annotate)
-  p.var.remove <- MakePrintVarRemove(var.remove)
-  p.clustering.var <- MakePrintClusteringVar(clustering.var)
-  p.seed.X <- MakePrintNum("seed.X", seed.X)
+  cat("Generating .R file of FLOWMAPR run", "\n")
+  print("names(env)")
+  print(names(env))
+  p.files <- MakePrintChar("files", env$files)
+  p.mode <- MakePrintChar("mode", env$mode)
+  p.save.folder <- MakePrintChar("save.folder", env$save.folder)
+  p.per <- MakePrintNum("per", env$per)
+  p.minimum <- MakePrintNum("minimum", env$minimum)
+  p.maximum <- MakePrintNum("maximum", env$maximum)
+  p.distance.metric <- MakePrintChar("distance.metric", env$distance.metric)
+  p.cluster.numbers <- MakePrintNum("cluster.numbers", env$cluster.numbers)
+  p.var.annotate <- MakePrintVarAnnotate(env$var.annotate)
+  p.var.remove <- MakePrintVarRemove(env$var.remove)
+  p.clustering.var <- MakePrintClusteringVar(env$clustering.var)
+  p.seed.X <- MakePrintNum("seed.X", env$seed.X)
   p.set.seed.X <- "set.seed(seed.X)"
-  p.name.sort = MakePrintNum("name.sort", name.sort)
-  p.downsample = MakePrintNum("downsample", downsample)
-  p.savePDFs = MakePrintNum("savePDFs", savePDFs)
-  p.which.palette = MakePrintChar("which.palette", which.palette)
+  p.name.sort = MakePrintNum("name.sort", env$name.sort)
+  p.downsample = MakePrintNum("downsample", env$downsample)
+  p.savePDFs = MakePrintNum("savePDFs", env$savePDFs)
+  p.which.palette = MakePrintChar("which.palette", env$which.palette)
   
-  if (downsample) {
-    p.exclude.pctile <- MakePrintNum("exclude.pctile", exclude.pctile)
-    p.target.pctile <- MakePrintNum("target.pctile", target.pctile)
-    if (is.null(target.number)) {
+  if (env$downsample) {
+    p.exclude.pctile <- MakePrintNum("exclude.pctile", env$exclude.pctile)
+    p.target.pctile <- MakePrintNum("target.pctile", env$target.pctile)
+    if (is.null(env$target.number)) {
       p.target.number <- "target.number <- NULL"
     } else {
-      p.target.number <- MakePrintNum("target.number", target.number)
+      p.target.number <- MakePrintNum("target.number", env$target.number)
     }
-    if (is.null(target.percent)) {
+    if (is.null(env$target.percent)) {
       p.target.percent <- "target.percent <- NULL"
     } else {
-      p.target.percent <- MakePrintNum("target.percent", target.percent)
+      p.target.percent <- MakePrintNum("target.percent", env$target.percent)
     }
     p.subsamples <- "subsamples <- FALSE"
   } else {
-    p.subsamples <- MakePrintNum("subsamples", subsamples)
+    p.subsamples <- MakePrintNum("subsamples", env$subsamples)
   }
-  if (downsample) {
+  if (env$downsample) {
     p.FLOWMAP <- "FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
     var.annotate = var.annotate, clustering.var = clustering.var,
     cluster.numbers = cluster.numbers, subsamples = subsamples,
@@ -103,7 +106,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   output <- file(output.file)
   p.setup1 <- "rm(list = ls())"
   p.setup2 <- "library(FLOWMAPR)"
-  if (downsample) {
+  if (env$downsample) {
     writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.per, p.minimum,
                  p.maximum, p.distance.metric, p.cluster.numbers,
                  p.var.annotate, p.var.remove, p.clustering.var,
