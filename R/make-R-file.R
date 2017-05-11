@@ -46,8 +46,6 @@ MakePrintChar <- function(var.assgn, char) {
 
 MakeFLOWMAPRFile <- function(env = parent.frame()) {
   cat("Generating .R file of FLOWMAPR run", "\n")
-  print("names(env)")
-  print(names(env))
   p.files <- MakePrintChar("files", env$files)
   p.mode <- MakePrintChar("mode", env$mode)
   p.save.folder <- MakePrintChar("save.folder", env$save.folder)
