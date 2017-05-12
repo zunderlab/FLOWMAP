@@ -1,15 +1,15 @@
 
 #' @export
-FLOWMAP <- function(seed.X, files, var.remove, var.annotate, clustering.var,
-                    cluster.numbers, subsamples, distance.metric,
-                    minimum, maximum, per, save.folder, mode = c("single", "multi", "one"),
-                    name.sort = TRUE, downsample = TRUE,
-                    savePDFs = TRUE, which.palette = "bluered", ...) {
+FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
+                    var.annotate, clustering.var, cluster.numbers = 100,
+                    distance.metric = "manhattan", minimum = 2, maximum = 5,
+                    per = 1, save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+                    downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+                    which.palette = "bluered", ...) {
   # optional variables
-  # transform 
-  # scale
   # starting.files = c("FCS", "cluster_matrix")
   set.seed(seed.X)
+  cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)

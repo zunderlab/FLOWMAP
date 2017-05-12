@@ -118,7 +118,7 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.
   return(list.of.FLOWMAP.clusters)
 }
 
-HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric, numcluster) {
+HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
     method <- "ward"
   } else {
