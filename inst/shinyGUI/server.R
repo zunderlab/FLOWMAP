@@ -190,27 +190,15 @@ shinyServer(function(input, output, session) {
     }
     setwd(dir)
     # writes the file
-    print("input")
-    print(input)
-    print("names(input)")
-    print(names(input))
-    print("input$fileorder")
-    print(input$fileorder)
-    print("input$button")
-    print(input$button)
-    print("input$generbutton2")
-    print(input$generbutton2)
-    
+    file.order <- as.numeric(unlist(strsplit(input$fileorder, split = ",")))
     flowfile <- (hot_to_r(input$table))
     print(folder_now)
     setwd(dir_now)
     set.seed(globe_input[["seedNum"]])
-    files <- c()
-    files <- globe_resdir
-    print("globe_resdir")
-    print(globe_resdir)
-    print("flowfile")
-    print(flowfile)
+    files <- list.files(globe_resdir)[file.order]
+    print("files")
+    print(files)
+    # NEED MULTIFLOW-MAP FIX FOR FILES
     mode <- globe_input[["multiSingle"]]
     save.folder <- globe_resdir2
     var.annotate <- list()
