@@ -225,7 +225,9 @@ shinyServer(function(input, output, session) {
     print("clustering.var")
     print(clustering.var)
     for (i in 1:length(clustering.var)) {
-      clustering.var[i] <- var.annotate[clustering.var[i]]
+      print("clustering.var[i]")
+      print(clustering.var[i])
+      clustering.var[i] <- var.annotate[[clustering.var[i]]]
     }
     print("var.annotate")
     print(var.annotate)
