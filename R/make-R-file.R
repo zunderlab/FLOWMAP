@@ -34,6 +34,34 @@ MakePrintClusteringVar <- function(clustering.var) {
   return(p.clustering.var)
 }
 
+MakePrintFiles <- function(files) {
+  if (length(files) == 1) {
+    p.files <- MakePrintChar("files", files)
+  } else if (length(files) > 1 & !is.list(files)) {
+    p.files <- paste("'", files, "'", sep = "")
+    p.files <- paste(p.files, collapse = ", ")
+    p.files <- paste("c(", p.files, ")", sep = "")
+    p.files <- paste("files", " <- ", p.files, sep = "")
+  } else if (length(files) > 1 & is.list(files)){
+    for (i in 1:length(files)) {
+      files.in.i <- paste("'", files[[i]], "'", sep = "")
+      files.in.i <- paste(files.in.i, collapse = ", ")
+      files.in.i <- paste("c(", files.in.i, ")", sep = "")
+      if (i == 1) {
+        p.files <- files.in.i
+      } else {
+        p.files <- paste(p.files, files.in.i, sep = ", ")
+      }
+    }
+    p.files <- paste("list(", p.files, ")", sep = "")
+    p.files <- paste("files", " <- ", p.files, sep = "")
+  } else {
+    warning("Files format not recognizable for printing!")
+    p.files <- MakePrintChar("files", files)
+  }
+  return(p.files)
+}
+
 MakePrintNum <- function(var.assgn, num) {
   p.num <- paste(var.assgn, " <- ", as.character(num), sep = "")
   return(p.num)
