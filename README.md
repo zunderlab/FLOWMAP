@@ -192,6 +192,11 @@ If the graph is too interconnected (hairball-like), try reducing maximum. You ca
 
 If the graph is not interconnected enough (spiky, single nodes radiating out), try increasing the minimum and/or maximum.
 
+In a singleFLOWMAP, 1200 total nodes takes about ??? min to produce results (including PDFs) with no downsampling (uses random subsampling).
+
+In a singleFLOWMAP, 3000 total nodes takes about 6 min to produce results (including PDFs) with no downsampling (uses random subsampling).
+
+In a singleFLOWMAP, 6000 total nodes takes about N min to produce results (including PDFs) with no downsampling (uses random subsampling).
 
 
 ## Using the GUI
