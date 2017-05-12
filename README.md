@@ -133,12 +133,18 @@ cluster.numbers <- 100
 seed.X <- 1
 clustering.var <- c("marker1", "marker2")
 set.seed(seed.X)
-FLOWMAPR::FLOWMAP(files = files, var.remove = var.remove, var.annotate = var.annotate,
-                  clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                  subsamples = subsamples, distance.metric = distance.metric,
-                  minimum = minimum, maximum = maximum, per = per, save.folder = save.folder,
-                  mode = mode, which.palette = "bluered", shuffle = TRUE,
-                  name.sort = FALSE, downsample = FALSE, savePDFs = TRUE, keep.names = TRUE)
+name.sort <- FALSE
+downsample <- FALSE
+savePDFs <- TRUE
+which.palette <- "CB"
+
+FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
+        var.annotate = var.annotate, clustering.var = clustering.var,
+        cluster.numbers = cluster.numbers, subsamples = subsamples,
+        distance.metric = distance.metric, minimum = minimum,
+        maximum = maximum, per = per, save.folder = save.folder,
+        mode = mode, name.sort = name.sort, downsample = downsample,
+        savePDFs = savePDFs, which.palette = which.palette)
 ```
 
 ### Example Data:
