@@ -146,6 +146,8 @@ FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.
         savePDFs = savePDFs, which.palette = which.palette)
 ```
 
+#### Template for a FLOWMAPR Run in R
+
 You can also access example FLOWMAPR runs as .R files, which you can then modify to work with your own data.
 
 To access a SingleFLOWMAP run without downsampling (random subsampling):
