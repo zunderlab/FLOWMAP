@@ -17,7 +17,7 @@
 #' 
 #' @export
 #' @examples
-#' # launch_GUI()
+#' # LaunchGUI()
 
 LaunchGUI <- function() {
   require(shiny)
