@@ -47,10 +47,12 @@ shinyServer(function(input, output, session) {
     for(i in order) {
       fcs_list <- c(fcs_list, file_names[i])
       fcs_list
+      print("fcs_list")
+      print(fcs_list)
     }
   })
-  print("fcs_order")
-  print(fcs_order)
+  print("fcs_list")
+  print(fcs_list)
   contentdiff <- eventReactive(input$generbutton2, {
     # Read input Files
     # Set the names
@@ -71,19 +73,20 @@ shinyServer(function(input, output, session) {
     if (rows > 1) {
       same <- Reduce(intersect, fcs_list)
       every <- Reduce(union, fcs_list)
-      diff <- every
-      diff <- diff[! every %in% same]
+      diffs <- every
+      diffs <- diffs[! every %in% same]
     } else {
-      diff <- NULL
+      diffs <- NULL
     }
     # Gets different parameters from the FCS files
-    final_new_diff <<- diff
-    print(diff)
-    diff
+    final_new_diff <<- diffs
+    print("diffs")
+    print(diffs)
+    diffs
     # If there is 1 FCS file, then there is no difference
   })
-  print("diff")
-  print(diff)
+  print("diffs")
+  print(diffs)
   
   contentsame <- eventReactive(input$generbutton2, {
     print("HELLO")
@@ -106,6 +109,7 @@ shinyServer(function(input, output, session) {
     diff <- every
     diff <- diff[! every %in% same]
     final_new_same <<- same
+    print("same")
     print(same)
     same
     #gives the same paramters
