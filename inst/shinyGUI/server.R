@@ -259,6 +259,7 @@ shinyServer(function(input, output, session) {
                       savePDFs = savePDFs, which.palette = which.palette)
     # Run FLOW-MAP
     # remove final global variables
+    stopApp()
   })
   output$stuff <- renderText({
     write_file()
