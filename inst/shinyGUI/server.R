@@ -224,6 +224,8 @@ shinyServer(function(input, output, session) {
     seed.X <- as.numeric(globe_input[["seedNum"]])
     print("var.annotate")
     print(var.annotate)
+    print("clustering.var")
+    print(clustering.var)
     name.sort <- FALSE
     downsample <- FALSE
     savePDFs <- TRUE
