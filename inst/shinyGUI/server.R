@@ -195,7 +195,7 @@ shinyServer(function(input, output, session) {
     print(folder_now)
     setwd(dir_now)
     set.seed(globe_input[["seedNum"]])
-    files <- list.files(globe_resdir)[file.order]
+    files <- list.files(globe_resdir, pattern = "\\.fcs")[file.order]
     print("files")
     print(files)
     # NEED MULTIFLOW-MAP FIX FOR FILES
