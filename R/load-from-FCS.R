@@ -77,7 +77,9 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     fcs.file <- as.data.frame(fcs.file)
     clean.fcs.files[[i]] <- fcs.file
     rm(fcs.file)
-  }  
+  }
+  print("head(clean.fcs.files[[1]])")
+  print(head(clean.fcs.files[[1]]))
   return(clean.fcs.files)
 }
 

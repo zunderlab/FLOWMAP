@@ -46,8 +46,6 @@ MakePrintChar <- function(var.assgn, char) {
 
 MakeFLOWMAPRFile <- function(env = parent.frame()) {
   cat("Generating .R file of FLOWMAPR run", "\n")
-  print("names(env)")
-  print(names(env))
   p.files <- MakePrintChar("files", env$files)
   p.mode <- MakePrintChar("mode", env$mode)
   p.save.folder <- MakePrintChar("save.folder", env$save.folder)
@@ -65,9 +63,6 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.downsample = MakePrintNum("downsample", env$downsample)
   p.savePDFs = MakePrintNum("savePDFs", env$savePDFs)
   p.which.palette = MakePrintChar("which.palette", env$which.palette)
-  
-  print("env$downsample")
-  print(env$downsample)
   
   if (env$downsample) {
     p.exclude.pctile <- MakePrintNum("exclude.pctile", env$exclude.pctile)

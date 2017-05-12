@@ -97,7 +97,7 @@ shinyServer(function(input, output, session) {
       name_desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
       fcs_list[[(count + 1)]] <- name_desc
       count <- count + 1
-      #Does sdame thing as above
+      # Does sdame thing as above
     }
     same <- Reduce(intersect, fcs_list)
     every <- Reduce(union, fcs_list)
@@ -107,7 +107,7 @@ shinyServer(function(input, output, session) {
     print("same")
     print(same)
     same
-    #gives the same paramters
+    # gives the same paramters
   })
   tablecreate <- eventReactive(input$generbutton2, {
     if (length(final_new_diff) == 0) {
@@ -199,7 +199,7 @@ shinyServer(function(input, output, session) {
       dir <- globe_resdir
     }
     setwd(dir)
-    #writes the file
+    # writes the file
     flowfile <- (hot_to_r(input$table))
     print(folder_now)
     print("works")
@@ -211,7 +211,7 @@ shinyServer(function(input, output, session) {
     save.folder <- globe_resdir2
     var.annotate <- list()
     for (j in 1:nrow(flowfile)) {
-      var.annotate[[flowfile[j, 1]]] <- flowfile[j,4]
+      var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
     }
     var.remove <- flowfile[flowfile$removal == T, 1]
     clustering.var <- flowfile[flowfile$cluster == T, 1]
@@ -222,34 +222,13 @@ shinyServer(function(input, output, session) {
     subsamples <- as.numeric(globe_input[["subsampleNum"]])
     cluster.numbers <- as.numeric(globe_input[["clusterNum"]])
     seed.X <- as.numeric(globe_input[["seedNum"]])
-    print("files")
-    print(files)
-    print("var.remove")
-    print(var.remove)
     print("var.annotate")
     print(var.annotate)
-    print("clustering.var")
-    print(clustering.var)
-    print("cluster.numbers")
-    print(cluster.numbers)
-    print("subsamples")
-    print(subsamples)
-    print("distance.metric")
-    print(distance.metric)
-    print("minimum")
-    print(minimum)
-    print("maximum")
-    print(maximum)
-    print("per")
-    print(per)
-    print("save.folder")
-    print(save.folder)
-    print("mode")
-    print(mode)
     name.sort <- FALSE
     downsample <- FALSE
     savePDFs <- TRUE
     which.palette <- "bluered"
+    # Run FLOW-MAP
     FLOWMAPR::FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
                       clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                       subsamples = subsamples, distance.metric = distance.metric,
@@ -257,8 +236,6 @@ shinyServer(function(input, output, session) {
                       save.folder = save.folder, mode = mode,
                       name.sort = name.sort, downsample = downsample,
                       savePDFs = savePDFs, which.palette = which.palette)
-    # Run FLOW-MAP
-    # remove final global variables
     stopApp()
   })
   output$stuff <- renderText({
