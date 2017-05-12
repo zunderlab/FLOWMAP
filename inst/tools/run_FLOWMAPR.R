@@ -1,6 +1,7 @@
 rm(list = ls())
 
 # EXAMPLE FLOW-MAP RUN
+
 library(FLOWMAPR)
 files <- '/Users/mesako/Desktop/SingleFLOWMAP' # Change to where your FCS files are located
 mode <- 'single'
@@ -20,6 +21,7 @@ name.sort <- FALSE
 downsample <- FALSE
 savePDFs <- TRUE
 which.palette <- 'bluered'
+
 FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
     var.annotate = var.annotate, clustering.var = clustering.var,
     cluster.numbers = cluster.numbers, subsamples = subsamples,
