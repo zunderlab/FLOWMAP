@@ -6,6 +6,7 @@ shinyServer(function(input, output, session) {
   options(shiny.maxRequestSize = 1000 * 1024^2)
   DF <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   operating_system <<- Sys.info()[1]
+  print("operating_system")
   print(operating_system)
   
   # get function for FLOW-MAP
@@ -14,17 +15,25 @@ shinyServer(function(input, output, session) {
   } else{
     folder_now <<- paste(getwd(), "/", sep = "")
   }
+  print("folder_now")
+  print(folder_now)
   # get directory for where all FLOW-MAP function files are located
   final_new_same <<- NULL
   final_new_diff <<- NULL
   # Set Global Variables
   dir_now <<- globe_resdir
+  print("dir_now")
+  print(dir_now)
   fileorder <- function() {
     file_names <<- list.files(dir_now, pattern = ".fcs")
-    name_vec = c()
+    print("file_names")
+    print(file_names)
+    name_vec <- c()
     for (i in 1:length(file_names)){
-      name_vec = c(name_vec, i)
+      name_vec <- c(name_vec, i)
     }
+    print("name_vec")
+    print(name_vec)
     len_filenames <<- name_vec
     file_names
   }

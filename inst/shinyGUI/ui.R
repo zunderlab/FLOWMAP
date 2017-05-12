@@ -14,7 +14,8 @@ shinyUI(
                          selectize = FALSE,
                          size = 10
              ),
-             textInput("fileorder", label = h5("Write the FCS File Order"), placeholder = "Ex: 4,2,7,5,3,1,6"),
+             textInput("fileorder", label = h5("Write the FCS File Order"),
+                       placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
              actionButton("generbutton2", "Generate Parameters"),
              textOutput(
                "stuff"
@@ -50,7 +51,7 @@ shinyUI(
              actionButton("mbutton", "Merge Selected Diff")
       ),
       column(width = 5,
-             actionButton("button", "Run FLOWMAP"),
+             actionButton("button", "Run FLOWMAPR"),
              br(),
              rHandsontableOutput("table", width = 600)
              

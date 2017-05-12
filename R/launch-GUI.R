@@ -24,12 +24,9 @@ launch_GUI <- function() {
   # parameter initialization
   cur_dir <- getwd()
   distanceMetrics <- c("manhattan", "euclidean")
-  # multiSingles <- c("multi", "single", "one")
-  multiSingles <- c("multi", "single")
-  
+  multiSingles <- c("multi", "single", "one")
   rawFCSdir <- tclVar(cur_dir)
   resDir <- tclVar(cur_dir)
-  projectName <- tclVar("FLOWMAP")
   distanceMetric <- tclVar("manhattan")
   multiSingle = tclVar("single")
   subsampleNum = tclVar("200")
@@ -43,100 +40,79 @@ launch_GUI <- function() {
   #  button functions
   reset_rawFCS_dir <- function() {
     rawFCS_dir <- ""
-    rawFCS_dir <- tclvalue(tkchooseDirectory(title = "Choose your rawFCS dircetory ..."))
+    rawFCS_dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
     if (rawFCS_dir != "") {
       tclvalue(rawFCSdir) <- rawFCS_dir
       tclvalue(resDir) <- rawFCS_dir
     }
   }
-  
   reset_res_dir <- function() {
     res_dir <- ""
-    res_dir <- tclvalue(tkchooseDirectory(title = "Choose your result dircetory ..."))
+    res_dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
     if (res_dir != "") {
       tclvalue(resDir) <- res_dir
     }
   }
-  
   reset_fcs_data <- function() {
     fnames <- ""
     fnames <- tk_choose.files(default = paste(tclvalue(rawFCSdir), 
-                                              "fcs", sep = .Platform$file.sep), caption = "Select FCS files", 
-                              multi = TRUE, filters = matrix(c("{fcs files}", "{.fcs}"), 
-                                                             1, 2), index = 1)
+                                              "fcs", sep = .Platform$file.sep),
+                              caption = "Select FCS files", 
+                              multi = TRUE, filters = matrix(c("{fcs files}", "{.fcs}"), 1, 2), index = 1)
     if (length(fnames) >= 1) {
       fnames <- fnames[!(grepl(paste0(.Platform$file.sep, 
                                       "fcs$"), fnames))]  # remove empty .fcs files
     }
   }
-  
   reset_num2null <- function() {
     tclvalue(fixedNum) <- "NULL"
   }
-  
   reset_num2any <- function() {
     tclvalue(fixedNum) <- "1000"
   }
-  
   rawFCSdir_help <- function() {
-    tkmessageBox(title = "rawFCSdir", message = "The directory that contains fcs files.", 
+    tkmessageBox(title = "rawFCSdir", message = "The directory that contains the raw FCS files.", 
                  icon = "info", type = "ok")
   }
-  
-  projectName_help <- function() {
-    tkmessageBox(title = "projectName", message = "A prefix that will be added to the names of result files.", 
-                 icon = "info", type = "ok")
-  }
-  
   distanceMetric_help <- function() {
     tkmessageBox(title = "distanceMetric", message = "Select the appropriate distance metric.", 
                  icon = "info", type = "ok")
   }
-  
   multiSingle_help <- function() {
     tkmessageBox(title = "multiSingle", message = "Method of analysis via multiple FCS files or via one.", 
                  icon = "info", type = "ok")
   }
-  
   resDir_help <- function() {
     tkmessageBox(title = "resDir", message = "The directory where result files will be generated", 
                  icon = "info", type = "ok")
   }
-  
   subsampleNum_help = function() {
     tkmessageBox(title = "subsampleNum", message = "The subsampling number",
                  icon = "info", type = "ok")
   }
-  
   clusterNum_help = function() {
     tkmessageBox(title = "clusterNum", message = "The clustering number",
                  icon = "info", type = "ok")
   }
-  
   seedNum_help = function() {
     tkmessageBox(title = "seedNum", message = "The seeding number",
                  icon = "info", type = "ok")
   }
-  
   edgepctNum_help = function() {
     tkmessageBox(title = "edgepctNum", message = "The edge percentile number",
                  icon = "info", type = "ok")
   }
-  
   edgeNumMin_help = function() {
     tkmessageBox(title = "edgeNumMin", message = "The lower bound for number of edges",
                  icon = "info", type = "ok")
   }
-  
   edgeNumMax_help = function() {
     tkmessageBox(title = "edgeNumMax", message = "The upper bound for number of edges",
                  icon = "info", type = "ok")
   }
-  
   reset <- function() {
     tclvalue(rawFCSdir) = cur_dir
     tclvalue(resDir) = cur_dir
-    tclvalue(projectName) = "FLOWMAP"
     tclvalue(distanceMetric) = distanceMetrics[1]
     tclvalue(multiSingle) = multiSingles[2]
     tclvalue(subsampleNum) = "200"
@@ -146,7 +122,6 @@ launch_GUI <- function() {
     tclvalue(edgeNumMin) = "2"
     tclvalue(edgeNumMax) = "5"
   }
-  
   submit <- function() {
     has_error = FALSE
     if (has_error == FALSE) {
@@ -154,19 +129,17 @@ launch_GUI <- function() {
       tkdestroy(tt)
     }
   }
-  
   quit <- function() {
     tkdestroy(tt)
   }
-  
   # build the GUI
   # head line
   tt <- tktoplevel(borderwidth = 20)
   tkwm.title(tt, "FLOWMAP")
   
-  if(.Platform$OS.type == "windows"){
+  if (.Platform$OS.type == "windows") {
     box_length <- 63
-  }else{
+  } else {
     box_length <- 55 
   }
   cell_width <- 3
@@ -222,11 +195,6 @@ launch_GUI <- function() {
                             command = reset_res_dir)
   resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
   
-  # projectName
-  projectName_label <- tklabel(tt, text = "Project Name :")
-  projectName_entry <- tkentry(tt, textvariable = projectName, width = box_length)
-  projectName_hBut <- tkbutton(tt, image = image2, command = projectName_help)
-  
   # distanceMetric
   distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
   distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
@@ -267,10 +235,6 @@ launch_GUI <- function() {
   tkgrid.configure(resDir_label, resDir_entry, resDir_button, 
                    sticky = "e")
   tkgrid.configure(resDir_hBut, sticky = "e")
-  
-  tkgrid(projectName_label, projectName_hBut, projectName_entry, padx = cell_width)
-  tkgrid.configure(projectName_label, projectName_entry, sticky = "e")
-  tkgrid.configure(projectName_hBut, sticky = "e")
   
   tkgrid(distanceMetric_label, distanceMetric_hBut, distanceMetric_rbuts, 
          padx = cell_width)
@@ -320,7 +284,7 @@ launch_GUI <- function() {
   # Return parameters
   if (tclvalue(ret_var) != "OK") {
     okMessage <- "Analysis is cancelled."
-  }else{
+  } else {
     inputs <- list()
     inputs[["multiSingle"]] = tclvalue(multiSingle)
     inputs[["subsampleNum"]] = tclvalue(subsampleNum)
@@ -330,27 +294,18 @@ launch_GUI <- function() {
     inputs[["edgepctNum"]] = tclvalue(edgepctNum)
     inputs[["edgeMaxNum"]] = tclvalue(edgeNumMax)
     inputs[["edgeminNum"]] = tclvalue(edgeNumMin)
-    inputs[["projectName"]] <- tclvalue(projectName)
     inputs[["resultDir"]] <- tclvalue(resDir)
     
     globe_input <<- inputs
     globe_resdir <<- tclvalue(rawFCSdir)
-    globe_proj <<- tclvalue(projectName)
     timeNow = Sys.time()
     globe_resdir2 <<- tclvalue(resDir)
-    
     timeNow = gsub("[:]","-", timeNow) 
-    
-    # write.csv(inputs, paste0(inputs[["resultDir"]], "/", inputs[["projectName"]], timeNow, ".csv"))
-    
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-  
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-  
 }
-
 
 opendir <- function(dir = getwd()){
   if (.Platform['OS.type'] == "windows"){
