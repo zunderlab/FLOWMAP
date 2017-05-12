@@ -15,8 +15,6 @@ shinyServer(function(input, output, session) {
   } else {
     folder_now <<- paste(getwd(), "/", sep = "")
   }
-  print("folder_now")
-  print(folder_now)
   # get directory for where all FLOW-MAP function files are located
   final_new_same <<- NULL
   final_new_diff <<- NULL
@@ -47,14 +45,11 @@ shinyServer(function(input, output, session) {
     for(i in order) {
       fcs_list <- c(fcs_list, file_names[i])
       fcs_list
-      print("fcs_list")
-      print(fcs_list)
     }
   })
   contentdiff <- eventReactive(input$generbutton2, {
     # Read input Files
     # Set the names
-    print("Hello")
     fcs_list <- list()
     rows <- length(fileorder(dir_now))
     count <- 0
@@ -78,13 +73,10 @@ shinyServer(function(input, output, session) {
     }
     # Gets different parameters from the FCS files
     final_new_diff <<- diffs
-    print("diffs")
-    print(diffs)
     diffs
     # If there is 1 FCS file, then there is no difference
   })
   contentsame <- eventReactive(input$generbutton2, {
-    print("HELLO")
     fcs_list <- list()
     rows <- length(fileorder(dir_now))
     count <- 0
@@ -104,8 +96,6 @@ shinyServer(function(input, output, session) {
     diff <- every
     diff <- diff[! every %in% same]
     final_new_same <<- same
-    print("same")
-    print(same)
     same
     # gives the same paramters
   })
@@ -202,7 +192,6 @@ shinyServer(function(input, output, session) {
     # writes the file
     flowfile <- (hot_to_r(input$table))
     print(folder_now)
-    print("works")
     setwd(dir_now)
     set.seed(globe_input[["seedNum"]])
     files <- c()
@@ -222,17 +211,9 @@ shinyServer(function(input, output, session) {
     subsamples <- as.numeric(globe_input[["subsampleNum"]])
     cluster.numbers <- as.numeric(globe_input[["clusterNum"]])
     seed.X <- as.numeric(globe_input[["seedNum"]])
-    print("clustering.var")
-    print(clustering.var)
     for (i in 1:length(clustering.var)) {
-      print("clustering.var[i]")
-      print(clustering.var[i])
       clustering.var[i] <- var.annotate[[clustering.var[i]]]
     }
-    print("var.annotate")
-    print(var.annotate)
-    print("clustering.var")
-    print(clustering.var)
     name.sort <- FALSE
     downsample <- FALSE
     savePDFs <- TRUE
