@@ -190,6 +190,11 @@ shinyServer(function(input, output, session) {
     }
     setwd(dir)
     # writes the file
+    print("input")
+    print(input)
+    print("names(input)")
+    print(names(input))
+    
     flowfile <- (hot_to_r(input$table))
     print(folder_now)
     setwd(dir_now)
