@@ -246,13 +246,17 @@ shinyServer(function(input, output, session) {
     print(save.folder)
     print("mode")
     print(mode)
+    name.sort <- FALSE
+    downsample <- FALSE
+    savePDFs <- TRUE
+    which.palette <- "bluered"
     FLOWMAPR::FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
                       clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                       subsamples = subsamples, distance.metric = distance.metric,
                       minimum = minimum, maximum = maximum, per = per,
                       save.folder = save.folder, mode = mode,
-                      name.sort = FALSE, downsample = FALSE,
-                      savePDFs = TRUE, which.palette = "bluered")
+                      name.sort = name.sort, downsample = downsample,
+                      savePDFs = savePDFs, which.palette = which.palette)
     # Run FLOW-MAP
     # remove final global variables
   })
