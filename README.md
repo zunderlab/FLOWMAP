@@ -1,6 +1,6 @@
 # FLOWMAPR
 
-This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
+This repository houses the FLOW-MAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
 ## Code Status
 Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
@@ -185,18 +185,17 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 + What are some of the different subpopulations in my data, especially those of interest to my question? What fraction of the total number of cells do each of these subpopulations represent? This info can inform whether you choose to downsample (`downsample <- TRUE`) or randomly subsample, or your clustering ratio (`subsample` : `cluster.numbers`).
 + What markers do or do not change across the timecourse? Generally, you will not want to include completely uninformative markers as clustering variables (`clustering.var`). This choice can be guided by the data (what you observe changing) and biological expert knowledge (what you know should change in the process you profiled).
 + What are some expected trajectories? That is, what are some cell subpopulations you expect to observe, and what changes should you observe in these cells over time. Any expert knowledge can help you know what to look for (confirmation in your results) after a FLOWMAPR run before you investigate novel findings.
++ Are there any parameters that are useless or unrelated to your biological question? You can try not removing any markers, but we generally recommend you include markers with no relevance (e.g. DNA, Event_length, Eubeads) in `var.remove` so that they do not carry through the analysis and no PDFs are generated for them. This step will save small amounts of time and make the graph less inconvenient to navigate in Gephi.
 2. Start off with a small number of clusters and generally keep the clustering ratio larger (`subsample` close to, either equal to or slightly less than, `cluster.numbers`). Though the resulting figures may not be fully representative of the variation in the data, these settings will allow you to quickly iterate through different configurations of edge settings and different choices of clustering variables. Given that a graph with about N total nodes or clusters takes M minutes to run, try starting with cluster numbers set to N / # of files. For example, if you have a single timecourse with 5 FCS files, try setting `cluster.numbers <- N` and `subsamples <- N * 2`.
-3. Write down several options with
+3. You will need to do several iterations of FLOWMAPR to try to arrive at appropriate settings for `minimum`, `maximum`, and `per` as well as `clustering.var`. The order in which you proceed depends on the results you see, so you may need to reverse the order of the steps (4-5) below.
+4. Try using the default edge settings for `minimum`, `maximum`, and `per` with different options for `clustering.var`. These results will show you how informative different sets of markers are. You should try to narrow down to a particular marker set that you can use to refine the edge settings.
+5. Once you select `clustering.var`, you can change edge settings `minimum`, `maximum`, and `per` to try to arrive at the maximal separation within your data. Generally you want to arrive at a graph that best resolves difference and allows for spread of different trajectories in the data, so that it captures as much info from the high-dimensional shape of the data as possible. Here are some guides for how to tweak these edge settings:
++ If the graph is too interconnected (hairball-like), try reducing `maximum`. You can try reducing `minimum` to 1, but generally we recommend that `minimum` is at least 2. Try moving `maximum` to being at most `minimum` + 1.
++ If the graph is not interconnected enough (spiky, single nodes radiating out), try increasing the `minimum` and/or `maximum`.
++ We generally suggest keeping `per` at 1, but if you try all reasonable combinations of `minimum` and `maximum`, you can reduce `per` to reduce connectedness or increase `per` to increase connectedness.
++ Be careful that it's possible for graphs to essentially become tangled as they are processed with a force-directed layout. If results do not look useful, check for these tangles that can be resolved in Gephi. Additionally, the force-directed layout step is a computationally intensive and time-consuming step, so it is possible within the R package that the process does not complete. These graphs can be resolved to a stable shape in Gephi.
 
-If the graph is too interconnected (hairball-like), try reducing maximum. You can try reducing minimum to 1, but generally we recommend that minimum is at least 2. Try moving maximum to being at most minimum + 1.
-
-If the graph is not interconnected enough (spiky, single nodes radiating out), try increasing the minimum and/or maximum.
-
-In a singleFLOWMAP, 1200 total nodes takes about ??? min to produce results (including PDFs) with no downsampling (uses random subsampling).
-
-In a singleFLOWMAP, 3000 total nodes takes about 6 min to produce results (including PDFs) with no downsampling (uses random subsampling).
-
-In a singleFLOWMAP, 6000 total nodes takes about N min to produce results (including PDFs) with no downsampling (uses random subsampling).
+In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total nodes takes about ??? min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results and 6000 total nodes takes about N min.
 
 
 ## Using the GUI
