@@ -196,6 +196,10 @@ shinyServer(function(input, output, session) {
     set.seed(globe_input[["seedNum"]])
     files <- c()
     files <- globe_resdir
+    print("globe_resdir")
+    print(globe_resdir)
+    print("flowfile")
+    print(flowfile)
     mode <- globe_input[["multiSingle"]]
     save.folder <- globe_resdir2
     var.annotate <- list()
