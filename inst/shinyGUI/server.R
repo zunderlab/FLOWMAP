@@ -222,6 +222,11 @@ shinyServer(function(input, output, session) {
     subsamples <- as.numeric(globe_input[["subsampleNum"]])
     cluster.numbers <- as.numeric(globe_input[["clusterNum"]])
     seed.X <- as.numeric(globe_input[["seedNum"]])
+    print("clustering.var")
+    print(clustering.var)
+    for (i in 1:length(clustering.var)) {
+      clustering.var[i] <- var.annotate[clustering.var[i]]
+    }
     print("var.annotate")
     print(var.annotate)
     print("clustering.var")
