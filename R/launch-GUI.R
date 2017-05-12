@@ -19,7 +19,7 @@
 #' @examples
 #' # launch_GUI()
 
-launch_GUI <- function() {
+LaunchGUI <- function() {
   require(shiny)
   # parameter initialization
   cur_dir <- getwd()
@@ -307,7 +307,7 @@ launch_GUI <- function() {
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
 
-opendir <- function(dir = getwd()){
+OpenDir <- function(dir = getwd()){
   if (.Platform['OS.type'] == "windows"){
     shell.exec(dir)
   } else {

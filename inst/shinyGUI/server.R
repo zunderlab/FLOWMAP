@@ -12,7 +12,7 @@ shinyServer(function(input, output, session) {
   # get function for FLOW-MAP
   if (operating_system == "Windows"){
     folder_now <<- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
-  } else{
+  } else {
     folder_now <<- paste(getwd(), "/", sep = "")
   }
   print("folder_now")
@@ -24,8 +24,8 @@ shinyServer(function(input, output, session) {
   dir_now <<- globe_resdir
   print("dir_now")
   print(dir_now)
-  fileorder <- function() {
-    file_names <<- list.files(dir_now, pattern = ".fcs")
+  fileorder <- function(dir_now) {
+    file_names <- list.files(dir_now, pattern = "\\.fcs")
     print("file_names")
     print(file_names)
     name_vec <- c()
@@ -34,18 +34,10 @@ shinyServer(function(input, output, session) {
     }
     print("name_vec")
     print(name_vec)
-    len_filenames <<- name_vec
-    file_names
+    len_filenames <- name_vec
+    return(len_filenames)
   }
-  len_filen <- function() {
-    file_names <<- list.files(dir_now, pattern = ".fcs")
-    name_vec <- c()
-    for (i in 1:length(file_names)){
-      name_vec <- c(name_vec, i)
-    }
-    len_filenames <<- name_vec
-    len_filenames
-  }
+  len_filenames <- fileorder(dir_now)
   observe({
     updateSelectInput(session, "checkGroup_files", choices = paste(len_filenames, file_names, sep = " "))
   })
