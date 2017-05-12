@@ -193,10 +193,12 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 + If the graph is too interconnected (hairball-like), try reducing `maximum`. You can try reducing `minimum` to 1, but generally we recommend that `minimum` is at least 2. Try moving `maximum` to being at most `minimum` + 1.
 + If the graph is not interconnected enough (spiky, single nodes radiating out), try increasing the `minimum` and/or `maximum`.
 + We generally suggest keeping `per` at 1, but if you try all reasonable combinations of `minimum` and `maximum`, you can reduce `per` to reduce connectedness or increase `per` to increase connectedness.
-+ Be careful that it's possible for graphs to essentially become tangled as they are processed with a force-directed layout. If results do not look useful, check for these tangles that can be resolved in Gephi. Additionally, the force-directed layout step is a computationally intensive and time-consuming step, so it is possible within the R package that the process does not complete. These graphs can be resolved to a stable shape in Gephi.
++ Be careful as it's possible for graphs to essentially become tangled as they are processed with a force-directed layout. If results do not look useful, check for these tangles that can be resolved in Gephi. Additionally, the force-directed layout step is a computationally intensive and time-consuming step, so it is possible within the R package that the process does not complete. These graphs can be resolved to a stable shape in Gephi.
+6. Once you arrive at a FLOW-MAP with the "best" settings, repeat the analysis with multiple settings of `seed.X` to produce "technical replicates" of your analysis. For steps that involve randomness, such as random subsampling of your FCS files, you will want to try to reproduce your FLOW-MAP figures with different samplings.
+
+#### Timing for FLOWMAPR Runs
 
 In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total nodes takes about ??? min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results and 6000 total nodes takes about N min.
-
 
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.
