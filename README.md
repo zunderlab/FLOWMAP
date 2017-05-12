@@ -5,6 +5,7 @@ This repository houses the FLOWMAP algorithm code, which was developed in R and 
 ## Code Status
 Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
 
+<!--
 ### Known Issues (“Bugs”)
 
 ### Planned Features
@@ -16,6 +17,7 @@ Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_
 * density rank can also be used to change amount of outlier removal
 * adjust ratio of edges within same time point to edges between time points
 * save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
+-->
 
 ## Getting Started
 
@@ -72,7 +74,7 @@ install.packages("rhandsontable")
 ```
 2. The GUI is accessed by running:
 ```
-FLOWMAPR::launch_GUI()
+FLOWMAPR::LaunchGUI()
 ```
 
 ### Updating FLOWMAPR:
@@ -89,29 +91,27 @@ If the above commands run without error, you should have the latest version of F
 
 To run a FLOWMAP analysis on your data set or an example data set:
 
-0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please label times sequentially from 1 ... n, even if that does not reflect the actual experimental timepoints. To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. **Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**
+0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last). To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. <!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
-  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results
-  * `files` - the directory where you can find the FCS files to be used
-  * `save.folder` - where you want the output files to be saved to
+  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
-  * `var.annotate` - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
+  * `files` - the directory where you can find the FCS files to be used
   * `var.remove` - any channels you want completely excluded from analysis
-  * `per` - affects connectivity, recommended default is 1
-  * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
-  * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 3
-  * `distance.metric` - choose manhattan or euclidean
-  * `subsamples` - how many cells to randomly subsample from each FCS file, RECOMMENDATION PENDING
-  * `cluster.numbers` - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500)
-  * `seed.X` - set this for reproducibility
+  * `var.annotate` - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
   * `clustering.var` - which channels to use to influence the graph shape
-  * `shuffle` - shuffle cells used in each sample
-  * `name.sort` - sort FCS files according to name in alphabetical/numerical order
-  * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`
-  * `savePDFs` - produce PDF files or only produce graphml files
-  * `which.palette` - optional argument for savePDFs functionality, can do colorblind-friendly option with "CB"
-  * `keep.times` - set to TRUE to use original time settings parsed from FCS file names or folder/subfolders where FCS files are located
+  * `cluster.numbers` - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500), default is set to 100
+  * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
+  * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
+  * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
+  * `per` - affects connectivity, recommended default is 1
+  * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
+  * `subsamples` - how many cells to randomly subsample from each FCS file, default is set to 200
+  * `name.sort` - sort FCS files according to name in alphabetical/numerical order, default is set to TRUE for sorting
+  * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
+  * `seed.X` - set this for reproducibility, default is set to 1
+  * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
+  * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
 
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
@@ -119,31 +119,30 @@ To run a FLOWMAP analysis on your data set or an example data set:
 ### Example Code:
 
 ```
-files <- "/Users/mesako/Desktop/FLOWMAP-Synthetic-Data-20161216/SingleFLOWMAP"
+library(FLOWMAPR)
+files <- "/Users/mesako/Desktop/SingleFLOWMAP"
 mode <- "single"
 save.folder <- "/Users/mesako/Desktop"
 var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
 var.remove <- c()
-per <- 1
-minimum <- 2
-maximum <- 3
-distance.metric <- "manhattan"
+clustering.var <- c("marker1", "marker2")
 subsamples <- 200
 cluster.numbers <- 100
+distance.metric <- "manhattan"
+per <- 1
+minimum <- 2
+maximum <- 5
 seed.X <- 1
-clustering.var <- c("marker1", "marker2")
-set.seed(seed.X)
 name.sort <- FALSE
 downsample <- FALSE
 savePDFs <- TRUE
-which.palette <- "CB"
+which.palette <- "bluered"
 
-FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
-        var.annotate = var.annotate, clustering.var = clustering.var,
-        cluster.numbers = cluster.numbers, subsamples = subsamples,
-        distance.metric = distance.metric, minimum = minimum,
-        maximum = maximum, per = per, save.folder = save.folder,
-        mode = mode, name.sort = name.sort, downsample = downsample,
+FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+        per = per, save.folder = save.folder, subsamples = subsamples,
+        name.sort = name.sort, downsample = downsample, seed.X = seed.X,
         savePDFs = savePDFs, which.palette = which.palette)
 ```
 
