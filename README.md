@@ -146,6 +146,19 @@ FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.
         savePDFs = savePDFs, which.palette = which.palette)
 ```
 
+You can also access example FLOWMAPR runs as .R files, which you can then modify to work with your own data.
+
+To access a SingleFLOWMAP run without downsampling (random subsampling):
+```
+file.edit(system.file("tools/run_FLOWMAPR.R", package = "FLOWMAPR"))
+```
+
+To access a SingleFLOWMAP run with SPADE downsampling:
+```
+file.edit(system.file("tools/run_downsample_FLOWMAPR.R", package = "FLOWMAPR"))
+```
+You will need to change the `files` and the `save.folder` to point to folders on your own computer. Furthermore, you will need to update the `var.annotate`, `var.remove`, and `clustering.var` parameters to reflect channels in your own data. You can change all other parameters based on your analysis needs.
+
 ### Example Data:
 
 An example (synthetic) data set is available as raw FCS files with the FLOWMAPR package for testing purposes. You can access these data sets by finding their directory on your computer using the following commands after you have installed and loaded FLOWMAPR.
