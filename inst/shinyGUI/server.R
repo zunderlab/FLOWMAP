@@ -21,23 +21,20 @@ shinyServer(function(input, output, session) {
   final_new_same <<- NULL
   final_new_diff <<- NULL
   # Set Global Variables
-  dir_now <<- globe_resdir
-  print("dir_now")
-  print(dir_now)
+  dir_now <- globe_resdir
   fileorder <- function(dir_now) {
     file_names <- list.files(dir_now, pattern = "\\.fcs")
-    print("file_names")
-    print(file_names)
     name_vec <- c()
     for (i in 1:length(file_names)){
       name_vec <- c(name_vec, i)
     }
-    print("name_vec")
-    print(name_vec)
     len_filenames <- name_vec
-    return(len_filenames)
+    return(list(len_filenames = len_filenames,
+                file_names = file_names))
   }
-  len_filenames <- fileorder(dir_now)
+  file_info <- fileorder(dir_now)
+  len_filenames <- file_info$len_filenames
+  file_names <- file_info$file_names
   observe({
     updateSelectInput(session, "checkGroup_files", choices = paste(len_filenames, file_names, sep = " "))
   })
@@ -47,17 +44,19 @@ shinyServer(function(input, output, session) {
   fcs_order <- eventReactive(input$generbutton2, {
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     fcs_list <- c()
-    for(i in order){
+    for(i in order) {
       fcs_list <- c(fcs_list, file_names[i])
       fcs_list
     }
   })
+  print("fcs_order")
+  print(fcs_order)
   contentdiff <- eventReactive(input$generbutton2, {
     # Read input Files
     # Set the names
     print("Hello")
     fcs_list <- list()
-    rows <- length(len_filen())
+    rows <- length(fileorder(dir_now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order) {
@@ -78,16 +77,18 @@ shinyServer(function(input, output, session) {
       diff <- NULL
     }
     # Gets different parameters from the FCS files
-    
     final_new_diff <<- diff
     print(diff)
     diff
-    #If there is 1 FCS file, then there is no difference
+    # If there is 1 FCS file, then there is no difference
   })
+  print("diff")
+  print(diff)
+  
   contentsame <- eventReactive(input$generbutton2, {
     print("HELLO")
     fcs_list <- list()
-    rows <- length(len_filen())
+    rows <- length(fileorder(dir_now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order)
@@ -109,6 +110,8 @@ shinyServer(function(input, output, session) {
     same
     #gives the same paramters
   })
+  print("same")
+  print(same)
   
   tablecreate <- eventReactive(input$generbutton2, {
     if (length(final_new_diff) == 0) {

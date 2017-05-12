@@ -217,6 +217,8 @@ LaunchGUI <- function() {
                        variable = multiSingle, value = multiSingles[1]), side = "left")
   tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[2],
                        variable = multiSingle, value = multiSingles[2]), side = "left")
+  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[3],
+                       variable = multiSingle, value = multiSingles[3]), side = "left")
   
   # submit / reset / quit
   submit_button <- tkbutton(tt, text = "Submit", command = submit)
