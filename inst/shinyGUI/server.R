@@ -47,6 +47,8 @@ shinyServer(function(input, output, session) {
     for(i in order) {
       fcs_list <- c(fcs_list, file_names[i])
       fcs_list
+      print("fcs_list")
+      print(fcs_list)
     }
   })
   contentdiff <- eventReactive(input$generbutton2, {
@@ -81,9 +83,6 @@ shinyServer(function(input, output, session) {
     diffs
     # If there is 1 FCS file, then there is no difference
   })
-  print("diffs")
-  print(diffs)
-  
   contentsame <- eventReactive(input$generbutton2, {
     print("HELLO")
     fcs_list <- list()
@@ -110,9 +109,6 @@ shinyServer(function(input, output, session) {
     same
     #gives the same paramters
   })
-  print("same")
-  print(same)
-  
   tablecreate <- eventReactive(input$generbutton2, {
     if (length(final_new_diff) == 0) {
       DF <<- data.frame(channels = c(final_new_same, final_new_diff),
@@ -133,7 +129,6 @@ shinyServer(function(input, output, session) {
     print(DF)
     DF_edit <<- DF
   })
-  
   observeEvent(input$generbutton2, {
     if (length(final_new_diff) == 0) {
       DF <- data.frame(channels = c(final_new_same, final_new_diff),
