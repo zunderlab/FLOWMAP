@@ -47,12 +47,8 @@ shinyServer(function(input, output, session) {
     for(i in order) {
       fcs_list <- c(fcs_list, file_names[i])
       fcs_list
-      print("fcs_list")
-      print(fcs_list)
     }
   })
-  print("fcs_list")
-  print(fcs_list)
   contentdiff <- eventReactive(input$generbutton2, {
     # Read input Files
     # Set the names
