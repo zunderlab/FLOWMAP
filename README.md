@@ -40,6 +40,7 @@ install.packages("igraph")
 install.packages("robustbase")
 source("http://bioconductor.org/biocLite.R")
 biocLite("flowCore")
+biocLite("spade")
 ```
 
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the NOlan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
