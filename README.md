@@ -1,4 +1,4 @@
-# FLOWMAP
+# FLOWMAPR
 
 This repository houses the FLOWMAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
 
@@ -87,7 +87,7 @@ To quickly update your FLOWMAPR R package up and get the latest version from Git
 
 If the above commands run without error, you should have the latest version of FLOWMAPR.
 
-## Running FLOW-MAP
+## Running FLOWMAPR
 
 To run a FLOWMAP analysis on your data set or an example data set:
 
@@ -174,6 +174,25 @@ files <- system.file("extdata/MultiFLOWMAP", package = "FLOWMAPR")
 ```
 
 Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()` command.
+
+
+### Practical Guidelines for Running FLOWMAPR:
+
+FLOWMAPR is an R package for visualization of high-dimensional data, though ultimately producing visualizations is a subjective process. If you are not sure where to start or what settings to use, here are some basic guidelines for your analysis:
+
+0. Consider what your question is for your dataset. FLOWMAPR can just be used to explore a given timecourse dataset, but generally your choice of settings will be simplified if you have a directed question. For example, you may be interested in how a biological process changes with different treatment conditions, or how different subpopulations change in a given set of markers during a process. 
+1. Analyze your timecourse data by some conventional means (heatmaps, histogram, dotplots, contour plots) to get an intuition for the data and to be able to answer, at least partially, the following questions:
++ What are some of the different subpopulations in my data, especially those of interest to my question? What fraction of the total number of cells do each of these subpopulations represent? This info can inform whether you choose to downsample (`downsample <- TRUE`) or randomly subsample, or your clustering ratio (`subsample` : `cluster.numbers`).
++ What markers do or do not change across the timecourse? Generally, you will not want to include completely uninformative markers as clustering variables (`clustering.var`). This choice can be guided by the data (what you observe changing) and biological expert knowledge (what you know should change in the process you profiled).
++ What are some expected trajectories? That is, what are some cell subpopulations you expect to observe, and what changes should you observe in these cells over time. Any expert knowledge can help you know what to look for (confirmation in your results) after a FLOWMAPR run before you investigate novel findings.
+2. Start off with a small number of clusters and generally keep the clustering ratio larger (`subsample` close to, either equal to or slightly less than, `cluster.numbers`). Though the resulting figures may not be fully representative of the variation in the data, these settings will allow you to quickly iterate through different configurations of edge settings and different choices of clustering variables. Given that a graph with about N total nodes or clusters takes M minutes to run, try starting with cluster numbers set to N / # of files. For example, if you have a single timecourse with 5 FCS files, try setting `cluster.numbers <- N` and `subsamples <- N * 2`.
+3. Write down several options with
+
+If the graph is too interconnected (hairball-like), try reducing maximum. You can try reducing minimum to 1, but generally we recommend that minimum is at least 2. Try moving maximum to being at most minimum + 1.
+
+If the graph is not interconnected enough (spiky, single nodes radiating out), try increasing the minimum and/or maximum.
+
+
 
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.
