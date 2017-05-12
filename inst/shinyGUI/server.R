@@ -194,6 +194,12 @@ shinyServer(function(input, output, session) {
     print(input)
     print("names(input)")
     print(names(input))
+    print("input$fileorder")
+    print(input$fileorder)
+    print("input$button")
+    print(input$button)
+    print("input$generbutton2")
+    print(input$generbutton2)
     
     flowfile <- (hot_to_r(input$table))
     print(folder_now)
