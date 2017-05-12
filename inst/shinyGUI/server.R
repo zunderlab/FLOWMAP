@@ -8,9 +8,8 @@ shinyServer(function(input, output, session) {
   operating_system <<- Sys.info()[1]
   print("operating_system")
   print(operating_system)
-  
   # get function for FLOW-MAP
-  if (operating_system == "Windows"){
+  if (operating_system == "Windows") {
     folder_now <<- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
   } else {
     folder_now <<- paste(getwd(), "/", sep = "")
@@ -196,8 +195,6 @@ shinyServer(function(input, output, session) {
     setwd(dir_now)
     set.seed(globe_input[["seedNum"]])
     files <- list.files(globe_resdir, full.names = TRUE, pattern = "\\.fcs")[file.order]
-    print("files")
-    print(files)
     # NEED MULTIFLOW-MAP FIX FOR FILES
     mode <- globe_input[["multiSingle"]]
     save.folder <- globe_resdir2
