@@ -200,7 +200,7 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 
 #### Timing for FLOWMAPR Runs
 
-In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results and 6000 total nodes takes about 21 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
+In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
 
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.
