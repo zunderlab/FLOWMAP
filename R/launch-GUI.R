@@ -200,12 +200,12 @@ LaunchGUI <- function() {
   # colorpalette Method
   color_label <- tklabel(tt, text = "Color palette: ")
   color_hBut <- tkbutton(tt, image = image2,
-                               command = color_help)
+                         command = color_help)
   color_rbuts <- tkframe(tt)
   tkpack(tklabel(color_rbuts, text = ""), side = "left")
   tkpack(tkradiobutton(color_rbuts, text = colorpalette[1], 
                        variable = colorpalette, value = colorpalette[1]), side = "left")
-  tkpack(tkradiobutton(color_rbuts, text = mode[2],
+  tkpack(tkradiobutton(color_rbuts, text = colorpalette[2],
                        variable = colorpalette, value = colorpalette[2]), side = "left")
   tkpack(tkradiobutton(color_rbuts, text = colorpalette[3],
                        variable = colorpalette, value = colorpalette[3]), side = "left")
@@ -213,7 +213,7 @@ LaunchGUI <- function() {
   # FLOWMAPtypeMethod
   mode_label <- tklabel(tt, text = "FLOW-MAP method: ")
   mode_hBut <- tkbutton(tt, image = image2,
-                               command = mode_help)
+                        command = mode_help)
   mode_rbuts <- tkframe(tt)
   tkpack(tklabel(mode_rbuts, text = ""), side = "left")
   tkpack(tkradiobutton(mode_rbuts, text = mode[1], 
@@ -265,7 +265,7 @@ LaunchGUI <- function() {
   edgeNumMax_entry = tkentry(tt, textvariable = edgeNumMax, width = 9)
   edgeNumMax_hBut = tkbutton(tt, image = image2, command = edgeNumMax_help)
   
- # submit / reset / quit
+  # submit / reset / quit
   submit_button <- tkbutton(tt, text = "Submit", command = submit)
   reset_button <- tkbutton(tt, text = "Reset", command = reset)
   quit_button <- tkbutton(tt, text = "Quit", command = quit)
@@ -282,7 +282,7 @@ LaunchGUI <- function() {
   tkgrid.configure(resDir_label, resDir_entry, resDir_button, 
                    sticky = "e")
   tkgrid.configure(resDir_hBut, sticky = "e")
-
+  
   tkgrid(downsample_label, downsample_hBut, downsample_rbuts, 
          padx = cell_width)
   tkgrid.configure(downsample_label, sticky = "e")
@@ -316,7 +316,7 @@ LaunchGUI <- function() {
   tkgrid.configure(mode_label, sticky = "e")
   tkgrid.configure(mode_rbuts, sticky = "w")
   tkgrid.configure(mode_hBut, sticky = "e")
-
+  
   tkgrid(color_label, color_hBut, color_rbuts,
          padx = cell_width)
   tkgrid.configure(color_label, sticky = "e")

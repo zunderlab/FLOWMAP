@@ -218,9 +218,11 @@ shinyServer(function(input, output, session) {
     }
     name.sort <- FALSE
     downsample <- as.logical(as.numeric(globe_input[["downsampleToggle"]]))
-    
+    print("downsample")
+    print(downsample)
     # Run FLOW-MAP
     if (downsample) {
+      print("Downsampling")
       target.number <- subsamples
       subsamples <- FALSE
       exclude.pctile <- 0.01
@@ -235,13 +237,14 @@ shinyServer(function(input, output, session) {
               exclude.pctile = exclude.pctile, target.pctile = target.pctile,
               target.number = target.number, target.percent = target.percent)
     } else {
-      FLOWMAPR::FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
-                        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                        subsamples = subsamples, distance.metric = distance.metric,
-                        minimum = minimum, maximum = maximum, per = per,
-                        save.folder = save.folder, mode = mode,
-                        name.sort = name.sort, downsample = downsample,
-                        savePDFs = savePDFs, which.palette = which.palette)
+      print("No downsampling")
+      FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
+              clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+              subsamples = subsamples, distance.metric = distance.metric,
+              minimum = minimum, maximum = maximum, per = per,
+              save.folder = save.folder, mode = mode,
+              name.sort = name.sort, downsample = downsample,
+              savePDFs = savePDFs, which.palette = which.palette)
     }
     stopApp()
   })
