@@ -12,6 +12,13 @@ Asinh <- function(value) {
   return(value)
 }
 
+RemoveExistingTimeVar <- function(fcs.file) {
+  fcs.file <- as.data.frame(fcs.file)
+  ind <- grep(colnames(fcs.file), pattern = "Time")
+  fcs.file[, ind] <- NULL
+  return(fcs.file)
+}
+
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
   fcs.files <- list.files(path = folder, pattern = "\\.fcs",
@@ -75,6 +82,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
       fcs.file <- apply(fcs.file, 2, Asinh) 
     }
     fcs.file <- as.data.frame(fcs.file)
+    fcs.file <- RemoveExistingTimeVar(fcs.file) 
     clean.fcs.files[[i]] <- fcs.file
     rm(fcs.file)
   }

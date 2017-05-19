@@ -8,10 +8,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     which.palette = "bluered", ...) {
   # optional variables
   # starting.files = c("FCS", "cluster_matrix")
-  print("files")
-  print(files)
-  print("list.files(files, full.names = TRUE)")
-  print(list.files(files, full.names = TRUE))
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
