@@ -186,7 +186,7 @@ LaunchGUI <- function() {
   downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
   downsample_rbuts <- tkframe(tt)
   tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(tt, variable = downsampleToggle, text = "BOOP"), 
+  tkpack(tkcheckbutton(downsample_rbuts, variable = downsampleToggle, text = "BOOP"), 
          side = "left")
   # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
   #                      variable = downsampleToggle, value = downsampleToggle[1]), 
@@ -200,7 +200,7 @@ LaunchGUI <- function() {
   savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
   savePDFs_rbuts <- tkframe(tt)
   tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(tt, variable = savePDFsToggle, text = "BEEP"), 
+  tkpack(tkcheckbutton(savePDFs_rbuts, variable = savePDFsToggle, text = "BEEP"), 
          side = "left")
   # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
   #                      variable = savePDFsToggle, value = savePDFsToggle[1]), 
@@ -287,12 +287,22 @@ LaunchGUI <- function() {
   tkgrid.configure(downsample_label, sticky = "e")
   tkgrid.configure(downsample_hBut, sticky = "e")
   tkgrid.configure(downsample_rbuts, sticky = "w")
+  # tkgrid(downsample_label, downsample_hBut, downsample_rbuts, 
+  #        padx = cell_width)
+  # tkgrid.configure(downsample_label, sticky = "e")
+  # tkgrid.configure(downsample_hBut, sticky = "e")
+  # tkgrid.configure(downsample_rbuts, sticky = "w")
   
   tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
          padx = cell_width)
   tkgrid.configure(savePDFs_label, sticky = "e")
   tkgrid.configure(savePDFs_hBut, sticky = "e")
   tkgrid.configure(savePDFs_rbuts, sticky = "w")
+  # tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
+  #        padx = cell_width)
+  # tkgrid.configure(savePDFs_label, sticky = "e")
+  # tkgrid.configure(savePDFs_hBut, sticky = "e")
+  # tkgrid.configure(savePDFs_rbuts, sticky = "w")
   
   tkgrid(distanceMetric_label, distanceMetric_hBut, distanceMetric_rbuts, 
          padx = cell_width)
