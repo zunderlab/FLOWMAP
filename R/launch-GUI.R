@@ -126,7 +126,7 @@ LaunchGUI <- function() {
     tclvalue(distanceMetric) <- distanceMetrics[1]
     tclvalue(multiSingle) <- multiSingles[2]
     tclvalue(downsampleToggle) <- downsampleToggle[2]
-    tclvalue(savePDFsToggle) <- downsampleToggle[1]
+    tclvalue(savePDFsToggle) <- savePDFsToggle[1]
     tclvalue(subsampleNum) <- "200"
     tclvalue(clusterNum) <- "100"
     tclvalue(seedNum) <- "1"
