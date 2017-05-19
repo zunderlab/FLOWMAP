@@ -186,7 +186,7 @@ LaunchGUI <- function() {
   downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
   downsample_rbuts <- tkframe(tt)
   tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(downsample_rbuts, variable = downsampleToggle, text = "BOOP"), 
+  tkpack(tkcheckbutton(downsample_rbuts, variable = downsampleToggle), 
          side = "left")
   # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
   #                      variable = downsampleToggle, value = downsampleToggle[1]), 
@@ -200,7 +200,7 @@ LaunchGUI <- function() {
   savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
   savePDFs_rbuts <- tkframe(tt)
   tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(savePDFs_rbuts, variable = savePDFsToggle, text = "BEEP"), 
+  tkpack(tkcheckbutton(savePDFs_rbuts, variable = savePDFsToggle), 
          side = "left")
   # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
   #                      variable = savePDFsToggle, value = savePDFsToggle[1]), 
@@ -365,6 +365,9 @@ LaunchGUI <- function() {
     inputs[["edgeMaxNum"]] <- tclvalue(edgeNumMax)
     inputs[["edgeminNum"]] <- tclvalue(edgeNumMin)
     inputs[["resultDir"]] <- tclvalue(resDir)
+    
+    print("inputs")
+    print(inputs)
     
     globe_input <<- inputs
     globe_resdir <<- tclvalue(rawFCSdir)
