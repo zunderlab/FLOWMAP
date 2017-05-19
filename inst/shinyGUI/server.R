@@ -196,7 +196,7 @@ shinyServer(function(input, output, session) {
     set.seed(globe_input[["seedNum"]])
     files <- list.files(globe_resdir, full.names = TRUE, pattern = "\\.fcs")[file.order]
     # NEED MULTIFLOW-MAP FIX FOR FILES
-    mode <- globe_input[["multiSingle"]]
+    mode <- globe_input[["mode"]]
     save.folder <- globe_resdir2
     var.annotate <- list()
     for (j in 1:nrow(flowfile)) {
@@ -211,21 +211,38 @@ shinyServer(function(input, output, session) {
     subsamples <- as.numeric(globe_input[["subsampleNum"]])
     cluster.numbers <- as.numeric(globe_input[["clusterNum"]])
     seed.X <- as.numeric(globe_input[["seedNum"]])
+    savePDFs <- as.logical(as.numeric(globe_input[["savePDFsToggle"]]))
+    which.palette <- globe_input[["colorpalette"]]
     for (i in 1:length(clustering.var)) {
       clustering.var[i] <- var.annotate[[clustering.var[i]]]
     }
     name.sort <- FALSE
-    downsample <- FALSE
-    savePDFs <- TRUE
-    which.palette <- "bluered"
+    downsample <- as.logical(as.numeric(globe_input[["downsampleToggle"]]))
+    
     # Run FLOW-MAP
-    FLOWMAPR::FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
-                      clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                      subsamples = subsamples, distance.metric = distance.metric,
-                      minimum = minimum, maximum = maximum, per = per,
-                      save.folder = save.folder, mode = mode,
-                      name.sort = name.sort, downsample = downsample,
-                      savePDFs = savePDFs, which.palette = which.palette)
+    if (downsample) {
+      target.number <- subsamples
+      subsamples <- FALSE
+      exclude.pctile <- 0.01
+      target.pctile <- 0.99
+      target.percent <- NULL
+      FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+              clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+              distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+              per = per, save.folder = save.folder, subsamples = subsamples,
+              name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+              savePDFs = savePDFs, which.palette = which.palette,
+              exclude.pctile = exclude.pctile, target.pctile = target.pctile,
+              target.number = target.number, target.percent = target.percent)
+    } else {
+      FLOWMAPR::FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
+                        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                        subsamples = subsamples, distance.metric = distance.metric,
+                        minimum = minimum, maximum = maximum, per = per,
+                        save.folder = save.folder, mode = mode,
+                        name.sort = name.sort, downsample = downsample,
+                        savePDFs = savePDFs, which.palette = which.palette)
+    }
     stopApp()
   })
   output$stuff <- renderText({

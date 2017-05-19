@@ -23,7 +23,7 @@ LaunchGUI <- function() {
   require(shiny)
   # parameter initialization
   cur_dir <- getwd()
-  distanceMetrics <- c("manhattan", "euclidean")
+  distanceMetric <- c("manhattan", "euclidean")
   mode <- c("multi", "single", "one")
   colorpalette <- c("bluered", "jet", "CB")
   rawFCSdir <- tclVar(cur_dir)
@@ -76,7 +76,7 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   distanceMetric_help <- function() {
-    tkmessageBox(title = "distanceMetrics", message = "Select the appropriate distance metric.", 
+    tkmessageBox(title = "distanceMetric", message = "Select the appropriate distance metric.", 
                  icon = "info", type = "ok")
   }
   mode_help <- function() {
@@ -126,7 +126,7 @@ LaunchGUI <- function() {
   reset <- function() {
     tclvalue(rawFCSdir) <- cur_dir
     tclvalue(resDir) <- cur_dir
-    tclvalue(distanceMetrics) <- distanceMetrics[1]
+    tclvalue(distanceMetric) <- distanceMetric[1]
     tclvalue(mode) <- mode[2]
     tclvalue(colorpalette) <- colorpalette[1]
     tclvalue(downsampleToggle) <- "0"
@@ -228,11 +228,11 @@ LaunchGUI <- function() {
   distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
   distanceMetric_rbuts <- tkframe(tt)
   tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[1], 
-                       variable = distanceMetrics, value = distanceMetrics[1]), 
+  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetric[1], 
+                       variable = distanceMetric, value = distanceMetric[1]), 
          side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[2],
-                       variable = distanceMetrics, value = distanceMetrics[2]), 
+  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetric[2],
+                       variable = distanceMetric, value = distanceMetric[2]), 
          side = "left")
   
   # subsampleNum
@@ -366,7 +366,7 @@ LaunchGUI <- function() {
     inputs[["downsampleToggle"]] <- tclvalue(downsampleToggle)
     inputs[["savePDFsToggle"]] <- tclvalue(savePDFsToggle)
     inputs[["subsampleNum"]] <- tclvalue(subsampleNum)
-    inputs[["distanceMetric"]] <- tclvalue(distanceMetrics)
+    inputs[["distanceMetric"]] <- tclvalue(distanceMetric)
     inputs[["clusterNum"]] <- tclvalue(clusterNum)
     inputs[["seedNum"]] <- tclvalue(seedNum)
     inputs[["edgepctNum"]] <- tclvalue(edgepctNum)
