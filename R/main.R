@@ -8,6 +8,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     which.palette = "bluered", ...) {
   # optional variables
   # starting.files = c("FCS", "cluster_matrix")
+  print("files")
+  print(files)
+  print("list.files(files, full.names = TRUE)")
+  print(list.files(files, full.names = TRUE))
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
@@ -128,6 +132,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+  print("orig.times")
+  print(orig.times)
+  print("orig.times")
+  print(orig.times)
   graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
   fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
   PrintSummary(env = parent.frame())

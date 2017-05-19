@@ -25,6 +25,8 @@ ChangeTimes <- function(num, time.convert) {
 
 ConvertOrigTime <- function(graph, orig.times) {
   which.ind <- grep(pattern = "Time", list.vertex.attributes(graph))
+  print("which.ind")
+  print(which.ind)
   if (length(which.ind) > 1) {
     stop("Too many time attributes in graph!")
   }
