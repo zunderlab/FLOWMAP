@@ -28,13 +28,15 @@ LaunchGUI <- function() {
   rawFCSdir <- tclVar(cur_dir)
   resDir <- tclVar(cur_dir)
   distanceMetric <- tclVar("manhattan")
-  multiSingle = tclVar("single")
-  subsampleNum = tclVar("200")
-  clusterNum = tclVar("100")
-  seedNum = tclVar("1")
-  edgepctNum = tclVar("1")
-  edgeNumMin = tclVar("2")
-  edgeNumMax = tclVar("5")
+  multiSingle <- tclVar("single")
+  downsampleToggle <- c("TRUE", "FALSE")
+  savePDFsToggle <- c("TRUE", "FALSE")
+  subsampleNum <- tclVar("200")
+  clusterNum <- tclVar("100")
+  seedNum <- tclVar("1")
+  edgepctNum <- tclVar("1")
+  edgeNumMin <- tclVar("2")
+  edgeNumMax <- tclVar("5")
   ret_var <- tclVar("")
   
   #  button functions
@@ -83,19 +85,27 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   resDir_help <- function() {
-    tkmessageBox(title = "resDir", message = "The directory where result files will be generated", 
+    tkmessageBox(title = "resDir", message = "The directory where result files will be generated.", 
+                 icon = "info", type = "ok")
+  }
+  downsample_help = function() {
+    tkmessageBox(title = "downsampleToggle", message = "Turn on/off SPADE downsampling.",
+                 icon = "info", type = "ok")
+  }
+  savePDFs_help = function() {
+    tkmessageBox(title = "savePDFsToggle", message = "Turn on/off saving PDFs of output graph.",
                  icon = "info", type = "ok")
   }
   subsampleNum_help = function() {
-    tkmessageBox(title = "subsampleNum", message = "The subsampling number",
+    tkmessageBox(title = "subsampleNum", message = "The number of cells to sample from each FCS file.",
                  icon = "info", type = "ok")
   }
   clusterNum_help = function() {
-    tkmessageBox(title = "clusterNum", message = "The clustering number",
+    tkmessageBox(title = "clusterNum", message = "The number of clusters from each FCS file.",
                  icon = "info", type = "ok")
   }
   seedNum_help = function() {
-    tkmessageBox(title = "seedNum", message = "The seeding number",
+    tkmessageBox(title = "seedNum", message = "The seed number for reproducible analysis.",
                  icon = "info", type = "ok")
   }
   edgepctNum_help = function() {
@@ -103,27 +113,29 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   edgeNumMin_help = function() {
-    tkmessageBox(title = "edgeNumMin", message = "The lower bound for number of edges",
+    tkmessageBox(title = "edgeNumMin", message = "The lower bound for number of edges during density-dependent edge drawing steps.",
                  icon = "info", type = "ok")
   }
   edgeNumMax_help = function() {
-    tkmessageBox(title = "edgeNumMax", message = "The upper bound for number of edges",
+    tkmessageBox(title = "edgeNumMax", message = "The upper bound for number of edges during density-dependent edge drawing steps.",
                  icon = "info", type = "ok")
   }
   reset <- function() {
-    tclvalue(rawFCSdir) = cur_dir
-    tclvalue(resDir) = cur_dir
-    tclvalue(distanceMetric) = distanceMetrics[1]
-    tclvalue(multiSingle) = multiSingles[2]
-    tclvalue(subsampleNum) = "200"
-    tclvalue(clusterNum) = "100"
-    tclvalue(seedNum) = "1"
-    tclvalue(edgepctNum) = "1"
-    tclvalue(edgeNumMin) = "2"
-    tclvalue(edgeNumMax) = "5"
+    tclvalue(rawFCSdir) <- cur_dir
+    tclvalue(resDir) <- cur_dir
+    tclvalue(distanceMetric) <- distanceMetrics[1]
+    tclvalue(multiSingle) <- multiSingles[2]
+    tclvalue(downsampleToggle) <- downsampleToggle[2]
+    tclvalue(savePDFsToggle) <- downsampleToggle[1]
+    tclvalue(subsampleNum) <- "200"
+    tclvalue(clusterNum) <- "100"
+    tclvalue(seedNum) <- "1"
+    tclvalue(edgepctNum) <- "1"
+    tclvalue(edgeNumMin) <- "2"
+    tclvalue(edgeNumMax) <- "5"
   }
   submit <- function() {
-    has_error = FALSE
+    has_error <- FALSE
     if (has_error == FALSE) {
       tclvalue(ret_var) <- "OK"
       tkdestroy(tt)
@@ -158,6 +170,62 @@ LaunchGUI <- function() {
   rawFCSdir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, command = reset_rawFCS_dir)
   rawFCSdir_hBut <- tkbutton(tt, image = image2, command = rawFCSdir_help)
   
+  # resDir
+  resDir_label <- tklabel(tt, text = "Result Directory :")
+  resDir_entry <- tkentry(tt, textvariable = resDir, width = box_length)
+  resDir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, 
+                            command = reset_res_dir)
+  resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
+  
+  # downsampleToggle
+  downsample_label <- tklabel(tt, text = "SPADE Downsampling :")
+  downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
+  downsample_rbuts <- tkframe(tt)
+  tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
+                       variable = downsampleToggle, value = downsampleToggle[1]), 
+         side = "left")
+  tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[2],
+                       variable = downsampleToggle, value = downsampleToggle[2]), 
+         side = "left")
+  
+  # savePDFsToggle
+  savePDFs_label <- tklabel(tt, text = "Save graph PDFs :")
+  savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
+  savePDFs_rbuts <- tkframe(tt)
+  tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
+                       variable = savePDFsToggle, value = savePDFsToggle[1]), 
+         side = "left")
+  tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[2],
+                       variable = savePDFsToggle, value = savePDFsToggle[2]), 
+         side = "left")
+  
+  # FLOWMAPtypeMethod
+  multiSingle_label <- tklabel(tt, text = "FLOW-MAP method: ")
+  multiSingle_hBut <- tkbutton(tt, image = image2,
+                               command = multiSingle_help)
+  multiSingle_rbuts <- tkframe(tt)
+  tkpack(tklabel(multiSingle_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[1], 
+                       variable = multiSingle, value = multiSingles[1]), side = "left")
+  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[2],
+                       variable = multiSingle, value = multiSingles[2]), side = "left")
+  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[3],
+                       variable = multiSingle, value = multiSingles[3]), side = "left")
+  
+  # distanceMetric
+  distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
+  distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
+  distanceMetric_rbuts <- tkframe(tt)
+  tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[1], 
+                       variable = distanceMetric, value = distanceMetrics[1]), 
+         side = "left")
+  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[2],
+                       variable = distanceMetric, value = distanceMetrics[2]), 
+         side = "left")
+  
   # subsampleNum
   subsampleNum_label = tklabel(tt, text = "Subsample Number :")
   subsampleNum_entry = tkentry(tt, textvariable = subsampleNum, width = 9)
@@ -188,39 +256,7 @@ LaunchGUI <- function() {
   edgeNumMax_entry = tkentry(tt, textvariable = edgeNumMax, width = 9)
   edgeNumMax_hBut = tkbutton(tt, image = image2, command = edgeNumMax_help)
   
-  # resDir
-  resDir_label <- tklabel(tt, text = "Result Directory :")
-  resDir_entry <- tkentry(tt, textvariable = resDir, width = box_length)
-  resDir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, 
-                            command = reset_res_dir)
-  resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
-  
-  # distanceMetric
-  distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
-  distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
-  distanceMetric_rbuts <- tkframe(tt)
-  tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[1], 
-                       variable = distanceMetric, value = distanceMetrics[1]), 
-         side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[2],
-                       variable = distanceMetric, value = distanceMetrics[2]), 
-         side = "left")
-  
-  # transformMethod
-  multiSingle_label <- tklabel(tt, text = "FLOW-MAP method: ")
-  multiSingle_hBut <- tkbutton(tt, image = image2,
-                               command = multiSingle_help)
-  multiSingle_rbuts <- tkframe(tt)
-  tkpack(tklabel(multiSingle_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[1], 
-                       variable = multiSingle, value = multiSingles[1]), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[2],
-                       variable = multiSingle, value = multiSingles[2]), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[3],
-                       variable = multiSingle, value = multiSingles[3]), side = "left")
-  
-  # submit / reset / quit
+ # submit / reset / quit
   submit_button <- tkbutton(tt, text = "Submit", command = submit)
   reset_button <- tkbutton(tt, text = "Reset", command = reset)
   quit_button <- tkbutton(tt, text = "Quit", command = quit)
