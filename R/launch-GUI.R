@@ -316,6 +316,12 @@ LaunchGUI <- function() {
   tkgrid.configure(mode_label, sticky = "e")
   tkgrid.configure(mode_rbuts, sticky = "w")
   tkgrid.configure(mode_hBut, sticky = "e")
+
+  tkgrid(color_label, color_hBut, color_rbuts,
+         padx = cell_width)
+  tkgrid.configure(color_label, sticky = "e")
+  tkgrid.configure(color_rbuts, sticky = "w")
+  tkgrid.configure(color_hBut, sticky = "e")
   
   tkgrid(subsampleNum_label, subsampleNum_hBut, subsampleNum_entry, padx = cell_width)
   tkgrid.configure(subsampleNum_hBut, sticky = "w")
@@ -356,6 +362,7 @@ LaunchGUI <- function() {
   } else {
     inputs <- list()
     inputs[["mode"]] <- tclvalue(mode)
+    inputs[["colorpalette"]] <- tclvalue(colorpalette)
     inputs[["downsampleToggle"]] <- tclvalue(downsampleToggle)
     inputs[["savePDFsToggle"]] <- tclvalue(savePDFsToggle)
     inputs[["subsampleNum"]] <- tclvalue(subsampleNum)
