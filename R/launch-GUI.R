@@ -24,15 +24,12 @@ LaunchGUI <- function() {
   # parameter initialization
   cur_dir <- getwd()
   distanceMetrics <- c("manhattan", "euclidean")
-  multiSingles <- c("multi", "single", "one")
+  mode <- c("multi", "single", "one")
+  colorpalette <- c("bluered", "jet", "CB")
   rawFCSdir <- tclVar(cur_dir)
   resDir <- tclVar(cur_dir)
-  distanceMetric <- tclVar("manhattan")
-  multiSingle <- tclVar("single")
-  downsampleToggle <- tclVar("downsample")
-  # downsampleToggle <- c("TRUE", "FALSE")
-  savePDFsToggle <- tclVar("savePDFs")
-  # savePDFsToggle <- c("BOOP", "BEEP")
+  downsampleToggle <- tclVar("0")
+  savePDFsToggle <- tclVar("0")
   subsampleNum <- tclVar("200")
   clusterNum <- tclVar("100")
   seedNum <- tclVar("1")
@@ -79,11 +76,15 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   distanceMetric_help <- function() {
-    tkmessageBox(title = "distanceMetric", message = "Select the appropriate distance metric.", 
+    tkmessageBox(title = "distanceMetrics", message = "Select the appropriate distance metric.", 
                  icon = "info", type = "ok")
   }
-  multiSingle_help <- function() {
-    tkmessageBox(title = "multiSingle", message = "Method of analysis via multiple FCS files or via one.", 
+  mode_help <- function() {
+    tkmessageBox(title = "mode", message = "Method of analysis via multiple FCS files or via one.", 
+                 icon = "info", type = "ok")
+  }
+  color_help <- function() {
+    tkmessageBox(title = "colorpalette", message = "Color palette to use for saved PDFs of output graph.", 
                  icon = "info", type = "ok")
   }
   resDir_help <- function() {
@@ -125,12 +126,11 @@ LaunchGUI <- function() {
   reset <- function() {
     tclvalue(rawFCSdir) <- cur_dir
     tclvalue(resDir) <- cur_dir
-    tclvalue(distanceMetric) <- distanceMetrics[1]
-    tclvalue(multiSingle) <- multiSingles[2]
-    tclvalue(downsampleToggle) <- "downsample"
-    # tclvalue(downsampleToggle) <- downsampleToggle[2]
-    tclvalue(savePDFsToggle) <- "savePDFs"
-    # tclvalue(savePDFsToggle) <- savePDFsToggle[1]
+    tclvalue(distanceMetrics) <- distanceMetrics[1]
+    tclvalue(mode) <- mode[2]
+    tclvalue(colorpalette) <- colorpalette[1]
+    tclvalue(downsampleToggle) <- "0"
+    tclvalue(savePDFsToggle) <- "0"
     tclvalue(subsampleNum) <- "200"
     tclvalue(clusterNum) <- "100"
     tclvalue(seedNum) <- "1"
@@ -188,12 +188,6 @@ LaunchGUI <- function() {
   tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
   tkpack(tkcheckbutton(downsample_rbuts, variable = downsampleToggle), 
          side = "left")
-  # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
-  #                      variable = downsampleToggle, value = downsampleToggle[1]), 
-  #        side = "left")
-  # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[2],
-  #                      variable = downsampleToggle, value = downsampleToggle[2]), 
-  #        side = "left")
   
   # savePDFsToggle
   savePDFs_label <- tklabel(tt, text = "Save graph PDFs :")
@@ -202,25 +196,32 @@ LaunchGUI <- function() {
   tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
   tkpack(tkcheckbutton(savePDFs_rbuts, variable = savePDFsToggle), 
          side = "left")
-  # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
-  #                      variable = savePDFsToggle, value = savePDFsToggle[1]), 
-  #        side = "left")
-  # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[2],
-  #                      variable = savePDFsToggle, value = savePDFsToggle[2]), 
-  #        side = "left")
+  
+  # colorpalette Method
+  color_label <- tklabel(tt, text = "Color palette: ")
+  color_hBut <- tkbutton(tt, image = image2,
+                               command = color_help)
+  color_rbuts <- tkframe(tt)
+  tkpack(tklabel(color_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(color_rbuts, text = colorpalette[1], 
+                       variable = colorpalette, value = colorpalette[1]), side = "left")
+  tkpack(tkradiobutton(color_rbuts, text = mode[2],
+                       variable = colorpalette, value = colorpalette[2]), side = "left")
+  tkpack(tkradiobutton(color_rbuts, text = colorpalette[3],
+                       variable = colorpalette, value = colorpalette[3]), side = "left")
   
   # FLOWMAPtypeMethod
-  multiSingle_label <- tklabel(tt, text = "FLOW-MAP method: ")
-  multiSingle_hBut <- tkbutton(tt, image = image2,
-                               command = multiSingle_help)
-  multiSingle_rbuts <- tkframe(tt)
-  tkpack(tklabel(multiSingle_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[1], 
-                       variable = multiSingle, value = multiSingles[1]), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[2],
-                       variable = multiSingle, value = multiSingles[2]), side = "left")
-  tkpack(tkradiobutton(multiSingle_rbuts, text = multiSingles[3],
-                       variable = multiSingle, value = multiSingles[3]), side = "left")
+  mode_label <- tklabel(tt, text = "FLOW-MAP method: ")
+  mode_hBut <- tkbutton(tt, image = image2,
+                               command = mode_help)
+  mode_rbuts <- tkframe(tt)
+  tkpack(tklabel(mode_rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(mode_rbuts, text = mode[1], 
+                       variable = mode, value = mode[1]), side = "left")
+  tkpack(tkradiobutton(mode_rbuts, text = mode[2],
+                       variable = mode, value = mode[2]), side = "left")
+  tkpack(tkradiobutton(mode_rbuts, text = mode[3],
+                       variable = mode, value = mode[3]), side = "left")
   
   # distanceMetric
   distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
@@ -228,10 +229,10 @@ LaunchGUI <- function() {
   distanceMetric_rbuts <- tkframe(tt)
   tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
   tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[1], 
-                       variable = distanceMetric, value = distanceMetrics[1]), 
+                       variable = distanceMetrics, value = distanceMetrics[1]), 
          side = "left")
   tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetrics[2],
-                       variable = distanceMetric, value = distanceMetrics[2]), 
+                       variable = distanceMetrics, value = distanceMetrics[2]), 
          side = "left")
   
   # subsampleNum
@@ -310,11 +311,11 @@ LaunchGUI <- function() {
   tkgrid.configure(distanceMetric_hBut, sticky = "e")
   tkgrid.configure(distanceMetric_rbuts, sticky = "w")
   
-  tkgrid(multiSingle_label, multiSingle_hBut, multiSingle_rbuts,
+  tkgrid(mode_label, mode_hBut, mode_rbuts,
          padx = cell_width)
-  tkgrid.configure(multiSingle_label, sticky = "e")
-  tkgrid.configure(multiSingle_rbuts, sticky = "w")
-  tkgrid.configure(multiSingle_hBut, sticky = "e")
+  tkgrid.configure(mode_label, sticky = "e")
+  tkgrid.configure(mode_rbuts, sticky = "w")
+  tkgrid.configure(mode_hBut, sticky = "e")
   
   tkgrid(subsampleNum_label, subsampleNum_hBut, subsampleNum_entry, padx = cell_width)
   tkgrid.configure(subsampleNum_hBut, sticky = "w")
@@ -354,11 +355,11 @@ LaunchGUI <- function() {
     okMessage <- "Analysis is cancelled."
   } else {
     inputs <- list()
-    inputs[["multiSingle"]] <- tclvalue(multiSingle)
+    inputs[["mode"]] <- tclvalue(mode)
     inputs[["downsampleToggle"]] <- tclvalue(downsampleToggle)
     inputs[["savePDFsToggle"]] <- tclvalue(savePDFsToggle)
     inputs[["subsampleNum"]] <- tclvalue(subsampleNum)
-    inputs[["distanceMetric"]] <- tclvalue(distanceMetric)
+    inputs[["distanceMetric"]] <- tclvalue(distanceMetrics)
     inputs[["clusterNum"]] <- tclvalue(clusterNum)
     inputs[["seedNum"]] <- tclvalue(seedNum)
     inputs[["edgepctNum"]] <- tclvalue(edgepctNum)
