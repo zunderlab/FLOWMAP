@@ -30,7 +30,7 @@ LaunchGUI <- function() {
   distanceMetric <- tclVar("manhattan")
   multiSingle <- tclVar("single")
   downsampleToggle <- c("TRUE", "FALSE")
-  savePDFsToggle <- c("TRUE", "FALSE")
+  savePDFsToggle <- c("BOOP", "BEEP")
   subsampleNum <- tclVar("200")
   clusterNum <- tclVar("100")
   seedNum <- tclVar("1")
