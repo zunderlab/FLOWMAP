@@ -273,6 +273,18 @@ LaunchGUI <- function() {
   tkgrid.configure(resDir_label, resDir_entry, resDir_button, 
                    sticky = "e")
   tkgrid.configure(resDir_hBut, sticky = "e")
+
+  tkgrid(downsample_label, downsample_hBut, downsample_rbuts, 
+         padx = cell_width)
+  tkgrid.configure(downsample_label, sticky = "e")
+  tkgrid.configure(downsample_hBut, sticky = "e")
+  tkgrid.configure(downsample_rbuts, sticky = "w")
+  
+  tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
+         padx = cell_width)
+  tkgrid.configure(savePDFs_label, sticky = "e")
+  tkgrid.configure(savePDFs_hBut, sticky = "e")
+  tkgrid.configure(savePDFs_rbuts, sticky = "w")
   
   tkgrid(distanceMetric_label, distanceMetric_hBut, distanceMetric_rbuts, 
          padx = cell_width)
@@ -324,21 +336,23 @@ LaunchGUI <- function() {
     okMessage <- "Analysis is cancelled."
   } else {
     inputs <- list()
-    inputs[["multiSingle"]] = tclvalue(multiSingle)
-    inputs[["subsampleNum"]] = tclvalue(subsampleNum)
-    inputs[["distanceMetric"]] = tclvalue(distanceMetric)
-    inputs[["clusterNum"]] = tclvalue(clusterNum)
-    inputs[["seedNum"]] = tclvalue(seedNum)
-    inputs[["edgepctNum"]] = tclvalue(edgepctNum)
-    inputs[["edgeMaxNum"]] = tclvalue(edgeNumMax)
-    inputs[["edgeminNum"]] = tclvalue(edgeNumMin)
+    inputs[["multiSingle"]] <- tclvalue(multiSingle)
+    inputs[["downsampleToggle"]] <- tclvalue(downsampleToggle)
+    inputs[["savePDFsToggle"]] <- tclvalue(savePDFsToggle)
+    inputs[["subsampleNum"]] <- tclvalue(subsampleNum)
+    inputs[["distanceMetric"]] <- tclvalue(distanceMetric)
+    inputs[["clusterNum"]] <- tclvalue(clusterNum)
+    inputs[["seedNum"]] <- tclvalue(seedNum)
+    inputs[["edgepctNum"]] <- tclvalue(edgepctNum)
+    inputs[["edgeMaxNum"]] <- tclvalue(edgeNumMax)
+    inputs[["edgeminNum"]] <- tclvalue(edgeNumMin)
     inputs[["resultDir"]] <- tclvalue(resDir)
     
     globe_input <<- inputs
     globe_resdir <<- tclvalue(rawFCSdir)
-    timeNow = Sys.time()
+    timeNow <- Sys.time()
     globe_resdir2 <<- tclvalue(resDir)
-    timeNow = gsub("[:]","-", timeNow) 
+    timeNow <- gsub("[:]","-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
