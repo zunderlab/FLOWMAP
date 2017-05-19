@@ -29,8 +29,10 @@ LaunchGUI <- function() {
   resDir <- tclVar(cur_dir)
   distanceMetric <- tclVar("manhattan")
   multiSingle <- tclVar("single")
-  downsampleToggle <- c("TRUE", "FALSE")
-  savePDFsToggle <- c("BOOP", "BEEP")
+  downsampleToggle <- tclVar("downsample")
+  # downsampleToggle <- c("TRUE", "FALSE")
+  savePDFsToggle <- tclVar("savePDFs")
+  # savePDFsToggle <- c("BOOP", "BEEP")
   subsampleNum <- tclVar("200")
   clusterNum <- tclVar("100")
   seedNum <- tclVar("1")
@@ -125,8 +127,10 @@ LaunchGUI <- function() {
     tclvalue(resDir) <- cur_dir
     tclvalue(distanceMetric) <- distanceMetrics[1]
     tclvalue(multiSingle) <- multiSingles[2]
-    tclvalue(downsampleToggle) <- downsampleToggle[2]
-    tclvalue(savePDFsToggle) <- savePDFsToggle[1]
+    tclvalue(downsampleToggle) <- "downsample"
+    # tclvalue(downsampleToggle) <- downsampleToggle[2]
+    tclvalue(savePDFsToggle) <- "savePDFs"
+    # tclvalue(savePDFsToggle) <- savePDFsToggle[1]
     tclvalue(subsampleNum) <- "200"
     tclvalue(clusterNum) <- "100"
     tclvalue(seedNum) <- "1"
@@ -182,24 +186,28 @@ LaunchGUI <- function() {
   downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
   downsample_rbuts <- tkframe(tt)
   tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
-                       variable = downsampleToggle, value = downsampleToggle[1]), 
+  tkpack(tkcheckbutton(tt, variable = downsampleToggle, text = "BOOP"), 
          side = "left")
-  tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[2],
-                       variable = downsampleToggle, value = downsampleToggle[2]), 
-         side = "left")
+  # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[1], 
+  #                      variable = downsampleToggle, value = downsampleToggle[1]), 
+  #        side = "left")
+  # tkpack(tkradiobutton(downsample_rbuts, text = downsampleToggle[2],
+  #                      variable = downsampleToggle, value = downsampleToggle[2]), 
+  #        side = "left")
   
   # savePDFsToggle
   savePDFs_label <- tklabel(tt, text = "Save graph PDFs :")
   savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
   savePDFs_rbuts <- tkframe(tt)
   tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
-                       variable = savePDFsToggle, value = savePDFsToggle[1]), 
+  tkpack(tkcheckbutton(tt, variable = savePDFsToggle, text = "BEEP"), 
          side = "left")
-  tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[2],
-                       variable = savePDFsToggle, value = savePDFsToggle[2]), 
-         side = "left")
+  # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[1], 
+  #                      variable = savePDFsToggle, value = savePDFsToggle[1]), 
+  #        side = "left")
+  # tkpack(tkradiobutton(savePDFs_rbuts, text = savePDFsToggle[2],
+  #                      variable = savePDFsToggle, value = savePDFsToggle[2]), 
+  #        side = "left")
   
   # FLOWMAPtypeMethod
   multiSingle_label <- tklabel(tt, text = "FLOW-MAP method: ")
