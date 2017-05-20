@@ -38,7 +38,7 @@ shinyUI(
                          selected = NULL,
                          multiple = TRUE,
                          selectize = FALSE,
-                         size = 10
+                         size = 7
              ),
              selectInput("checkGroup_diff",
                          label = h5("Different Fields"),
@@ -46,7 +46,7 @@ shinyUI(
                          selected = NULL,
                          multiple = TRUE,
                          selectize = FALSE,
-                         size = 10
+                         size = 7
              ),
              textInput("filemerge", label = h5("Select New Merge Name"), placeholder = "New Name"),
              actionButton("mbutton", "Merge Selected Diff")
@@ -54,8 +54,8 @@ shinyUI(
       column(width = 5,
              actionButton("button", "Run FLOWMAPR"),
              br(),
+             br(),
              rHandsontableOutput("table", width = 600)
-             
       )
     )
   ))
