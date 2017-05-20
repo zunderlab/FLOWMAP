@@ -151,7 +151,7 @@ LaunchGUI <- function() {
   # build the GUI
   # head line
   tt <- tktoplevel(borderwidth = 20)
-  tkwm.title(tt, "FLOWMAP")
+  tkwm.title(tt, "FLOWMAPR")
   
   if (.Platform$OS.type == "windows") {
     box_length <- 63
@@ -324,8 +324,11 @@ LaunchGUI <- function() {
   tkgrid.configure(color_hBut, sticky = "e")
   
   tkgrid(subsampleNum_label, subsampleNum_hBut, subsampleNum_entry, padx = cell_width)
-  tkgrid.configure(subsampleNum_hBut, sticky = "w")
-  tkgrid.configure(subsampleNum_label, subsampleNum_entry, sticky = "w")
+  tkgrid.configure(subsampleNum_label, sticky = "e")
+  tkgrid.configure(subsampleNum_entry, sticky = "w")
+  tkgrid.configure(subsampleNum_hBut, sticky = "e")
+  # tkgrid.configure(subsampleNum_hBut, sticky = "w")
+  # tkgrid.configure(subsampleNum_label, subsampleNum_entry, sticky = "w")
   
   tkgrid(clusterNum_label, clusterNum_hBut, clusterNum_entry, padx = cell_width)
   tkgrid.configure(clusterNum_hBut, sticky = "w")
