@@ -3,11 +3,15 @@ require(shiny)
 require(rhandsontable)
 
 shinyServer(function(input, output, session) {
-  print("globe_input")
-  print(globe_input)
-  if (!exists("globe.result.dir")) {
-    stopApp()
-  }
+  print("ls()")
+  print(ls())
+  print("objects()")
+  print(objects())
+  # print("globe_input")
+  # print(globe_input)
+  # if (!exists("globe.result.dir")) {
+  #   stopApp()
+  # }
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   operating.system <- Sys.info()[1]
