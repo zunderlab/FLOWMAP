@@ -37,7 +37,7 @@ LaunchGUI <- function() {
   edge.num.min <- tclVar("2")
   edge.num.max <- tclVar("5")
   ret.var <- tclVar("")
-  quit.var <- FALSE
+  quit.var <- TRUE
   
   # button functions
   ResetRawFCSDir <- function() {
@@ -125,13 +125,13 @@ LaunchGUI <- function() {
   Submit <- function() {
     has.error <- FALSE
     if (has.error == FALSE) {
+      quit.var <<- FALSE
       tclvalue(ret.var) <- "OK"
       tkdestroy(tt)
     }
   }
   Quit <- function() {
     tkdestroy(tt)
-    quit.var <- TRUE
     stop("Exiting FLOWMAPR GUI.")
   }
   
