@@ -3,7 +3,7 @@ require(shiny)
 require(rhandsontable)
 
 shinyServer(function(input, output, session) {
-  if (!exists("globe_resdir")) {
+  if (!exists("globe.result.dir")) {
     stopApp()
   }
   options(shiny.maxRequestSize = 1000 * 1024^2)
