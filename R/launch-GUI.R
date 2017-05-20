@@ -297,7 +297,7 @@ LaunchGUI <- function() {
   
   tkgrid(color.label, color.hBut, color.rbuts,
          padx = cell.width)
-  tkgrid.configure(color.label, color.hBut, ticky = "e")
+  tkgrid.configure(color.label, color.hBut, sticky = "e")
   tkgrid.configure(color.rbuts, sticky = "w")
   # tkgrid.configure(color.label, sticky = "e")
   # tkgrid.configure(color.hBut, sticky = "e")
