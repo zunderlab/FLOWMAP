@@ -130,6 +130,7 @@ LaunchGUI <- function() {
   }
   Quit <- function() {
     tkdestroy(tt)
+    rm(globe.inputs)
     stop("Exiting FLOWMAPR GUI.")
   }
   
@@ -342,9 +343,6 @@ LaunchGUI <- function() {
     inputs[["edgeMaxNum"]] <- tclvalue(edge.num.max)
     inputs[["edgeminNum"]] <- tclvalue(edge.num.min)
     inputs[["resultDir"]] <- tclvalue(result.dir)
-    
-    print("inputs")
-    print(inputs)
     
     globe.inputs <<- inputs
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
