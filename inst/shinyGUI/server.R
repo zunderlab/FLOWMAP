@@ -115,7 +115,6 @@ shinyServer(function(input, output, session) {
       rhandsontable(DF) %>%
         hot_col("channels", readOnly = TRUE)
     })
-    print(DF)
     DF_edit <<- DF
   })
   observeEvent(input$generbutton2, {
@@ -218,18 +217,14 @@ shinyServer(function(input, output, session) {
     }
     name.sort <- FALSE
     downsample <- as.logical(as.numeric(globe_input[["downsampleToggle"]]))
-    print("downsample")
-    print(downsample)
     # Run FLOW-MAP
     if (downsample) {
       print("Downsampling")
       target.number <- subsamples
       subsamples <- FALSE
+      target.percent <- NULL
       exclude.pctile <- 0.01
       target.pctile <- 0.99
-      target.percent <- NULL
-      cat("subsamples", "target.number", "exclude.pctile", "target.pctile", "target.percent", "\n")
-      cat(subsamples, target.number, exclude.pctile, target.pctile, target.percent, "\n")
       FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
               clustering.var = clustering.var, cluster.numbers = cluster.numbers,
               distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -250,19 +245,19 @@ shinyServer(function(input, output, session) {
     }
     stopApp()
   })
-  output$stuff <- renderText({
+  output$writefile <- renderText({
     write_file()
     NULL
   })
-  output$stuff3 <- renderText({
+  output$vartable <- renderText({
     tablecreate()
     NULL
   })
-  output$stuff2 <- renderText({
+  output$ordering <- renderText({
     chosen_order()
     NULL
   })
-  output$stuff4 <- renderText({
+  output$fcsorder <- renderText({
     fcs_order()
   })
 })

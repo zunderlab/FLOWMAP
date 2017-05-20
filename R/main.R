@@ -9,8 +9,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     target.number = NULL, target.percent = NULL, ...) {
   # optional variables
   # starting.files = c("FCS", "cluster_matrix")
-  print(ls())
-  for ( obj in ls() ) { print(get(obj)) }
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
@@ -32,14 +30,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     orig.times <- ParseTimes(fcs.file.names, name.sort = name.sort)
     file.name <- fcs.file.names[1]
     if (downsample) {
-      print("exclude.pctile")
-      print(exclude.pctile)
-      print("target.pctile")
-      print(target.pctile)
-      print("target.number")
-      print(target.number)
-      print("target.percent")
-      print(target.percent)
       cat("Downsampling all files using SPADE downsampling", "\n")
       fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
                                  channel.remove = var.remove, exclude.pctile = exclude.pctile,

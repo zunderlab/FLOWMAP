@@ -100,7 +100,7 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   subsampleNum_help = function() {
-    tkmessageBox(title = "subsampleNum", message = "The number of cells to sample from each FCS file.",
+    tkmessageBox(title = "subsampleNum", message = "The number of cells to sample from each FCS file. If SPADE downsampling is selected, this specifies the target number.",
                  icon = "info", type = "ok")
   }
   clusterNum_help = function() {
@@ -169,20 +169,20 @@ LaunchGUI <- function() {
   tcl(image2, "copy", image1, subsample = 6)
   
   # rawFCSdir
-  rawFCSdir_label <- tklabel(tt, text = "Raw FCS Directory :")
+  rawFCSdir_label <- tklabel(tt, text = "Raw FCS Files Directory:")
   rawFCSdir_entry <- tkentry(tt, textvariable = rawFCSdir, width = box_length)
   rawFCSdir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, command = reset_rawFCS_dir)
   rawFCSdir_hBut <- tkbutton(tt, image = image2, command = rawFCSdir_help)
   
   # resDir
-  resDir_label <- tklabel(tt, text = "Result Directory :")
+  resDir_label <- tklabel(tt, text = "Result Directory:")
   resDir_entry <- tkentry(tt, textvariable = resDir, width = box_length)
   resDir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, 
                             command = reset_res_dir)
   resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
   
   # downsampleToggle
-  downsample_label <- tklabel(tt, text = "SPADE Downsampling :")
+  downsample_label <- tklabel(tt, text = "SPADE Downsampling:")
   downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
   downsample_rbuts <- tkframe(tt)
   tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
@@ -190,7 +190,7 @@ LaunchGUI <- function() {
          side = "left")
   
   # savePDFsToggle
-  savePDFs_label <- tklabel(tt, text = "Save graph PDFs :")
+  savePDFs_label <- tklabel(tt, text = "Save Graph PDFs:")
   savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
   savePDFs_rbuts <- tkframe(tt)
   tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
@@ -198,7 +198,7 @@ LaunchGUI <- function() {
          side = "left")
   
   # colorpalette Method
-  color_label <- tklabel(tt, text = "Color palette: ")
+  color_label <- tklabel(tt, text = "Color Palette:")
   color_hBut <- tkbutton(tt, image = image2,
                          command = color_help)
   color_rbuts <- tkframe(tt)
@@ -211,7 +211,7 @@ LaunchGUI <- function() {
                        variable = colorpalette, value = colorpalette[3]), side = "left")
   
   # FLOWMAPtypeMethod
-  mode_label <- tklabel(tt, text = "FLOW-MAP method: ")
+  mode_label <- tklabel(tt, text = "FLOW-MAP Mode:")
   mode_hBut <- tkbutton(tt, image = image2,
                         command = mode_help)
   mode_rbuts <- tkframe(tt)
@@ -224,7 +224,7 @@ LaunchGUI <- function() {
                        variable = mode, value = mode[3]), side = "left")
   
   # distanceMetric
-  distanceMetric_label <- tklabel(tt, text = "Distance Metric :")
+  distanceMetric_label <- tklabel(tt, text = "Distance Metric:")
   distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
   distanceMetric_rbuts <- tkframe(tt)
   tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
@@ -236,32 +236,32 @@ LaunchGUI <- function() {
          side = "left")
   
   # subsampleNum
-  subsampleNum_label = tklabel(tt, text = "Subsample Number :")
+  subsampleNum_label = tklabel(tt, text = "Subsample Number (Downsample Target Number):")
   subsampleNum_entry = tkentry(tt, textvariable = subsampleNum, width = 9)
   subsampleNum_hBut = tkbutton(tt, image = image2, command = subsampleNum_help)
   
   # clusterNum
-  clusterNum_label = tklabel(tt, text = "Clustering Number :")
+  clusterNum_label = tklabel(tt, text = "Number of Clusters:")
   clusterNum_entry = tkentry(tt, textvariable = clusterNum, width = 9)
   clusterNum_hBut = tkbutton(tt, image = image2, command = clusterNum_help)
   
   # seedNum
-  seedNum_label = tklabel(tt, text = "Seed number :")
+  seedNum_label = tklabel(tt, text = "Seed Number:")
   seedNum_entry = tkentry(tt, textvariable = seedNum, width = 9)
   seedNum_hBut = tkbutton(tt, image = image2, command = seedNum_help)
   
   # edgepctNum
-  edgepctNum_label = tklabel(tt, text = "Edge Percentile Number :")
+  edgepctNum_label = tklabel(tt, text = "Edge Percentile Number:")
   edgepctNum_entry = tkentry(tt, textvariable = edgepctNum, width = 9)
   edgepctNum_hBut = tkbutton(tt, image = image2, command = edgepctNum_help)
   
   # edgeNumMin
-  edgeNumMin_label = tklabel(tt, text = "Minimum Number of Edges :")
+  edgeNumMin_label = tklabel(tt, text = "Minimum Number of Edges:")
   edgeNumMin_entry = tkentry(tt, textvariable = edgeNumMin, width = 9)
   edgeNumMin_hBut = tkbutton(tt, image = image2, command = edgeNumMin_help)
   
   # edgeNumMax
-  edgeNumMax_label = tklabel(tt, text = "Maximum Number of Edges :")
+  edgeNumMax_label = tklabel(tt, text = "Maximum Number of Edges:")
   edgeNumMax_entry = tkentry(tt, textvariable = edgeNumMax, width = 9)
   edgeNumMax_hBut = tkbutton(tt, image = image2, command = edgeNumMax_help)
   

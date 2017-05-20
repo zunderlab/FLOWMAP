@@ -16,18 +16,19 @@ shinyUI(
              ),
              textInput("fileorder", label = h5("Write the FCS File Order"),
                        placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
+             actionButton("generbutton1", "Use Default Order and Generate Parameters"),
              actionButton("generbutton2", "Generate Parameters"),
              textOutput(
-               "stuff"
+               "writefile"
              ),
              textOutput(
-               "stuff2"
+               "vartable"
              ),
              textOutput(
-               "stuff3"
+               "ordering"
              ),
              textOutput(
-               "stuff4"
+               "fcsorder"
              )
       ),
       column(width = 3,
@@ -58,3 +59,8 @@ shinyUI(
       )
     )
   ))
+
+
+# exclude.pctile <- 0.01
+# target.pctile <- 0.99
+
