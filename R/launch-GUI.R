@@ -269,64 +269,73 @@ LaunchGUI <- function() {
   
   tkgrid(downsample.label, downsample.hBut, downsample.rbuts, 
          padx = cell.width)
-  tkgrid.configure(downsample.label, sticky = "e")
-  tkgrid.configure(downsample.hBut, sticky = "e")
+  tkgrid.configure(downsample.label, downsample.hBut, sticky = "e")
   tkgrid.configure(downsample.rbuts, sticky = "w")
+  # tkgrid.configure(downsample.label, sticky = "e")
+  # tkgrid.configure(downsample.hBut, sticky = "e")
   
   tkgrid(savePDFs.label, savePDFs.hBut, savePDFs.rbuts, 
          padx = cell.width)
-  tkgrid.configure(savePDFs.label, sticky = "e")
-  tkgrid.configure(savePDFs.hBut, sticky = "e")
+  tkgrid.configure(savePDFs.label, savePDFs.hBut, sticky = "e")
   tkgrid.configure(savePDFs.rbuts, sticky = "w")
+  # tkgrid.configure(savePDFs.label, sticky = "e")
+  # tkgrid.configure(savePDFs.hBut, sticky = "e")
   
   tkgrid(distance.metric.label, distance.metric.hBut, distance.metric.rbuts, 
          padx = cell.width)
-  tkgrid.configure(distance.metric.label, sticky = "e")
-  tkgrid.configure(distance.metric.hBut, sticky = "e")
+  tkgrid.configure(distance.metric.label, distance.metric.hBut, sticky = "e")
   tkgrid.configure(distance.metric.rbuts, sticky = "w")
+  # tkgrid.configure(distance.metric.label, sticky = "e")
+  # tkgrid.configure(distance.metric.hBut, sticky = "e")
   
   tkgrid(mode.label, mode.hBut, mode.rbuts,
          padx = cell.width)
-  tkgrid.configure(mode.label, sticky = "e")
+  tkgrid.configure(mode.label, mode.hBut, sticky = "e")
   tkgrid.configure(mode.rbuts, sticky = "w")
-  tkgrid.configure(mode.hBut, sticky = "e")
+  # tkgrid.configure(mode.label, sticky = "e")
+  # tkgrid.configure(mode.hBut, sticky = "e")
   
   tkgrid(color.label, color.hBut, color.rbuts,
          padx = cell.width)
-  tkgrid.configure(color.label, sticky = "e")
+  tkgrid.configure(color.label, color.hBut, ticky = "e")
   tkgrid.configure(color.rbuts, sticky = "w")
-  tkgrid.configure(color.hBut, sticky = "e")
+  # tkgrid.configure(color.label, sticky = "e")
+  # tkgrid.configure(color.hBut, sticky = "e")
   
   tkgrid(subsample.num.label, subsample.num.hBut, subsample.num.entry, padx = cell.width)
-  tkgrid.configure(subsample.num.label, sticky = "e")
+  tkgrid.configure(subsample.num.label, subsample.num.hBut, sticky = "e")
   tkgrid.configure(subsample.num.entry, sticky = "w")
-  tkgrid.configure(subsample.num.hBut, sticky = "e")
+  # tkgrid.configure(subsample.num.label, sticky = "e")
+  # tkgrid.configure(subsample.num.hBut, sticky = "e")
   
   tkgrid(cluster.num.label, cluster.num.hBut, cluster.num.entry, padx = cell.width)
-  tkgrid.configure(cluster.num.label, sticky = "e")
+  tkgrid.configure(cluster.num.label, cluster.num.hBut, sticky = "e")
   tkgrid.configure(cluster.num.entry, sticky = "w")
-  tkgrid.configure(cluster.num.hBut, sticky = "e")
+  # tkgrid.configure(cluster.num.label, sticky = "e")
+  # tkgrid.configure(cluster.num.hBut, sticky = "e")
   
   tkgrid(seed.num.label, seed.num.hBut, seed.num.entry, padx = cell.width)
-  tkgrid.configure(seed.num.label, sticky = "e")
+  tkgrid.configure(seed.num.label, seed.num.hBut, sticky = "e")
   tkgrid.configure(seed.num.entry, sticky = "w")
-  tkgrid.configure(seed.num.hBut, sticky = "e")
-
+  # tkgrid.configure(seed.num.label, sticky = "e")
+  # tkgrid.configure(seed.num.hBut, sticky = "e")
+  
   tkgrid(edge.pct.num.label, edge.pct.num.hBut, edge.pct.num.entry, padx = cell.width)
-  tkgrid.configure(edge.pct.num.label, sticky = "e")
+  tkgrid.configure(edge.pct.num.label, edge.pct.num.hBut, sticky = "e")
   tkgrid.configure(edge.pct.num.entry, sticky = "w")
-  tkgrid.configure(edge.pct.num.hBut, sticky = "e")
+  # tkgrid.configure(edge.pct.num.label, sticky = "e")
+  # tkgrid.configure(edge.pct.num.hBut, sticky = "e")
   
   tkgrid(edge.num.min.label, edge.num.min.hBut, edge.num.min.entry, padx = cell.width)
-  tkgrid.configure(edge.num.min.label, sticky = "e")
+  tkgrid.configure(edge.num.min.label, edge.num.min.hBut, sticky = "e")
   tkgrid.configure(edge.num.min.entry, sticky = "w")
-  tkgrid.configure(edge.num.min.hBut, sticky = "e")
+  # tkgrid.configure(edge.num.min.label, sticky = "e")
+  # tkgrid.configure(edge.num.min.hBut, sticky = "e")
   
   tkgrid(edge.num.max.label, edge.num.max.hBut, edge.num.max.entry, padx = cell.width)
   tkgrid.configure(edge.num.max.label, edge.num.max.hBut, sticky = "e")
   tkgrid.configure(edge.num.max.entry, sticky = "w")
   # tkgrid.configure(edge.num.max.label, sticky = "e")
-  # tkgrid.configure(edge.num.max.entry, sticky = "w")
   # tkgrid.configure(edge.num.max.hBut, sticky = "e")
   
   tkgrid(tklabel(tt, text = "\n"), padx = cell.width)  # leave blank line

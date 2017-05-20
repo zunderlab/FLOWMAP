@@ -13,7 +13,7 @@ shinyServer(function(input, output, session) {
   print(operating.system)
   final.new.same <- NULL
   final.new.diff <- NULL
-  dir.now <- globe_resdir
+  dir.now <- globe.result.dir
   FileOrder <- function(dir.now) {
     file.names <- list.files(dir.now, pattern = "\\.fcs")
     len.filenames <- seq(1, length(file.names))
