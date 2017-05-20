@@ -6,7 +6,7 @@ shinyUI(
     titlePanel("File Uploader"),
     fluidRow(
       column(width = 3,
-             selectInput("checkGroup_files",
+             selectInput("check.group.files",
                          label = h5("Uploaded Order"),
                          choices = "Pending Upload",
                          selected = NULL,
@@ -35,7 +35,7 @@ shinyUI(
              )
       ),
       column(width = 3,
-             selectInput("checkGroup_sim",
+             selectInput("check.group.sim",
                          label = h5("Similar Fields"),
                          choices = "Pending Upload",
                          selected = NULL,
@@ -43,7 +43,7 @@ shinyUI(
                          selectize = FALSE,
                          size = 7
              ),
-             selectInput("checkGroup_diff",
+             selectInput("check.group.diff",
                          label = h5("Different Fields"),
                          choices = "Pending upload",
                          selected = NULL,
@@ -51,11 +51,11 @@ shinyUI(
                          selectize = FALSE,
                          size = 7
              ),
-             textInput("filemerge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-             actionButton("mbutton", "Merge Selected Diff")
+             textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
+             actionButton("merge.button", "Merge Selected Diff")
       ),
       column(width = 5,
-             actionButton("button", "Run FLOWMAPR"),
+             actionButton("start.button", "Run FLOWMAPR"),
              br(),
              br(),
              rHandsontableOutput("table", width = 600)

@@ -10,52 +10,50 @@ shinyServer(function(input, output, session) {
   }
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
-  operating.system <- Sys.info()[1]
-  print("operating.system")
-  print(operating.system)
   final.new.same <- NULL
   final.new.diff <- NULL
-  dir.now <- globe.raw.FCS.dir
   FileOrder <- function(dir.now) {
     file.names <- list.files(dir.now, pattern = "\\.fcs")
     len.filenames <- seq(1, length(file.names))
     return(list(len.filenames = len.filenames,
                 file.names = file.names))
   }
-  file.info <- FileOrder(dir.now)
+  file.info <- FileOrder(globe.raw.FCS.dir)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
   observe({
-    updateSelectInput(session, "checkGroup_files",
+    updateSelectInput(session, "CheckGroupFiles",
                       choices = paste(len.filenames, file.names, sep = " "))
   })
-  testprint <- eventReactive(input$default.button, {
+  TestPrint <- eventReactive(input$default.button, {
     print("BEEP")
     print("BOOP")
   })
-  chosen_order <- eventReactive(input$gener.param.button, {
+  ChosenOrder <- eventReactive(input$gener.param.button, {
     input$file.order.input
   })
-  fcs_order <- eventReactive(input$gener.param.button, {
-    order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
-    fcs.list <- c()
-    for(i in order) {
-      fcs.list <- c(fcs.list, file.names[i])
-      fcs.list
-    }
+  FCSOrder <- eventReactive(input$gener.param.button, {
+    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+    fcs.list <- file.names[order]
+    fcs.list
+    # fcs.list <- c()
+    # for(i in order) {
+    #   fcs.list <- c(fcs.list, file.names[i])
+    #   fcs.list
+    # }
   })
-  contentdiff <- eventReactive(input$gener.param.button, {
+  ContentDiff <- eventReactive(input$gener.param.button, {
     # Read input Files
     # Set the names
     fcs.list <- list()
-    rows <- length(FileOrder(dir.now))
+    rows <- length(FileOrder(globe.raw.FCS.dir))
     count <- 0
-    order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
+    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
     for(i in order) {
-      setwd(dir.now)
-      files <- read.FCS(file.names[i], emptyValue = FALSE)
-      filed <- pData(parameters(files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
+      setwd(globe.raw.FCS.dir)
+      fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
+      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
       fcs.list[[(count + 1)]] <- name.desc
       count <- count + 1
       # Reads FCS Files, gets name and Description, add to a list of different FCS files
@@ -73,17 +71,16 @@ shinyServer(function(input, output, session) {
     diffs
     # If there is 1 FCS file, then there is no difference
   })
-  contentsame <- eventReactive(input$gener.param.button, {
+  ContentSame <- eventReactive(input$gener.param.button, {
     fcs.list <- list()
-    rows <- length(FileOrder(dir.now))
+    rows <- length(FileOrder(globe.raw.FCS.dir))
     count <- 0
-    order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
-    for(i in order)
-    {
-      setwd(dir.now)
-      files <- read.FCS(file.names[i], emptyValue = FALSE)
-      filed <- pData(parameters(files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
+    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+    for(i in order) {
+      setwd(globe.raw.FCS.dir)
+      fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
+      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
       fcs.list[[(count + 1)]] <- name.desc
       count <- count + 1
       # Does same thing as above
@@ -96,18 +93,18 @@ shinyServer(function(input, output, session) {
     same
     # gives the same paramters
   })
-  tablecreate <- eventReactive(input$gener.param.button, {
+  TableCreate <- eventReactive(input$gener.param.button, {
     if (length(final.new.diff) == 0) {
       panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                        removal = logical(length = length(final.new.same)),
-                        cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                        annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
+                                removal = logical(length = length(final.new.same)),
+                                cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                                annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
     } else {
       panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                        removal = c(logical(length = length(final.new.same)),
-                                    !logical(length = length(final.new.diff))),
-                        cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                        annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
+                                removal = c(logical(length = length(final.new.same)),
+                                            !logical(length = length(final.new.diff))),
+                                cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                                annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
     }
     output$table <- renderRHandsontable({
       rhandsontable(panel.info) %>%
@@ -118,47 +115,47 @@ shinyServer(function(input, output, session) {
   observeEvent(input$gener.param.button, {
     if (length(final.new.diff) == 0) {
       panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                       removal = logical(length = length(final.new.same)),
-                       cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                       annotate = c(final.new.same, final.new.diff))
+                               removal = logical(length = length(final.new.same)),
+                               cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                               annotate = c(final.new.same, final.new.diff))
     } else {
       panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                       removal = c(logical(length = length(final.new.same)),
-                                   !logical(length = length(final.new.diff))),
-                       cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                       annotate = c(final.new.same, final.new.diff))
+                               removal = c(logical(length = length(final.new.same)),
+                                           !logical(length = length(final.new.diff))),
+                               cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                               annotate = c(final.new.same, final.new.diff))
     }
   })
   observe({
-    updateSelectInput(session, "checkGroup_sim", choices = contentsame())
+    updateSelectInput(session, "check.group.sim", choices = ContentSame())
   })
   # updates the checkbox group to show same
   observe({
-    updateSelectInput(session, "checkGroup_diff", choices = contentdiff())
+    updateSelectInput(session, "check.group.files", choices = ContentDiff())
   })
-  file_merge_diff <- eventReactive(input$mbutton, {
-    files_tbm <- input$checkGroup_diff
-    merge_name <- input$filemerge
-    new_diff <- contentdiff() [! contentdiff() %in% files_tbm]
-    print(new_diff)
+  FileMergeDiff <- eventReactive(input$merge.button, {
+    files.tbm <- input$check.group.files
+    merge.name <- input$file.merge
+    new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
+    print(new.diff)
     print("DIFF WORKS")
-    new_diff
+    new.diff
   })
-  file_merge_same <- eventReactive(input$mbutton, {
-    new_same <- c(input$filemerge, contentsame())
-    print(new_same)
+  FileMergeSame <- eventReactive(input$merge.button, {
+    new.same <- c(input$file.merge, ContentSame())
+    print(new.same)
     print("SAME WORKS")
-    new_same
+    new.same
   })
-  file_merge_table <- eventReactive(input$mbutton, {
+  FileMergeTable <- eventReactive(input$merge.button, {
     print("TABLE STARTED")
-    files_tbm <- input$checkGroup_diff
+    files.tbm <- input$check.group.files
     new.panel.info <- panel.info.edit
-    print(input$checkGroup_diff)
+    print(input$check.group.files)
     print("got here")
-    for (i in files_tbm) {
+    for (i in files.tbm) {
       print("round")
-      new.panel.info[new.panel.info$channels == i, "annotate"] <- input$filemerge
+      new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
       panel.info.edit <<- new.panel.info
     }
     print("NEW DF MADE")
@@ -169,30 +166,24 @@ shinyServer(function(input, output, session) {
     print("TABLE SUCCESS")
   })
   observe({
-    updateSelectInput(session, "checkGroup_sim", choices = file_merge_same())
+    updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
   })
   # updates the checkbox group to show same
   observe({
-    updateSelectInput(session, "checkGroup_diff", choices = file_merge_diff())
+    updateSelectInput(session, "check.group.files", choices = FileMergeDiff())
   })
   observe({
-    file_merge_table()
+    FileMergeTable()
   })
-  write_file <- eventReactive(input$button, {
-    if (operating.system != "Windows") {
-      dir <- globe.result.dir
-    } else {
-      dir <- globe.result.dir
-    }
-    setwd(dir)
-    # writes the file
+  WriteFile <- eventReactive(input$start.button, {
     file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
     flowfile <- (hot_to_r(input$table))
-    # print(folder.now)
-    setwd(dir.now)
+    print("flowfile")
+    print(flowfile)
+    setwd(globe.raw.FCS.dir)
     set.seed(globe.inputs[["seedNum"]])
     files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
-    # NEED MULTIFLOW-MAP FIX FOR FILES
+    # NEED MULTI-FLOWMAP FIX FOR FILES
     mode <- globe.inputs[["mode"]]
     save.folder <- globe.result.dir
     var.annotate <- list()
@@ -244,25 +235,25 @@ shinyServer(function(input, output, session) {
     stopApp()
   })
   output$TESTPRINT <- renderText({
-    testprint()
+    TestPrint()
   })
   output$writefile <- renderText({
-    write_file()
+    WriteFile()
     NULL
   })
   output$vartable <- renderText({
-    tablecreate()
+    TableCreate()
     NULL
   })
   output$ordering <- renderText({
-    chosen_order()
+    ChosenOrder()
     NULL
   })
   output$fcsorder <- renderText({
-    fcs_order()
+    FCSOrder()
   })
   output$testprint <- renderText({
-    testprint()
+    TestPrint()
     test.print <- "TEST PRINT"
     test.print
     "TEST PRINT"
