@@ -3,6 +3,9 @@ require(shiny)
 require(rhandsontable)
 
 shinyServer(function(input, output, session) {
+  if (!exists("globe_resdir")) {
+    stopApp()
+  }
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   operating.system <- Sys.info()[1]
