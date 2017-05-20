@@ -66,7 +66,7 @@ To currently get the FLOWMAPR R package up and working on your computer:
 
 ### Installing the GUI
 
-1. The GUI has a package dependancy for Shiny, TclTk, and Rhandsontable. Install these with:
+1. The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
 ```
 install.packages("shiny")
 install.packages("tcltk")
@@ -91,7 +91,13 @@ If the above commands run without error, you should have the latest version of F
 
 To run a FLOWMAP analysis on your data set or an example data set:
 
-0. Make your data available and parseable by FLOWMAP. For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last). To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. <!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
+0. Make your data available and parseable by FLOWMAP.
+* For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time.
+* Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last).
+* To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. 
+* Do not use any digits (i.e. 0-9) in the name of the FCS file unless they specify time. Change any labels for the conditions in the FCS file name to be alphabetical characters. Ex: Condition1-t24.fcs should be renamed to ConditionOne-t24.fcs.
+* Please note that when your FCS files are loaded into FLOWMAPR, any "Time" variables already in the data will be removed and overwritten with the "time" of each FCS file.
+<!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
   * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
