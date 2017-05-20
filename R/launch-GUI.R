@@ -341,9 +341,8 @@ LaunchGUI <- function() {
     inputs[["cluster.num"]] <- tclvalue(cluster.num)
     inputs[["seed.num"]] <- tclvalue(seed.num)
     inputs[["edge.pct.num"]] <- tclvalue(edge.pct.num)
-    inputs[["edgeMaxNum"]] <- tclvalue(edge.num.max)
-    inputs[["edgeminNum"]] <- tclvalue(edge.num.min)
-    inputs[["resultDir"]] <- tclvalue(result.dir)
+    inputs[["edge.max.num"]] <- tclvalue(edge.num.max)
+    inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- tclvalue(quit.var)
     
     globe.inputs <<- inputs

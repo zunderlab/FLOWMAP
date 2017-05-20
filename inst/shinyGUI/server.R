@@ -181,7 +181,7 @@ shinyServer(function(input, output, session) {
     print("flowfile")
     print(flowfile)
     setwd(globe.raw.FCS.dir)
-    set.seed(globe.inputs[["seedNum"]])
+    set.seed(globe.inputs[["seed.num"]])
     files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
     # NEED MULTI-FLOWMAP FIX FOR FILES
     mode <- globe.inputs[["mode"]]
@@ -192,20 +192,20 @@ shinyServer(function(input, output, session) {
     }
     var.remove <- flowfile[flowfile$removal == TRUE, 1]
     clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-    per <- as.numeric(globe.inputs[["edgepctNum"]])
-    maximum <- as.numeric(globe.inputs[["edgeMaxNum"]])
-    minimum <- as.numeric(globe.inputs[["edgeminNum"]])
-    distance.metric <- globe.inputs[["distanceMetric"]]
-    subsamples <- as.numeric(globe.inputs[["subsampleNum"]])
-    cluster.numbers <- as.numeric(globe.inputs[["clusterNum"]])
-    seed.X <- as.numeric(globe.inputs[["seedNum"]])
-    savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFsToggle"]]))
-    which.palette <- globe.inputs[["colorpalette"]]
+    per <- as.numeric(globe.inputs[["edge.pct.num"]])
+    maximum <- as.numeric(globe.inputs[["edge.max.num"]])
+    minimum <- as.numeric(globe.inputs[["edge.min.num"]])
+    distance.metric <- globe.inputs[["distance.metric"]]
+    subsamples <- as.numeric(globe.inputs[["subsample.num"]])
+    cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
+    seed.X <- as.numeric(globe.inputs[["seed.num"]])
+    savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
+    which.palette <- globe.inputs[["color.palette"]]
     for (i in 1:length(clustering.var)) {
       clustering.var[i] <- var.annotate[[clustering.var[i]]]
     }
     name.sort <- FALSE
-    downsample <- as.logical(as.numeric(globe.inputs[["downsampleToggle"]]))
+    downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
     # Run FLOW-MAP
     if (downsample) {
       print("Downsampling")
