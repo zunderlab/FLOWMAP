@@ -5,7 +5,7 @@ require(rhandsontable)
 shinyServer(function(input, output, session) {
   print("globe.inputs")
   print(globe.inputs)
-  if (globe.inputs[["quit"]]) {
+  if (as.logical(as.numeric(globe.inputs[["quit"]]))) {
     stopApp()
   }
   options(shiny.maxRequestSize = 1000 * 1024^2)
