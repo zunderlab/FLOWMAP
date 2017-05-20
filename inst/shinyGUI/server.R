@@ -3,6 +3,8 @@ require(shiny)
 require(rhandsontable)
 
 shinyServer(function(input, output, session) {
+  print("globe_input")
+  print(globe_input)
   if (!exists("globe.result.dir")) {
     stopApp()
   }
