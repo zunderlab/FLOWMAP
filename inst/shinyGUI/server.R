@@ -4,36 +4,40 @@ require(rhandsontable)
 
 shinyServer(function(input, output, session) {
   options(shiny.maxRequestSize = 1000 * 1024^2)
-  DF <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
-  operating_system <<- Sys.info()[1]
-  print("operating_system")
-  print(operating_system)
+  panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
+  operating.system <- Sys.info()[1]
+  print("operating.system")
+  print(operating.system)
+  print("getwd()")
+  print(getwd())
   # get function for FLOW-MAP
-  if (operating_system == "Windows") {
-    folder_now <<- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
+  if (operating.system == "Windows") {
+    folder.now <- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
   } else {
-    folder_now <<- paste(getwd(), "/", sep = "")
+    folder.now <- paste(getwd(), "/", sep = "")
   }
+  print("folder.now")
+  print(folder.now)
   # get directory for where all FLOW-MAP function files are located
-  final_new_same <<- NULL
-  final_new_diff <<- NULL
+  final.new.same <- NULL
+  final.new.diff <- NULL
   # Set Global Variables
-  dir_now <- globe_resdir
-  fileorder <- function(dir_now) {
-    file_names <- list.files(dir_now, pattern = "\\.fcs")
-    name_vec <- c()
-    for (i in 1:length(file_names)){
-      name_vec <- c(name_vec, i)
+  dir.now <- globe_resdir
+  fileorder <- function(dir.now) {
+    file.names <- list.files(dir.now, pattern = "\\.fcs")
+    len.filenames <- c()
+    for (i in 1:length(file.names)){
+      len.filenames <- c(len.filenames, i)
     }
-    len_filenames <- name_vec
-    return(list(len_filenames = len_filenames,
-                file_names = file_names))
+    return(list(len.filenames = len.filenames,
+                file.names = file.names))
   }
-  file_info <- fileorder(dir_now)
-  len_filenames <- file_info$len_filenames
-  file_names <- file_info$file_names
+  file.info <- fileorder(dir.now)
+  len.filenames <- file.info$len.filenames
+  file.names <- file.info$file.names
   observe({
-    updateSelectInput(session, "checkGroup_files", choices = paste(len_filenames, file_names, sep = " "))
+    updateSelectInput(session, "checkGroup_files",
+                      choices = paste(len.filenames, file.names, sep = " "))
   })
   testprint <- eventReactive(input$generbutton1, {
     print("BEEP")
@@ -44,95 +48,95 @@ shinyServer(function(input, output, session) {
   })
   fcs_order <- eventReactive(input$generbutton2, {
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
-    fcs_list <- c()
+    fcs.list <- c()
     for(i in order) {
-      fcs_list <- c(fcs_list, file_names[i])
-      fcs_list
+      fcs.list <- c(fcs.list, file.names[i])
+      fcs.list
     }
   })
   contentdiff <- eventReactive(input$generbutton2, {
     # Read input Files
     # Set the names
-    fcs_list <- list()
-    rows <- length(fileorder(dir_now))
+    fcs.list <- list()
+    rows <- length(fileorder(dir.now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order) {
-      setwd(dir_now)
-      files <- read.FCS(file_names[i], emptyValue = FALSE)
+      setwd(dir.now)
+      files <- read.FCS(file.names[i], emptyValue = FALSE)
       filed <- pData(parameters(files))[, c("name")]
-      name_desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
-      fcs_list[[(count + 1)]] <- name_desc
+      name.desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
+      fcs.list[[(count + 1)]] <- name.desc
       count <- count + 1
       # Reads FCS Files, gets name and Description, add to a list of different FCS files
     }
     if (rows > 1) {
-      same <- Reduce(intersect, fcs_list)
-      every <- Reduce(union, fcs_list)
+      same <- Reduce(intersect, fcs.list)
+      every <- Reduce(union, fcs.list)
       diffs <- every
       diffs <- diffs[! every %in% same]
     } else {
       diffs <- NULL
     }
     # Gets different parameters from the FCS files
-    final_new_diff <<- diffs
+    final.new.diff <<- diffs
     diffs
     # If there is 1 FCS file, then there is no difference
   })
   contentsame <- eventReactive(input$generbutton2, {
-    fcs_list <- list()
-    rows <- length(fileorder(dir_now))
+    fcs.list <- list()
+    rows <- length(fileorder(dir.now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order)
     {
-      setwd(dir_now)
-      files <- read.FCS(file_names[i], emptyValue = FALSE)
+      setwd(dir.now)
+      files <- read.FCS(file.names[i], emptyValue = FALSE)
       filed <- pData(parameters(files))[, c("name")]
-      name_desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
-      fcs_list[[(count + 1)]] <- name_desc
+      name.desc <- do.call(paste, as.data.frame(filed, stringsAsFactors = FALSE))
+      fcs.list[[(count + 1)]] <- name.desc
       count <- count + 1
-      # Does sdame thing as above
+      # Does same thing as above
     }
-    same <- Reduce(intersect, fcs_list)
-    every <- Reduce(union, fcs_list)
+    same <- Reduce(intersect, fcs.list)
+    every <- Reduce(union, fcs.list)
     diff <- every
     diff <- diff[! every %in% same]
-    final_new_same <<- same
+    final.new.same <<- same
     same
     # gives the same paramters
   })
   tablecreate <- eventReactive(input$generbutton2, {
-    if (length(final_new_diff) == 0) {
-      DF <<- data.frame(channels = c(final_new_same, final_new_diff),
-                        removal = logical(length = length(final_new_same)),
-                        cluster = logical(length = length(final_new_diff) + length(final_new_same)),
-                        annotate = c(final_new_same, final_new_diff), stringsAsFactors = FALSE)
+    if (length(final.new.diff) == 0) {
+      panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
+                        removal = logical(length = length(final.new.same)),
+                        cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                        annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
     } else {
-      DF <<- data.frame(channels = c(final_new_same, final_new_diff),
-                        removal = c(logical(length = length(final_new_same)),
-                                    !logical(length = length(final_new_diff))),
-                        cluster = logical(length = length(final_new_diff) + length(final_new_same)),
-                        annotate = c(final_new_same, final_new_diff), stringsAsFactors = FALSE)
+      panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
+                        removal = c(logical(length = length(final.new.same)),
+                                    !logical(length = length(final.new.diff))),
+                        cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                        annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
     }
     output$table <- renderRHandsontable({
-      rhandsontable(DF) %>%
+      rhandsontable(panel.info) %>%
         hot_col("channels", readOnly = TRUE)
     })
-    DF_edit <<- DF
+    panel.info.edit <<- panel.info
   })
   observeEvent(input$generbutton2, {
-    if (length(final_new_diff) == 0) {
-      DF <- data.frame(channels = c(final_new_same, final_new_diff),
-                       removal = logical(length = length(final_new_same)),
-                       cluster = logical(length = length(final_new_diff) + length(final_new_same)),
-                       annotate = c(final_new_same, final_new_diff))
+    if (length(final.new.diff) == 0) {
+      panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
+                       removal = logical(length = length(final.new.same)),
+                       cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                       annotate = c(final.new.same, final.new.diff))
     } else {
-      DF <- data.frame(channels = c(final_new_same, final_new_diff),
-                       removal = c(logical(length = length(final_new_same)),
-                                   !logical(length = length(final_new_diff))),
-                       cluster = logical(length = length(final_new_diff) + length(final_new_same)),
-                       annotate = c(final_new_same, final_new_diff))
+      panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
+                       removal = c(logical(length = length(final.new.same)),
+                                   !logical(length = length(final.new.diff))),
+                       cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                       annotate = c(final.new.same, final.new.diff))
     }
   })
   observe({
@@ -159,17 +163,17 @@ shinyServer(function(input, output, session) {
   file_merge_table <- eventReactive(input$mbutton, {
     print("TABLE STARTED")
     files_tbm <- input$checkGroup_diff
-    new_df <- DF_edit
+    new.panel.info <- panel.info.edit
     print(input$checkGroup_diff)
     print("got here")
     for (i in files_tbm) {
       print("round")
-      new_df[new_df$channels == i, "annotate"] <- input$filemerge
-      DF_edit <<- new_df
+      new.panel.info[new.panel.info$channels == i, "annotate"] <- input$filemerge
+      panel.info.edit <<- new.panel.info
     }
     print("NEW DF MADE")
     output$table <- renderRHandsontable({
-      rhandsontable(new_df) %>%
+      rhandsontable(new.panel.info) %>%
         hot_col("channels", readOnly = TRUE)
     })
     print("TABLE SUCCESS")
@@ -185,7 +189,7 @@ shinyServer(function(input, output, session) {
     file_merge_table()
   })
   write_file <- eventReactive(input$button, {
-    if (operating_system != "Windows") {
+    if (operating.system != "Windows") {
       dir <- globe_resdir
     } else {
       dir <- globe_resdir
@@ -194,8 +198,8 @@ shinyServer(function(input, output, session) {
     # writes the file
     file.order <- as.numeric(unlist(strsplit(input$fileorder, split = ",")))
     flowfile <- (hot_to_r(input$table))
-    print(folder_now)
-    setwd(dir_now)
+    print(folder.now)
+    setwd(dir.now)
     set.seed(globe_input[["seedNum"]])
     files <- list.files(globe_resdir, full.names = TRUE, pattern = "\\.fcs")[file.order]
     # NEED MULTIFLOW-MAP FIX FOR FILES
@@ -207,8 +211,8 @@ shinyServer(function(input, output, session) {
     }
     print("input$testprint")
     print(input$testprint)
-    var.remove <- flowfile[flowfile$removal == T, 1]
-    clustering.var <- flowfile[flowfile$cluster == T, 1]
+    var.remove <- flowfile[flowfile$removal == TRUE, 1]
+    clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
     per <- as.numeric(globe_input[["edgepctNum"]])
     maximum <- as.numeric(globe_input[["edgeMaxNum"]])
     minimum <- as.numeric(globe_input[["edgeminNum"]])
@@ -268,5 +272,8 @@ shinyServer(function(input, output, session) {
   })
   output$testprint <- renderText({
     testprint()
+    test.print <- "TEST PRINT"
+    test.print
+    "TEST PRINT"
   })
 })
