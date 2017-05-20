@@ -32,15 +32,10 @@ shinyServer(function(input, output, session) {
   ChosenOrder <- eventReactive(input$gener.param.button, {
     input$file.order.input
   })
-  FCSOrder <- eventReactive(input$gener.param.button, {
+  GetFCSinOrder <- eventReactive(input$gener.param.button, {
     order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
     fcs.list <- file.names[order]
     fcs.list
-    # fcs.list <- c()
-    # for(i in order) {
-    #   fcs.list <- c(fcs.list, file.names[i])
-    #   fcs.list
-    # }
   })
   ContentDiff <- eventReactive(input$gener.param.button, {
     # Read input Files
@@ -206,6 +201,10 @@ shinyServer(function(input, output, session) {
     }
     name.sort <- FALSE
     downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
+    
+    print("output")
+    print(output)
+    
     # Run FLOW-MAP
     if (downsample) {
       print("Downsampling")
@@ -237,10 +236,10 @@ shinyServer(function(input, output, session) {
   output$TESTPRINT <- renderText({
     TestPrint()
   })
-  output$writefile <- renderText({
-    WriteFile()
-    NULL
-  })
+  # output$writefile <- renderText({
+  #   WriteFile()
+  #   NULL
+  # })
   output$vartable <- renderText({
     TableCreate()
     NULL
@@ -250,7 +249,7 @@ shinyServer(function(input, output, session) {
     NULL
   })
   output$fcsorder <- renderText({
-    FCSOrder()
+    GetFCSinOrder()
   })
   output$testprint <- renderText({
     TestPrint()
