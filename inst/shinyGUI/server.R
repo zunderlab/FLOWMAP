@@ -39,14 +39,14 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "checkGroup_files",
                       choices = paste(len.filenames, file.names, sep = " "))
   })
-  testprint <- eventReactive(input$generbutton1, {
+  testprint <- eventReactive(input$default.button, {
     print("BEEP")
     input$testprint
   })
-  chosen_order <- eventReactive(input$generbutton2, {
+  chosen_order <- eventReactive(input$gener.param.button, {
     input$file.order.input
   })
-  fcs_order <- eventReactive(input$generbutton2, {
+  fcs_order <- eventReactive(input$gener.param.button, {
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     fcs.list <- c()
     for(i in order) {
@@ -54,7 +54,7 @@ shinyServer(function(input, output, session) {
       fcs.list
     }
   })
-  contentdiff <- eventReactive(input$generbutton2, {
+  contentdiff <- eventReactive(input$gener.param.button, {
     # Read input Files
     # Set the names
     fcs.list <- list()
@@ -83,7 +83,7 @@ shinyServer(function(input, output, session) {
     diffs
     # If there is 1 FCS file, then there is no difference
   })
-  contentsame <- eventReactive(input$generbutton2, {
+  contentsame <- eventReactive(input$gener.param.button, {
     fcs.list <- list()
     rows <- length(FileOrder(dir.now))
     count <- 0
@@ -106,7 +106,7 @@ shinyServer(function(input, output, session) {
     same
     # gives the same paramters
   })
-  tablecreate <- eventReactive(input$generbutton2, {
+  tablecreate <- eventReactive(input$gener.param.button, {
     if (length(final.new.diff) == 0) {
       panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
                         removal = logical(length = length(final.new.same)),
@@ -125,7 +125,7 @@ shinyServer(function(input, output, session) {
     })
     panel.info.edit <<- panel.info
   })
-  observeEvent(input$generbutton2, {
+  observeEvent(input$gener.param.button, {
     if (length(final.new.diff) == 0) {
       panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
                        removal = logical(length = length(final.new.same)),
@@ -254,6 +254,9 @@ shinyServer(function(input, output, session) {
               savePDFs = savePDFs, which.palette = which.palette)
     }
     stopApp()
+  })
+  output$TESTPRINT <- renderText({
+    testprint()
   })
   output$writefile <- renderText({
     write_file()
