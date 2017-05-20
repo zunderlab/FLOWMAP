@@ -147,6 +147,7 @@ LaunchGUI <- function() {
   }
   quit <- function() {
     tkdestroy(tt)
+    stop("Exiting FLOWMAPR GUI.")
   }
   # build the GUI
   # head line

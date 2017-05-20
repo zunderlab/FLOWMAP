@@ -35,7 +35,7 @@ shinyServer(function(input, output, session) {
   observe({
     updateSelectInput(session, "checkGroup_files", choices = paste(len_filenames, file_names, sep = " "))
   })
-  test_print <- eventReactive(input$generbutton1, {
+  testprint <- eventReactive(input$generbutton1, {
     print("BEEP")
     input$testprint
   })
@@ -266,7 +266,7 @@ shinyServer(function(input, output, session) {
   output$fcsorder <- renderText({
     fcs_order()
   })
-  output$test_print <- renderText({
-    test_print()
+  output$testprint <- renderText({
+    testprint()
   })
 })
