@@ -228,8 +228,8 @@ shinyServer(function(input, output, session) {
       exclude.pctile <- 0.01
       target.pctile <- 0.99
       target.percent <- NULL
-      cat("subsamples", "target.number", "exclude.pctile", "target.pctile", "target.percent")
-      cat(subsamples, target.number, exclude.pctile, target.pctile, target.percent)
+      cat("subsamples", "target.number", "exclude.pctile", "target.pctile", "target.percent", "\n")
+      cat(subsamples, target.number, exclude.pctile, target.pctile, target.percent, "\n")
       FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
               clustering.var = clustering.var, cluster.numbers = cluster.numbers,
               distance.metric = distance.metric, minimum = minimum, maximum = maximum,

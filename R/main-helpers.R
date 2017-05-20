@@ -46,7 +46,6 @@ CheckModeOne <- function(files) {
   # a vector of 1 fcs file path
   fail.flag <- TRUE
   guide <- NULL
-  print("BLAH")
   if (length(files) == 1) {
     if (grepl(pattern = "\\.fcs", files)) {
       fail.flag <- FALSE
@@ -64,7 +63,6 @@ CheckModeOne <- function(files) {
 CheckModeSingle <- function(files) {
   fail.flag <- TRUE
   guide <- NULL
-  print("BOOP")
   # "files" variable could be one of the following:
   # a single folder path containing 2+ fcs files
   # a vector of fcs file paths
@@ -88,7 +86,6 @@ CheckModeSingle <- function(files) {
 CheckModeMulti <- function(files) {
   fail.flag <- TRUE
   guide <- NULL
-  print("BEEP")
   # "files" variable could be one of the following:
   # a single folder path, containing subfolders,
   # which each contain 2+ fcs files
