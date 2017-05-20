@@ -92,10 +92,10 @@ If the above commands run without error, you should have the latest version of F
 To run a FLOWMAP analysis on your data set or an example data set:
 
 0. Make your data available and parseable by FLOWMAP.
-* For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time.
+* For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. If FCS files in the same subdirectory that come from different time points (e.g. "ConditionA-d01.fcs" with "ConditionB-d02.fcs"), FLOWMAPR will pick one time label arbitrarily.
 * Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last).
-* To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters. 
-* Do not use any digits (i.e. 0-9) in the name of the FCS file unless they specify time. Change any labels for the conditions in the FCS file name to be alphabetical characters. Ex: Condition1-t24.fcs should be renamed to ConditionOne-t24.fcs.
+* To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters (e.g. "ConditionA-d01.fcs" where "ConditionA" will be the condition label).
+* Do not use any digits (i.e. 0-9) in the name of the FCS file unless they specify time. Change any labels for the conditions in the FCS file name to be alphabetical characters. Ex: Condition1-t24.fcs should be renamed to ConditionOne-t24.fcs or else the time label will be parsed as "124" instead of "24" for this file.
 * Please note that when your FCS files are loaded into FLOWMAPR, any "Time" variables already in the data will be removed and overwritten with the "time" of each FCS file.
 <!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
