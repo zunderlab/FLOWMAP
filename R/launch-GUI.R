@@ -317,31 +317,31 @@ LaunchGUI <- function() {
   tkgrid.configure(subsampleNum_label, sticky = "e")
   tkgrid.configure(subsampleNum_entry, sticky = "w")
   tkgrid.configure(subsampleNum_hBut, sticky = "e")
-  # tkgrid.configure(subsampleNum_hBut, sticky = "w")
-  # tkgrid.configure(subsampleNum_label, subsampleNum_entry, sticky = "w")
   
   tkgrid(clusterNum_label, clusterNum_hBut, clusterNum_entry, padx = cell_width)
   tkgrid.configure(clusterNum_label, sticky = "e")
   tkgrid.configure(clusterNum_entry, sticky = "w")
   tkgrid.configure(clusterNum_hBut, sticky = "e")
-  # tkgrid.configure(clusterNum_hBut, sticky = "w")
-  # tkgrid.configure(clusterNum_label, clusterNum_entry, sticky = "w")
   
   tkgrid(seedNum_label, seedNum_hBut, seedNum_entry, padx = cell_width)
-  tkgrid.configure(seedNum_hBut, sticky = "w")
-  tkgrid.configure(seedNum_label, seedNum_entry, sticky = "w")
-  
+  tkgrid.configure(seedNum_label, sticky = "e")
+  tkgrid.configure(seedNum_entry, sticky = "w")
+  tkgrid.configure(seedNum_hBut, sticky = "e")
+
   tkgrid(edgepctNum_label, edgepctNum_hBut, edgepctNum_entry, padx = cell_width)
-  tkgrid.configure(edgepctNum_hBut, sticky = "w")
-  tkgrid.configure(edgepctNum_label, edgepctNum_entry, sticky = "w")
+  tkgrid.configure(edgepctNum_label, sticky = "e")
+  tkgrid.configure(edgepctNum_entry, sticky = "w")
+  tkgrid.configure(edgepctNum_hBut, sticky = "e")
   
   tkgrid(edgeNumMin_label, edgeNumMin_hBut, edgeNumMin_entry, padx = cell_width)
-  tkgrid.configure(edgeNumMin_hBut, sticky = "w")
-  tkgrid.configure(edgeNumMin_label, edgeNumMin_entry, sticky = "w")
+  tkgrid.configure(edgeNumMin_label, sticky = "e")
+  tkgrid.configure(edgeNumMin_entry, sticky = "w")
+  tkgrid.configure(edgeNumMin_hBut, sticky = "e")
   
   tkgrid(edgeNumMax_label, edgeNumMax_hBut, edgeNumMax_entry, padx = cell_width)
-  tkgrid.configure(edgeNumMax_hBut, sticky = "w")
-  tkgrid.configure(edgeNumMax_label, edgeNumMax_entry, sticky = "w")
+  tkgrid.configure(edgeNumMax_label, sticky = "e")
+  tkgrid.configure(edgeNumMax_entry, sticky = "w")
+  tkgrid.configure(edgeNumMax_hBut, sticky = "e")
   
   tkgrid(tklabel(tt, text = "\n"), padx = cell_width)  # leave blank line
   
