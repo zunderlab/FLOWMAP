@@ -346,10 +346,10 @@ LaunchGUI <- function() {
     print("inputs")
     print(inputs)
     
-    globe.input <<- inputs
-    globe.result.dir <<- tclvalue(raw.FCS.dir)
+    globe.inputs <<- inputs
+    globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
-    globe.result.dir2 <<- tclvalue(result.dir)
+    globe.result.dir <<- tclvalue(result.dir)
     timeNow <- gsub("[:]","-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])

@@ -7,8 +7,12 @@ shinyServer(function(input, output, session) {
   print(ls())
   print("objects()")
   print(objects())
-  # print("globe_input")
-  # print(globe_input)
+  print("input")
+  print(input)
+  print("globe.inputs")
+  print(globe.inputs)
+  print("inputs")
+  print(inputs)
   # if (!exists("globe.result.dir")) {
   #   stopApp()
   # }
@@ -19,7 +23,7 @@ shinyServer(function(input, output, session) {
   print(operating.system)
   final.new.same <- NULL
   final.new.diff <- NULL
-  dir.now <- globe.result.dir
+  dir.now <- globe.raw.FCS.dir
   FileOrder <- function(dir.now) {
     file.names <- list.files(dir.now, pattern = "\\.fcs")
     len.filenames <- seq(1, length(file.names))
@@ -184,9 +188,9 @@ shinyServer(function(input, output, session) {
   })
   write_file <- eventReactive(input$button, {
     if (operating.system != "Windows") {
-      dir <- globe_resdir
+      dir <- globe.result.dir
     } else {
-      dir <- globe_resdir
+      dir <- globe.result.dir
     }
     setwd(dir)
     # writes the file
@@ -195,10 +199,10 @@ shinyServer(function(input, output, session) {
     # print(folder.now)
     setwd(dir.now)
     set.seed(globe_input[["seedNum"]])
-    files <- list.files(globe_resdir, full.names = TRUE, pattern = "\\.fcs")[file.order]
+    files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
     # NEED MULTIFLOW-MAP FIX FOR FILES
     mode <- globe_input[["mode"]]
-    save.folder <- globe_resdir2
+    save.folder <- globe.result.dir
     var.annotate <- list()
     for (j in 1:nrow(flowfile)) {
       var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
