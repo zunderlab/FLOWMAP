@@ -37,6 +37,7 @@ shinyServer(function(input, output, session) {
   })
   test_print <- eventReactive(input$generbutton1, {
     print("BEEP")
+    input$testprint
   })
   chosen_order <- eventReactive(input$generbutton2, {
     input$fileorder
@@ -204,6 +205,8 @@ shinyServer(function(input, output, session) {
     for (j in 1:nrow(flowfile)) {
       var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
     }
+    print("input$testprint")
+    print(input$testprint)
     var.remove <- flowfile[flowfile$removal == T, 1]
     clustering.var <- flowfile[flowfile$cluster == T, 1]
     per <- as.numeric(globe_input[["edgepctNum"]])
