@@ -41,7 +41,7 @@ shinyServer(function(input, output, session) {
   })
   testprint <- eventReactive(input$default.button, {
     print("BEEP")
-    input$testprint
+    print("BOOP")
   })
   chosen_order <- eventReactive(input$gener.param.button, {
     input$file.order.input
@@ -198,7 +198,7 @@ shinyServer(function(input, output, session) {
     # writes the file
     file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
     flowfile <- (hot_to_r(input$table))
-    print(folder.now)
+    # print(folder.now)
     setwd(dir.now)
     set.seed(globe_input[["seedNum"]])
     files <- list.files(globe_resdir, full.names = TRUE, pattern = "\\.fcs")[file.order]
@@ -209,8 +209,6 @@ shinyServer(function(input, output, session) {
     for (j in 1:nrow(flowfile)) {
       var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
     }
-    print("input$testprint")
-    print(input$testprint)
     var.remove <- flowfile[flowfile$removal == TRUE, 1]
     clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
     per <- as.numeric(globe_input[["edgepctNum"]])
