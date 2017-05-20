@@ -11,20 +11,8 @@ shinyServer(function(input, output, session) {
   operating.system <- Sys.info()[1]
   print("operating.system")
   print(operating.system)
-  # print("getwd()")
-  # print(getwd())
-  # get function for FLOW-MAP
-  # if (operating.system == "Windows") {
-  #   folder.now <- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
-  # } else {
-  #   folder.now <- paste(getwd(), "/", sep = "")
-  # }
-  # print("folder.now")
-  # print(folder.now)
-  # get directory for where all FLOW-MAP function files are located
   final.new.same <- NULL
   final.new.diff <- NULL
-  # Set Global Variables
   dir.now <- globe_resdir
   FileOrder <- function(dir.now) {
     file.names <- list.files(dir.now, pattern = "\\.fcs")

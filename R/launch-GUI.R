@@ -22,145 +22,128 @@
 LaunchGUI <- function() {
   require(shiny)
   # parameter initialization
-  cur_dir <- getwd()
-  distanceMetric <- c("manhattan", "euclidean")
+  current.dir <- getwd()
+  distance.metric <- c("manhattan", "euclidean")
   mode <- c("multi", "single", "one")
-  colorpalette <- c("bluered", "jet", "CB")
-  rawFCSdir <- tclVar(cur_dir)
-  resDir <- tclVar(cur_dir)
-  downsampleToggle <- tclVar("0")
-  savePDFsToggle <- tclVar("0")
-  subsampleNum <- tclVar("200")
-  clusterNum <- tclVar("100")
-  seedNum <- tclVar("1")
-  edgepctNum <- tclVar("1")
-  edgeNumMin <- tclVar("2")
-  edgeNumMax <- tclVar("5")
-  ret_var <- tclVar("")
+  color.palette <- c("bluered", "jet", "CB")
+  raw.FCS.dir <- tclVar(current.dir)
+  result.dir <- tclVar(current.dir)
+  downsample.toggle <- tclVar("0")
+  savePDFs.toggle <- tclVar("0")
+  subsample.num <- tclVar("200")
+  cluster.num <- tclVar("100")
+  seed.num <- tclVar("1")
+  edge.pct.num <- tclVar("1")
+  edge.num.min <- tclVar("2")
+  edge.num.max <- tclVar("5")
+  ret.var <- tclVar("")
   
-  #  button functions
-  reset_rawFCS_dir <- function() {
-    rawFCS_dir <- ""
-    rawFCS_dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
-    if (rawFCS_dir != "") {
-      tclvalue(rawFCSdir) <- rawFCS_dir
-      tclvalue(resDir) <- rawFCS_dir
+  # button functions
+  ResetRawFCSDir <- function() {
+    raw.FCS.dir <- ""
+    raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
+    if (raw.FCS.dir != "") {
+      tclvalue(raw.FCS.dir) <- raw.FCS.dir
+      tclvalue(result.dir) <- raw.FCS.dir
     }
   }
-  reset_res_dir <- function() {
-    res_dir <- ""
-    res_dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
-    if (res_dir != "") {
-      tclvalue(resDir) <- res_dir
+  ResetResultDir <- function() {
+    result.dir <- ""
+    result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
+    if (result.dir != "") {
+      tclvalue(result.dir) <- result.dir
     }
   }
-  reset_fcs_data <- function() {
-    fnames <- ""
-    fnames <- tk_choose.files(default = paste(tclvalue(rawFCSdir), 
-                                              "fcs", sep = .Platform$file.sep),
-                              caption = "Select FCS files", 
-                              multi = TRUE, filters = matrix(c("{fcs files}", "{.fcs}"), 1, 2), index = 1)
-    if (length(fnames) >= 1) {
-      fnames <- fnames[!(grepl(paste0(.Platform$file.sep, 
-                                      "fcs$"), fnames))]  # remove empty .fcs files
-    }
-  }
-  reset_num2null <- function() {
-    tclvalue(fixedNum) <- "NULL"
-  }
-  reset_num2any <- function() {
-    tclvalue(fixedNum) <- "1000"
-  }
-  rawFCSdir_help <- function() {
-    tkmessageBox(title = "rawFCSdir", message = "The directory that contains the raw FCS files.", 
+  RawFCSDirHelp <- function() {
+    tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
                  icon = "info", type = "ok")
   }
-  distanceMetric_help <- function() {
-    tkmessageBox(title = "distanceMetric", message = "Select the appropriate distance metric.", 
+  DistanceMetricHelp <- function() {
+    tkmessageBox(title = "distance.metric", message = "Select the appropriate distance metric.", 
                  icon = "info", type = "ok")
   }
-  mode_help <- function() {
+  ModeHelp <- function() {
     tkmessageBox(title = "mode", message = "Method of analysis via multiple FCS files or via one.", 
                  icon = "info", type = "ok")
   }
-  color_help <- function() {
-    tkmessageBox(title = "colorpalette", message = "Color palette to use for saved PDFs of output graph.", 
+  ColorHelp <- function() {
+    tkmessageBox(title = "color.palette", message = "Color palette to use for saved PDFs of output graph.", 
                  icon = "info", type = "ok")
   }
-  resDir_help <- function() {
-    tkmessageBox(title = "resDir", message = "The directory where result files will be generated.", 
+  ResultDirHelp <- function() {
+    tkmessageBox(title = "result.dir", message = "The directory where result files will be generated.", 
                  icon = "info", type = "ok")
   }
-  downsample_help = function() {
-    tkmessageBox(title = "downsampleToggle", message = "Turn on/off SPADE downsampling.",
+  DownsampleHelp = function() {
+    tkmessageBox(title = "downsample.toggle", message = "Turn on/off SPADE downsampling.",
                  icon = "info", type = "ok")
   }
-  savePDFs_help = function() {
-    tkmessageBox(title = "savePDFsToggle", message = "Turn on/off saving PDFs of output graph.",
+  SavePDFsHelp = function() {
+    tkmessageBox(title = "savePDFs.toggle", message = "Turn on/off saving PDFs of output graph.",
                  icon = "info", type = "ok")
   }
-  subsampleNum_help = function() {
-    tkmessageBox(title = "subsampleNum", message = "The number of cells to sample from each FCS file. If SPADE downsampling is selected, this specifies the target number.",
+  SubsampleNumHelp = function() {
+    tkmessageBox(title = "subsample.num", message = "The number of cells to sample from each FCS file. If SPADE downsampling is selected, this specifies the target number.",
                  icon = "info", type = "ok")
   }
-  clusterNum_help = function() {
-    tkmessageBox(title = "clusterNum", message = "The number of clusters from each FCS file.",
+  ClusterNumHelp = function() {
+    tkmessageBox(title = "cluster.num", message = "The number of clusters from each FCS file.",
                  icon = "info", type = "ok")
   }
-  seedNum_help = function() {
-    tkmessageBox(title = "seedNum", message = "The seed number for reproducible analysis.",
+  SeedNumHelp = function() {
+    tkmessageBox(title = "seed.num", message = "The seed number for reproducible analysis.",
                  icon = "info", type = "ok")
   }
-  edgepctNum_help = function() {
-    tkmessageBox(title = "edgepctNum", message = "The edge percentile number",
+  EdgePctNumHelp = function() {
+    tkmessageBox(title = "edge.pct.num", message = "The edge percentile number",
                  icon = "info", type = "ok")
   }
-  edgeNumMin_help = function() {
-    tkmessageBox(title = "edgeNumMin", message = "The lower bound for number of edges during density-dependent edge drawing steps.",
+  EdgeNumMinHelp = function() {
+    tkmessageBox(title = "edge.num.min", message = "The lower bound for number of edges during density-dependent edge drawing steps.",
                  icon = "info", type = "ok")
   }
-  edgeNumMax_help = function() {
-    tkmessageBox(title = "edgeNumMax", message = "The upper bound for number of edges during density-dependent edge drawing steps.",
+  EdgeNumMaxHelp = function() {
+    tkmessageBox(title = "edge.num.max", message = "The upper bound for number of edges during density-dependent edge drawing steps.",
                  icon = "info", type = "ok")
   }
-  reset <- function() {
-    tclvalue(rawFCSdir) <- cur_dir
-    tclvalue(resDir) <- cur_dir
-    tclvalue(distanceMetric) <- distanceMetric[1]
+  Reset <- function() {
+    tclvalue(raw.FCS.dir) <- current.dir
+    tclvalue(result.dir) <- current.dir
+    tclvalue(distance.metric) <- distance.metric[1]
     tclvalue(mode) <- mode[2]
-    tclvalue(colorpalette) <- colorpalette[1]
-    tclvalue(downsampleToggle) <- "0"
-    tclvalue(savePDFsToggle) <- "0"
-    tclvalue(subsampleNum) <- "200"
-    tclvalue(clusterNum) <- "100"
-    tclvalue(seedNum) <- "1"
-    tclvalue(edgepctNum) <- "1"
-    tclvalue(edgeNumMin) <- "2"
-    tclvalue(edgeNumMax) <- "5"
+    tclvalue(color.palette) <- color.palette[1]
+    tclvalue(downsample.toggle) <- "0"
+    tclvalue(savePDFs.toggle) <- "0"
+    tclvalue(subsample.num) <- "200"
+    tclvalue(cluster.num) <- "100"
+    tclvalue(seed.num) <- "1"
+    tclvalue(edge.pct.num) <- "1"
+    tclvalue(edge.num.min) <- "2"
+    tclvalue(edge.num.max) <- "5"
   }
-  submit <- function() {
-    has_error <- FALSE
-    if (has_error == FALSE) {
-      tclvalue(ret_var) <- "OK"
+  Submit <- function() {
+    has.error <- FALSE
+    if (has.error == FALSE) {
+      tclvalue(ret.var) <- "OK"
       tkdestroy(tt)
     }
   }
-  quit <- function() {
+  Quit <- function() {
     tkdestroy(tt)
     stop("Exiting FLOWMAPR GUI.")
   }
+  
   # build the GUI
   # head line
   tt <- tktoplevel(borderwidth = 20)
   tkwm.title(tt, "FLOWMAPR")
-  
   if (.Platform$OS.type == "windows") {
-    box_length <- 63
+    box.length <- 63
   } else {
-    box_length <- 55 
+    box.length <- 55 
   }
-  cell_width <- 3
-  bt_width <- 8
+  cell.width <- 3
+  bt.width <- 8
   
   imgfile <- system.file("extdata", "help.gif", package = "cytofkit")
   image1 <- tclVar()
@@ -169,215 +152,217 @@ LaunchGUI <- function() {
   tkimage.create("photo", image2)
   tcl(image2, "copy", image1, subsample = 6)
   
-  # rawFCSdir
-  rawFCSdir_label <- tklabel(tt, text = "Raw FCS Files Directory:")
-  rawFCSdir_entry <- tkentry(tt, textvariable = rawFCSdir, width = box_length)
-  rawFCSdir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, command = reset_rawFCS_dir)
-  rawFCSdir_hBut <- tkbutton(tt, image = image2, command = rawFCSdir_help)
+  # raw.FCS.dir
+  raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files Directory:")
+  raw.FCS.dir.entry <- tkentry(tt, textvariable = raw.FCS.dir, width = box.length)
+  raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = ResetRawFCSDir)
+  raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
   
-  # resDir
-  resDir_label <- tklabel(tt, text = "Result Directory:")
-  resDir_entry <- tkentry(tt, textvariable = resDir, width = box_length)
-  resDir_button <- tkbutton(tt, text = " Choose... ", width = bt_width, 
-                            command = reset_res_dir)
-  resDir_hBut <- tkbutton(tt, image = image2, command = resDir_help)
+  # result.dir
+  result.dir.label <- tklabel(tt, text = "Result Directory:")
+  result.dir.entry <- tkentry(tt, textvariable = result.dir, width = box.length)
+  result.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, 
+                            command = ResetResultDir)
+  result.dir.hBut <- tkbutton(tt, image = image2, command = ResultDirHelp)
   
-  # downsampleToggle
-  downsample_label <- tklabel(tt, text = "SPADE Downsampling:")
-  downsample_hBut <- tkbutton(tt, image = image2, command = downsample_help)
-  downsample_rbuts <- tkframe(tt)
-  tkpack(tklabel(downsample_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(downsample_rbuts, variable = downsampleToggle), 
+  # downsample.toggle
+  downsample.label <- tklabel(tt, text = "SPADE Downsampling:")
+  downsample.hBut <- tkbutton(tt, image = image2, command = DownsampleHelp)
+  downsample.rbuts <- tkframe(tt)
+  tkpack(tklabel(downsample.rbuts, text = ""), side = "left")
+  tkpack(tkcheckbutton(downsample.rbuts, variable = downsample.toggle), 
          side = "left")
   
-  # savePDFsToggle
-  savePDFs_label <- tklabel(tt, text = "Save Graph PDFs:")
-  savePDFs_hBut <- tkbutton(tt, image = image2, command = savePDFs_help)
-  savePDFs_rbuts <- tkframe(tt)
-  tkpack(tklabel(savePDFs_rbuts, text = ""), side = "left")
-  tkpack(tkcheckbutton(savePDFs_rbuts, variable = savePDFsToggle), 
+  # savePDFs.toggle
+  savePDFs.label <- tklabel(tt, text = "Save Graph PDFs:")
+  savePDFs.hBut <- tkbutton(tt, image = image2, command = SavePDFsHelp)
+  savePDFs.rbuts <- tkframe(tt)
+  tkpack(tklabel(savePDFs.rbuts, text = ""), side = "left")
+  tkpack(tkcheckbutton(savePDFs.rbuts, variable = savePDFs.toggle), 
          side = "left")
   
-  # colorpalette Method
-  color_label <- tklabel(tt, text = "Color Palette:")
-  color_hBut <- tkbutton(tt, image = image2,
-                         command = color_help)
-  color_rbuts <- tkframe(tt)
-  tkpack(tklabel(color_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(color_rbuts, text = colorpalette[1], 
-                       variable = colorpalette, value = colorpalette[1]), side = "left")
-  tkpack(tkradiobutton(color_rbuts, text = colorpalette[2],
-                       variable = colorpalette, value = colorpalette[2]), side = "left")
-  tkpack(tkradiobutton(color_rbuts, text = colorpalette[3],
-                       variable = colorpalette, value = colorpalette[3]), side = "left")
+  # color.palette Method
+  color.label <- tklabel(tt, text = "Color Palette:")
+  color.hBut <- tkbutton(tt, image = image2,
+                         command = ColorHelp)
+  color.rbuts <- tkframe(tt)
+  tkpack(tklabel(color.rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(color.rbuts, text = color.palette[1], 
+                       variable = color.palette, value = color.palette[1]), side = "left")
+  tkpack(tkradiobutton(color.rbuts, text = color.palette[2],
+                       variable = color.palette, value = color.palette[2]), side = "left")
+  tkpack(tkradiobutton(color.rbuts, text = color.palette[3],
+                       variable = color.palette, value = color.palette[3]), side = "left")
   
   # FLOWMAPtypeMethod
-  mode_label <- tklabel(tt, text = "FLOW-MAP Mode:")
-  mode_hBut <- tkbutton(tt, image = image2,
-                        command = mode_help)
-  mode_rbuts <- tkframe(tt)
-  tkpack(tklabel(mode_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(mode_rbuts, text = mode[1], 
+  mode.label <- tklabel(tt, text = "FLOW-MAP Mode:")
+  mode.hBut <- tkbutton(tt, image = image2,
+                        command = ModeHelp)
+  mode.rbuts <- tkframe(tt)
+  tkpack(tklabel(mode.rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(mode.rbuts, text = mode[1], 
                        variable = mode, value = mode[1]), side = "left")
-  tkpack(tkradiobutton(mode_rbuts, text = mode[2],
+  tkpack(tkradiobutton(mode.rbuts, text = mode[2],
                        variable = mode, value = mode[2]), side = "left")
-  tkpack(tkradiobutton(mode_rbuts, text = mode[3],
+  tkpack(tkradiobutton(mode.rbuts, text = mode[3],
                        variable = mode, value = mode[3]), side = "left")
   
-  # distanceMetric
-  distanceMetric_label <- tklabel(tt, text = "Distance Metric:")
-  distanceMetric_hBut <- tkbutton(tt, image = image2, command = distanceMetric_help)
-  distanceMetric_rbuts <- tkframe(tt)
-  tkpack(tklabel(distanceMetric_rbuts, text = ""), side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetric[1], 
-                       variable = distanceMetric, value = distanceMetric[1]), 
+  # distance.metric
+  distance.metric.label <- tklabel(tt, text = "Distance Metric:")
+  distance.metric.hBut <- tkbutton(tt, image = image2, command = DistanceMetricHelp)
+  distance.metric.rbuts <- tkframe(tt)
+  tkpack(tklabel(distance.metric.rbuts, text = ""), side = "left")
+  tkpack(tkradiobutton(distance.metric.rbuts, text = distance.metric[1], 
+                       variable = distance.metric, value = distance.metric[1]), 
          side = "left")
-  tkpack(tkradiobutton(distanceMetric_rbuts, text = distanceMetric[2],
-                       variable = distanceMetric, value = distanceMetric[2]), 
+  tkpack(tkradiobutton(distance.metric.rbuts, text = distance.metric[2],
+                       variable = distance.metric, value = distance.metric[2]), 
          side = "left")
   
-  # subsampleNum
-  subsampleNum_label = tklabel(tt, text = "Subsample Number (Downsample Target Number):")
-  subsampleNum_entry = tkentry(tt, textvariable = subsampleNum, width = 9)
-  subsampleNum_hBut = tkbutton(tt, image = image2, command = subsampleNum_help)
+  # subsample.num
+  subsample.num.label <- tklabel(tt, text = "Subsample Number (Downsample Target Number):")
+  subsample.num.entry <- tkentry(tt, textvariable = subsample.num, width = 9)
+  subsample.num.hBut <- tkbutton(tt, image = image2, command = SubsampleNumHelp)
   
-  # clusterNum
-  clusterNum_label = tklabel(tt, text = "Number of Clusters:")
-  clusterNum_entry = tkentry(tt, textvariable = clusterNum, width = 9)
-  clusterNum_hBut = tkbutton(tt, image = image2, command = clusterNum_help)
+  # cluster.num
+  cluster.num.label <- tklabel(tt, text = "Number of Clusters:")
+  cluster.num.entry <- tkentry(tt, textvariable = cluster.num, width = 9)
+  cluster.num.hBut <- tkbutton(tt, image = image2, command = ClusterNumHelp)
   
-  # seedNum
-  seedNum_label = tklabel(tt, text = "Seed Number:")
-  seedNum_entry = tkentry(tt, textvariable = seedNum, width = 9)
-  seedNum_hBut = tkbutton(tt, image = image2, command = seedNum_help)
+  # seed.num
+  seed.num.label <- tklabel(tt, text = "Seed Number:")
+  seed.num.entry <- tkentry(tt, textvariable = seed.num, width = 9)
+  seed.num.hBut <- tkbutton(tt, image = image2, command = SeedNumHelp)
   
-  # edgepctNum
-  edgepctNum_label = tklabel(tt, text = "Edge Percentile Number:")
-  edgepctNum_entry = tkentry(tt, textvariable = edgepctNum, width = 9)
-  edgepctNum_hBut = tkbutton(tt, image = image2, command = edgepctNum_help)
+  # edge.pct.num
+  edge.pct.num.label <- tklabel(tt, text = "Edge Percentile Number:")
+  edge.pct.num.entry <- tkentry(tt, textvariable = edge.pct.num, width = 9)
+  edge.pct.num.hBut <- tkbutton(tt, image = image2, command = EdgePctNumHelp)
   
-  # edgeNumMin
-  edgeNumMin_label = tklabel(tt, text = "Minimum Number of Edges:")
-  edgeNumMin_entry = tkentry(tt, textvariable = edgeNumMin, width = 9)
-  edgeNumMin_hBut = tkbutton(tt, image = image2, command = edgeNumMin_help)
+  # edge.num.min
+  edge.num.min.label <- tklabel(tt, text = "Minimum Number of Edges:")
+  edge.num.min.entry <- tkentry(tt, textvariable = edge.num.min, width = 9)
+  edge.num.min.hBut <- tkbutton(tt, image = image2, command = EdgeNumMinHelp)
   
-  # edgeNumMax
-  edgeNumMax_label = tklabel(tt, text = "Maximum Number of Edges:")
-  edgeNumMax_entry = tkentry(tt, textvariable = edgeNumMax, width = 9)
-  edgeNumMax_hBut = tkbutton(tt, image = image2, command = edgeNumMax_help)
+  # edge.num.max
+  edge.num.max.label <- tklabel(tt, text = "Maximum Number of Edges:")
+  edge.num.max.entry <- tkentry(tt, textvariable = edge.num.max, width = 9)
+  edge.num.max.hBut <- tkbutton(tt, image = image2, command = EdgeNumMaxHelp)
   
   # submit / reset / quit
-  submit_button <- tkbutton(tt, text = "Submit", command = submit)
-  reset_button <- tkbutton(tt, text = "Reset", command = reset)
-  quit_button <- tkbutton(tt, text = "Quit", command = quit)
+  submit.button <- tkbutton(tt, text = "Submit", command = Submit)
+  reset.button <- tkbutton(tt, text = "Reset", command = Reset)
+  quit.button <- tkbutton(tt, text = "Quit", command = Quit)
   
   # display GUI
-  tkgrid(rawFCSdir_label, rawFCSdir_hBut, rawFCSdir_entry, rawFCSdir_button, 
-         padx = cell_width)
-  tkgrid.configure(rawFCSdir_label, rawFCSdir_entry, rawFCSdir_button, 
+  tkgrid(raw.FCS.dir.label, raw.FCS.dir.hBut, raw.FCS.dir.entry, raw.FCS.dir.button, 
+         padx = cell.width)
+  tkgrid.configure(raw.FCS.dir.label, raw.FCS.dir.entry, raw.FCS.dir.button, 
                    sticky = "e")
-  tkgrid.configure(rawFCSdir_hBut, sticky = "e")
+  tkgrid.configure(raw.FCS.dir.hBut, sticky = "e")
   
-  tkgrid(resDir_label, resDir_hBut, resDir_entry, resDir_button, 
-         padx = cell_width)
-  tkgrid.configure(resDir_label, resDir_entry, resDir_button, 
+  tkgrid(result.dir.label, result.dir.hBut, result.dir.entry, result.dir.button, 
+         padx = cell.width)
+  tkgrid.configure(result.dir.label, result.dir.entry, result.dir.button, 
                    sticky = "e")
-  tkgrid.configure(resDir_hBut, sticky = "e")
+  tkgrid.configure(result.dir.hBut, sticky = "e")
   
-  tkgrid(downsample_label, downsample_hBut, downsample_rbuts, 
-         padx = cell_width)
-  tkgrid.configure(downsample_label, sticky = "e")
-  tkgrid.configure(downsample_hBut, sticky = "e")
-  tkgrid.configure(downsample_rbuts, sticky = "w")
+  tkgrid(downsample.label, downsample.hBut, downsample.rbuts, 
+         padx = cell.width)
+  tkgrid.configure(downsample.label, sticky = "e")
+  tkgrid.configure(downsample.hBut, sticky = "e")
+  tkgrid.configure(downsample.rbuts, sticky = "w")
   
-  tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
-         padx = cell_width)
-  tkgrid.configure(savePDFs_label, sticky = "e")
-  tkgrid.configure(savePDFs_hBut, sticky = "e")
-  tkgrid.configure(savePDFs_rbuts, sticky = "w")
+  tkgrid(savePDFs.label, savePDFs.hBut, savePDFs.rbuts, 
+         padx = cell.width)
+  tkgrid.configure(savePDFs.label, sticky = "e")
+  tkgrid.configure(savePDFs.hBut, sticky = "e")
+  tkgrid.configure(savePDFs.rbuts, sticky = "w")
   
-  tkgrid(distanceMetric_label, distanceMetric_hBut, distanceMetric_rbuts, 
-         padx = cell_width)
-  tkgrid.configure(distanceMetric_label, sticky = "e")
-  tkgrid.configure(distanceMetric_hBut, sticky = "e")
-  tkgrid.configure(distanceMetric_rbuts, sticky = "w")
+  tkgrid(distance.metric.label, distance.metric.hBut, distance.metric.rbuts, 
+         padx = cell.width)
+  tkgrid.configure(distance.metric.label, sticky = "e")
+  tkgrid.configure(distance.metric.hBut, sticky = "e")
+  tkgrid.configure(distance.metric.rbuts, sticky = "w")
   
-  tkgrid(mode_label, mode_hBut, mode_rbuts,
-         padx = cell_width)
-  tkgrid.configure(mode_label, sticky = "e")
-  tkgrid.configure(mode_rbuts, sticky = "w")
-  tkgrid.configure(mode_hBut, sticky = "e")
+  tkgrid(mode.label, mode.hBut, mode.rbuts,
+         padx = cell.width)
+  tkgrid.configure(mode.label, sticky = "e")
+  tkgrid.configure(mode.rbuts, sticky = "w")
+  tkgrid.configure(mode.hBut, sticky = "e")
   
-  tkgrid(color_label, color_hBut, color_rbuts,
-         padx = cell_width)
-  tkgrid.configure(color_label, sticky = "e")
-  tkgrid.configure(color_rbuts, sticky = "w")
-  tkgrid.configure(color_hBut, sticky = "e")
+  tkgrid(color.label, color.hBut, color.rbuts,
+         padx = cell.width)
+  tkgrid.configure(color.label, sticky = "e")
+  tkgrid.configure(color.rbuts, sticky = "w")
+  tkgrid.configure(color.hBut, sticky = "e")
   
-  tkgrid(subsampleNum_label, subsampleNum_hBut, subsampleNum_entry, padx = cell_width)
-  tkgrid.configure(subsampleNum_label, sticky = "e")
-  tkgrid.configure(subsampleNum_entry, sticky = "w")
-  tkgrid.configure(subsampleNum_hBut, sticky = "e")
+  tkgrid(subsample.num.label, subsample.num.hBut, subsample.num.entry, padx = cell.width)
+  tkgrid.configure(subsample.num.label, sticky = "e")
+  tkgrid.configure(subsample.num.entry, sticky = "w")
+  tkgrid.configure(subsample.num.hBut, sticky = "e")
   
-  tkgrid(clusterNum_label, clusterNum_hBut, clusterNum_entry, padx = cell_width)
-  tkgrid.configure(clusterNum_label, sticky = "e")
-  tkgrid.configure(clusterNum_entry, sticky = "w")
-  tkgrid.configure(clusterNum_hBut, sticky = "e")
+  tkgrid(cluster.num.label, cluster.num.hBut, cluster.num.entry, padx = cell.width)
+  tkgrid.configure(cluster.num.label, sticky = "e")
+  tkgrid.configure(cluster.num.entry, sticky = "w")
+  tkgrid.configure(cluster.num.hBut, sticky = "e")
   
-  tkgrid(seedNum_label, seedNum_hBut, seedNum_entry, padx = cell_width)
-  tkgrid.configure(seedNum_label, sticky = "e")
-  tkgrid.configure(seedNum_entry, sticky = "w")
-  tkgrid.configure(seedNum_hBut, sticky = "e")
+  tkgrid(seed.num.label, seed.num.hBut, seed.num.entry, padx = cell.width)
+  tkgrid.configure(seed.num.label, sticky = "e")
+  tkgrid.configure(seed.num.entry, sticky = "w")
+  tkgrid.configure(seed.num.hBut, sticky = "e")
 
-  tkgrid(edgepctNum_label, edgepctNum_hBut, edgepctNum_entry, padx = cell_width)
-  tkgrid.configure(edgepctNum_label, sticky = "e")
-  tkgrid.configure(edgepctNum_entry, sticky = "w")
-  tkgrid.configure(edgepctNum_hBut, sticky = "e")
+  tkgrid(edge.pct.num.label, edge.pct.num.hBut, edge.pct.num.entry, padx = cell.width)
+  tkgrid.configure(edge.pct.num.label, sticky = "e")
+  tkgrid.configure(edge.pct.num.entry, sticky = "w")
+  tkgrid.configure(edge.pct.num.hBut, sticky = "e")
   
-  tkgrid(edgeNumMin_label, edgeNumMin_hBut, edgeNumMin_entry, padx = cell_width)
-  tkgrid.configure(edgeNumMin_label, sticky = "e")
-  tkgrid.configure(edgeNumMin_entry, sticky = "w")
-  tkgrid.configure(edgeNumMin_hBut, sticky = "e")
+  tkgrid(edge.num.min.label, edge.num.min.hBut, edge.num.min.entry, padx = cell.width)
+  tkgrid.configure(edge.num.min.label, sticky = "e")
+  tkgrid.configure(edge.num.min.entry, sticky = "w")
+  tkgrid.configure(edge.num.min.hBut, sticky = "e")
   
-  tkgrid(edgeNumMax_label, edgeNumMax_hBut, edgeNumMax_entry, padx = cell_width)
-  tkgrid.configure(edgeNumMax_label, sticky = "e")
-  tkgrid.configure(edgeNumMax_entry, sticky = "w")
-  tkgrid.configure(edgeNumMax_hBut, sticky = "e")
+  tkgrid(edge.num.max.label, edge.num.max.hBut, edge.num.max.entry, padx = cell.width)
+  tkgrid.configure(edge.num.max.label, edge.num.max.hBut, sticky = "e")
+  tkgrid.configure(edge.num.max.entry, sticky = "w")
+  # tkgrid.configure(edge.num.max.label, sticky = "e")
+  # tkgrid.configure(edge.num.max.entry, sticky = "w")
+  # tkgrid.configure(edge.num.max.hBut, sticky = "e")
   
-  tkgrid(tklabel(tt, text = "\n"), padx = cell_width)  # leave blank line
+  tkgrid(tklabel(tt, text = "\n"), padx = cell.width)  # leave blank line
   
-  tkgrid(reset_button, tklabel(tt, text = ""), submit_button, 
-         quit_button, padx = cell_width)
-  tkgrid.configure(reset_button, sticky = "e")
-  tkgrid.configure(quit_button, sticky = "w")
+  tkgrid(reset.button, tklabel(tt, text = ""), submit.button, 
+         quit.button, padx = cell.width)
+  tkgrid.configure(reset.button, sticky = "e")
+  tkgrid.configure(quit.button, sticky = "w")
   
   tkwait.window(tt)
   
   # Return parameters
-  if (tclvalue(ret_var) != "OK") {
+  if (tclvalue(ret.var) != "OK") {
     okMessage <- "Analysis is cancelled."
   } else {
     inputs <- list()
     inputs[["mode"]] <- tclvalue(mode)
-    inputs[["colorpalette"]] <- tclvalue(colorpalette)
-    inputs[["downsampleToggle"]] <- tclvalue(downsampleToggle)
-    inputs[["savePDFsToggle"]] <- tclvalue(savePDFsToggle)
-    inputs[["subsampleNum"]] <- tclvalue(subsampleNum)
-    inputs[["distanceMetric"]] <- tclvalue(distanceMetric)
-    inputs[["clusterNum"]] <- tclvalue(clusterNum)
-    inputs[["seedNum"]] <- tclvalue(seedNum)
-    inputs[["edgepctNum"]] <- tclvalue(edgepctNum)
-    inputs[["edgeMaxNum"]] <- tclvalue(edgeNumMax)
-    inputs[["edgeminNum"]] <- tclvalue(edgeNumMin)
-    inputs[["resultDir"]] <- tclvalue(resDir)
+    inputs[["color.palette"]] <- tclvalue(color.palette)
+    inputs[["downsample.toggle"]] <- tclvalue(downsample.toggle)
+    inputs[["savePDFs.toggle"]] <- tclvalue(savePDFs.toggle)
+    inputs[["subsample.num"]] <- tclvalue(subsample.num)
+    inputs[["distance.metric"]] <- tclvalue(distance.metric)
+    inputs[["cluster.num"]] <- tclvalue(cluster.num)
+    inputs[["seed.num"]] <- tclvalue(seed.num)
+    inputs[["edge.pct.num"]] <- tclvalue(edge.pct.num)
+    inputs[["edgeMaxNum"]] <- tclvalue(edge.num.max)
+    inputs[["edgeminNum"]] <- tclvalue(edge.num.min)
+    inputs[["resultDir"]] <- tclvalue(result.dir)
     
     print("inputs")
     print(inputs)
     
-    globe_input <<- inputs
-    globe_resdir <<- tclvalue(rawFCSdir)
+    globe.input <<- inputs
+    globe.result.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
-    globe_resdir2 <<- tclvalue(resDir)
+    globe.result.dir2 <<- tclvalue(result.dir)
     timeNow <- gsub("[:]","-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
