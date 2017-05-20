@@ -246,7 +246,7 @@ In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total no
 
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.
-1. When `FLOWMAPR::launch_GUI()` is run, a dialogue box of the header "FLOWMAP" should appear. 
+1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box of the header "FLOWMAPR" should appear. 
 2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed.
 3. When "Submit" is pressed, a new window should appear which runs with Shiny.
 4. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown.
