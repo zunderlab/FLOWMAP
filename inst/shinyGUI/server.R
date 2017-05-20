@@ -5,9 +5,9 @@ require(rhandsontable)
 shinyServer(function(input, output, session) {
   print("globe.inputs")
   print(globe.inputs)
-  # if (!exists("globe.result.dir")) {
-  #   stopApp()
-  # }
+  if (globe.inputs[["quit"]]) {
+    stopApp()
+  }
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   operating.system <- Sys.info()[1]
@@ -190,10 +190,10 @@ shinyServer(function(input, output, session) {
     flowfile <- (hot_to_r(input$table))
     # print(folder.now)
     setwd(dir.now)
-    set.seed(globe_input[["seedNum"]])
+    set.seed(globe.inputs[["seedNum"]])
     files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
     # NEED MULTIFLOW-MAP FIX FOR FILES
-    mode <- globe_input[["mode"]]
+    mode <- globe.inputs[["mode"]]
     save.folder <- globe.result.dir
     var.annotate <- list()
     for (j in 1:nrow(flowfile)) {
@@ -201,20 +201,20 @@ shinyServer(function(input, output, session) {
     }
     var.remove <- flowfile[flowfile$removal == TRUE, 1]
     clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-    per <- as.numeric(globe_input[["edgepctNum"]])
-    maximum <- as.numeric(globe_input[["edgeMaxNum"]])
-    minimum <- as.numeric(globe_input[["edgeminNum"]])
-    distance.metric <- globe_input[["distanceMetric"]]
-    subsamples <- as.numeric(globe_input[["subsampleNum"]])
-    cluster.numbers <- as.numeric(globe_input[["clusterNum"]])
-    seed.X <- as.numeric(globe_input[["seedNum"]])
-    savePDFs <- as.logical(as.numeric(globe_input[["savePDFsToggle"]]))
-    which.palette <- globe_input[["colorpalette"]]
+    per <- as.numeric(globe.inputs[["edgepctNum"]])
+    maximum <- as.numeric(globe.inputs[["edgeMaxNum"]])
+    minimum <- as.numeric(globe.inputs[["edgeminNum"]])
+    distance.metric <- globe.inputs[["distanceMetric"]]
+    subsamples <- as.numeric(globe.inputs[["subsampleNum"]])
+    cluster.numbers <- as.numeric(globe.inputs[["clusterNum"]])
+    seed.X <- as.numeric(globe.inputs[["seedNum"]])
+    savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFsToggle"]]))
+    which.palette <- globe.inputs[["colorpalette"]]
     for (i in 1:length(clustering.var)) {
       clustering.var[i] <- var.annotate[[clustering.var[i]]]
     }
     name.sort <- FALSE
-    downsample <- as.logical(as.numeric(globe_input[["downsampleToggle"]]))
+    downsample <- as.logical(as.numeric(globe.inputs[["downsampleToggle"]]))
     # Run FLOW-MAP
     if (downsample) {
       print("Downsampling")

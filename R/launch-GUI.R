@@ -37,6 +37,7 @@ LaunchGUI <- function() {
   edge.num.min <- tclVar("2")
   edge.num.max <- tclVar("5")
   ret.var <- tclVar("")
+  quit.var <- tclVar(FALSE)
   
   # button functions
   ResetRawFCSDir <- function() {
@@ -130,7 +131,7 @@ LaunchGUI <- function() {
   }
   Quit <- function() {
     tkdestroy(tt)
-    rm(globe.inputs)
+    tclvalue(quit.var) <- TRUE
     stop("Exiting FLOWMAPR GUI.")
   }
   
@@ -343,6 +344,7 @@ LaunchGUI <- function() {
     inputs[["edgeMaxNum"]] <- tclvalue(edge.num.max)
     inputs[["edgeminNum"]] <- tclvalue(edge.num.min)
     inputs[["resultDir"]] <- tclvalue(result.dir)
+    inputs[["quit"]] <- tclvalue(quit.var)
     
     globe.inputs <<- inputs
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
