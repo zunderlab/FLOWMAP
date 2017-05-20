@@ -5,7 +5,7 @@ require(rhandsontable)
 shinyServer(function(input, output, session) {
   print("globe.inputs")
   print(globe.inputs)
-  if (as.logical(as.numeric(globe.inputs[["quit"]]))) {
+  if (globe.inputs[["quit"]]) {
     stopApp()
   }
   options(shiny.maxRequestSize = 1000 * 1024^2)
@@ -236,10 +236,10 @@ shinyServer(function(input, output, session) {
   output$TESTPRINT <- renderText({
     TestPrint()
   })
-  # output$writefile <- renderText({
-  #   WriteFile()
-  #   NULL
-  # })
+  output$writefile <- renderText({
+    WriteFile()
+    NULL
+  })
   output$vartable <- renderText({
     TableCreate()
     NULL
