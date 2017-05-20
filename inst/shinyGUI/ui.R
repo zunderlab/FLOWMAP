@@ -14,7 +14,7 @@ shinyUI(
                          selectize = FALSE,
                          size = 10
              ),
-             textInput("fileorder", label = h5("Write the FCS File Order"),
+             textInput("file.order.input", label = h5("Write the FCS File Order"),
                        placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
              actionButton("generbutton", "Generate Parameters"),
              actionButton("defaultbutton", "Use Default Order"),

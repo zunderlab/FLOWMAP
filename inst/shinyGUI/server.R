@@ -11,31 +11,28 @@ shinyServer(function(input, output, session) {
   operating.system <- Sys.info()[1]
   print("operating.system")
   print(operating.system)
-  print("getwd()")
-  print(getwd())
+  # print("getwd()")
+  # print(getwd())
   # get function for FLOW-MAP
-  if (operating.system == "Windows") {
-    folder.now <- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
-  } else {
-    folder.now <- paste(getwd(), "/", sep = "")
-  }
-  print("folder.now")
-  print(folder.now)
+  # if (operating.system == "Windows") {
+  #   folder.now <- paste(gsub("/", "\\\\", getwd()), "\\", sep = "")
+  # } else {
+  #   folder.now <- paste(getwd(), "/", sep = "")
+  # }
+  # print("folder.now")
+  # print(folder.now)
   # get directory for where all FLOW-MAP function files are located
   final.new.same <- NULL
   final.new.diff <- NULL
   # Set Global Variables
   dir.now <- globe_resdir
-  fileorder <- function(dir.now) {
+  FileOrder <- function(dir.now) {
     file.names <- list.files(dir.now, pattern = "\\.fcs")
-    len.filenames <- c()
-    for (i in 1:length(file.names)){
-      len.filenames <- c(len.filenames, i)
-    }
+    len.filenames <- seq(1, length(file.names))
     return(list(len.filenames = len.filenames,
                 file.names = file.names))
   }
-  file.info <- fileorder(dir.now)
+  file.info <- FileOrder(dir.now)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
   observe({
@@ -47,7 +44,7 @@ shinyServer(function(input, output, session) {
     input$testprint
   })
   chosen_order <- eventReactive(input$generbutton2, {
-    input$fileorder
+    input$file.order.input
   })
   fcs_order <- eventReactive(input$generbutton2, {
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
@@ -61,7 +58,7 @@ shinyServer(function(input, output, session) {
     # Read input Files
     # Set the names
     fcs.list <- list()
-    rows <- length(fileorder(dir.now))
+    rows <- length(FileOrder(dir.now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order) {
@@ -88,7 +85,7 @@ shinyServer(function(input, output, session) {
   })
   contentsame <- eventReactive(input$generbutton2, {
     fcs.list <- list()
-    rows <- length(fileorder(dir.now))
+    rows <- length(FileOrder(dir.now))
     count <- 0
     order <- as.numeric(unlist(strsplit(chosen_order(), ",")))
     for(i in order)
@@ -199,7 +196,7 @@ shinyServer(function(input, output, session) {
     }
     setwd(dir)
     # writes the file
-    file.order <- as.numeric(unlist(strsplit(input$fileorder, split = ",")))
+    file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
     flowfile <- (hot_to_r(input$table))
     print(folder.now)
     setwd(dir.now)
