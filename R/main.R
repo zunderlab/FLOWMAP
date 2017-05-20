@@ -5,12 +5,12 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     distance.metric = "manhattan", minimum = 2, maximum = 5,
                     per = 1, save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
-                    which.palette = "bluered", ...) {
+                    which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
+                    target.number = NULL, target.percent = NULL, ...) {
   # optional variables
   # starting.files = c("FCS", "cluster_matrix")
   print(ls())
   for ( obj in ls() ) { print(get(obj)) }
-  print(objects())
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
