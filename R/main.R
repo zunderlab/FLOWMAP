@@ -29,6 +29,14 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     orig.times <- ParseTimes(fcs.file.names, name.sort = name.sort)
     file.name <- fcs.file.names[1]
     if (downsample) {
+      print("exclude.pctile")
+      print(exclude.pctile)
+      print("target.pctile")
+      print(target.pctile)
+      print("target.number")
+      print(target.number)
+      print("target.percent")
+      print(target.percent)
       cat("Downsampling all files using SPADE downsampling", "\n")
       fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
                                  channel.remove = var.remove, exclude.pctile = exclude.pctile,
@@ -128,10 +136,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  print("orig.times")
-  print(orig.times)
-  print("orig.times")
-  print(orig.times)
   graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
   fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
   PrintSummary(env = parent.frame())
