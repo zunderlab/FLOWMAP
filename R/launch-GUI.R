@@ -288,22 +288,12 @@ LaunchGUI <- function() {
   tkgrid.configure(downsample_label, sticky = "e")
   tkgrid.configure(downsample_hBut, sticky = "e")
   tkgrid.configure(downsample_rbuts, sticky = "w")
-  # tkgrid(downsample_label, downsample_hBut, downsample_rbuts, 
-  #        padx = cell_width)
-  # tkgrid.configure(downsample_label, sticky = "e")
-  # tkgrid.configure(downsample_hBut, sticky = "e")
-  # tkgrid.configure(downsample_rbuts, sticky = "w")
   
   tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
          padx = cell_width)
   tkgrid.configure(savePDFs_label, sticky = "e")
   tkgrid.configure(savePDFs_hBut, sticky = "e")
   tkgrid.configure(savePDFs_rbuts, sticky = "w")
-  # tkgrid(savePDFs_label, savePDFs_hBut, savePDFs_rbuts, 
-  #        padx = cell_width)
-  # tkgrid.configure(savePDFs_label, sticky = "e")
-  # tkgrid.configure(savePDFs_hBut, sticky = "e")
-  # tkgrid.configure(savePDFs_rbuts, sticky = "w")
   
   tkgrid(distanceMetric_label, distanceMetric_hBut, distanceMetric_rbuts, 
          padx = cell_width)
@@ -331,8 +321,11 @@ LaunchGUI <- function() {
   # tkgrid.configure(subsampleNum_label, subsampleNum_entry, sticky = "w")
   
   tkgrid(clusterNum_label, clusterNum_hBut, clusterNum_entry, padx = cell_width)
-  tkgrid.configure(clusterNum_hBut, sticky = "w")
-  tkgrid.configure(clusterNum_label, clusterNum_entry, sticky = "w")
+  tkgrid.configure(clusterNum_label, sticky = "e")
+  tkgrid.configure(clusterNum_entry, sticky = "w")
+  tkgrid.configure(clusterNum_hBut, sticky = "e")
+  # tkgrid.configure(clusterNum_hBut, sticky = "w")
+  # tkgrid.configure(clusterNum_label, clusterNum_entry, sticky = "w")
   
   tkgrid(seedNum_label, seedNum_hBut, seedNum_entry, padx = cell_width)
   tkgrid.configure(seedNum_hBut, sticky = "w")
