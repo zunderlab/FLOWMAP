@@ -36,13 +36,11 @@ library(devtools)
 FLOWMAPR package depends on several packages, which can be installed using the below commands:
 
 ```
-install.packages("Rclusterpp") 
 install.packages("SDMTools") 
 install.packages("igraph")
 install.packages("robustbase")
 source("http://bioconductor.org/biocLite.R")
 biocLite("flowCore")
-biocLite("spade")
 ```
 
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the NOlan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
@@ -50,6 +48,8 @@ Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made availa
 ```
 library(devtools)
 install_github("nolanlab/scaffold")
+install_github("nolanlab/Rclusterpp")
+install_github("nolanlab/spade")
 ```
 
 ### Installing FLOWMAPR:
