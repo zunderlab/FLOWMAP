@@ -54,7 +54,7 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
 }
 
 BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
-                              max, distance.metric, cellnum, label.key) {
+                              max, distance.metric, label.key) {
   remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(list.of.FLOWMAP.clusters)
   output.graph <- BuildFirstMultiFLOWMAP(remodel.FLOWMAP.clusters, per,
                                          min, max, distance.metric = distance.metric)

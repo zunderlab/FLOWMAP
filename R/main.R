@@ -47,7 +47,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       file.clusters <- Upsample(file.clusters)
     }
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
-                            max = maximum, distance.metric = distance.metric, cellnum = subsamples,
+                            max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
     graph <- results$output.graph
   } else if (mode == "multi") {
@@ -89,7 +89,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       file.clusters <- MultiUpsample(file.clusters)
     }
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
-                               max = maximum, distance.metric = distance.metric, cellnum = subsamples,
+                               max = maximum, distance.metric = distance.metric,
                                label.key = label.key)
   } else if (mode == "one") {
     check <- CheckModeOne(files)
@@ -117,8 +117,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                        clustering.var = clustering.var)
     output.graph <- first.results$output.graph
     output.graph <- AnnotateGraph(output.graph = output.graph,
-                                  FLOWMAP.clusters = file.clusters,
-                                  cellnum = subsamples)
+                                  FLOWMAP.clusters = file.clusters)
     graph <- output.graph
   } else {
     stop("Unknown mode!")
