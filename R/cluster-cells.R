@@ -93,7 +93,6 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
   return(FLOWMAP.clusters)  
 }
 
-
 MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.metric) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
@@ -161,4 +160,53 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   return(list(tmp.cell.assgn = tmp.cell.assgn,
               new.medians = new.medians,
               new.counts = new.counts))
+}
+
+#### DF SPECIFIC METHODS ####
+
+ConstructOneFLOWMAPCluster <- function(df) {
+  full.clusters <- df
+  cluster.medians <- list()
+  cluster.medians[[1]] <- df
+  table.breaks <- nrow(df)
+  table.lengths <- nrow(df)
+  cluster.counts <- list()
+  cluster.counts[[1]] <- as.data.frame(matrix(rep(1, times = nrow(df))))
+  colnames(cluster.counts[[1]]) <- c("Counts")
+  cell.assgn <- list()
+  cell.assgn[[1]] <- as.data.frame(matrix(seq(1, nrow(df))))
+  colnames(cell.assgn[[1]]) <- c("Cluster")
+  file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
+                                  cluster.medians, cluster.counts, cell.assgn)
+  return(file.clusters)
+}
+
+ConstructSingleFLOWMAPCluster <- function(list.of.df) {
+  full.clusters <- data.frame()
+  cluster.medians <- list()
+  table.breaks <- c()
+  table.lengths <- c()
+  cluster.counts <- list()
+  cell.assgn <- list()
+  for (i in 1:length(list.of.df)) {
+    full.clusters <- rbind(full.clusters, list.of.df[[i]])
+    cluster.medians[[i]] <- list.of.df[[i]]
+    table.breaks <- c(table.breaks, nrow(list.of.df[[i]]))
+    table.lengths <- c(table.lengths, nrow(list.of.df[[i]]))
+    cluster.counts[[i]] <- as.data.frame(matrix(rep(1, times = nrow(list.of.df[[i]]))))
+    colnames(cluster.counts[[i]]) <- c("Counts")
+    cell.assgn[[i]] <- as.data.frame(matrix(seq(1, nrow(list.of.df[[i]]))))
+    colnames(cell.assgn[[i]]) <- c("Cluster")
+  }
+  file.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
+                                  cluster.medians, cluster.counts, cell.assgn)
+  return(file.clusters)
+}
+
+ConstructMultiFLOWMAPCluster <- function(multi.list.df) {
+  list.of.FLOWMAP.clusters <- list()
+  for (i in 1:length(multi.list.df)) {
+    list.of.FLOWMAP.clusters[[i]]] <- ConstructSingleFLOWMAPCluster(multi.list.df[[i]])
+  }
+  return(list.of.FLOWMAP.clusters)
 }
