@@ -71,17 +71,10 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
       attrs.colnames <- c(attrs.colnames, attribute) 
     } else if (is.character(get.vertex.attribute(graph, attribute, index = V(graph)))) {
       remember.attr <- c(remember.attr, attribute)
-      # if (attribute != "Time" & !grepl(pattern = "Time", x = attribute)) {
-      #   remember.attr <- c(remember.attr, attribute)
-      # }
     } else {
       warning("Unknown attribute type!")
     }
   }
-  print("all.attributes")
-  print(all.attributes)
-  print("remember.attr")
-  print(remember.attr)
   colnames(all.attributes) <- attrs.colnames
   rownames(all.attributes) <- V(graph)
   # get x-y graph layout
@@ -111,11 +104,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
     attribute <- all.attributes[, name]
     if (name == "name") {
       next
-      # } else if (name == "Time" | grepl(pattern = "Time", x = name)) {
-      #   num.unique <- length(unique(attribute))
-      #   color.scale <- time.palette(num.unique)
-      #   color <- color.scale[attribute]
-      #   save.time.scale <- color.scale
     } else {
       # set up color boundaries
       ifelse (!is.null(scale), 
@@ -133,7 +121,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
       grad <- seq(boundary[1], boundary[2], length.out = length(color.scale))
       color <- color.scale[findInterval(attribute, grad, all.inside = TRUE)]
       color[is.na(attribute)] <- "grey"
-      # color[is.na(attribute) | (all.attributes[, "percent.total"] == 0)] <- "grey"
     }
     fill.color <- color
     is.na(fill.color) <- is.na(attribute)
@@ -142,31 +129,18 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
         width = pdf.width, height = pdf.height, pointsize = 12,
         bg = "transparent")
     graph.aspect <- ((max(graph.l[, 2]) - min(graph.l[, 2])) / (max(graph.l[, 1]) - min(graph.l[, 1])))
-    par(mar = c(1.5, 0, 0, 0))
+    par(mar = c(1.5, 1.5, 1.5, 1.5))
     plot(graph, layout = graph.l, vertex.shape = "circle", 
          vertex.color = fill.color, vertex.frame.color = frame.color, 
          edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
          vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
          asp = graph.aspect)
-    pnts <- cbind(x = c(0.80, 0.875, 0.875, 0.80), y = c(1.1, 1.1, 0.8, 0.8))
-    # if (grepl(name, pattern = "Time")) {
-    #   print("unique(get.vertex.attribute(graph, name, index = V(graph)))")
-    #   print(unique(get.vertex.attribute(graph, name, index = V(graph))))
-    #   time.labels <- unique(get.vertex.attribute(graph, name, index = V(graph)))
-    #   legend("topright", legend = time.labels, fill = save.time.scale, cex = 10)
-    #   color.scale <- my.palette(100)
-    # } else {
+    pnts <- cbind(x = c(0.85, 0.9, 0.9, 0.85), y = c(1.2, 1.2, 0.9, 0.9))
     legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
-    # }
     dev.off()
   }
   remember.attr <- setdiff(remember.attr, "id")
   if (length(remember.attr) > 0) {
-    if (which.palette == "CB") {
-      my.palette <- colorRampPalette(c("#0072B2", "#C3C3C7", "#E69F00"))
-    } else {
-      my.palette <- colorRampPalette(c("#00007F","blue","#007FFF","cyan","#7FFF7F","yellow","#FF7F00","red","#7F0000"))
-    }
     for (name in remember.attr) {
       if (grepl(name, pattern = "Time")) {
         palette.use <- time.palette
@@ -190,14 +164,19 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
           width = pdf.width, height = pdf.height, pointsize = 12,
           bg = "transparent")
       graph.aspect <- ((max(graph.l[, 2]) - min(graph.l[, 2])) / (max(graph.l[, 1]) - min(graph.l[, 1])))
-      par(mar = c(1.5, 0, 0, 0))
+      par(mar = c(1.5, 1.5, 1.5, 1.5))
       plot(graph, layout = graph.l, vertex.shape = "circle", 
            vertex.color = fill.color, vertex.frame.color = frame.color, 
            edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
            vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
            asp = graph.aspect)
-      legend(0.75, 1, legend = unique(attribute),
-             fill = color.scale, cex = 10)
+      if (grepl(name, pattern = "Time")) {
+        legend(0.875, 1.25, legend = unique(attribute),
+               fill = color.scale, cex = 10)
+      } else {
+        legend(0.8, 1.25, legend = unique(attribute),
+               fill = color.scale, cex = 10)
+      }
       dev.off()
     }
   }
