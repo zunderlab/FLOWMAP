@@ -206,7 +206,7 @@ ConstructSingleFLOWMAPCluster <- function(list.of.df) {
 ConstructMultiFLOWMAPCluster <- function(multi.list.df) {
   list.of.FLOWMAP.clusters <- list()
   for (i in 1:length(multi.list.df)) {
-    list.of.FLOWMAP.clusters[[i]]] <- ConstructSingleFLOWMAPCluster(multi.list.df[[i]])
+    list.of.FLOWMAP.clusters[[i]] <- ConstructSingleFLOWMAPCluster(multi.list.df[[i]])
   }
   return(list.of.FLOWMAP.clusters)
 }
