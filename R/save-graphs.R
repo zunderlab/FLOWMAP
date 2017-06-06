@@ -49,7 +49,7 @@ ConvertOrigTime <- function(graph, orig.times) {
 }
 
 ConvertToPDF <- function(graphml.file, scale = NULL,
-                         which.palette = "bluered", orig.times) {
+                         which.palette = "bluered") {
   pctile.color <- c(0.2, 0.98)
   node.size.scale <- 2
   min.node.size <- 12
@@ -70,7 +70,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
       all.attributes <- cbind(all.attributes, get.vertex.attribute(graph, attribute, index = V(graph)))
       attrs.colnames <- c(attrs.colnames, attribute) 
     } else if (is.character(get.vertex.attribute(graph, attribute, index = V(graph)))) {
-      if (name != "Time" & !grepl(pattern = "Time", x = name)) {
+      if (attribute != "Time" & !grepl(pattern = "Time", x = attribute)) {
         remember.attr <- c(remember.attr, attribute)
       }
     }
