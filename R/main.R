@@ -138,7 +138,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
+    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
   }
   return(graph.xy)
 }
