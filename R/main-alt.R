@@ -1,7 +1,7 @@
 
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
-                          var.remove, var.annotate, clustering.var, distance.metric = "manhattan",
+                          clustering.var, distance.metric = "manhattan",
                           minimum = 2, maximum = 5, per = 1, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, downsample = FALSE, clustering = FALSE,
@@ -90,8 +90,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  PrintSummary(env = parent.frame())
-  MakeFLOWMAPRFile(env = parent.frame())
+  # PrintSummary(env = parent.frame())
+  # MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)

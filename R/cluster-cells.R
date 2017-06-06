@@ -191,8 +191,8 @@ ConstructSingleFLOWMAPCluster <- function(list.of.df) {
   for (i in 1:length(list.of.df)) {
     full.clusters <- rbind(full.clusters, list.of.df[[i]])
     cluster.medians[[i]] <- list.of.df[[i]]
-    table.breaks <- c(table.breaks, nrow(list.of.df[[i]]))
     table.lengths <- c(table.lengths, nrow(list.of.df[[i]]))
+    table.breaks <- c(table.breaks, sum(table.lengths))
     cluster.counts[[i]] <- as.data.frame(matrix(rep(1, times = nrow(list.of.df[[i]]))))
     colnames(cluster.counts[[i]]) <- c("Counts")
     cell.assgn[[i]] <- as.data.frame(matrix(seq(1, nrow(list.of.df[[i]]))))

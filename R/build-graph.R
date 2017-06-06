@@ -224,8 +224,12 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   if (all.equal(colnames(fix.needed.ind), correct.names) & (nrow(fix.needed.ind) > 1)) {
     # print("more than one edge needs to be renamed")
     temp.el <- mst.edgelist.fixed[fix.needed.ind[, 1], ]
+  } else if (nrow(fix.needed.ind) == 1) {
+    warning("fix.needed.ind is only 1 row!")
+    temp.el <- mst.edgelist.fixed[fix.needed.ind[, 1], ]
+    temp.el <- t(as.matrix(temp.el))
   } else {
-    stop("Abort! fix.needed.ind is only 1 row or different colnames")
+    stop("fix.needed.ind is only <1 row or different colnames!")
   }
   for (i in 1:nrow(temp.el)) {
     each.edge <- temp.el[i, ]
