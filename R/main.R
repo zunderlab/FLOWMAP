@@ -39,7 +39,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
     }
-    fcs.files <- ShuffleCells(fcs.files, subsamples)
+    fcs.files <- ShuffleCells(fcs.files)
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
@@ -78,7 +78,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                      subsamples = subsamples)
     }
-    fcs.files <- MultiShuffleCells(fcs.files, subsamples)
+    fcs.files <- MultiShuffleCells(fcs.files)
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key

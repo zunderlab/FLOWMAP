@@ -3,7 +3,7 @@
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           var.remove, var.annotate, clustering.var, distance.metric = "manhattan",
                           minimum = 2, maximum = 5, per = 1, save.folder = getwd(),
-                          subsamples = 200, time.col.label = "Time", condition.col.label = NULL,
+                          time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, downsample = FALSE, clustering = FALSE,
                           seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
                           cluster.numbers = NULL, exclude.pctile = NULL, target.pctile = NULL,
@@ -21,7 +21,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
-    df <- ShuffleCells(df, subsamples)
+    df <- ShuffleCells(df)
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -41,7 +41,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     runtype <- "MultiFLOWMAP"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
-    df <- MultiShuffleCells(df, subsamples)
+    df <- MultiShuffleCells(df)
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
     if (clustering) {
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,

@@ -1,14 +1,8 @@
 
-ShuffleCells <- function(fcs.files, subsamples) {
+ShuffleCells <- function(fcs.files) {
   x <- c()
   for (i in 1:length(fcs.files)) {
-    if (length(subsamples) > 1) {
-      subsamp <- subsamples[i]
-    } else if (subsamples == FALSE) {
-      subsamp <- nrow(fcs.files[[i]])
-    } else {
-      subsamp <- subsamples
-    }
+    subsamp <- nrow(fcs.files[[i]])
     df1 <- fcs.files[[i]]
     x <- c(x, nrow(df1))
     df2 <- df1[sample(nrow(df1)), ]
@@ -18,17 +12,11 @@ ShuffleCells <- function(fcs.files, subsamples) {
   return(fcs.files)
 }
 
-MultiShuffleCells <- function(fcs.files, subsamples) {
+MultiShuffleCells <- function(fcs.files) {
   x <- c()
   for (n in 1:length(fcs.files)) {
     for (i in 1:length(fcs.files[[n]])) {
-      if (length(subsamples) > 1) {
-        subsamp <- subsamples[[n]][[i]]
-      } else if (subsamples == FALSE) {
-        subsamp <- nrow(fcs.files[[n]][[i]])
-      } else {
-        subsamp <- subsamples
-      }
+      subsamp <- nrow(fcs.files[[n]][[i]])
       df1 <- fcs.files[[n]][[i]]
       x <- c(x, nrow(df1))
       df2 <- df1[sample(nrow(df1)), ]
@@ -69,7 +57,7 @@ CheckModeSingle <- function(files) {
   if (length(files) == 1) {
     if (length(list.files(files)) > 1) {
       if (sum(grepl(pattern = "\\.fcs", list.files(files))) > 1) {
-      # if (all(grepl(pattern = "\\.fcs", list.files(files)))) {
+        # if (all(grepl(pattern = "\\.fcs", list.files(files)))) {
         fail.flag <- FALSE
         guide <- "folder"
       }
