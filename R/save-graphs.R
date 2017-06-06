@@ -70,7 +70,9 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
       all.attributes <- cbind(all.attributes, get.vertex.attribute(graph, attribute, index = V(graph)))
       attrs.colnames <- c(attrs.colnames, attribute) 
     } else if (is.character(get.vertex.attribute(graph, attribute, index = V(graph)))) {
-      remember.attr <- c(remember.attr, attribute)
+      if (name != "Time" & !grepl(pattern = "Time", x = name)) {
+        remember.attr <- c(remember.attr, attribute)
+      }
     }
   }
   colnames(all.attributes) <- attrs.colnames
