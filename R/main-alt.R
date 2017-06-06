@@ -84,13 +84,17 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  graph.with.fixed.times <- ConvertOrigTime(graph.xy, orig.times)
-  fixed.file <- ConvertToGraphML(output.graph = graph.with.fixed.times, file.name = fixed.file.name)
+  if (mode != "one") {
+    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
+  } else {
+    fixed.graph <- graph.xy
+  }
+  fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
   PrintSummary(env = parent.frame())
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = final.file.name, which.palette = which.palette, orig.times = orig.times)
+    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
   }
   return(graph.xy)
 }
