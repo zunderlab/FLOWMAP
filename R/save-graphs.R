@@ -98,8 +98,6 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   vsize[is.na(vsize) | (all.attributes[, "percent.total"] == 0)] <- (min.node.size) ^ (0.5 / pi)
   # print out one pdf for each attribute
   for (name in colnames(all.attributes)) {
-    print("name")
-    print(name)
     # get attribute name and data
     attribute <- all.attributes[, name]
     if (name == "name") {
@@ -145,8 +143,8 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
     if (grepl(name, pattern = "Time")) {
       print("name")
       print(name)
-      print("get.vertex.attribute(graph, name, index = V(graph))")
-      print(get.vertex.attribute(graph, name, index = V(graph)))
+      print("unique(get.vertex.attribute(graph, name, index = V(graph)))")
+      print(unique(get.vertex.attribute(graph, name, index = V(graph))))
       time.labels <- orig.times
       legend("topright", legend = time.labels, fill = save.time.scale, cex = 10)
       color.scale <- my.palette(100)
