@@ -98,6 +98,8 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   vsize[is.na(vsize) | (all.attributes[, "percent.total"] == 0)] <- (min.node.size) ^ (0.5 / pi)
   # print out one pdf for each attribute
   for (name in colnames(all.attributes)) {
+    print("name")
+    print(name)
     # get attribute name and data
     attribute <- all.attributes[, name]
     if (name == "name") {
