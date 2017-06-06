@@ -145,7 +145,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
     if (grepl(name, pattern = "Time")) {
       print("name")
       print(name)
-      print("get.vertex.attribute(graph, name, index = V(graph)"))
+      print("get.vertex.attribute(graph, name, index = V(graph))")
       print(get.vertex.attribute(graph, name, index = V(graph)))
       time.labels <- orig.times
       legend("topright", legend = time.labels, fill = save.time.scale, cex = 10)
