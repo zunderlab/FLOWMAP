@@ -6,42 +6,26 @@ This code has been reformatted and compiled into a single R package known as **F
 
 # Navigation
 <!-- [Code Status]() -->
-[Getting Started](#start)
-
-[Software and Package Prerequisites]()
-
-[Installing FLOWMAPR]()
-
-[Installing the GUI]()
-
-[Updating FLOWMAPR]()
-
-[Running FLOWMAPR]()
-
-[Starting from FCS Files]()
-
-[Starting from a Dataframe in R]()
-
-[Example Code for FLOWMAP()]()
+[Getting Started](#start)  
+[Software and Package Prerequisites]()  
+[Installing FLOWMAPR]()  
+[Installing the GUI]()  
+[Updating FLOWMAPR]()  
+[Running FLOWMAPR]()  
+[Starting from FCS Files]()  
+[Starting from a Dataframe in R]()  
+[Example Code for FLOWMAP()]()  
 <!-- Example Code for FLOWMAP() with SPADE downsampling -->
 <!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
-
-[Example Data]()
-
-[Example Code for FLOWMAPfromDF()]()
-
-[Practical Guidelines for Running FLOWMAPR]()
+[Example Data]()  
+[Example Code for FLOWMAPfromDF()]()  
+[Practical Guidelines for Running FLOWMAPR]()  
 <!-- Timing for FLOWMAPR Runs -->
-
-[Practical Guidelines for Post-Processing in Gephi]()
-
-[Using the GUI]()
+[Practical Guidelines for Post-Processing in Gephi]()  
+[Using the GUI]()  
 <!-- Contributing -->
 <!-- Versioning -->
-
-[Authors]()
-
-[License]()
+[Authors and License]()  
 <!-- Acknowledgments -->
 
 
