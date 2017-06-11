@@ -7,27 +7,43 @@ This code has been reformatted and compiled into a single R package known as **F
 # Navigation
 <!-- [Code Status]() -->
 [Getting Started](#start)
+
 [Software and Package Prerequisites]()
+
 [Installing FLOWMAPR]()
+
 [Installing the GUI]()
+
 [Updating FLOWMAPR]()
+
 [Running FLOWMAPR]()
+
 [Starting from FCS Files]()
+
 [Starting from a Dataframe in R]()
+
 [Example Code for FLOWMAP()]()
 <!-- Example Code for FLOWMAP() with SPADE downsampling -->
 <!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
+
 [Example Data]()
+
 [Example Code for FLOWMAPfromDF()]()
+
 [Practical Guidelines for Running FLOWMAPR]()
 <!-- Timing for FLOWMAPR Runs -->
+
 [Practical Guidelines for Post-Processing in Gephi]()
+
 [Using the GUI]()
 <!-- Contributing -->
 <!-- Versioning -->
+
 [Authors]()
+
 [License]()
 <!-- Acknowledgments -->
+
 
 ## Code Status
 Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
@@ -46,7 +62,8 @@ Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_
 * save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
 -->
 
-## Getting Started<a name="start"></a>
+<a name="start"></a>
+## Getting Started
 
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
 
