@@ -156,7 +156,7 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
 <a name="FLOWMAPR-DF"></a>
 ### Starting from a Dataframe in R:
 
-To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need to load/preprocess in R (differently than how FCS files are handled):
+To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need to load/preprocess in R (differently than how FCS files are handled): 
 
 0. **Complete all preprocessing steps on your data and make sure it is parseable by FLOWMAPR.** Here are the expected formats of your data for each FLOW-MAP run mode.
 * **mode "one"** = one data.frame object;
