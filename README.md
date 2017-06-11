@@ -6,28 +6,27 @@ This code has been reformatted and compiled into a single R package known as **F
 
 # Navigation
 <!-- [Code Status]() -->
-[Getting Started](#start)  
-[Software and Package Prerequisites]()  
-[Installing FLOWMAPR]()  
-[Installing the GUI]()  
-[Updating FLOWMAPR]()  
-[Running FLOWMAPR]()  
-[Starting from FCS Files]()  
-[Starting from a Dataframe in R]()  
-[Example Code for FLOWMAP()]()  
-<!-- Example Code for FLOWMAP() with SPADE downsampling -->
-<!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
-[Example Data]()  
-[Example Code for FLOWMAPfromDF()]()  
-[Practical Guidelines for Running FLOWMAPR]()  
+[Getting Started: Installing FLOWMAPR](#install)  
+[Getting Started: Installing the GUI](#gui-install)  
+[Updating FLOWMAPR](#update)  
+[Running FLOWMAPR: Starting from FCS Files](#FLOWMAPR-FCS)  
+[Running FLOWMAPR: Starting from a Dataframe in R](#FLOWMAPR-DF)  
+[Example Code for FLOWMAP()](#example-code)  
+[Example Data](#example-data)  
+[Example Code for FLOWMAPfromDF()](#example-code2)  
+[Practical Guidelines for Running FLOWMAPR](#FLOWMAPR-guide)  
+[Practical Guidelines for Post-Processing in Gephi](#gephi-guide)  
+[Using the GUI](#gui-guide)  
+[Authors and License](#info)  
+
 <!-- Timing for FLOWMAPR Runs -->
-[Practical Guidelines for Post-Processing in Gephi]()  
-[Using the GUI]()  
+<!-- [Getting Started](#start)
+[Running FLOWMAPR]() -->
 <!-- Contributing -->
 <!-- Versioning -->
-[Authors and License]()  
+<!-- Example Code for FLOWMAP() with SPADE downsampling -->
+<!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
 <!-- Acknowledgments -->
-
 
 ## Code Status
 Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
@@ -46,7 +45,6 @@ Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_
 * save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
 -->
 
-<a name="start"></a>
 ## Getting Started
 
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
@@ -80,9 +78,10 @@ install_github("nolanlab/Rclusterpp")
 install_github("nolanlab/spade")
 ```
 
+<a name="install"></a>
 ### Installing FLOWMAPR:
 
-To currently get the FLOWMAPR R package up and working on your computer:
+To currently get the FLOWMAPR R package up and working on your computer, once you have installed all package dependencies (see above):
 
 1. Make a github account if you haven't already.
 2. Get access to repo zunderlab/FLOWMAP for your github account.
@@ -92,6 +91,7 @@ To currently get the FLOWMAPR R package up and working on your computer:
 6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
 7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
+<a name="gui-install"></a>
 ### Installing the GUI:
 
 1. The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
@@ -105,6 +105,7 @@ install.packages("rhandsontable")
 FLOWMAPR::LaunchGUI()
 ```
 
+<a name="update"></a>
 ### Updating FLOWMAPR:
 
 To quickly update your FLOWMAPR R package up and get the latest version from GitHub:
@@ -116,6 +117,7 @@ To quickly update your FLOWMAPR R package up and get the latest version from Git
 If the above commands run without error, you should have the latest version of FLOWMAPR.
 
 ## Running FLOWMAPR
+<a name="FLOWMAPR-FCS"></a>
 
 ### Starting from FCS Files:
 
@@ -151,6 +153,7 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP() function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
 
+<a name="FLOWMAPR-DF"></a>
 ### Starting from a Dataframe in R:
 
 To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need to load/preprocess in R (differently than how FCS files are handled):
@@ -187,6 +190,7 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
 3. Run `FLOWMAPR::FLOWMAPfromDF()` as a command in R Studio, but pass the variables that you assigned into FLOWMAPfromDF() function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files. **As of this most recent update, summaries and reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
 
+<a name="example-code"></a>
 ### Example Code for FLOWMAP():
 
 ```
@@ -268,6 +272,7 @@ file.edit(system.file("tools/run_downsample_FLOWMAPR.R", package = "FLOWMAPR"))
 ```
 You will need to change the `files` and the `save.folder` to point to folders on your own computer. Furthermore, you will need to update the `var.annotate`, `var.remove`, and `clustering.var` parameters to reflect channels in your own data. You can change all other parameters based on your analysis needs.
 
+<a name="example-data"></a>
 ### Example Data:
 
 An example (synthetic) data set is available as raw FCS files with the FLOWMAPR package for testing purposes. You can access these data sets by finding their directory on your computer using the following commands after you have installed and loaded FLOWMAPR.
@@ -284,6 +289,7 @@ files <- system.file("extdata/MultiFLOWMAP", package = "FLOWMAPR")
 
 Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()` command.
 
+<a name="example-code2"></a>
 ### Example Code for FLOWMAPfromDF():
 ```
 library(FLOWMAPR)
@@ -326,6 +332,7 @@ FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
 
 ```
 
+<a name="FLOWMAPR-guide"></a>
 ### Practical Guidelines for Running FLOWMAPR:
 
 FLOWMAPR is an R package for visualization of high-dimensional data, though ultimately producing visualizations is a subjective process. If you are not sure where to start or what settings to use, here are some basic guidelines for your analysis:
@@ -350,6 +357,7 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 
 In a SingleFLOW-MAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
 
+<a name="gephi-guide"></a>
 ### Practical Guidelines for Post-Processing in Gephi:
 
 Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerates PDF results so that the user can quickly scan through the resulting graphs and iterate through different settings. However, Gephi allows for greater customization of visual settings.
@@ -391,6 +399,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 * Once you are happy with the graph appearance (having clicked "Refresh"), you can then click on the Export "SVG/PDF/PNG" to generate any of these file types.
 
+<a name="gui-guide"></a>
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.
 1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box of the header "FLOWMAPR" should appear. 
@@ -411,6 +420,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 ???
 
+<a name="info"></a>
 ## Authors
 
 * **Eli Zunder** - *Initial work*
