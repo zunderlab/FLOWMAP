@@ -1,5 +1,4 @@
 
-#' @export
 ForceDirectedXY <- function(graph) {
   force.graph1 <- scaffold:::layout.forceatlas2(graph, iter = 10000,
                                                 stopping_tolerance = 0.001,

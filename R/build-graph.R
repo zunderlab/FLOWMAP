@@ -343,7 +343,6 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
               edgelist.save = edgelist.save))
 }
 
-#' @export
 BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                          distance.metric, clustering.var) {
   edgelist.save <- list()

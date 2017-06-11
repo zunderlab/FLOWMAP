@@ -1,6 +1,33 @@
 # FLOWMAPR
 
-This repository houses the FLOW-MAP algorithm code, which was developed in R and originally published in Zunder et al. A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry. Cell Stem Cell. 2015.
+This repository houses the FLOW-MAP algorithm code, which was developed in R and originally published in Zunder et al., "A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry." Cell Stem Cell 2015.
+
+This code has been reformatted and compiled into a single R package known as **FLOWMAPR**. This README provides full instructions for how to install, set-up, and use FLOWMAPR. Other details, including a comparison with other visualization tools for single-cell data, will be published imminently and linked when available.
+
+# Navigation
+<!-- [Code Status]() -->
+[Getting Started](#start)
+[Software and Package Prerequisites]()
+[Installing FLOWMAPR]()
+[Installing the GUI]()
+[Updating FLOWMAPR]()
+[Running FLOWMAPR]()
+[Starting from FCS Files]()
+[Starting from a Dataframe in R]()
+[Example Code for FLOWMAP()]()
+<!-- Example Code for FLOWMAP() with SPADE downsampling -->
+<!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
+[Example Data]()
+[Example Code for FLOWMAPfromDF()]()
+[Practical Guidelines for Running FLOWMAPR]()
+<!-- Timing for FLOWMAPR Runs -->
+[Practical Guidelines for Post-Processing in Gephi]()
+[Using the GUI]()
+<!-- Contributing -->
+<!-- Versioning -->
+[Authors]()
+[License]()
+<!-- Acknowledgments -->
 
 ## Code Status
 Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
@@ -19,7 +46,7 @@ Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_
 * save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
 -->
 
-## Getting Started
+## Getting Started<a name="start"></a>
 
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
 
@@ -43,7 +70,7 @@ source("http://bioconductor.org/biocLite.R")
 biocLite("flowCore")
 ```
 
-Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the NOlan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
+Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
 
 ```
 library(devtools)
@@ -64,7 +91,7 @@ To currently get the FLOWMAPR R package up and working on your computer:
 6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
 7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
-### Installing the GUI
+### Installing the GUI:
 
 1. The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
 ```
@@ -89,10 +116,12 @@ If the above commands run without error, you should have the latest version of F
 
 ## Running FLOWMAPR
 
-To run a FLOWMAP analysis on your data set or an example data set:
+### Starting from FCS Files:
+
+To run a FLOW-MAP analysis on your data set if you are using FCS files or an example data set:
 
 0. **Make your data available and parseable by FLOWMAP.**
-* For MultiFLOWMAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. If FCS files in the same subdirectory that come from different time points (e.g. "ConditionA-d01.fcs" with "ConditionB-d02.fcs"), FLOWMAPR will pick one time label arbitrarily.
+* For MultiFLOW-MAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. If FCS files in the same subdirectory that come from different time points (e.g. "ConditionA-d01.fcs" with "ConditionB-d02.fcs"), FLOWMAPR will pick one time label arbitrarily.
 * Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last).
 * To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters (e.g. "ConditionA-d01.fcs" where "ConditionA" will be the condition label).
 * Do not use any digits (i.e. 0-9) in the name of the FCS file unless they specify time. Change any labels for the conditions in the FCS file name to be alphabetical characters. Ex: Condition1-t24.fcs should be renamed to ConditionOne-t24.fcs or else the time label will be parsed as "124" instead of "24" for this file.
@@ -100,7 +129,6 @@ To run a FLOWMAP analysis on your data set or an example data set:
 <!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
-  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
   * `files` - the directory where you can find the FCS files to be used
   * `var.remove` - any channels you want completely excluded from analysis
@@ -115,14 +143,50 @@ To run a FLOWMAP analysis on your data set or an example data set:
   * `subsamples` - how many cells to randomly subsample from each FCS file, default is set to 200
   * `name.sort` - sort FCS files according to name in alphabetical/numerical order, default is set to TRUE for sorting
   * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
-  * `seed.X` - set this for reproducibility, default is set to 1
+  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
   * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
 
-3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP function. A full example is provided below.
+3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP() function. A full example is provided below.
 4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
 
-### Example Code:
+### Starting from a Dataframe in R:
+
+To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need to load/preprocess in R (differently than how FCS files are handled):
+
+0. **Complete all preprocessing steps on your data and make sure it is parseable by FLOWMAPR.** Here are the expected formats of your data for each FLOW-MAP run mode.
+* **mode "one"** = one data.frame object;
+* **mode "single"** = a list of data.frame objects where each element contains cells from a different timepoint;
+* **mode "multi"** = a list of lists of data.frame objects where the first level of each list corresponds to different timepoints and sublists correspond to different conditions within that timepoint
+* If your data starts as one single large data.frame, you can use the `FLOWMAPR::RestructureDF()` function to reformat your data. Pass `time.col.label` (default is "Time") and `condition.col.label` (default is NULL, only required for MultiFLOW-MAP), which it will use to separate the data into a list or list of lists of data.frames basaed on time and/or condition.
+* **You must preprocess your data, including all subsampling, renaming or removing of channels, and transformation necessary for your data type.** `FLOWMAPfromDF()` has the option to cluster your data, but it does not have options to subsample/downsample, change channels, or transform data like `FLOWMAP()` does.
+* Please note that you can use data that has already been clustered in this FLOW-MAP analysis (each row is a cluster with the median expression values). However, Counts/percent.total will not be accurately generated from the data. You can include a channel that reflects the size of each cluster (e.g. "cluster.counts"), but it will not be used to adjust node size in the graph in the autogenerated PDFs.
+
+1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAPfromDF()` autocomplete if you type it into the command line.
+2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
+  
+  * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
+  * `project.name` - a text label that will be appended to some of the files generated as results from the FLOW-MAP run
+  * `df` - your data as a data.frame format object, a list of data.frame objects, or a list of lists of data.frame objects in R, it is expected that first level of each list corresponds to different timepoints and sublists correspond to different conditions (if applicable)
+  * `time.col.label` - required variable, function will use the column with this label as the time label for each cell, default is set to "Time"
+  * `condition.col.label` - variable that is only required for MultiFLOW-MAP runs to distinguish data from different conditions/treatments/timecourses, function will use the column with this label as the condition label for each cell, default is set to NULL
+  * `clustering.var` - which channels to use to influence the graph shape
+  * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
+  * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
+  * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
+  * `per` - affects connectivity, recommended default is 1
+  * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
+  * `name.sort` - sort timepoints according to time label in alphabetical/numerical order, default is set to TRUE for sorting
+  * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
+  * `clustering` - cluster within each timepoint, in which case you will want to specify optional variable `cluster.numbers`, default is set to FALSE for clustering
+  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
+  * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
+  * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
+
+3. Run `FLOWMAPR::FLOWMAPfromDF()` as a command in R Studio, but pass the variables that you assigned into FLOWMAPfromDF() function. A full example is provided below.
+4. Check that it saves an output folder with reasonable looking PDFs and graphml files. **As of this most recent update, summaries and reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
+
+### Example Code for FLOWMAP():
 
 ```
 library(FLOWMAPR)
@@ -152,7 +216,7 @@ FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.
         savePDFs = savePDFs, which.palette = which.palette)
 ```
 
-### Example Code (with SPADE downsampling):
+### Example Code for FLOWMAP() with SPADE downsampling:
 
 ```
 library(FLOWMAPR)
@@ -188,16 +252,16 @@ FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.
         target.number = target.number, target.percent = target.percent)
 ```
 
-#### Template for a FLOWMAPR Run in R
+#### Template for a FLOWMAPR Run using FLOWMAP() function in R
 
 You can also access example FLOWMAPR runs as .R files, which you can then modify to work with your own data.
 
-To access a SingleFLOWMAP run without downsampling (random subsampling):
+To access a SingleFLOW-MAP run without downsampling (random subsampling):
 ```
 file.edit(system.file("tools/run_FLOWMAPR.R", package = "FLOWMAPR"))
 ```
 
-To access a SingleFLOWMAP run with SPADE downsampling:
+To access a SingleFLOW-MAP run with SPADE downsampling:
 ```
 file.edit(system.file("tools/run_downsample_FLOWMAPR.R", package = "FLOWMAPR"))
 ```
@@ -207,18 +271,59 @@ You will need to change the `files` and the `save.folder` to point to folders on
 
 An example (synthetic) data set is available as raw FCS files with the FLOWMAPR package for testing purposes. You can access these data sets by finding their directory on your computer using the following commands after you have installed and loaded FLOWMAPR.
 
-To access the SingleFLOWMAP data (one condition, one time course data in a single folder of FCS files):
+To access the SingleFLOW-MAP data (one condition, one time course data in a single folder of FCS files):
 ```
 files <- system.file("extdata/SingleFLOWMAP", package = "FLOWMAPR")
 ```
 
-To access the MultiFLOWMAP data (two conditions, one time course data in a folder that contains subfolders of FCS files, wherein each subfolder is numbered according to sequential timepoints):
+To access the MultiFLOW-MAP data (two conditions, one time course data in a folder that contains subfolders of FCS files, wherein each subfolder is numbered according to sequential timepoints):
 ```
 files <- system.file("extdata/MultiFLOWMAP", package = "FLOWMAPR")
 ```
 
 Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()` command.
 
+### Example Code for FLOWMAPfromDF():
+```
+library(FLOWMAPR)
+library(readxl)
+mode <- "single"
+save.folder <- "/Users/mesako/Desktop"
+project.name <- "Example_FLOWMAP_Run"
+clustering.var <- c("marker1", "marker2")
+distance.metric <- "manhattan"
+per <- 1
+minimum <- 2
+maximum <- 5
+seed.X <- 1
+name.sort <- FALSE
+downsample <- FALSE
+clustering <- FALSE
+savePDFs <- TRUE
+which.palette <- "bluered"
+
+time.col.label <- "Time"
+condition.col.label <- NULL
+
+file <- "/Users/mesako/Downloads/Example-dataset.xlsx"
+df <- read_excel(file)
+df <- as.data.frame(df)
+df.keep <- subset.data.frame(df, select = c("Time"))
+df.transform <- subset.data.frame(df, select = setdiff(colnames(df), c("Time")))
+df.transform <- apply(df.transform, 2, log) 
+final.df <- cbind(df.keep, df.transform)
+df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label, 
+                              condition.col.label = condition.col.label)$new.df
+
+FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
+                                 time.col.label = time.col.label, condition.col.label = condition.col.label,
+                                 clustering.var = clustering.var, distance.metric = distance.metric,
+                                 minimum = minimum, maximum = maximum, per = per,
+                                 save.folder = save.folder, subsamples = subsamples,
+                                 name.sort = name.sort, downsample = downsample, clustering = clustering,
+                                 seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
+
+```
 
 ### Practical Guidelines for Running FLOWMAPR:
 
@@ -242,7 +347,48 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 
 #### Timing for FLOWMAPR Runs
 
-In a singleFLOWMAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
+In a SingleFLOW-MAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
+
+### Practical Guidelines for Post-Processing in Gephi:
+
+Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerates PDF results so that the user can quickly scan through the resulting graphs and iterate through different settings. However, Gephi allows for greater customization of visual settings.
+
+0. **Download and install Gephi.** Gephi is a free, open-source program available online at [http://www.gephi.org](http://www.gephi.org). We recommend using Gephi version "0.9.2-SNAPSHOT" as Gephi 0.9.1 has a bug that prevents users from changing node size of FLOW-MAP graphs using the "percent.total" parameter.
+
+1. **Open your FLOW-MAP graphml file in Gephi.** We recommend you use the resulting graphml file that contains the substring "xy_orig_time" in the file name. A window will pop up called the "Import report," just hit the OK button.
+
+2. **Set the node size in your graph.** The nodes will need to be the final size you intend for the graph before you run the force-directed layout.
+* Go to the appearance panel usually in the top left. Make sure you have "Nodes" selected and click the button that shows three concentric circles inside one another (hovering should show the label "Size").
+* Click on "Ranking" and use "percent.total" if you want the nodes to reflect the relative sizes of the clusters. If you did not cluster, you can pick one single size using "Unique" instead of "Ranking."
+* Pick any size or window of sizes you prefer, as this may depend on how many nodes you have in your graph.
+
+3. **Resolve your FLOW-MAP graph further using Gephi's ForceAtlas2 algorithm.** To do this, go to the Layout panel usually in the bottom left after opening your graphml file. Click the "Choose a Layout" field and select "ForceAtlas 2." We generally recommend not changing any of the default setting. Press Run to start resolving the graph in a force-directed layout.
+
+* To speed up this process (and make it less computationally intensive), you can make edges invisible. Do so by pressing the button below the graph viewing window that looks like a line segment. If you hover over the button, it is called "Show Edges." Click to toggle it on and off.
+
+* You may see regions of the graph that appear tangled. As long as ForceAtlas 2 is actively running (the Run button changes into a Stop button), you can click on nodes in the graph and while holding down the mouse button, move and manipulate them. The graph should respond as you move nodes.
+
+* ForceAtlas 2 does not have a stopping time. You can continue to resolve the graph as long as you like, though it is recommended that you do so until there are no tangles and the graph stops changing.
+
+* **Once you are happy with your graph layout**, we recommend that you toggle on the "Dissuade Hubs" option under Layout. This should be pressed while ForceAtlas 2 is still running. Wait until the graph finishes moving and then toggle on the "Prevent Overlap" option. This will spread the nodes so you can clearly see them as opposed to having them stack on top of each other. Once nodes approximately stop moving (they will continue to jiggle a little), hit the Stop button.
+
+* **We recommend you save and export this new graph with the finalized layout** so you can consistently generate figures from this one graph. Gephi has its own file format (.gephi) and can also export .graphml files. We recommend saving both. If you export a graphml file, be sure to check the Options button and make sure that "Position (x,y)" is checked off.
+
+4. **Use consistent visual settings to color the graph by marker expression.** You can set the color scheme by clicking on the paint palette in the Appearance pane. Make sure that "Nodes" are highlighted.
+
+* "Partition" can be used to color by categorical variables (e.g. different timepoints or conditions) while "Ranking" can be used to color by marker expression or cluster size. For "Partition," you can set each separate value's color by clicking on each colored square and dragging it on the color wheel. In contrast, "Ranking" variables are colored on a gradient set by a few values. If you hover over the color bar, you can see arrows appear at the points where the color is defined. Doubleclicking on any arrow allows you to reassign the color using a color wheel, RGB values, or a Hex value. 
+
+* We recommend using the bluered palette used in the FLOWMAPR package to color by marker expression. Cells with lowest expression levels will be blue, intermediate will be grey, and high will be red. You can set this up by clicking on the left, middle, and right arrows and assigning them to Hex values 1500FB, C3C3C7, D10100 respectively. **Press the Apply button to have the graph update with these new color settings.**
+
+* However, to produce more accessible figures, you may want to consider using a **colorblind-friendly palette**. The colorblind option used in FLOWMAPR uses a blue-yellow scale. The hex color code for each arrow from left to right is 0072B2, C3C3C7, E69F00.
+
+5. **Save PDFs or image files of your graph colored by each marker.** Once you have your desired visual settings, click on the "Preview" button on the top bar. **Click the Refresh button on the bottom left to make your graph appear.** This graph will essentially be a duplicate of what you produced in the "Overview" mode with a few exceptions.
+
+* Preview mode shows your graph with edges, in particular curved edges. We recommend saving PDFs with edges invisible as the appearance of many grey edges will make your figure look messy. To turn off edges, click on "Show Edges" option under "Edges" on the left and click "Refresh" to update the graph. If you choose to display edges, you can adjust your edge settings (thickness, color, curve, opacity, etc.) in that section.
+
+* We recommend that you also print your PDF with no borders around the nodes. We find that node borders generally makes the graph look messy and the colors harder to distinguish. To turn this off, click the value next to "Border Width" (generally defaults to 1.0) under the "Nodes" header. You can change this value to 0 and click "Refresh" to update the graph.
+
+* Once you are happy with the graph appearance (having clicked "Refresh"), you can then click on the Export "SVG/PDF/PNG" to generate any of these file types.
 
 ## Using the GUI
 0. Make sure all FSC files that are to be tested are within one folder.

@@ -1,5 +1,4 @@
 
-#' @export
 FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
                            cluster.medians, cluster.counts, cell.assgn)  {
   object <- list(full.clusters = full.clusters,
