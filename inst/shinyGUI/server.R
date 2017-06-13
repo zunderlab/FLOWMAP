@@ -23,7 +23,8 @@ shinyServer(function(input, output, session) {
   file.names <- file.info$file.names
   observe({
     updateSelectInput(session, "CheckGroupFiles",
-                      choices = paste(len.filenames, file.names, sep = " "))
+                      choices = paste(FileOrder(globe.raw.FCS.dir)$len.filenames,
+                                      FileOrder(globe.raw.FCS.dir)$file.names, sep = " "))
   })
   TestPrint <- eventReactive(input$default.button, {
     print("BEEP")
