@@ -41,32 +41,12 @@ LaunchGUI <- function() {
   
   # button functions
   SetRawFCSDir <- function() {
-    # raw.FCS.dir <- ""
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
-    print("raw.FCS.dir")
-    print(raw.FCS.dir)
-    # raw.FCS.dir2 <- tkchooseDirectory(title = "Choose your raw FCS files directory ...")
-    # print("raw.FCS.dir2")
-    # print(raw.FCS.dir2)
-    # if (raw.FCS.dir != "") {
     tclvalue(init.raw.FCS.dir) <- raw.FCS.dir
-    # }
-    print("raw.FCS.dir")
-    print(raw.FCS.dir)
   }
   SetResultDir <- function() {
-    # result.dir <- ""
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
-    print("result.dir")
-    print(result.dir)
-    # result.dir2 <- tkchooseDirectory(title = "Choose your result directory ...")
-    # print("result.dir2")
-    # print(result.dir2)
-    # if (result.dir != "") {
     tclvalue(init.result.dir) <- result.dir
-    # }
-    print("result.dir")
-    print(result.dir)
   }
   RawFCSDirHelp <- function() {
     tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
@@ -358,10 +338,6 @@ LaunchGUI <- function() {
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
     globe.inputs <<- inputs
-    print("raw.FCS.dir before")
-    print(tclvalue(init.raw.FCS.dir))
-    print("result.dir before")
-    print(tclvalue(init.result.dir))
     globe.raw.FCS.dir <<- tclvalue(init.raw.FCS.dir)
     timeNow <- Sys.time()
     globe.result.dir <<- tclvalue(init.result.dir)
@@ -369,10 +345,6 @@ LaunchGUI <- function() {
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-  print("raw.FCS.dir after")
-  print(tclvalue(init.raw.FCS.dir))
-  print("result.dir after")
-  print(tclvalue(init.result.dir))
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
