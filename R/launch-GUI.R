@@ -359,20 +359,20 @@ LaunchGUI <- function() {
     inputs[["quit"]] <- quit.var
     globe.inputs <<- inputs
     print("raw.FCS.dir before")
-    print(tclvalue(raw.FCS.dir))
+    print(tclvalue(init.raw.FCS.dir))
     print("result.dir before")
-    print(tclvalue(result.dir))
-    globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
+    print(tclvalue(init.result.dir))
+    globe.raw.FCS.dir <<- tclvalue(init.raw.FCS.dir)
     timeNow <- Sys.time()
-    globe.result.dir <<- tclvalue(result.dir)
+    globe.result.dir <<- tclvalue(init.result.dir)
     timeNow <- gsub("[:]","-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
   print("raw.FCS.dir after")
-  print(tclvalue(raw.FCS.dir))
+  print(tclvalue(init.raw.FCS.dir))
   print("result.dir after")
-  print(tclvalue(result.dir))
+  print(tclvalue(init.result.dir))
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
