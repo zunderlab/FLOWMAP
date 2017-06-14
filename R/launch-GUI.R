@@ -39,27 +39,22 @@ LaunchGUI <- function() {
   ret.var <- tclVar("")
   quit.var <- TRUE
   
-  print("raw.FCS.dir")
-  print(raw.FCS.dir)
-  print("result.dir")
-  print(result.dir)
-  
   # button functions
-  ResetRawFCSDir <- function() {
-    raw.FCS.dir <- ""
+  SetRawFCSDir <- function() {
+    # raw.FCS.dir <- ""
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
-    if (raw.FCS.dir != "") {
-      tclvalue(raw.FCS.dir) <- raw.FCS.dir
-    }
+    # if (raw.FCS.dir != "") {
+    tclvalue(raw.FCS.dir) <- raw.FCS.dir
+    # }
     print("raw.FCS.dir")
     print(raw.FCS.dir)
   }
-  ResetResultDir <- function() {
-    result.dir <- ""
+  SetResultDir <- function() {
+    # result.dir <- ""
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
-    if (result.dir != "") {
-      tclvalue(result.dir) <- result.dir
-    }
+    # if (result.dir != "") {
+    tclvalue(result.dir) <- result.dir
+    # }
     print("result.dir")
     print(result.dir)
   }
@@ -165,14 +160,14 @@ LaunchGUI <- function() {
   # raw.FCS.dir
   raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files Directory:")
   raw.FCS.dir.entry <- tkentry(tt, textvariable = raw.FCS.dir, width = box.length)
-  raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = ResetRawFCSDir)
+  raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = SetRawFCSDir)
   raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
   
   # result.dir
   result.dir.label <- tklabel(tt, text = "Result Directory:")
   result.dir.entry <- tkentry(tt, textvariable = result.dir, width = box.length)
   result.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, 
-                            command = ResetResultDir)
+                                command = SetResultDir)
   result.dir.hBut <- tkbutton(tt, image = image2, command = ResultDirHelp)
   
   # downsample.toggle
@@ -332,11 +327,6 @@ LaunchGUI <- function() {
          quit.button, padx = cell.width)
   tkgrid.configure(reset.button, sticky = "e")
   tkgrid.configure(quit.button, sticky = "w")
-
-  print("raw.FCS.dir")
-  print(raw.FCS.dir)
-  print("result.dir")
-  print(result.dir)
   
   tkwait.window(tt)
   
@@ -357,12 +347,6 @@ LaunchGUI <- function() {
     inputs[["edge.max.num"]] <- tclvalue(edge.num.max)
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
-    
-    print("raw.FCS.dir")
-    print(raw.FCS.dir)
-    print("result.dir")
-    print(result.dir)
-    
     globe.inputs <<- inputs
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
