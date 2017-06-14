@@ -45,9 +45,9 @@ LaunchGUI <- function() {
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
     print("raw.FCS.dir")
     print(raw.FCS.dir)
-    raw.FCS.dir2 <- tkchooseDirectory(title = "Choose your raw FCS files directory ...")
-    print("raw.FCS.dir2")
-    print(raw.FCS.dir2)
+    # raw.FCS.dir2 <- tkchooseDirectory(title = "Choose your raw FCS files directory ...")
+    # print("raw.FCS.dir2")
+    # print(raw.FCS.dir2)
     # if (raw.FCS.dir != "") {
     tclvalue(raw.FCS.dir) <- raw.FCS.dir
     # }
@@ -59,9 +59,9 @@ LaunchGUI <- function() {
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
     print("result.dir")
     print(result.dir)
-    result.dir2 <- tkchooseDirectory(title = "Choose your result directory ...")
-    print("result.dir2")
-    print(result.dir2)
+    # result.dir2 <- tkchooseDirectory(title = "Choose your result directory ...")
+    # print("result.dir2")
+    # print(result.dir2)
     # if (result.dir != "") {
     tclvalue(result.dir) <- result.dir
     # }
@@ -359,9 +359,9 @@ LaunchGUI <- function() {
     inputs[["quit"]] <- quit.var
     globe.inputs <<- inputs
     print("raw.FCS.dir before")
-    print(raw.FCS.dir)
+    print(tclvalue(raw.FCS.dir))
     print("result.dir before")
-    print(result.dir)
+    print(tclvalue(result.dir))
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
     globe.result.dir <<- tclvalue(result.dir)
@@ -370,9 +370,9 @@ LaunchGUI <- function() {
                         inputs[["resultDir"]])
   }
   print("raw.FCS.dir after")
-  print(raw.FCS.dir)
+  print(tclvalue(raw.FCS.dir))
   print("result.dir after")
-  print(result.dir)
+  print(tclvalue(result.dir))
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
