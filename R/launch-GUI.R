@@ -50,7 +50,6 @@ LaunchGUI <- function() {
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
     if (raw.FCS.dir != "") {
       tclvalue(raw.FCS.dir) <- raw.FCS.dir
-      tclvalue(result.dir) <- raw.FCS.dir
     }
     print("raw.FCS.dir")
     print(raw.FCS.dir)
@@ -378,12 +377,4 @@ LaunchGUI <- function() {
   print(result.dir)
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-}
-
-OpenDir <- function(dir = getwd()){
-  if (.Platform['OS.type'] == "windows"){
-    shell.exec(dir)
-  } else {
-    system(paste(Sys.getenv("R_BROWSER"), dir))
-  }
 }
