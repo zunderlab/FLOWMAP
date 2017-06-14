@@ -28,7 +28,12 @@ shinyServer(function(input, output, session) {
   file.info <- FileOrder(globe.raw.FCS.dir)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
-  print()
+  print("file.info")
+  print(file.info)
+  print("len.filenames")
+  print(len.filenames)
+  print("file.names")
+  print(file.names)
   observe({
     updateSelectInput(session, "CheckGroupFiles",
                       choices = paste(FileOrder(globe.raw.FCS.dir)$len.filenames,
