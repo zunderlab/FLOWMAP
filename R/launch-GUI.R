@@ -43,20 +43,26 @@ LaunchGUI <- function() {
   SetRawFCSDir <- function() {
     # raw.FCS.dir <- ""
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
+    raw.FCS.dir2 <- tkchooseDirectory(title = "Choose your raw FCS files directory ...")
     # if (raw.FCS.dir != "") {
-    tclvalue(raw.FCS.dir) <- raw.FCS.dir
+    # tclvalue(raw.FCS.dir) <- raw.FCS.dir
     # }
     print("raw.FCS.dir")
     print(raw.FCS.dir)
+    print("raw.FCS.dir2")
+    print(raw.FCS.dir2)
   }
   SetResultDir <- function() {
     # result.dir <- ""
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
+    result.dir2 <- tkchooseDirectory(title = "Choose your result directory ...")
     # if (result.dir != "") {
-    tclvalue(result.dir) <- result.dir
+    # tclvalue(result.dir) <- result.dir
     # }
     print("result.dir")
     print(result.dir)
+    print("result.dir2")
+    print(result.dir2)
   }
   RawFCSDirHelp <- function() {
     tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
