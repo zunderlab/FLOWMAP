@@ -43,26 +43,30 @@ LaunchGUI <- function() {
   SetRawFCSDir <- function() {
     # raw.FCS.dir <- ""
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
+    print("raw.FCS.dir")
+    print(raw.FCS.dir)
     raw.FCS.dir2 <- tkchooseDirectory(title = "Choose your raw FCS files directory ...")
+    print("raw.FCS.dir2")
+    print(raw.FCS.dir2)
     # if (raw.FCS.dir != "") {
-    # tclvalue(raw.FCS.dir) <- raw.FCS.dir
+    tclvalue(raw.FCS.dir) <- raw.FCS.dir
     # }
     print("raw.FCS.dir")
     print(raw.FCS.dir)
-    print("raw.FCS.dir2")
-    print(raw.FCS.dir2)
   }
   SetResultDir <- function() {
     # result.dir <- ""
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
+    print("result.dir")
+    print(result.dir)
     result.dir2 <- tkchooseDirectory(title = "Choose your result directory ...")
+    print("result.dir2")
+    print(result.dir2)
     # if (result.dir != "") {
-    # tclvalue(result.dir) <- result.dir
+    tclvalue(result.dir) <- result.dir
     # }
     print("result.dir")
     print(result.dir)
-    print("result.dir2")
-    print(result.dir2)
   }
   RawFCSDirHelp <- function() {
     tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
@@ -354,6 +358,10 @@ LaunchGUI <- function() {
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
     globe.inputs <<- inputs
+    print("raw.FCS.dir before")
+    print(raw.FCS.dir)
+    print("result.dir before")
+    print(result.dir)
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
     globe.result.dir <<- tclvalue(result.dir)
@@ -361,9 +369,9 @@ LaunchGUI <- function() {
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-  print("raw.FCS.dir")
+  print("raw.FCS.dir after")
   print(raw.FCS.dir)
-  print("result.dir")
+  print("result.dir after")
   print(result.dir)
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
