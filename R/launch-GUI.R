@@ -26,8 +26,8 @@ LaunchGUI <- function() {
   distance.metric <- c("manhattan", "euclidean")
   mode <- c("multi", "single", "one")
   color.palette <- c("bluered", "jet", "CB")
-  raw.FCS.dir <- tclVar(current.dir)
-  result.dir <- tclVar(current.dir)
+  init.raw.FCS.dir <- tclVar(current.dir)
+  init.result.dir <- tclVar(current.dir)
   downsample.toggle <- tclVar("0")
   savePDFs.toggle <- tclVar("0")
   subsample.num <- tclVar("200")
@@ -49,7 +49,7 @@ LaunchGUI <- function() {
     # print("raw.FCS.dir2")
     # print(raw.FCS.dir2)
     # if (raw.FCS.dir != "") {
-    tclvalue(raw.FCS.dir) <- raw.FCS.dir
+    tclvalue(init.raw.FCS.dir) <- raw.FCS.dir
     # }
     print("raw.FCS.dir")
     print(raw.FCS.dir)
@@ -63,7 +63,7 @@ LaunchGUI <- function() {
     # print("result.dir2")
     # print(result.dir2)
     # if (result.dir != "") {
-    tclvalue(result.dir) <- result.dir
+    tclvalue(init.result.dir) <- result.dir
     # }
     print("result.dir")
     print(result.dir)
@@ -169,13 +169,13 @@ LaunchGUI <- function() {
   
   # raw.FCS.dir
   raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files Directory:")
-  raw.FCS.dir.entry <- tkentry(tt, textvariable = raw.FCS.dir, width = box.length)
+  raw.FCS.dir.entry <- tkentry(tt, textvariable = init.raw.FCS.dir, width = box.length)
   raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = SetRawFCSDir)
   raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
   
   # result.dir
   result.dir.label <- tklabel(tt, text = "Result Directory:")
-  result.dir.entry <- tkentry(tt, textvariable = result.dir, width = box.length)
+  result.dir.entry <- tkentry(tt, textvariable = init.result.dir, width = box.length)
   result.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, 
                                 command = SetResultDir)
   result.dir.hBut <- tkbutton(tt, image = image2, command = ResultDirHelp)
