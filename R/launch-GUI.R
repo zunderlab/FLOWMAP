@@ -39,6 +39,11 @@ LaunchGUI <- function() {
   ret.var <- tclVar("")
   quit.var <- TRUE
   
+  print("raw.FCS.dir")
+  print(raw.FCS.dir)
+  print("result.dir")
+  print(result.dir)
+  
   # button functions
   ResetRawFCSDir <- function() {
     raw.FCS.dir <- ""
@@ -47,6 +52,8 @@ LaunchGUI <- function() {
       tclvalue(raw.FCS.dir) <- raw.FCS.dir
       tclvalue(result.dir) <- raw.FCS.dir
     }
+    print("raw.FCS.dir")
+    print(raw.FCS.dir)
   }
   ResetResultDir <- function() {
     result.dir <- ""
@@ -54,6 +61,8 @@ LaunchGUI <- function() {
     if (result.dir != "") {
       tclvalue(result.dir) <- result.dir
     }
+    print("result.dir")
+    print(result.dir)
   }
   RawFCSDirHelp <- function() {
     tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
@@ -324,6 +333,11 @@ LaunchGUI <- function() {
          quit.button, padx = cell.width)
   tkgrid.configure(reset.button, sticky = "e")
   tkgrid.configure(quit.button, sticky = "w")
+
+  print("raw.FCS.dir")
+  print(raw.FCS.dir)
+  print("result.dir")
+  print(result.dir)
   
   tkwait.window(tt)
   
@@ -345,6 +359,11 @@ LaunchGUI <- function() {
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
     
+    print("raw.FCS.dir")
+    print(raw.FCS.dir)
+    print("result.dir")
+    print(result.dir)
+    
     globe.inputs <<- inputs
     globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
     timeNow <- Sys.time()
@@ -353,6 +372,11 @@ LaunchGUI <- function() {
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
+  print("raw.FCS.dir")
+  print(raw.FCS.dir)
+  print("result.dir")
+  print(result.dir)
+  
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
 }
 

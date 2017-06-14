@@ -5,6 +5,13 @@ require(rhandsontable)
 shinyServer(function(input, output, session) {
   print("globe.inputs")
   print(globe.inputs)
+  
+  print("globe.raw.FCS.dir")
+  print(globe.raw.FCS.dir)
+  
+  print("globe.result.dir")
+  print(globe.result.dir)
+  
   if (globe.inputs[["quit"]]) {
     stopApp()
   }
@@ -21,6 +28,7 @@ shinyServer(function(input, output, session) {
   file.info <- FileOrder(globe.raw.FCS.dir)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
+  print()
   observe({
     updateSelectInput(session, "CheckGroupFiles",
                       choices = paste(FileOrder(globe.raw.FCS.dir)$len.filenames,
