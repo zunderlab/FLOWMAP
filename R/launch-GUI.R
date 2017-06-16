@@ -36,7 +36,7 @@ LaunchGUI <- function() {
   edge.num.min <- tclVar("2")
   edge.num.max <- tclVar("5")
   ret.var <- tclVar("")
-  quit.var <- TRUE
+  quit.var <<- TRUE
   
   # button functions
   SetRawFCSDir <- function() {
@@ -125,6 +125,7 @@ LaunchGUI <- function() {
   Quit <- function() {
     tkdestroy(tt)
     stop("Exiting FLOWMAPR GUI.")
+    quit.var <<-TRUE
   }
   
   # build the GUI
@@ -346,5 +347,5 @@ LaunchGUI <- function() {
   }
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-
+  # runApp(appDir = file.path("C:\\Users\\Rohit\\Desktop\\FLOWMAP\\inst\\shinyGUI"))
 }
