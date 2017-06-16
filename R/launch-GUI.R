@@ -1,4 +1,3 @@
-
 #' GUI for launching shiny Application
 #' 
 #' This code was adapted from the cytofkit R package,
