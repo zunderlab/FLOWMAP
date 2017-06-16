@@ -1,4 +1,3 @@
-
 #' GUI for launching shiny Application
 #' 
 #' This code was adapted from the cytofkit R package,
@@ -26,8 +25,8 @@ LaunchGUI <- function() {
   distance.metric <- c("manhattan", "euclidean")
   mode <- c("multi", "single", "one")
   color.palette <- c("bluered", "jet", "CB")
-  raw.FCS.dir <- tclVar(current.dir)
-  result.dir <- tclVar(current.dir)
+  init.raw.FCS.dir <- tclVar(current.dir)
+  init.result.dir <- tclVar(current.dir)
   downsample.toggle <- tclVar("0")
   savePDFs.toggle <- tclVar("0")
   subsample.num <- tclVar("200")
@@ -40,20 +39,13 @@ LaunchGUI <- function() {
   quit.var <- TRUE
   
   # button functions
-  ResetRawFCSDir <- function() {
-    raw.FCS.dir <- ""
+  SetRawFCSDir <- function() {
     raw.FCS.dir <- tclvalue(tkchooseDirectory(title = "Choose your raw FCS files directory ..."))
-    if (raw.FCS.dir != "") {
-      tclvalue(raw.FCS.dir) <- raw.FCS.dir
-      tclvalue(result.dir) <- raw.FCS.dir
-    }
+    tclvalue(init.raw.FCS.dir) <- raw.FCS.dir
   }
-  ResetResultDir <- function() {
-    result.dir <- ""
+  SetResultDir <- function() {
     result.dir <- tclvalue(tkchooseDirectory(title = "Choose your result directory ..."))
-    if (result.dir != "") {
-      tclvalue(result.dir) <- result.dir
-    }
+    tclvalue(init.result.dir) <- result.dir
   }
   RawFCSDirHelp <- function() {
     tkmessageBox(title = "raw.FCS.dir", message = "The directory that contains the raw FCS files.", 
@@ -156,15 +148,15 @@ LaunchGUI <- function() {
   
   # raw.FCS.dir
   raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files Directory:")
-  raw.FCS.dir.entry <- tkentry(tt, textvariable = raw.FCS.dir, width = box.length)
-  raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = ResetRawFCSDir)
+  raw.FCS.dir.entry <- tkentry(tt, textvariable = init.raw.FCS.dir, width = box.length)
+  raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = SetRawFCSDir)
   raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
   
   # result.dir
   result.dir.label <- tklabel(tt, text = "Result Directory:")
-  result.dir.entry <- tkentry(tt, textvariable = result.dir, width = box.length)
+  result.dir.entry <- tkentry(tt, textvariable = init.result.dir, width = box.length)
   result.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, 
-                            command = ResetResultDir)
+                                command = SetResultDir)
   result.dir.hBut <- tkbutton(tt, image = image2, command = ResultDirHelp)
   
   # downsample.toggle
@@ -344,22 +336,14 @@ LaunchGUI <- function() {
     inputs[["edge.max.num"]] <- tclvalue(edge.num.max)
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
-    
     globe.inputs <<- inputs
-    globe.raw.FCS.dir <<- tclvalue(raw.FCS.dir)
+    globe.raw.FCS.dir <<- tclvalue(init.raw.FCS.dir)
     timeNow <- Sys.time()
-    globe.result.dir <<- tclvalue(result.dir)
+    globe.result.dir <<- tclvalue(init.result.dir)
     timeNow <- gsub("[:]","-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
+  
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-}
-
-OpenDir <- function(dir = getwd()){
-  if (.Platform['OS.type'] == "windows"){
-    shell.exec(dir)
-  } else {
-    system(paste(Sys.getenv("R_BROWSER"), dir))
-  }
 }
