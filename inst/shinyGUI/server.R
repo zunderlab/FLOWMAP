@@ -15,9 +15,6 @@ shinyServer(function(input, output, session) {
   if (globe.inputs[["quit"]]) {
     stopApp()
   }
-  if (quit.var == TRUE){
-    stopApp()
-  }
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   final.new.same <- NULL
@@ -41,6 +38,7 @@ shinyServer(function(input, output, session) {
   })
   ChosenOrder <- eventReactive(input$gener.param.button, {
 <<<<<<< HEAD
+<<<<<<< HEAD
     input$file.order.input
 =======
     print(paste(len.filenames, sep = "", collapse = ", "))
@@ -50,6 +48,14 @@ shinyServer(function(input, output, session) {
     }
     actual.input
 >>>>>>> origin/master
+=======
+    print(paste(len.filenames, sep = "", collapse = ", "))
+    actual.input = input$file.order.input
+    if( actual.input == ""){
+      actual.input = paste(len.filenames, sep = "", collapse = ",")
+    }
+    actual.input
+>>>>>>> parent of cdf2a3d... quit button functionality
   })
   GetFCSinOrder <- eventReactive(input$gener.param.button, {
     order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
@@ -145,10 +151,10 @@ shinyServer(function(input, output, session) {
   })
   # updates the checkbox group to show same
   observe({
-    updateSelectInput(session, "check.group.files", choices = ContentDiff())
+    updateSelectInput(session, "check.group.diff", choices = ContentDiff())
   })
   FileMergeDiff <- eventReactive(input$merge.button, {
-    files.tbm <- input$check.group.files
+    files.tbm <- input$check.group.diff
     merge.name <- input$file.merge
     new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
     print(new.diff)
@@ -163,9 +169,9 @@ shinyServer(function(input, output, session) {
   })
   FileMergeTable <- eventReactive(input$merge.button, {
     print("TABLE STARTED")
-    files.tbm <- input$check.group.files
+    files.tbm <- input$check.group.diff
     new.panel.info <- panel.info.edit
-    print(input$check.group.files)
+    print(input$check.group.diff)
     print("got here")
     for (i in files.tbm) {
       print("round")
@@ -184,18 +190,22 @@ shinyServer(function(input, output, session) {
   })
   # updates the checkbox group to show same
   observe({
-    updateSelectInput(session, "check.group.files", choices = FileMergeDiff())
+    updateSelectInput(session, "check.group.diff", choices = FileMergeDiff())
   })
   observe({
     FileMergeTable()
   })
   WriteFile <- eventReactive(input$start.button, {
 <<<<<<< HEAD
+<<<<<<< HEAD
     file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
 =======
     file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
     # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
 >>>>>>> origin/master
+=======
+    file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
+>>>>>>> parent of cdf2a3d... quit button functionality
     flowfile <- (hot_to_r(input$table))
     print("flowfile")
     print(flowfile)
@@ -247,6 +257,7 @@ shinyServer(function(input, output, session) {
               target.number = target.number, target.percent = target.percent)
     } else {
       print("No downsampling")
+      print(files)
       FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
               clustering.var = clustering.var, cluster.numbers = cluster.numbers,
               subsamples = subsamples, distance.metric = distance.metric,
