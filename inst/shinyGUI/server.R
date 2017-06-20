@@ -40,7 +40,16 @@ shinyServer(function(input, output, session) {
     print("BOOP")
   })
   ChosenOrder <- eventReactive(input$gener.param.button, {
+<<<<<<< HEAD
     input$file.order.input
+=======
+    print(paste(len.filenames, sep = "", collapse = ", "))
+    actual.input <- input$file.order.input
+    if( actual.input == ""){
+      actual.input <- paste(len.filenames, sep = "", collapse = ",")
+    }
+    actual.input
+>>>>>>> origin/master
   })
   GetFCSinOrder <- eventReactive(input$gener.param.button, {
     order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
@@ -181,7 +190,12 @@ shinyServer(function(input, output, session) {
     FileMergeTable()
   })
   WriteFile <- eventReactive(input$start.button, {
+<<<<<<< HEAD
     file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
+=======
+    file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
+    # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
+>>>>>>> origin/master
     flowfile <- (hot_to_r(input$table))
     print("flowfile")
     print(flowfile)

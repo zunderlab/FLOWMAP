@@ -347,5 +347,8 @@ LaunchGUI <- function() {
   }
   
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
+<<<<<<< HEAD
   # runApp(appDir = file.path("C:\\Users\\Rohit\\Desktop\\FLOWMAP\\inst\\shinyGUI"))
+=======
+>>>>>>> origin/master
 }
