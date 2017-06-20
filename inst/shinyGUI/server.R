@@ -39,6 +39,7 @@ shinyServer(function(input, output, session) {
   ChosenOrder <- eventReactive(input$gener.param.button, {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     input$file.order.input
 =======
     print(paste(len.filenames, sep = "", collapse = ", "))
@@ -49,12 +50,17 @@ shinyServer(function(input, output, session) {
     actual.input
 >>>>>>> origin/master
 =======
+=======
+>>>>>>> parent of cdf2a3d... quit button functionality
     print(paste(len.filenames, sep = "", collapse = ", "))
     actual.input = input$file.order.input
     if( actual.input == ""){
       actual.input = paste(len.filenames, sep = "", collapse = ",")
     }
     actual.input
+<<<<<<< HEAD
+>>>>>>> parent of cdf2a3d... quit button functionality
+=======
 >>>>>>> parent of cdf2a3d... quit button functionality
   })
   GetFCSinOrder <- eventReactive(input$gener.param.button, {
@@ -198,11 +204,15 @@ shinyServer(function(input, output, session) {
   WriteFile <- eventReactive(input$start.button, {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
 =======
     file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
     # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
 >>>>>>> origin/master
+=======
+    file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
+>>>>>>> parent of cdf2a3d... quit button functionality
 =======
     file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
 >>>>>>> parent of cdf2a3d... quit button functionality
