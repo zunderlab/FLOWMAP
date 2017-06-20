@@ -81,10 +81,10 @@ CheckModeMulti <- function(files) {
   # of 1+ fcs file paths from each treatment/condition
   if (length(files) == 1) {
     if (length(list.files(files)) > 1) {
-      subfolders <- list.files(files)
+      subfolders <- list.files(files, full.names = TRUE)
       temp.fail.flag <- FALSE
       for (n in subfolders) {
-        if (!(sum(grepl(pattern = "\\.fcs", list.files(files))) >= 1)) {
+        if (!(sum(grepl(pattern = "\\.fcs", list.files(n))) >= 1)) {
           temp.fail.flag <- TRUE
         }
       }
