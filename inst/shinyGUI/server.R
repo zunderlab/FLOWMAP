@@ -15,6 +15,7 @@ shinyServer(function(input, output, session) {
   if (globe.inputs[["quit"]]) {
     stopApp()
   }
+  
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   final.new.same <- NULL
@@ -28,13 +29,44 @@ shinyServer(function(input, output, session) {
   file.info <- FileOrder(globe.raw.FCS.dir)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
+  print(len.filenames)
+  print(file.names)
+  if(identical(file.names, character(0))){
+    choice = "No FCS Files"
+  } else {
+    choice = paste(len.filenames, file.names, sep = " ")
+  }
   observe({
     updateSelectInput(session, "check.group.files",
-                      choices = paste(len.filenames, file.names, sep = " "))
+                      choices = choice)
   })
-  TestPrint <- eventReactive(input$default.button, {
-    print("BEEP")
-    print("BOOP")
+  observe({
+    updateSelectInput(session, "check.group.csv",
+                      choices = list.files(globe.raw.FCS.dir, pattern = "\\.csv"))
+  })
+  SelectCsv <- eventReactive(input$csv.finder, {
+    input$check.group.csv
+  })
+  observeEvent(input$csv.finder, {
+    print("Parsing CSV")
+    print(SelectCsv())
+    csv.path = paste(globe.raw.FCS.dir, SelectCsv(), sep = "/")
+    print(csv.path)
+    csv.data = read.csv(csv.path, header = FALSE)
+    multi.list = list()
+    temp.vec = c()
+    for(i in 1:nrow(csv.data)){
+      for(j in 1:length(csv.data[i,])){
+        if(csv.data[i, ][j] != ""){
+          temp.vec = c(temp.vec, csv.data[i, ][j])
+        }
+      }
+      multi.list[[i]] = temp.vec
+      temp.vec = c()
+    }
+    print(multi.list)
+    updateSelectInput(session, "check.group.files", 
+                      choices = c("MultiFlowMap"))  
   })
   ChosenOrder <- eventReactive(input$gener.param.button, {
     print(paste(len.filenames, sep = "", collapse = ", "))
@@ -247,9 +279,9 @@ shinyServer(function(input, output, session) {
     }
     stopApp()
   })
-  output$TESTPRINT <- renderText({
-    TestPrint()
-  })
+  # output$TESTPRINT <- renderText({
+  #   TestPrint()
+  # })
   output$writefile <- renderText({
     WriteFile()
     NULL
