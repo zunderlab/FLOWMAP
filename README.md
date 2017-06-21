@@ -427,7 +427,6 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 ## CSV Format for Multiple Analysis
 The way a CSV file should be formatted is shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. 
 
-|    |   |
 | ------------- | ------------- |
 | First FCS File Path  | Second FCS File Path  |
 | Third FCS File Path  |    |
