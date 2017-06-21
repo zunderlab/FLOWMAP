@@ -5,17 +5,17 @@ require(rhandsontable)
 shinyServer(function(input, output, session) {
   print("globe.inputs")
   print(globe.inputs)
-  
+
   print("globe.raw.FCS.dir")
   print(globe.raw.FCS.dir)
-  
+
   print("globe.result.dir")
   print(globe.result.dir)
   
   if (globe.inputs[["quit"]]) {
     stopApp()
   }
-  
+  multi.start <<- FALSE
   options(shiny.maxRequestSize = 1000 * 1024^2)
   panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
   final.new.same <- NULL
@@ -29,8 +29,8 @@ shinyServer(function(input, output, session) {
   file.info <- FileOrder(globe.raw.FCS.dir)
   len.filenames <- file.info$len.filenames
   file.names <- file.info$file.names
-  print(len.filenames)
-  print(file.names)
+  # print(len.filenames)
+  # print(file.names)
   if(identical(file.names, character(0))){
     choice = "No FCS Files"
   } else {
@@ -48,10 +48,10 @@ shinyServer(function(input, output, session) {
     input$check.group.csv
   })
   observeEvent(input$csv.finder, {
-    print("Parsing CSV")
-    print(SelectCsv())
+    # print("Parsing CSV")
+    # print(SelectCsv())
     csv.path = paste(globe.raw.FCS.dir, SelectCsv(), sep = "/")
-    print(csv.path)
+    # print(csv.path)
     csv.data = read.csv(csv.path, header = FALSE)
     multi.list = list()
     temp.vec = c()
@@ -64,72 +64,141 @@ shinyServer(function(input, output, session) {
       multi.list[[i]] = temp.vec
       temp.vec = c()
     }
-    print(multi.list)
+    # print(multi.list)
+    multi.list.global <<- multi.list
+    multi.start <<- TRUE
     updateSelectInput(session, "check.group.files", 
                       choices = c("MultiFlowMap"))  
   })
   ChosenOrder <- eventReactive(input$gener.param.button, {
-    print(paste(len.filenames, sep = "", collapse = ", "))
-    actual.input <- input$file.order.input
-    if( actual.input == ""){
-      actual.input <- paste(len.filenames, sep = "", collapse = ",")
-    }
+    if(multi.start == FALSE){
+      print(paste(len.filenames, sep = "", collapse = ", "))
+      actual.input <- input$file.order.input
+      if( actual.input == ""){
+        actual.input <- paste(len.filenames, sep = "", collapse = ",")
+      }
     actual.input
+    } else{
+    }
   })
   GetFCSinOrder <- eventReactive(input$gener.param.button, {
-    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-    fcs.list <- file.names[order]
-    fcs.list
+    if(multi.start == FALSE){
+      order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+      fcs.list <- file.names[order]
+      fcs.list
+    } else {
+    }
   })
   ContentDiff <- eventReactive(input$gener.param.button, {
     # Read input Files
     # Set the names
-    fcs.list <- list()
-    rows <- length(FileOrder(globe.raw.FCS.dir))
-    count <- 0
-    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-    for(i in order) {
-      setwd(globe.raw.FCS.dir)
-      fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-      fcs.list[[(count + 1)]] <- name.desc
-      count <- count + 1
-      # Reads FCS Files, gets name and Description, add to a list of different FCS files
-    }
-    if (rows > 1) {
+    if(multi.start == FALSE){
+      fcs.list <- list()
+      rows <- length(FileOrder(globe.raw.FCS.dir))
+      count <- 0
+      order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+      print(order)
+      file.names <- file.names[!is.na(file.names)]
+      for(i in order) {
+        setwd(globe.raw.FCS.dir)
+        # print("before")
+        print(file.names[i])
+        
+        fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
+        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.list[[(count + 1)]] <- name.desc
+        count <- count + 1
+        # Reads FCS Files, gets name and Description, add to a list of different FCS files
+      }
+      print(multi.start)
+      if (rows > 1) {
+        same <- Reduce(intersect, fcs.list)
+        every <- Reduce(union, fcs.list)
+        diffs <- every
+        diffs <- diffs[! every %in% same]
+      } else {
+        diffs <- NULL
+      }
+      # Gets different parameters from the FCS files
+      final.new.diff <<- diffs
+      diffs
+      # If there is 1 FCS file, then there is no difference
+    } else {
+      count = 0
+      fcs.list <- list()
+      fcs.file.path <- c()
+      for(i in multi.list.global){
+        fcs.file.path <- c(fcs.file.path, i)
+      }
+      fcs.file.path <- unlist(fcs.file.path) 
+      fcs.file.path <- levels(droplevels(fcs.file.path))
+      print(fcs.file.path)
+      test.globe <<- fcs.file.path
+      for(i in fcs.file.path) {
+        fcs.files <- read.FCS(i, emptyValue = FALSE)
+        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.list[[(count + 1)]] <- name.desc
+        count <- count + 1
+        # Reads FCS Files, gets name and Description, add to a list of different FCS files
+      }
+      print(fcs.list)
       same <- Reduce(intersect, fcs.list)
       every <- Reduce(union, fcs.list)
       diffs <- every
       diffs <- diffs[! every %in% same]
-    } else {
-      diffs <- NULL
+      final.new.diff <<- diffs
+      diffs
     }
-    # Gets different parameters from the FCS files
-    final.new.diff <<- diffs
-    diffs
-    # If there is 1 FCS file, then there is no difference
   })
   ContentSame <- eventReactive(input$gener.param.button, {
-    fcs.list <- list()
-    rows <- length(FileOrder(globe.raw.FCS.dir))
-    count <- 0
-    order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-    for(i in order) {
-      setwd(globe.raw.FCS.dir)
-      fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-      fcs.list[[(count + 1)]] <- name.desc
-      count <- count + 1
-      # Does same thing as above
+    if(multi.start == FALSE){
+      fcs.list <- list()
+      rows <- length(FileOrder(globe.raw.FCS.dir))
+      count <- 0
+      order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+      for(i in order) {
+        setwd(globe.raw.FCS.dir)
+        fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
+        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.list[[(count + 1)]] <- name.desc
+        count <- count + 1
+        # Does same thing as above
+      }
+      same <- Reduce(intersect, fcs.list)
+      every <- Reduce(union, fcs.list)
+      diff <- every
+      diff <- diff[! every %in% same]
+      final.new.same <<- same
+      same
+    } else {
+      fcs.list <- list()
+      fcs.file.path <- c()
+      for(i in multi.list.global){
+        fcs.file.path <- c(fcs.file.path, i)
+      }
+      fcs.file.path <- unlist(fcs.file.path) 
+      fcs.file.path <- levels(droplevels(fcs.file.path))
+      print(fcs.file.path)
+      count = 0
+      for(i in fcs.file.path) {
+        print(i)
+        fcs.files <- read.FCS(i, emptyValue = FALSE)
+        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.list[[(count + 1)]] <- name.desc
+        count <- count + 1
+        # Reads FCS Files, gets name and Description, add to a list of different FCS files
+      }
+      same <- Reduce(intersect, fcs.list)
+      every <- Reduce(union, fcs.list)
+      diff <- every
+      diff <- diff[! every %in% same]
+      final.new.same <<- same
+      same
     }
-    same <- Reduce(intersect, fcs.list)
-    every <- Reduce(union, fcs.list)
-    diff <- every
-    diff <- diff[! every %in% same]
-    final.new.same <<- same
-    same
     # gives the same paramters
   })
   TableCreate <- eventReactive(input$gener.param.button, {
