@@ -46,6 +46,20 @@ GetOrigTimesfromDF <- function(list.of.df, time.col.label = "Time", name.sort = 
   return(orig.times)
 }
 
+StripTimesfromDF <- function(df, time.col.label = "Time") {
+  keep <- setdiff(colnames(df), time.col.label)
+  fixed.df <- df[, keep]
+  return(fixed.df)
+}
+
+StripTimesfromDFList <- function(list.of.df, time.col.label = "Time") {
+  fixed.df.list <- list()
+  for (i in 1:length(list.of.df)) {
+    fixed.df.list[[i]] <- StripTimesfromDF(list.of.df[[i]], time.col.label)
+  }
+  return(fixed.df.list)
+}
+
 GetLabelKeyfromDF <- function(multi.list.df, time.col.label, condition.col.label) {
   if (class(multi.list.df) == "list" & class(multi.list.df[[1]]) == "list") {
     label.key <- list()
