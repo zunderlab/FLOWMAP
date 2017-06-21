@@ -405,12 +405,31 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box of the header "FLOWMAPR" should appear. 
 2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed.
 3. When "Submit" is pressed, a new window should appear which runs with Shiny.
+**The usage differs depending on if multi or single/one is used.**
+**For single/one:**
 4. Select the order of the FCS files that you wish to use. If there is only 1 FCS file, choose the number of the file that is shown.
-5. Press "Generate Parameters."
+5. Press "Generate Parameters".
 6. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
 7. If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
 8. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
-9. Press "Write File" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+9. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+**For multi:**
+4. Select the CSV file that has the corresponding FCS file paths. The arrangement of the CSV will be shown in the following section.
+5. Press "Input CSV" once the CSV is selected in the box.
+6. Press "Generate Parameters".
+7.If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
+8. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
+9. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+
+## CSV Format for Multiple Analysis
+The way a CSV file should be formatted is shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. 
+
+| First FCS File Path |    |    |
+| Second FCS File Path  | Third FCS File Path  |    |
+| Fourth FCS File Path | Fifth FCS File Path |    |
+| Sixth FCS File Path | Seventh FCS File Path | Eighth FCS File Path |
+| Ninth FCS File Path |    |    |
+
 
 ## Contributing
 
