@@ -22,6 +22,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     setwd(output.folder)
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
+    print("removed times")
     df <- ShuffleCells(df)
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
