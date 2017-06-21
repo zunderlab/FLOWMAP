@@ -20,6 +20,7 @@
 
 LaunchGUI <- function() {
   require(shiny)
+  require(tcltk)
   # parameter initialization
   current.dir <- getwd()
   distance.metric <- c("manhattan", "euclidean")

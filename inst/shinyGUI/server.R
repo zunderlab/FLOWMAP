@@ -64,7 +64,7 @@ shinyServer(function(input, output, session) {
       multi.list[[i]] = temp.vec
       temp.vec = c()
     }
-    # print(multi.list)
+    print(multi.list)
     multi.list.global <<- multi.list
     multi.start <<- TRUE
     updateSelectInput(session, "check.group.files", 
