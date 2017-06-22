@@ -13,6 +13,7 @@ if(globe.inputs[["mode"]] == "single"){
     print(globe.result.dir)
     
     if (globe.inputs[["quit"]]) {
+      print("Exiting FLOWMAP")
       stopApp()
     }
     options(shiny.maxRequestSize = 1000 * 1024^2)

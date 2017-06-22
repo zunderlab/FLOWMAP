@@ -117,15 +117,21 @@ LaunchGUI <- function() {
   }
   Submit <- function() {
     has.error <- FALSE
+    quit.var <<- FALSE
+    print("Submit")
     if (has.error == FALSE) {
-      quit.var <<- FALSE
       tclvalue(ret.var) <- "OK"
       tkdestroy(tt)
     }
   }
   Quit <- function() {
-    tkdestroy(tt)
-    stop("Exiting FLOWMAPR GUI.")
+    print("Exiting FLOWMAPR GUI")
+    quit.var <<- TRUE
+    has.error <- FALSE
+    if (has.error == FALSE) {
+      tclvalue(ret.var) <- "OK"
+      tkdestroy(tt)
+    }
   }
   
   # build the GUI
@@ -346,6 +352,6 @@ LaunchGUI <- function() {
                         inputs[["resultDir"]])
   }
   
-  runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-  # runApp(appDir = "C:/Users/Rohit/Desktop/FLOWMAP/inst/shinyGUI")
+  # runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
+  runApp(appDir = "C:/Users/Rohit/Desktop/FLOWMAP/inst/shinyGUI")
 }
