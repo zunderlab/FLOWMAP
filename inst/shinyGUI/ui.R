@@ -6,17 +6,6 @@ if(globe.inputs[["mode"]] == "single"){
       titlePanel("File Uploader"),
       fluidRow(
         column(width = 3,
-               selectInput("check.group.csv",
-                           label = h5("Import CSV"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = FALSE,
-                           selectize = FALSE,
-                           size = 3
-               ),
-               actionButton("csv.finder", "Input CSV"),
-               br(),
-               br(),
                selectInput("check.group.files",
                            label = h5("Uploaded Order"),
                            choices = "Pending Upload",
@@ -28,7 +17,6 @@ if(globe.inputs[["mode"]] == "single"){
                textInput("file.order.input", label = h5("Write the FCS File Order"),
                          placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
                actionButton("gener.param.button", "Generate Parameters"),
-               # actionButton("default.button", "Use Default Order"),
                textOutput(
                  "TESTPRINT"
                ),
@@ -69,10 +57,10 @@ if(globe.inputs[["mode"]] == "single"){
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
                br(),
-               rHandsontableOutput("table", width = 600),
-               br(),
-               br(),
-               actionButton("down.gener.param", "Run Downsample")
+               rHandsontableOutput("table", width = 600)
+               # br(),
+               # br(),
+               # actionButton("down.gener.param", "Run Downsample")
         )
       )
     ))
