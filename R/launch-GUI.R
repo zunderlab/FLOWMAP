@@ -148,7 +148,7 @@ LaunchGUI <- function() {
   tcl(image2, "copy", image1, subsample = 6)
   
   # raw.FCS.dir
-  raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files Directory:")
+  raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files or CSV Directory:")
   raw.FCS.dir.entry <- tkentry(tt, textvariable = init.raw.FCS.dir, width = box.length)
   raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = SetRawFCSDir)
   raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
