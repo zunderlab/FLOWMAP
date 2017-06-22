@@ -79,20 +79,7 @@ if(globe.inputs[["mode"]] == "single"){
                            size = 3
                ),
                actionButton("csv.finder", "Input CSV"),
-               # br(),
-               # br(),
-               # selectInput("check.group.files",
-               #             label = h5("Uploaded Order"),
-               #             choices = "Pending Upload",
-               #             selected = NULL,
-               #             multiple = TRUE,
-               #             selectize = FALSE,
-               #             size = 7
-               # ),
-               # textInput("file.order.input", label = h5("Write the FCS File Order"),
-               #           placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
-               # actionButton("gener.param.button", "Generate Parameters"),
-               # actionButton("default.button", "Use Default Order"),
+               
                textOutput(
                  "TESTPRINT"
                ),
@@ -154,8 +141,6 @@ if(globe.inputs[["mode"]] == "single"){
                            selectize = FALSE,
                            size = 7
                ),
-               # textInput("file.order.input", label = h5("Write the FCS File Order"),
-               #           placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
                actionButton("gener.param.button", "Generate Parameters"),
                # actionButton("default.button", "Use Default Order"),
                textOutput(
@@ -174,27 +159,7 @@ if(globe.inputs[["mode"]] == "single"){
                  "fcsorder"
                )
         ),
-        # column(width = 3,
-        #        selectInput("check.group.sim",
-        #                    label = h5("Parameters"),
-        #                    choices = "Pending Upload",
-        #                    selected = NULL,
-        #                    multiple = TRUE,
-        #                    selectize = FALSE,
-        #                    size = 7
-        #        )
-        #        # selectInput("check.group.diff",
-        #        #             label = h5("Different Fields"),
-        #        #             choices = "Pending upload",
-        #        #             selected = NULL,
-        #        #             multiple = TRUE,
-        #        #             selectize = FALSE,
-        #        #             size = 7
-        #        # ),
-        #        # textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-        #        # actionButton("merge.button", "Merge Selected Diff")
-        # ),
-        column(width = 5,
+        column(width = 8,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
                br(),
