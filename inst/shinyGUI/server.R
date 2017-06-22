@@ -662,7 +662,6 @@ if(globe.inputs[["mode"]] == "single"){
     if (globe.inputs[["quit"]]) {
       stopApp()
     }
-    multi.start <<- FALSE
     options(shiny.maxRequestSize = 1000 * 1024^2)
     panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
@@ -676,269 +675,66 @@ if(globe.inputs[["mode"]] == "single"){
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
-    # print(len.filenames)
-    # print(file.names)
     if(identical(file.names, character(0))){
-      choice = "No FCS Files"
+      choice <<- "No FCS Files"
     } else {
-      choice = paste(len.filenames, file.names, sep = " ")
+      choice <<- file.names
     }
     observe({
       updateSelectInput(session, "check.group.files",
                         choices = choice)
     })
-    observe({
-      updateSelectInput(session, "check.group.csv",
-                        choices = list.files(globe.raw.FCS.dir, pattern = "\\.csv"))
-    })
-    SelectCsv <- eventReactive(input$csv.finder, {
-      input$check.group.csv
-    })
-    observeEvent(input$csv.finder, {
-      # print("Parsing CSV")
-      # print(SelectCsv())
-      csv.path = paste(globe.raw.FCS.dir, SelectCsv(), sep = "/")
-      # print(csv.path)
-      csv.data = read.csv(csv.path, header = FALSE)
-      multi.list = list()
-      temp.vec = c()
-      for(i in 1:nrow(csv.data)){
-        for(j in 1:length(csv.data[i,])){
-          if(csv.data[i, ][j] != ""){
-            temp.vec = c(temp.vec, csv.data[i, ][j])
-          }
-        }
-        multi.list[[i]] = temp.vec
-        temp.vec = c()
-      }
-      print(multi.list)
-      multi.list.global <<- multi.list
-      multi.start <<- TRUE
-      updateSelectInput(session, "check.group.files", 
-                        choices = c("MultiFlowMap"))  
-    })
-    ChosenOrder <- eventReactive(input$gener.param.button, {
-      if(multi.start == FALSE){
-        print(paste(len.filenames, sep = "", collapse = ", "))
-        actual.input <- input$file.order.input
-        if( actual.input == ""){
-          actual.input <- paste(len.filenames, sep = "", collapse = ",")
-        }
-        actual.input
-      } else{
-      }
-    })
-    GetFCSinOrder <- eventReactive(input$gener.param.button, {
-      if(multi.start == FALSE){
-        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-        fcs.list <- file.names[order]
-        fcs.list
-      } else {
-      }
-    })
-    ContentDiff <- eventReactive(input$gener.param.button, {
-      # Read input Files
-      # Set the names
-      if(multi.start == FALSE){
-        fcs.list <- list()
-        rows <- length(FileOrder(globe.raw.FCS.dir))
-        count <- 0
-        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-        print(order)
-        file.names <- file.names[!is.na(file.names)]
-        for(i in order) {
-          setwd(globe.raw.FCS.dir)
-          # print("before")
-          print(file.names[i])
-          
-          fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-          fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-          name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-          fcs.list[[(count + 1)]] <- name.desc
-          count <- count + 1
-          # Reads FCS Files, gets name and Description, add to a list of different FCS files
-        }
-        print(multi.start)
-        if (rows > 1) {
-          same <- Reduce(intersect, fcs.list)
-          every <- Reduce(union, fcs.list)
-          diffs <- every
-          diffs <- diffs[! every %in% same]
-        } else {
-          diffs <- NULL
-        }
-        # Gets different parameters from the FCS files
-        final.new.diff <<- diffs
-        diffs
-        # If there is 1 FCS file, then there is no difference
-      } else {
-        count = 0
-        fcs.list <- list()
-        fcs.file.path <- c()
-        for(i in multi.list.global){
-          fcs.file.path <- c(fcs.file.path, i)
-        }
-        fcs.file.path <- unlist(fcs.file.path) 
-        fcs.file.path <- levels(droplevels(fcs.file.path))
-        print(fcs.file.path)
-        test.globe <<- fcs.file.path
-        for(i in fcs.file.path) {
-          fcs.files <- read.FCS(i, emptyValue = FALSE)
-          fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-          name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-          fcs.list[[(count + 1)]] <- name.desc
-          count <- count + 1
-          # Reads FCS Files, gets name and Description, add to a list of different FCS files
-        }
-        print(fcs.list)
-        same <- Reduce(intersect, fcs.list)
-        every <- Reduce(union, fcs.list)
-        diffs <- every
-        diffs <- diffs[! every %in% same]
-        final.new.diff <<- diffs
-        diffs
-      }
-    })
+    
     ContentSame <- eventReactive(input$gener.param.button, {
-      if(multi.start == FALSE){
-        fcs.list <- list()
-        rows <- length(FileOrder(globe.raw.FCS.dir))
-        count <- 0
-        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-        for(i in order) {
-          setwd(globe.raw.FCS.dir)
-          fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-          fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-          name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-          fcs.list[[(count + 1)]] <- name.desc
-          count <- count + 1
-          # Does same thing as above
-        }
-        same <- Reduce(intersect, fcs.list)
-        every <- Reduce(union, fcs.list)
-        diff <- every
-        diff <- diff[! every %in% same]
-        final.new.same <<- same
-        same
-      } else {
-        fcs.list <- list()
-        fcs.file.path <- c()
-        for(i in multi.list.global){
-          fcs.file.path <- c(fcs.file.path, i)
-        }
-        fcs.file.path <- unlist(fcs.file.path) 
-        fcs.file.path <- levels(droplevels(fcs.file.path))
-        print(fcs.file.path)
-        count = 0
-        for(i in fcs.file.path) {
-          print(i)
-          fcs.files <- read.FCS(i, emptyValue = FALSE)
-          fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-          name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-          fcs.list[[(count + 1)]] <- name.desc
-          count <- count + 1
-          # Reads FCS Files, gets name and Description, add to a list of different FCS files
-        }
-        same <- Reduce(intersect, fcs.list)
-        every <- Reduce(union, fcs.list)
-        diff <- every
-        diff <- diff[! every %in% same]
-        final.new.same <<- same
-        same
-      }
+      fcs.list <- list()
+        setwd(globe.raw.FCS.dir)
+        fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
+        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.list[[(1)]] <- name.desc
+        # Does same thing as above
+      same <- Reduce(intersect, fcs.list)
+      every <- Reduce(union, fcs.list)
+      diff <- every
+      diff <- diff[! every %in% same]
+      final.new.same <<- same
+      same
       # gives the same paramters
     })
     TableCreate <- eventReactive(input$gener.param.button, {
-      if (length(final.new.diff) == 0) {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = logical(length = length(final.new.same)),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      } else {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = c(logical(length = length(final.new.same)),
-                                              !logical(length = length(final.new.diff))),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      }
+      panel.info <<- data.frame(channels = c(final.new.same),
+                                removal = logical(length = length(final.new.same)),
+                                cluster = logical(length = length(final.new.same)),
+                                annotate = c(final.new.same), stringsAsFactors = FALSE)
       output$table <- renderRHandsontable({
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
-      panel.info.edit <<- panel.info
+      # panel.info.edit <<- panel.info
     })
     observeEvent(input$gener.param.button, {
-      if (length(final.new.diff) == 0) {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = logical(length = length(final.new.same)),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      } else {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = c(logical(length = length(final.new.same)),
-                                             !logical(length = length(final.new.diff))),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      }
+        panel.info <<- data.frame(channels = c(final.new.same),
+                                  removal = logical(length = length(final.new.same)),
+                                  cluster = logical(length = length(final.new.same)),
+                                  annotate = c(final.new.same), stringsAsFactors = FALSE)
     })
-    observe({
-      updateSelectInput(session, "check.group.sim", choices = ContentSame())
+    
+    observeEvent(input$gener.param.button, {
+      updateSelectInput(session, "check.group.files", choices = ContentSame())
     })
-    # updates the checkbox group to show same
-    observe({
-      updateSelectInput(session, "check.group.diff", choices = ContentDiff())
+    
+    observeEvent(input$gener.param.button, {
+      updateSelectInput(session, "check.group.files", choices = choice)
     })
-    FileMergeDiff <- eventReactive(input$merge.button, {
-      files.tbm <- input$check.group.diff
-      merge.name <- input$file.merge
-      new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
-      print(new.diff)
-      print("DIFF WORKS")
-      new.diff
-    })
-    FileMergeSame <- eventReactive(input$merge.button, {
-      new.same <- c(input$file.merge, ContentSame())
-      print(new.same)
-      print("SAME WORKS")
-      new.same
-    })
-    FileMergeTable <- eventReactive(input$merge.button, {
-      print("TABLE STARTED")
-      files.tbm <- input$check.group.diff
-      new.panel.info <- panel.info.edit
-      print(input$check.group.diff)
-      print("got here")
-      for (i in files.tbm) {
-        print("round")
-        new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
-        panel.info.edit <<- new.panel.info
-      }
-      print("NEW DF MADE")
-      output$table <- renderRHandsontable({
-        rhandsontable(new.panel.info) %>%
-          hot_col("channels", readOnly = TRUE)
-      })
-      print("TABLE SUCCESS")
-    })
-    observe({
-      updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
-    })
-    # updates the checkbox group to show same
-    observe({
-      updateSelectInput(session, "check.group.diff", choices = FileMergeDiff())
-    })
-    observe({
-      FileMergeTable()
-    })
+    
+    
     WriteFile <- eventReactive(input$start.button, {
-      file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
-      # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
-      files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
+      files <- list.files(input$check.group.files)
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -995,9 +791,6 @@ if(globe.inputs[["mode"]] == "single"){
       }
       stopApp()
     })
-    # output$TESTPRINT <- renderText({
-    #   TestPrint()
-    # })
     output$writefile <- renderText({
       WriteFile()
       NULL
@@ -1007,11 +800,10 @@ if(globe.inputs[["mode"]] == "single"){
       NULL
     })
     output$ordering <- renderText({
-      ChosenOrder()
       NULL
     })
     output$fcsorder <- renderText({
-      GetFCSinOrder()
+      NULL
     })
     output$testprint <- renderText({
       TestPrint()
