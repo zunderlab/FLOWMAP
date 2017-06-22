@@ -79,19 +79,19 @@ if(globe.inputs[["mode"]] == "single"){
                            size = 3
                ),
                actionButton("csv.finder", "Input CSV"),
-               br(),
-               br(),
-               selectInput("check.group.files",
-                           label = h5("Uploaded Order"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
-               textInput("file.order.input", label = h5("Write the FCS File Order"),
-                         placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
-               actionButton("gener.param.button", "Generate Parameters"),
+               # br(),
+               # br(),
+               # selectInput("check.group.files",
+               #             label = h5("Uploaded Order"),
+               #             choices = "Pending Upload",
+               #             selected = NULL,
+               #             multiple = TRUE,
+               #             selectize = FALSE,
+               #             size = 7
+               # ),
+               # textInput("file.order.input", label = h5("Write the FCS File Order"),
+               #           placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
+               # actionButton("gener.param.button", "Generate Parameters"),
                # actionButton("default.button", "Use Default Order"),
                textOutput(
                  "TESTPRINT"
