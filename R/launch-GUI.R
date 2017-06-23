@@ -351,7 +351,10 @@ LaunchGUI <- function() {
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-  
-  runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
-  # runApp(appDir = "C:/Users/Rohit/Desktop/FLOWMAP/inst/shinyGUI")
+  if(quit.var == FALSE){
+    runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "shinyGUI"))
+    # runApp(appDir = "C:\\Users\\Rohit\\Desktop\\FLOWMAP\\inst\\shinyGUI")
+  } else {
+    stop("Analysis has be cancelled")
+  }
 }
