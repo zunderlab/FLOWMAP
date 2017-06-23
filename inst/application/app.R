@@ -196,6 +196,7 @@ if(globe.inputs[["mode"]] == "single"){
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
       files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
+      print(files)
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -324,18 +325,36 @@ if(globe.inputs[["mode"]] == "single"){
       csv.path = paste(globe.raw.FCS.dir, SelectCsv(), sep = "/")
       print(csv.path)
       csv.data = read.csv(csv.path, header = FALSE)
+      print(csv.data)
       multi.list = list()
       temp.vec = c()
+      print("starting loop")
       for(i in 1:nrow(csv.data)){
         for(j in 1:length(csv.data[i,])){
           if(csv.data[i, ][j] != ""){
-            temp.vec = c(temp.vec, csv.data[i, ][j])
+            if(paste(levels(csv.data[i, ][j]), collapse = "") != ""){
+              temp.vec = c(temp.vec, levels(droplevels(csv.data[i, ][j])))
+              print("fcs path")
+              print(csv.data[i, ][j])
+              print("temp vec")
+              print(temp.vec)
+              print("There are levels")
+            } else {
+              temp.vec = c(temp.vec, csv.data[i, ][j])
+              print("fcs path")
+              print(csv.data[i, ][j])
+              print("temp vec")
+              print(temp.vec)
+              print("There are no levels")
+            } 
           }
         }
-        multi.list[[i]] = temp.vec
+        multi.list[[i]] = (temp.vec)
         temp.vec = c()
       }
+      print("loop done")
       print(multi.list)
+      print("list complete")
       multi.list.global <<- multi.list
       updateSelectInput(session, "check.group.files", 
                         choices = c("MultiFlowMap"))  
@@ -349,7 +368,11 @@ if(globe.inputs[["mode"]] == "single"){
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
-      fcs.file.path <- levels(droplevels(fcs.file.path))
+      print("Pathway")
+      print(fcs.file.path)
+      if(paste(levels(fcs.file.path), collapse = "") != ""){
+        fcs.file.path <- levels(droplevels(fcs.file.path))
+      }
       print(fcs.file.path)
       test.globe <<- fcs.file.path
       for(i in fcs.file.path) {
@@ -376,7 +399,9 @@ if(globe.inputs[["mode"]] == "single"){
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
-      fcs.file.path <- levels(droplevels(fcs.file.path))
+      if(paste(levels(fcs.file.path), collapse = "") != ""){
+        fcs.file.path <- levels(droplevels(fcs.file.path))
+      }
       all.files <<- fcs.file.path
       print(fcs.file.path)
       count = 0
@@ -486,7 +511,9 @@ if(globe.inputs[["mode"]] == "single"){
       print(flowfile)
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
-      files <- all.files
+      files <- multi.list.global
+      print("@@@@@@@@@@@")
+      print(multi.list.global)
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -609,6 +636,7 @@ if(globe.inputs[["mode"]] == "single"){
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
       setwd(globe.raw.FCS.dir)
+      one.fcs <<- input$check.group.files
       fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
       fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
       name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
@@ -648,14 +676,15 @@ if(globe.inputs[["mode"]] == "single"){
       updateSelectInput(session, "check.group.files", choices = choice)
     })
     
-    
     WriteFile <- eventReactive(input$start.button, {
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
+      print("HERE I AM")
       print(flowfile)
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
-      files <- list.files(input$check.group.files)
+      files <- one.fcs
+      print(files)
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -664,7 +693,10 @@ if(globe.inputs[["mode"]] == "single"){
         var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
       }
       var.remove <- flowfile[flowfile$removal == TRUE, 1]
+      print(var.remove)
       clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      print(var.annotate)
+      print(files)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
@@ -682,7 +714,6 @@ if(globe.inputs[["mode"]] == "single"){
       
       print("output")
       print(output)
-      
       # Run FLOW-MAP
       if (downsample) {
         print("Downsampling")
@@ -691,6 +722,7 @@ if(globe.inputs[["mode"]] == "single"){
         target.percent <- NULL
         exclude.pctile <- 0.01
         target.pctile <- 0.99
+        print(files)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
