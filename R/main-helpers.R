@@ -154,7 +154,7 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   for (i in 1:length(fcs.file.names)) {
     times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
   }
-  alt.times <- names(files)
+  alt.times <- names(fcs.file.names)
   if (name.sort) {
     alt.times <- alt.times[order(as.numeric(alt.times))]
   }
