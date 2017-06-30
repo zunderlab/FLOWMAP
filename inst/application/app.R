@@ -230,8 +230,8 @@ if(globe.inputs[["mode"]] == "single"){
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -547,8 +547,8 @@ if(globe.inputs[["mode"]] == "single"){
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -720,8 +720,8 @@ if(globe.inputs[["mode"]] == "single"){
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         print(files)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
@@ -1167,8 +1167,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -1484,8 +1484,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -1657,8 +1657,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         target.number <- subsamples
         subsamples <- FALSE
         target.percent <- NULL
-        exclude.pctile <- 0.01
-        target.pctile <- 0.99
+        exclude.pctile <- input$exclude.pctile
+        target.pctile <- input$target.pctile
         print(files)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
@@ -1719,6 +1719,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
              ),
              textInput("file.order.input", label = h5("Write the FCS File Order"),
                        placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
+             numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
+             numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
              actionButton("gener.param.button", "Generate Parameters"),
              textOutput(
                "TESTPRINT"
@@ -1759,7 +1761,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       column(width = 5,
              actionButton("start.button", "Run FLOWMAPR"),
              br(),
-             br(),
              rHandsontableOutput("table", width = 600)
              # br(),
              # br(),
@@ -1781,6 +1782,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
                          selectize = FALSE,
                          size = 3
              ),
+             numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
+             numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
              actionButton("csv.finder", "Input CSV"),
              
              textOutput(
@@ -1822,7 +1825,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       column(width = 5,
              actionButton("start.button", "Run FLOWMAPR"),
              br(),
-             br(),
              rHandsontableOutput("table", width = 600)
              # br(),
              # br(),
@@ -1843,6 +1845,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
                          selectize = FALSE,
                          size = 7
              ),
+             numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
+             numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
              actionButton("gener.param.button", "Generate Parameters"),
              # actionButton("default.button", "Use Default Order"),
              textOutput(
@@ -1861,9 +1865,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
                "fcsorder"
              )
       ),
-      column(width = 8,
+      column(width = 5,
              actionButton("start.button", "Run FLOWMAPR"),
-             br(),
              br(),
              rHandsontableOutput("table", width = 600)
              # br(),
