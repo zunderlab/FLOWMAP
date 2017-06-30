@@ -99,7 +99,7 @@ CheckModeMulti <- function(files) {
         if (!all(grepl(pattern = "\\.fcs", files[[i]]))) {
           temp.fail.flag <- TRUE
         }
-        if (length(files[[i]]) > 1) {
+        if (length(files[[i]]) >= 1) {
           multiple.condition.flag <- TRUE
         }
       }
