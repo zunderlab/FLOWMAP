@@ -355,6 +355,6 @@ LaunchGUI <- function() {
     runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
     # runApp(appDir = "C:/Users/Rohit/Desktop/Application")
   } else {
-    stop("Analysis has be cancelled")
+    stop("Analysis is cancelled")
   }
 }
