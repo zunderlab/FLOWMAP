@@ -13,6 +13,7 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   clusters <- list.of.FLOWMAP.clusters$cluster.medians[[1]]
   # get distance matrix from clusters
   print("I got here")
+  print(files)
   clusters <- subset(clusters, select = clustering.var)
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
