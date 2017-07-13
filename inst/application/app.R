@@ -327,38 +327,38 @@ if(globe.inputs[["mode"]] == "single"){
     observeEvent(input$csv.finder, {
       print("Parsing CSV")
       csv.path = paste(globe.raw.FCS.dir, SelectCsv(), sep = "/")
-      print(csv.path)
+      # print(csv.path)
       csv.data = read.csv(csv.path, header = FALSE)
-      print(csv.data)
+      # print(csv.data)
       multi.list = list()
       temp.vec = c()
-      print("starting loop")
+      # print("starting loop")
       for(i in 1:nrow(csv.data)){
         for(j in 1:length(csv.data[i,])){
           if(csv.data[i, ][j] != ""){
             if(paste(levels(csv.data[i, ][j]), collapse = "") != ""){
               temp.vec = c(temp.vec, levels(droplevels(csv.data[i, ][j])))
-              print("fcs path")
-              print(csv.data[i, ][j])
-              print("temp vec")
-              print(temp.vec)
-              print("There are levels")
+              # print("fcs path")
+              # print(csv.data[i, ][j])
+              # print("temp vec")
+              # print(temp.vec)
+              # print("There are levels")
             } else {
               temp.vec = c(temp.vec, csv.data[i, ][j])
-              print("fcs path")
-              print(csv.data[i, ][j])
-              print("temp vec")
-              print(temp.vec)
-              print("There are no levels")
+              # print("fcs path")
+              # print(csv.data[i, ][j])
+              # print("temp vec")
+              # print(temp.vec)
+              # print("There are no levels")
             } 
           }
         }
         multi.list[[i]] = (temp.vec)
         temp.vec = c()
       }
-      print("loop done")
-      print(multi.list)
-      print("list complete")
+      # print("loop done")
+      # print(multi.list)
+      # print("list complete")
       multi.list.global <<- multi.list
       updateSelectInput(session, "check.group.files", 
                         choices = c("MultiFlowMap"))  
@@ -372,12 +372,12 @@ if(globe.inputs[["mode"]] == "single"){
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
-      print("Pathway")
-      print(fcs.file.path)
+      # print("Pathway")
+      # print(fcs.file.path)
       if(paste(levels(fcs.file.path), collapse = "") != ""){
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
-      print(fcs.file.path)
+      # print(fcs.file.path)
       test.globe <<- fcs.file.path
       for(i in fcs.file.path) {
         fcs.files <- read.FCS(i, emptyValue = FALSE)
@@ -387,7 +387,7 @@ if(globe.inputs[["mode"]] == "single"){
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
-      print(fcs.list)
+      # print(fcs.list)
       same <- Reduce(intersect, fcs.list)
       every <- Reduce(union, fcs.list)
       diffs <- every
@@ -407,10 +407,10 @@ if(globe.inputs[["mode"]] == "single"){
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
       all.files <<- fcs.file.path
-      print(fcs.file.path)
+      # print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
-        print(i)
+        # print(i)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
         fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
         name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
@@ -516,8 +516,8 @@ if(globe.inputs[["mode"]] == "single"){
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
       files <- multi.list.global
-      print("@@@@@@@@@@@")
-      print(multi.list.global)
+      # print("@@@@@@@@@@@")
+      # print(multi.list.global)
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -527,6 +527,8 @@ if(globe.inputs[["mode"]] == "single"){
       }
       var.remove <- flowfile[flowfile$removal == TRUE, 1]
       clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      print("clustering.var")
+      print(clustering.var)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
@@ -542,8 +544,8 @@ if(globe.inputs[["mode"]] == "single"){
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
-      print("output")
-      print(output)
+      # print("output")
+      # print(output)
       
       # Run FLOW-MAP
       if (downsample) {
