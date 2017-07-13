@@ -13,7 +13,6 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   # This section creates a flowmap for the first time point
   clusters <- list.of.FLOWMAP.clusters$cluster.medians[[1]]
   # get distance matrix from clusters
-  print("I got here")
   clusters <- subset(clusters, select = clustering.var)
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
@@ -71,7 +70,6 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
     cat("Build FLOWMAP from", n, "to", n + 1, "\n")
     # get clusters for time a and a+1
     clusters <- rbind(remodel.FLOWMAP.clusters$cluster.medians[[n]], remodel.FLOWMAP.clusters$cluster.medians[[n + 1]])
-    print("I got here 2")
     clusters <- subset(clusters, select = clustering.var)
     numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
