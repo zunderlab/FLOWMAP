@@ -53,7 +53,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     }
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric,
-                               label.key = label.key)
+                               label.key = label.key, clustering.var = clustering.var)
   } else if (mode == "one") {
     check <- CheckDFModeOne(df)
     cat("check", check, "\n")

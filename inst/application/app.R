@@ -232,8 +232,6 @@ if(globe.inputs[["mode"]] == "single"){
         target.percent <- NULL
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
-        print("clustering.var")
-        print(clustering.var)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -245,8 +243,6 @@ if(globe.inputs[["mode"]] == "single"){
       } else {
         print("No downsampling")
         print(files)
-        print("clustering.var")
-        print(clustering.var)
         FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 subsamples = subsamples, distance.metric = distance.metric,

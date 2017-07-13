@@ -6,7 +6,8 @@ InitializeMultiGraph <- function(list.of.FLOWMAP.clusters) {
   return(initial.graph)
 }
 
-BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, distance.metric) {
+BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, distance.metric,
+                                   clustering.var) {
   output.graph <- InitializeMultiGraph(list.of.FLOWMAP.clusters)
   cat("Building first FLOWMAP\n")
   # This section creates a flowmap for the first time point
@@ -55,10 +56,11 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
 }
 
 BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
-                              max, distance.metric, label.key) {
+                              max, distance.metric, label.key, clustering.var) {
   remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(list.of.FLOWMAP.clusters)
   output.graph <- BuildFirstMultiFLOWMAP(remodel.FLOWMAP.clusters, per,
-                                         min, max, distance.metric = distance.metric)
+                                         min, max, distance.metric = distance.metric,
+                                         clustering.var)
   # put each conditions clusters together into one timepoint
   table.breaks <- c(0, remodel.FLOWMAP.clusters$table.breaks)
   # This section builds the flowmap one timepoint at a time
