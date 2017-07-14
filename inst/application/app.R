@@ -523,8 +523,6 @@ if(globe.inputs[["mode"]] == "single"){
       }
       var.remove <- flowfile[flowfile$removal == TRUE, 1]
       clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      print("clustering.var")
-      print(clustering.var)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
@@ -684,9 +682,11 @@ if(globe.inputs[["mode"]] == "single"){
       print("HERE I AM")
       print(flowfile)
       setwd(globe.raw.FCS.dir)
+      print(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
       files <- one.fcs
       print(files)
+      print(paste(globe.raw.FCS.dir, files, sep = "/"))
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -725,7 +725,7 @@ if(globe.inputs[["mode"]] == "single"){
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
         print(files)
-        FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        FLOWMAP(mode = mode, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
                 per = per, save.folder = save.folder, subsamples = subsamples,
@@ -736,7 +736,7 @@ if(globe.inputs[["mode"]] == "single"){
       } else {
         print("No downsampling")
         print(files)
-        FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        FLOWMAP(seed.X = seed.X, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 subsamples = subsamples, distance.metric = distance.metric,
                 minimum = minimum, maximum = maximum, per = per,
@@ -1662,7 +1662,7 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
         print(files)
-        FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        FLOWMAP(mode = mode, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
                 per = per, save.folder = save.folder, subsamples = subsamples,
@@ -1673,7 +1673,7 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       } else {
         print("No downsampling")
         print(files)
-        FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        FLOWMAP(seed.X = seed.X, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 subsamples = subsamples, distance.metric = distance.metric,
                 minimum = minimum, maximum = maximum, per = per,
