@@ -352,8 +352,8 @@ LaunchGUI <- function() {
                         inputs[["resultDir"]])
   }
   if(quit.var == FALSE){
-    # runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
-    runApp(appDir = "C:/Users/Rohit/Desktop/Application")
+    runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
+    # runApp(appDir = "C:/Users/Rohit/Desktop/Application")
   } else {
     stop("Analysis is cancelled")
   }
