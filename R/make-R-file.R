@@ -66,6 +66,7 @@ MakePrintFiles <- function(files) {
     }
     print("STOPPPPPPPPPPPPPPPP")
     gsub("\\\\", "/", p.files)
+    print(p.files)
     p.files <- paste("list(", p.files, ")", sep = "")
     p.files <- paste("files", " <- ", p.files, sep = "")
   } else {
