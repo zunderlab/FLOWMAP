@@ -51,11 +51,10 @@ MakePrintFiles <- function(files) {
       if (i == 1) {
         p.files <- files.in.i
       } else {
-        print(p.files)
         p.files <- paste(p.files, files.in.i, sep = ", ")
       }
     }
-    gsub("\\\\", "/", p.files)
+    p.files = gsub("\\\\", "/", p.files)
     print(p.files)
     p.files <- paste("list(", p.files, ")", sep = "")
     p.files <- paste("files", " <- ", p.files, sep = "")
