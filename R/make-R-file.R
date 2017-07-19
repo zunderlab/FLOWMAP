@@ -39,6 +39,7 @@ MakePrintFiles <- function(files) {
   print(files)
   print(globe.raw.FCS.dir)
   if (length(files) == 1) {
+    files <- paste(globe.raw.FCS.dir, files, sep = "/")
     p.files <- MakePrintChar("files", files)
   } else if (length(files) > 1 & !is.list(files)) {
     p.files <- paste("'", files, "'", sep = "")
@@ -48,14 +49,20 @@ MakePrintFiles <- function(files) {
   } else if (length(files) > 1 & is.list(files)){
     for (i in 1:length(files)) {
       files.in.i <- paste("'", files[[i]], "'", sep = "")
+      print(files.in.i)
       files.in.i <- paste(files.in.i, collapse = ", ")
+      print(files.in.i)
       files.in.i <- paste("c(", files.in.i, ")", sep = "")
+      print(files.in.i)
       if (i == 1) {
         p.files <- files.in.i
       } else {
+        print("LOOP AGAIN")
+        print(p.files)
         p.files <- paste(p.files, files.in.i, sep = ", ")
       }
     }
+    print("STOPPPPPPPPPPPPPPPP")
     p.files <- paste("list(", p.files, ")", sep = "")
     p.files <- paste("files", " <- ", p.files, sep = "")
   } else {
