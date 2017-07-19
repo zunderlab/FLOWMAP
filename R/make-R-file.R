@@ -36,6 +36,8 @@ MakePrintClusteringVar <- function(clustering.var) {
 
 MakePrintFiles <- function(files) {
   if (length(files) == 1) {
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    print(files)
     p.files <- MakePrintChar("files", files)
   } else if (length(files) > 1 & !is.list(files)) {
     p.files <- paste("'", files, "'", sep = "")
