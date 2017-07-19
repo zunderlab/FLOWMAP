@@ -35,9 +35,6 @@ MakePrintClusteringVar <- function(clustering.var) {
 }
 
 MakePrintFiles <- function(files) {
-  print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-  print(files)
-  print(globe.raw.FCS.dir)
   if (length(files) == 1) {
     files <- paste(globe.raw.FCS.dir, files, sep = "/")
     p.files <- MakePrintChar("files", files)
@@ -49,22 +46,15 @@ MakePrintFiles <- function(files) {
   } else if (length(files) > 1 & is.list(files)){
     for (i in 1:length(files)) {
       files.in.i <- paste("'", files[[i]], "'", sep = "")
-      print(files.in.i)
       files.in.i <- paste(files.in.i, collapse = ", ")
-      print(files.in.i)
       files.in.i <- paste("c(", files.in.i, ")", sep = "")
-      print(files.in.i)
       if (i == 1) {
         p.files <- files.in.i
       } else {
-        print("LOOP AGAIN")
         print(p.files)
         p.files <- paste(p.files, files.in.i, sep = ", ")
-        print(p.files)
-        print("^ is p.files")
       }
     }
-    print("STOPPPPPPPPPPPPPPPP")
     gsub("\\\\", "/", p.files)
     print(p.files)
     p.files <- paste("list(", p.files, ")", sep = "")
