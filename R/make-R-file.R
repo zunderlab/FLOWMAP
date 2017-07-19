@@ -60,6 +60,8 @@ MakePrintFiles <- function(files) {
         print("LOOP AGAIN")
         print(p.files)
         p.files <- paste(p.files, files.in.i, sep = ", ")
+        print(p.files)
+        print("^ is p.files")
       }
     }
     print("STOPPPPPPPPPPPPPPPP")
