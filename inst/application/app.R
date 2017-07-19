@@ -724,6 +724,7 @@ if(globe.inputs[["mode"]] == "single"){
         target.percent <- NULL
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
+        files = paste(globe.raw.FCS.dir, files, sep = "/")
         print(files)
         FLOWMAP(mode = mode, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
@@ -735,6 +736,7 @@ if(globe.inputs[["mode"]] == "single"){
                 target.number = target.number, target.percent = target.percent)
       } else {
         print("No downsampling")
+        paste(globe.raw.FCS.dir, files, sep = "/")
         print(files)
         FLOWMAP(seed.X = seed.X, files = paste(globe.raw.FCS.dir, files, sep = "/"), var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
