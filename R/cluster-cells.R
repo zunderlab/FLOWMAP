@@ -89,6 +89,7 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
                                      cluster.medians = cluster.medians,
                                      cluster.counts = cluster.counts,
                                      cell.assgn = cell.assgn)
+  clusterdata <<- FLOWMAP.clusters
   return(FLOWMAP.clusters)  
 }
 
@@ -156,9 +157,6 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   tmp.cell.assgn <- data.frame(clust$assgn)
   tmp.cell.assgn <- as.data.frame(tmp.cell.assgn[complete.cases(tmp.cell.assgn), ])
   colnames(tmp.cell.assgn) <- c("Cluster")
-  clusterdata <<- list(tmp.cell.assgn = tmp.cell.assgn,
-                       new.medians = new.medians,
-                       new.counts = new.counts)
   return(list(tmp.cell.assgn = tmp.cell.assgn,
               new.medians = new.medians,
               new.counts = new.counts))
