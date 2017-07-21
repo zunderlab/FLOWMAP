@@ -89,7 +89,6 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
                                      cluster.medians = cluster.medians,
                                      cluster.counts = cluster.counts,
                                      cell.assgn = cell.assgn)
-  clusterdata <<- FLOWMAP.clusters
   return(FLOWMAP.clusters)  
 }
 
@@ -114,6 +113,7 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.
     file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
     list.of.FLOWMAP.clusters[[t]] <- file.clusters
   }
+  clusterdata <<- list.of.FLOWMAP.clusters
   return(list.of.FLOWMAP.clusters)
 }
 
