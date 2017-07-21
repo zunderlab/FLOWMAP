@@ -1,5 +1,4 @@
-count <<- 0
-fcs.cluster.list.rohit <<- list()
+
 FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
                            cluster.medians, cluster.counts, cell.assgn)  {
   object <- list(full.clusters = full.clusters,
@@ -123,11 +122,9 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   } else {
     method <- "single"
   }
-  count <<- count + 1
   FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
                                     distance = distance.metric)
   
-  fcs.cluster.list.rohit[[count]] <<- FCS.clusters
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
