@@ -91,9 +91,6 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   # if cells are identical in all measurements, distance is 0
   # remove these edges
   
-  final.edgelists[[a_3]] <<- final.edgelist.with.distances
-  a_3 <<- a_3 + 1
-  
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
   output.graph <- add.edges(output.graph, edges = vertices.edges,
                             weight = final.edgelist.with.distances[, 3],
