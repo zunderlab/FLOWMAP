@@ -95,77 +95,6 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
               final.edgelist.with.distances = final.edgelist.with.distances))
 }
 
-CheckMSTEdgesOLD <- function(output.graph, cluster.distances.matrix,
-                          table.lengths, offset, n) {
-  # print("CheckMSTEdgesOLD")
-  # create dummy graph contains n and n+1 vertices, but n_n section is fully connected so
-  # it will act as a single connected component while n_n+1 and n+1_n+1 sections are not
-  # connected, so each n+1 vertex will be its own disconnected component
-  adjacency.nn <- cluster.distances.matrix[1:table.lengths[1], 1:table.lengths[1]]
-  el.nn.with.dist <- cbind(as.vector(row(adjacency.nn)),
-                           as.vector(col(adjacency.nn)), 
-                           as.vector(adjacency.nn))
-  dummy.graph <- graph.empty(n = nrow(cluster.distances.matrix), directed = FALSE)
-  dummy.graph <- add.edges(dummy.graph, edges = as.vector(t(el.nn.with.dist[, 1:2])))
-  clu <- igraph::clusters(dummy.graph)
-  # get the cluter that each node belongs to
-  members <- clu$membership
-  # initialize matrix to hold distances between graph components
-  link.weights <- matrix(nrow = clu$no, ncol = clu$no)
-  # loop through all components vs. all components to fill in distances
-  
-  mst.edgelist <- c()
-  
-  for (i in 1:clu$no) {
-    members.i <- which(members == i)
-    for (j in 1:clu$no) {
-      members.j <- which(members == j)
-      # get the minimum distance between components i and j
-      # (note members has zero index)
-      tmp.matrix <- cluster.distances.matrix[members.i, members.j]
-      link.weights[i, j] <- min(tmp.matrix)
-    }
-  }
-  # set i-i distances to Inf instead of 0 so they aren't picked
-  # as the closest neighbors
-  for (i in 1:ncol(link.weights)) {
-    link.weights[i, i] <- Inf
-  }
-  # make the minimum spanning tree for graph components
-  components.adjacency <- graph.adjacency(link.weights, mode = "undirected",
-                                          weighted = TRUE, diag = TRUE)
-  components.mst <- minimum.spanning.tree(components.adjacency)
-  components.mst.el <- get.edgelist(components.mst, names = FALSE)
-  # go from MST edges to the actual edges between individual nodes
-  for (i in 1:nrow(components.mst.el)) {
-    # get index of shortest connection between components
-    members.x <- which(members == components.mst.el[i, 1])
-    members.y <- which(members == components.mst.el[i, 2])
-    tmp.matrix <- as.matrix(cluster.distances.matrix[members.x, members.y])
-    if(length(members.x) == 1){
-      tmp.matrix <- t(tmp.matrix)
-    }
-    tmp.min <- min(tmp.matrix) # get the largest weight = shortest distance
-    tmp.index <- which(tmp.matrix == tmp.min, arr.ind = TRUE)
-    v1 <- members.x[tmp.index[1]] + offset
-    v2 <- members.y[tmp.index[2]] + offset
-    if (are.connected(output.graph, v1, v2)) {
-      E(output.graph, P = c(members.x[tmp.index[1]] + offset,
-                            members.y[tmp.index[2]] + offset))$label <- "MST"
-    } else {
-      output.graph <- add.edges(output.graph, c(members.x[tmp.index[1]] + offset,
-                                                members.y[tmp.index[2]] + offset),
-                                weight = tmp.min, label = "MST",
-                                sequence_assignment = n)
-      mst.edgelist <- rbind(mst.edgelist, c(members.x[tmp.index[1]] + offset, members.y[tmp.index[2]] + offset, tmp.min))
-    }
-  }
-  mst.edges[[a_4]] <<- mst.edgelist
-  a_4 <<- a_4 + 1
-  
-  return(output.graph)
-}
-
 CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
   print("CheckMSTEdgesNEW")
@@ -322,8 +251,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   # if they exist, label them as MST
   # if not, add them and label them as MST
   
-  mst.edgelist <- c()
-  
   for (i in 1:nrow(mst.edgelist.fixed)) {
     v1 <- mst.edgelist.fixed[i, "Vertex 1"]
     v2 <- mst.edgelist.fixed[i, "Vertex 2"]
@@ -349,9 +276,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
       mst.edgelist <- rbind(mst.edgelist, c(v1, v2, mst.edgelist.fixed[i, "Distance"]))
     }
   }
-  mst.edges[[a_4]] <<- mst.edgelist
-  a_4 <<- a_4 + 1
-  
   return(output.graph)
 }
 
@@ -418,10 +342,6 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
       mst.edgelist <- rbind(mst.edgelist, c(mst.graph.edgelist[i, ]))
     }
   }
-  
-  mst.edges[[a_4]] <<- mst.edgelist
-  a_4 <<- a_4 + 1
-  
   return(list(output.graph = output.graph,
               edgelist.save = edgelist.save))
 }
