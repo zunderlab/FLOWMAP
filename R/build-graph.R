@@ -95,7 +95,7 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
               final.edgelist.with.distances = final.edgelist.with.distances))
 }
 
-CheckMSTEdgesOLD <- function(output.graph, cluster.distances.matrix,
+CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
   print("CheckMSTEdgesOLD")
   # create dummy graph contains n and n+1 vertices, but n_n section is fully connected so
@@ -166,7 +166,7 @@ CheckMSTEdgesOLD <- function(output.graph, cluster.distances.matrix,
   return(output.graph)
 }
 
-CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
+CheckMSTEdgesNEW <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
   print("CheckMSTEdgesNEW")
   cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
