@@ -59,9 +59,6 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
   }
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
-  print("densities.no.zeros")
-  print(densities.no.zeros)
-  
   # add in zeros for clusters with no edges (table function leaves these out)
   densities <- rep(0, numcluster)
   if (table.lengths[1] == FALSE) {
@@ -90,7 +87,6 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   # try removing edges with 0 distance (Inf weight)
   # if cells are identical in all measurements, distance is 0
   # remove these edges
-  
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
   output.graph <- add.edges(output.graph, edges = vertices.edges,
                             weight = final.edgelist.with.distances[, 3],
@@ -324,6 +320,8 @@ CheckMSTEdges2 <- function(output.graph, cluster.distances.matrix,
   # if they exist, label them as MST
   # if not, add them and label them as MST
   
+  mst.edgelist <- c()
+  
   for (i in 1:nrow(mst.edgelist.fixed)) {
     v1 <- mst.edgelist.fixed[i, "Vertex 1"]
     v2 <- mst.edgelist.fixed[i, "Vertex 2"]
@@ -338,6 +336,7 @@ CheckMSTEdges2 <- function(output.graph, cluster.distances.matrix,
             output.graph <- add.edges(output.graph, c(v1, v2),
                                       weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                       sequence_assignment = n)
+            mst.edgelist <- rbind(mst.edgelist, c(v1, v2, mst.edgelist.fixed[i, "Distance"]))
           }
         }
       }
@@ -345,8 +344,12 @@ CheckMSTEdges2 <- function(output.graph, cluster.distances.matrix,
       output.graph <- add.edges(output.graph, c(v1, v2),
                                 weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                 sequence_assignment = n)
+      mst.edgelist <- rbind(mst.edgelist, c(v1, v2, mst.edgelist.fixed[i, "Distance"]))
     }
   }
+  mst.edges[[a_4]] <<- mst.edgelist
+  a_4 <<- a_4 + 1
+  
   return(output.graph)
 }
 
@@ -429,9 +432,6 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                      distance.metric = distance.metric,
                                      clustering.var = clustering.var)
   output.graph <- first.results$output.graph
-  mid.graphs[[a_2]] <<- output.graph
-  a_2 <<- a_2 + 1
-  
   edgelist.save[["first"]] <- first.results$edgelist.save
   table.breaks <- c(0, FLOWMAP.clusters$table.breaks)
   # This section builds the flowmap one timepoint at a time
@@ -471,15 +471,11 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                    normalized.densities = normalized.densities,
                                    n = n, offset = offset)
     output.graph <- results$output.graph
-    mid.graphs[[a_2]] <<- output.graph
-    a_2 <<- a_2 + 1
     edgelist.save[[n]] <- results$final.edgelist.with.distances
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
     output.graph <- CheckMSTEdges(output.graph = output.graph,
                                   cluster.distances.matrix = cluster.distances.matrix, 
                                   table.lengths = n_n1.table.lengths, n = n, offset = offset)
-    mid.graphs[[a_2]] <<- output.graph
-    a_2 <<- a_2 + 1
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
