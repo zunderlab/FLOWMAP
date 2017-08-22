@@ -71,10 +71,6 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   }
   densities[names(densities.no.zeros)] <- densities.no.zeros
   normalized.densities <- round(densities / max(densities) * (max - min) + min)
-  
-  norm.densities[[a_1]] <<- normalized.densities
-  a_1 <<- a_1 + 1
-  
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
 }
