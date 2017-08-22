@@ -36,52 +36,6 @@ RemoveWithinNEdges <- function(arr.inds.with.values, inds.in.n) {
   return(inds.no.n_n)
 }
 
-
-FindNormalizedOLD <- function(cluster.distances.matrix, per, min,
-                           max, numcluster, table.lengths,
-                           table.breaks, offset) {
-  for (i in 1:ncol(cluster.distances.matrix)) {
-    cluster.distances.matrix[i,i] <- Inf
-  }
-  
-  cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
-  # make fully connected graph from adjacency list
-  # note: "weight" here is really distance, calling it weight for the mst function later needs this
-  edgelist.with.distances <- cbind(as.vector(row(cluster.distances.matrix)),
-                                   as.vector(col(cluster.distances.matrix)), as.vector(cluster.distances.matrix))
-  # take only the upper triangle of the matrix
-  edgelist.with.distances <- edgelist.with.distances[upper.tri(matrix(data=1:length(cluster.distances.matrix),
-                                                                      nrow=nrow(cluster.distances.matrix),ncol=ncol(cluster.distances.matrix))),]
-  # convert strings to numeric
-  class(edgelist.with.distances) <- "numeric"
-  # sort edges by distance (column 3)
-  edgelist.with.distances <- edgelist.with.distances[order(edgelist.with.distances[,3]),]
-  # take only the top X-% edges by distance based on PERCENT_TOTAL
-  trim.edgelist.with.distances <- edgelist.with.distances[1:floor(length(edgelist.with.distances[,1])*per/100),]
-  # calculate "density" for each cluster and normalize
-  densities.no.zeros <- table(trim.edgelist.with.distances[,1:2])
-  
-  print("densities.no.zeros")
-  print(densities.no.zeros)
-  
-  # add in zeros for clusters with no edges (table function leaves these out)
-  densities <- rep(0,numcluster)
-  
-  if (table.lengths[1] == FALSE) {
-    names(densities) <- (1:numcluster)
-  } else {
-    names(densities) <- (offset + 1):(offset + table.lengths[1] + table.lengths[2])
-  }
-  densities[as.numeric(names(densities.no.zeros))] <- densities.no.zeros
-  normalized.densities <- round(densities/max(densities)*(max - min) + min)
-  
-  norm.densities[[a_1]] <<- normalized.densities
-  a_1 <<- a_1 + 1
-  
-  return(list(normalized.densities = normalized.densities,
-              edgelist.with.distances = edgelist.with.distances))
-}
-
 FindNormalized <- function(cluster.distances.matrix, per, min,
                            max, numcluster, table.lengths,
                            table.breaks, offset) {
