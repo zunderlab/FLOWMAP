@@ -97,6 +97,7 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
 
 CheckMSTEdgesOLD <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
+  print("CheckMSTEdgesOLD")
   # create dummy graph contains n and n+1 vertices, but n_n section is fully connected so
   # it will act as a single connected component while n_n+1 and n+1_n+1 sections are not
   # connected, so each n+1 vertex will be its own disconnected component
@@ -167,6 +168,7 @@ CheckMSTEdgesOLD <- function(output.graph, cluster.distances.matrix,
 
 CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
+  print("CheckMSTEdgesNEW")
   cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
   # check that any distances between clusters are 0
   # if they are, set them to infinity
