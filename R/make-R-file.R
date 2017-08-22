@@ -36,6 +36,7 @@ MakePrintClusteringVar <- function(clustering.var) {
 
 MakePrintFiles <- function(files) {
   if (length(files) == 1) {
+    files <- paste(globe.raw.FCS.dir, files, sep = "/")
     p.files <- MakePrintChar("files", files)
   } else if (length(files) > 1 & !is.list(files)) {
     p.files <- paste("'", files, "'", sep = "")
@@ -53,6 +54,8 @@ MakePrintFiles <- function(files) {
         p.files <- paste(p.files, files.in.i, sep = ", ")
       }
     }
+    p.files = gsub("\\\\", "/", p.files)
+    print(p.files)
     p.files <- paste("list(", p.files, ")", sep = "")
     p.files <- paste("files", " <- ", p.files, sep = "")
   } else {

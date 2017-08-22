@@ -124,6 +124,7 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   }
   FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
                                     distance = distance.metric)
+  
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
