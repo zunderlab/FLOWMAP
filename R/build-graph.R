@@ -296,7 +296,13 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   table.lengths <- FLOWMAP.clusters$table.lengths
   # get distance matrix from clusters
   clusters <- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
+  print("a")
+  print("clustering.var")
+  print(clustering.var)
+  print("colnames(clusters)")
+  print(colnames(clusters))
   clusters <- subset(clusters, select = clustering.var)
+  print("b")
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
   cluster.distances.matrix <- as.data.frame(cluster.distances.matrix)
