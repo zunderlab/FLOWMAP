@@ -37,6 +37,51 @@ RemoveWithinNEdges <- function(arr.inds.with.values, inds.in.n) {
 }
 
 
+FindNormalizedOLD <- function(cluster.distances.matrix, per, min,
+                           max, numcluster, table.lengths,
+                           table.breaks, offset) {
+  for (i in 1:ncol(cluster.distances.matrix)) {
+    cluster.distances.matrix[i,i] <- Inf
+  }
+  
+  cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
+  # make fully connected graph from adjacency list
+  # note: "weight" here is really distance, calling it weight for the mst function later needs this
+  edgelist.with.distances <- cbind(as.vector(row(cluster.distances.matrix)),
+                                   as.vector(col(cluster.distances.matrix)), as.vector(cluster.distances.matrix))
+  # take only the upper triangle of the matrix
+  edgelist.with.distances <- edgelist.with.distances[upper.tri(matrix(data=1:length(cluster.distances.matrix),
+                                                                      nrow=nrow(cluster.distances.matrix),ncol=ncol(cluster.distances.matrix))),]
+  # convert strings to numeric
+  class(edgelist.with.distances) <- "numeric"
+  # sort edges by distance (column 3)
+  edgelist.with.distances <- edgelist.with.distances[order(edgelist.with.distances[,3]),]
+  # take only the top X-% edges by distance based on PERCENT_TOTAL
+  trim.edgelist.with.distances <- edgelist.with.distances[1:floor(length(edgelist.with.distances[,1])*per/100),]
+  # calculate "density" for each cluster and normalize
+  densities.no.zeros <- table(trim.edgelist.with.distances[,1:2])
+  
+  print("densities.no.zeros")
+  print(densities.no.zeros)
+  
+  # add in zeros for clusters with no edges (table function leaves these out)
+  densities <- rep(0,numcluster)
+  
+  if (table.lengths[1] == FALSE) {
+    names(densities) <- (1:numcluster)
+  } else {
+    names(densities) <- (offset + 1):(offset + table.lengths[1] + table.lengths[2])
+  }
+  densities[as.numeric(names(densities.no.zeros))] <- densities.no.zeros
+  normalized.densities <- round(densities/max(densities)*(max - min) + min)
+  
+  norm.densities[[a_1]] <<- normalized.densities
+  a_1 <<- a_1 + 1
+  
+  return(list(normalized.densities = normalized.densities,
+              edgelist.with.distances = edgelist.with.distances))
+}
+
 FindNormalized <- function(cluster.distances.matrix, per, min,
                            max, numcluster, table.lengths,
                            table.breaks, offset) {
@@ -60,6 +105,9 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
     trim.edgelist.with.distances <- t(trim.edgelist.with.distances)
   }
   densities.no.zeros <- table(trim.edgelist.with.distances[, 1:2])
+  print("densities.no.zeros")
+  print(densities.no.zeros)
+  
   # add in zeros for clusters with no edges (table function leaves these out)
   densities <- rep(0, numcluster)
   if (table.lengths[1] == FALSE) {
@@ -69,6 +117,10 @@ FindNormalized <- function(cluster.distances.matrix, per, min,
   }
   densities[names(densities.no.zeros)] <- densities.no.zeros
   normalized.densities <- round(densities / max(densities) * (max - min) + min)
+  
+  norm.densities[[a_1]] <<- normalized.densities
+  a_1 <<- a_1 + 1
+  
   return(list(normalized.densities = normalized.densities,
               edgelist.with.distances = edgelist.with.distances))
 }
@@ -89,6 +141,9 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
   # if cells are identical in all measurements, distance is 0
   # remove these edges
   
+  final.edgelists[[a_3]] <<- final.edgelist.with.distances
+  a_3 <<- a_3 + 1
+  
   vertices.edges <- as.vector(t(as.matrix(final.edgelist.with.distances[, 1:2])))
   output.graph <- add.edges(output.graph, edges = vertices.edges,
                             weight = final.edgelist.with.distances[, 3],
@@ -98,6 +153,76 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
 }
 
 CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
+                          table.lengths, offset, n) {
+  # create dummy graph contains n and n+1 vertices, but n_n section is fully connected so
+  # it will act as a single connected component while n_n+1 and n+1_n+1 sections are not
+  # connected, so each n+1 vertex will be its own disconnected component
+  adjacency.nn <- cluster.distances.matrix[1:table.lengths[1], 1:table.lengths[1]]
+  el.nn.with.dist <- cbind(as.vector(row(adjacency.nn)),
+                           as.vector(col(adjacency.nn)), 
+                           as.vector(adjacency.nn))
+  dummy.graph <- graph.empty(n = nrow(cluster.distances.matrix), directed = FALSE)
+  dummy.graph <- add.edges(dummy.graph, edges = as.vector(t(el.nn.with.dist[, 1:2])))
+  clu <- igraph::clusters(dummy.graph)
+  # get the cluter that each node belongs to
+  members <- clu$membership
+  # initialize matrix to hold distances between graph components
+  link.weights <- matrix(nrow = clu$no, ncol = clu$no)
+  # loop through all components vs. all components to fill in distances
+  
+  mst.edgelist <- c()
+  
+  for (i in 1:clu$no) {
+    members.i <- which(members == i)
+    for (j in 1:clu$no) {
+      members.j <- which(members == j)
+      # get the minimum distance between components i and j
+      # (note members has zero index)
+      tmp.matrix <- cluster.distances.matrix[members.i, members.j]
+      link.weights[i, j] <- min(tmp.matrix)
+    }
+  }
+  # set i-i distances to Inf instead of 0 so they aren't picked
+  # as the closest neighbors
+  for (i in 1:ncol(link.weights)) {
+    link.weights[i, i] <- Inf
+  }
+  # make the minimum spanning tree for graph components
+  components.adjacency <- graph.adjacency(link.weights, mode = "undirected",
+                                          weighted = TRUE, diag = TRUE)
+  components.mst <- minimum.spanning.tree(components.adjacency)
+  components.mst.el <- get.edgelist(components.mst, names = FALSE)
+  # go from MST edges to the actual edges between individual nodes
+  for (i in 1:nrow(components.mst.el)) {
+    # get index of shortest connection between components
+    members.x <- which(members == components.mst.el[i, 1])
+    members.y <- which(members == components.mst.el[i, 2])
+    tmp.matrix <- as.matrix(cluster.distances.matrix[members.x, members.y])
+    if(length(members.x) == 1){
+      tmp.matrix <- t(tmp.matrix)
+    }
+    tmp.min <- min(tmp.matrix) # get the largest weight = shortest distance
+    tmp.index <- which(tmp.matrix == tmp.min, arr.ind = TRUE)
+    v1 <- members.x[tmp.index[1]] + offset
+    v2 <- members.y[tmp.index[2]] + offset
+    if (are.connected(output.graph, v1, v2)) {
+      E(output.graph, P = c(members.x[tmp.index[1]] + offset,
+                            members.y[tmp.index[2]] + offset))$label <- "MST"
+    } else {
+      output.graph <- add.edges(output.graph, c(members.x[tmp.index[1]] + offset,
+                                                members.y[tmp.index[2]] + offset),
+                                weight = tmp.min, label = "MST",
+                                sequence_assignment = n)
+      mst.edgelist <- rbind(mst.edgelist, c(members.x[tmp.index[1]] + offset, members.y[tmp.index[2]] + offset, tmp.min))
+    }
+  }
+  mst.edges[[a_4]] <<- mst.edgelist
+  a_4 <<- a_4 + 1
+  
+  return(output.graph)
+}
+
+CheckMSTEdges2 <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
   cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
   # check that any distances between clusters are 0
@@ -326,6 +451,8 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   mst.graph.edgelist <- cbind(get.edgelist(mst.graph), E(mst.graph)$weight)
   class(mst.graph.edgelist) <- "numeric"
   
+  mst.edgelist <- c()
+  
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
   for (i in 1:nrow(mst.graph.edgelist)) {
     if (are.connected(output.graph, mst.graph.edgelist[i, 1], mst.graph.edgelist[i, 2])) {
@@ -336,8 +463,12 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                                 as.numeric(mst.graph.edgelist[i, 1:2]),
                                 weight = mst.graph.edgelist[i, 3],
                                 label = "MST", sequence_assignment = n)
+      mst.edgelist <- rbind(mst.edgelist, c(mst.graph.edgelist[i, ]))
     }
   }
+  
+  mst.edges[[a_4]] <<- mst.edgelist
+  a_4 <<- a_4 + 1
   
   return(list(output.graph = output.graph,
               edgelist.save = edgelist.save))
@@ -351,6 +482,9 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                      distance.metric = distance.metric,
                                      clustering.var = clustering.var)
   output.graph <- first.results$output.graph
+  mid.graphs[[a_2]] <<- output.graph
+  a_2 <<- a_2 + 1
+  
   edgelist.save[["first"]] <- first.results$edgelist.save
   table.breaks <- c(0, FLOWMAP.clusters$table.breaks)
   # This section builds the flowmap one timepoint at a time
@@ -382,6 +516,7 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                          table.breaks = n_n1.table.breaks,
                                          offset = offset)
     normalized.densities <- normalized.results$normalized.densities
+    
     edgelist.with.distances <- normalized.results$edgelist.with.distances
     # build new edgelist with N edges for each cluster based on normalized density
     results <- DrawNormalizedEdges(output.graph = output.graph,
@@ -389,11 +524,15 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, per, min, max,
                                    normalized.densities = normalized.densities,
                                    n = n, offset = offset)
     output.graph <- results$output.graph
+    mid.graphs[[a_2]] <<- output.graph
+    a_2 <<- a_2 + 1
     edgelist.save[[n]] <- results$final.edgelist.with.distances
     # This section adds the "MST" for n_n+1 and n+1_n+1 nodes
     output.graph <- CheckMSTEdges(output.graph = output.graph,
                                   cluster.distances.matrix = cluster.distances.matrix, 
                                   table.lengths = n_n1.table.lengths, n = n, offset = offset)
+    mid.graphs[[a_2]] <<- output.graph
+    a_2 <<- a_2 + 1
   }
   # convert graph distances to weights (low distance = high weight and vice versa)
   distances <- E(output.graph)$weight
@@ -441,10 +580,10 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters) {
     colnames(time.matrix) <- c("Timepoint")
     anno$medians <- cbind(anno$medians, time.matrix)
     # add median and percent values
-    for (a in c("medians", "percent.total")) {
+    for (col in c("medians", "percent.total")) {
       # anno.cat is all the annos concatenated, will be
       # used to make "anno.Rsave" file
-      anno.cat[[a]] <- rbind(anno.cat[[a]], anno[[a]])
+      anno.cat[[col]] <- rbind(anno.cat[[col]], anno[[col]])
     }
   }
   # combine anno.cat matrices
