@@ -36,7 +36,9 @@ MakePrintClusteringVar <- function(clustering.var) {
 
 MakePrintFiles <- function(files) {
   if (length(files) == 1) {
-    files <- paste(globe.raw.FCS.dir, files, sep = "/")
+    if (exists("globe.raw.FCS.dir")) {
+      files <- paste(globe.raw.FCS.dir, files, sep = "/")
+    }
     p.files <- MakePrintChar("files", files)
   } else if (length(files) > 1 & !is.list(files)) {
     p.files <- paste("'", files, "'", sep = "")
