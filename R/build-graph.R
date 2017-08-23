@@ -301,6 +301,8 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   print(clustering.var)
   print("colnames(clusters)")
   print(colnames(clusters))
+  print("colnames(clusters) == clustering.var")
+  print(colnames(clusters) == clustering.var)
   clusters <- subset(clusters, select = clustering.var)
   print("b")
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
