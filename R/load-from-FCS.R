@@ -156,8 +156,6 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
                           transform = TRUE) {
-  # kernel_mult = kernel_mult,
-  # apprx_mult = apprx_mult, med_samples = med_samples
   downsample.files <- list()
   cat("Downsampling FCS files.", "\n")
   for (i in 1:length(fcs.file.names)) {

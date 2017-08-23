@@ -264,7 +264,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
             output.graph <- add.edges(output.graph, c(v1, v2),
                                       weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                       sequence_assignment = n)
-            mst.edgelist <- rbind(mst.edgelist, c(v1, v2, mst.edgelist.fixed[i, "Distance"]))
           }
         }
       }
@@ -272,7 +271,6 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
       output.graph <- add.edges(output.graph, c(v1, v2),
                                 weight = mst.edgelist.fixed[i, "Distance"], label = "MST",
                                 sequence_assignment = n)
-      mst.edgelist <- rbind(mst.edgelist, c(v1, v2, mst.edgelist.fixed[i, "Distance"]))
     }
   }
   return(output.graph)
@@ -326,8 +324,6 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   mst.graph.edgelist <- cbind(get.edgelist(mst.graph), E(mst.graph)$weight)
   class(mst.graph.edgelist) <- "numeric"
   
-  mst.edgelist <- c()
-  
   # for each edge of the mst, if it exists in the graph then label MST, if it doesn't exist then add it
   for (i in 1:nrow(mst.graph.edgelist)) {
     if (are.connected(output.graph, mst.graph.edgelist[i, 1], mst.graph.edgelist[i, 2])) {
@@ -338,7 +334,6 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                                 as.numeric(mst.graph.edgelist[i, 1:2]),
                                 weight = mst.graph.edgelist[i, 3],
                                 label = "MST", sequence_assignment = n)
-      mst.edgelist <- rbind(mst.edgelist, c(mst.graph.edgelist[i, ]))
     }
   }
   return(list(output.graph = output.graph,
