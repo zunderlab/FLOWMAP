@@ -23,7 +23,6 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
     print("removed times")
-    # df <- ShuffleCells(df)
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -43,7 +42,6 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     runtype <- "MultiFLOWMAP"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
-    # df <- MultiShuffleCells(df)
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
     if (clustering) {
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,

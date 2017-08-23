@@ -1,32 +1,4 @@
 
-ShuffleCells <- function(fcs.files) {
-  x <- c()
-  for (i in 1:length(fcs.files)) {
-    subsamp <- nrow(fcs.files[[i]])
-    df1 <- fcs.files[[i]]
-    x <- c(x, nrow(df1))
-    df2 <- df1[sample(nrow(df1)), ]
-    fcs.files[[i]] <- df2
-    rownames(fcs.files[[i]]) <- seq(1:subsamp)
-  }
-  return(fcs.files)
-}
-
-MultiShuffleCells <- function(fcs.files) {
-  x <- c()
-  for (n in 1:length(fcs.files)) {
-    for (i in 1:length(fcs.files[[n]])) {
-      subsamp <- nrow(fcs.files[[n]][[i]])
-      df1 <- fcs.files[[n]][[i]]
-      x <- c(x, nrow(df1))
-      df2 <- df1[sample(nrow(df1)), ]
-      fcs.files[[n]][[i]] <- df2
-      rownames(fcs.files[[n]][[i]]) <- seq(1:subsamp)
-    }
-  }
-  return(fcs.files)
-}
-
 CheckModeOne <- function(files) {
   # "files" variable could be one of the following:
   # a single fcs file path

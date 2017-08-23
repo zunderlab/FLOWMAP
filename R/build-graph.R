@@ -97,7 +97,6 @@ DrawNormalizedEdges <- function(output.graph, cluster.distances.matrix,
 
 CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
                           table.lengths, offset, n) {
-  print("CheckMSTEdgesNEW")
   cluster.distances.matrix <- as.matrix(cluster.distances.matrix)
   # check that any distances between clusters are 0
   # if they are, set them to infinity
@@ -296,15 +295,7 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
   table.lengths <- FLOWMAP.clusters$table.lengths
   # get distance matrix from clusters
   clusters <- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
-  print("a")
-  print("clustering.var")
-  print(clustering.var)
-  print("colnames(clusters)")
-  print(colnames(clusters))
-  print("colnames(clusters) == clustering.var")
-  print(colnames(clusters) == clustering.var)
   clusters <- subset(clusters, select = clustering.var)
-  print("b")
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
   cluster.distances.matrix <- as.data.frame(cluster.distances.matrix)
