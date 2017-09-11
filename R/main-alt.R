@@ -23,6 +23,10 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
     print("removed times")
+    print("class(df)")
+    print(class(df))
+    print("dim(df)")
+    print(dim(df))
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -61,8 +65,14 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    fcs.files <- list()
+    fcs.files[[1]] <- df
+    print("class(fcs.files)")
+    print(class(fcs.files))
+    print("dim(fcs.files)")
+    print(dim(fcs.files))
     if (clustering) {
-      file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
+      file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
     } else {
       file.clusters <- ConstructOneFLOWMAPCluster(df)
