@@ -157,7 +157,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
                           target.number = NULL,
                           target.percent = 0.1) {
   downsample.file.names <- c()
-  for (file.name in fcs.files) {
+  for (file.name in fcs.file.names) {
     print(file.name)
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
     infilename <- paste(base.name, "density.fcs", sep = "_")
@@ -165,7 +165,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
     print(base.name)
     spade::SPADE.addDensityToFCS(file.name, infilename,
                                  cols = clustering.var, comp = TRUE,
-                                 transforms = transforms)
+                               g  transforms = transforms)
     print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
