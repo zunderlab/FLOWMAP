@@ -172,8 +172,13 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
     # spade::SPADE.addDensityToFCS(file.name, infilename,
     #                              cols = clustering.var, comp = TRUE,
     #                              transforms = transforms)
+    cat("infilename is", infilename, "\n")
     print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
+    cat("exclude_pctile is", exclude.pctile, "\n")
+    cat("target_pctile is", target.pctile, "\n")
+    cat("target_number is", target.number, "\n")
+    cat("target_percent is", target.percent, "\n")
     SPADE.downsampleFCS(infilename = infilename, outfilename,
                         exclude_pctile = exclude.pctile,
                         target_pctile = target.pctile,
