@@ -101,7 +101,7 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
       cat("Subsampling all files to:", subsamp.orig, "\n")
       subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
       subsamples <- subsample.new
-    } else {
+    } else if (length(subsamp.orig) > 1 & subsamp.orig != FALSE) {
       subsamples <- subsamp.orig[[t]]
     }
     list.of.FCS.files[[t]] <- LoadCleanFCS(fcs.file.names,
@@ -158,36 +158,25 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
                           target.pctile = 0.99,
                           target.number = NULL,
                           target.percent = 0.1) {
-  print("inside DownsampleFCS function")
   cat("exclude_pctile is", exclude.pctile, "\n")
   cat("target_pctile is", target.pctile, "\n")
   cat("target_number is", target.number, "\n")
   cat("target_percent is", target.percent, "\n")
   downsample.file.names <- c()
   for (file.name in fcs.file.names) {
-    print(file.name)
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
     infilename <- paste(base.name, "density.fcs", sep = "_")
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
-    print(base.name)
     new.cols <- c()
     for (i in clustering.var) {
       new.name <- names(which(var.annotate == i))
       new.cols <- c(new.cols, new.name)
     }
-    print("start add density")
     SPADE.addDensityToFCS(file.name, infilename, cols = new.cols, comp = TRUE, transforms = transforms)
     # spade::SPADE.addDensityToFCS(file.name, infilename,
     #                              cols = clustering.var, comp = TRUE,
     #                              transforms = transforms)
-    cat("infilename is", infilename, "\n")
-    print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
-    cat("exclude_pctile is", exclude.pctile, "\n")
-    cat("target_pctile is", target.pctile, "\n")
-    cat("target_number is", target.number, "\n")
-    cat("target_percent is", target.percent, "\n")
-    print("start downsample")
     SPADE.downsampleFCS(infilename = infilename, outfilename,
                         exclude_pctile = exclude.pctile,
                         target_pctile = target.pctile,
@@ -198,7 +187,6 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
     #                            target_pctile = target.pctile,
     #                            target_number = target.number,
     #                            target_percent = target.percent)
-    print("finish downsample")
     downsample.file.names <- c(downsample.file.names, outfilename)
   }
   return(downsample.file.names)
@@ -209,11 +197,6 @@ MultiDownsampleFCS <- function(list.of.file.names, clustering.var,
                                target.pctile = target.pctile,
                                target.number = target.number,
                                target.percent = target.percent) {
-  print("inside MultiDownsampleFCS function")
-  cat("exclude_pctile is", exclude.pctile, "\n")
-  cat("target_pctile is", target.pctile, "\n")
-  cat("target_number is", target.number, "\n")
-  cat("target_percent is", target.percent, "\n")
   list.downsample.file.names <- list()
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]

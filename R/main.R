@@ -41,10 +41,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       #                            target.pctile = target.pctile, target.number = target.number,
       #                            target.percent = target.percent)
       
-      cat("exclude_pctile is", exclude.pctile, "\n")
-      cat("target_pctile is", target.pctile, "\n")
-      cat("target_number is", target.number, "\n")
-      cat("target_percent is", target.percent, "\n")
       fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
                                       distance.metric,  exclude.pctile = exclude.pctile,
                                       target.pctile = target.pctile, target.number = target.number,
@@ -90,10 +86,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       #                                 channel.remove = var.remove, exclude.pctile = exclude.pctile,
       #                                 target.pctile = target.pctile, target.number = target.number,
       #                                 target.percent = target.percent)
-      cat("exclude_pctile is", exclude.pctile, "\n")
-      cat("target_pctile is", target.pctile, "\n")
-      cat("target_number is", target.number, "\n")
-      cat("target_percent is", target.percent, "\n")
       fcs.file.names <- MultiDownsampleFCS(fcs.file.names, clustering.var,
                                            distance.metric,  exclude.pctile = exclude.pctile,
                                            target.pctile = target.pctile, target.number = target.number,
