@@ -158,18 +158,22 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
                           target.percent = 0.1) {
   downsample.file.names <- c()
   for (file.name in fcs.files) {
+    print(file.name)
     base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
     infilename <- paste(base.name, "density.fcs", sep = "_")
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
+    print(base.name)
     spade::SPADE.addDensityToFCS(file.name, infilename,
                                  cols = clustering.var, comp = TRUE,
                                  transforms = transforms)
+    print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
                                exclude_pctile = exclude.pctile,
                                target_pctile = target.pctile,
                                target_number = target.number,
                                target_percent = target.percent)
+    print("finish downsample")
     downsample.file.names <- c(downsample.file.names, outfilename)
   }
   return(downsample.file.names)
