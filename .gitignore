@@ -3,5 +3,6 @@ Synthetic Data/
 *_singleFLOWMAP_run/
 .Rproj.user
 .Rapp.history
+.Rhistory
 FLOWMAP_run.R
 OldFLOWMAP/
