@@ -31,10 +31,18 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     file.name <- fcs.file.names[1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
-      fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
-                                 channel.remove = var.remove, exclude.pctile = exclude.pctile,
-                                 target.pctile = target.pctile, target.number = target.number,
-                                 target.percent = target.percent)
+      # fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
+      #                            channel.remove = var.remove, exclude.pctile = exclude.pctile,
+      #                            target.pctile = target.pctile, target.number = target.number,
+      #                            target.percent = target.percent)
+      
+      fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
+                                      distance.metric,  exclude.pctile = exclude.pctile,
+                                      target.pctile = target.pctile, target.number = target.number,
+                                      target.percent = target.percent)
+      subsamples <- FALSE
+      fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                                channel.annotate = var.annotate, subsamples = subsamples)
     } else {
       fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
@@ -69,10 +77,17 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     file.name <- fcs.file.names[[1]][1]
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
-      fcs.files <- MultiDownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
-                                      channel.remove = var.remove, exclude.pctile = exclude.pctile,
-                                      target.pctile = target.pctile, target.number = target.number,
-                                      target.percent = target.percent)
+      # fcs.files <- MultiDownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
+      #                                 channel.remove = var.remove, exclude.pctile = exclude.pctile,
+      #                                 target.pctile = target.pctile, target.number = target.number,
+      #                                 target.percent = target.percent)
+      fcs.file.names <- MultiDownsampleFCS(fcs.file.names, clustering.var,
+                                           distance.metric,  exclude.pctile = exclude.pctile,
+                                           target.pctile = target.pctile, target.number = target.number,
+                                           target.percent = target.percent)
+      subsamples <- FALSE
+      fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
+                                     subsamples = subsamples)
     } else {
       fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                      subsamples = subsamples)

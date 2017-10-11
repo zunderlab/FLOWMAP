@@ -142,6 +142,60 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' This code was adapted from the spade R package,
 #' available here: https://github.com/nolanlab/spade.
 #' 
+#' Specifically, the code in this file is adapted from downsample.R.
+#' 
+#' This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
+#' and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
+#' was used under the GNU General Public License v. 2.0
+#' (https://github.com/nolanlab/spade/blob/master/LICENSE) available
+#' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
+#' license rules, our code is available under GPL-3.0.
+
+DownsampleFCS <- function(fcs.file.names, clustering.var,
+                          distance.metric, exclude.pctile = 0.01,
+                          target.pctile = 0.99,
+                          target.number = NULL,
+                          target.percent = 0.1) {
+  downsample.file.names <- c()
+  for (file.name in fcs.files) {
+    base.name <- unlist(strsplit(basename(file.name), "\\."))[1]
+    infilename <- paste(base.name, "density.fcs", sep = "_")
+    transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
+    spade::SPADE.addDensityToFCS(file.name, infilename,
+                                 cols = clustering.var, comp = TRUE,
+                                 transforms = transforms)
+    outfilename <- paste(base.name, "downsample.fcs", sep = "_")
+    spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
+                               exclude_pctile = exclude.pctile,
+                               target_pctile = target.pctile,
+                               target_number = target.number,
+                               target_percent = target.percent)
+    downsample.file.names <- c(downsample.file.names, outfilename)
+  }
+  return(downsample.file.names)
+}
+
+MultiDownsampleFCS <- function(list.of.file.names, clustering.var,
+                               distance.metric, exclude.pctile = 0.01,
+                               target.pctile = 0.99,
+                               target.number = NULL,
+                               target.percent = 0.1) {
+  list.downsample.file.names <- list()
+  for (t in 1:length(list.of.file.names)) {
+    fcs.file.names <- list.of.file.names[[t]]
+    downsample.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
+                                           distance.metric, exclude.pctile, target.pctile,
+                                           target.number, target.percent)
+    list.downsample.file.names[[t]] <- downsample.file.names
+  }
+  return(list.downsample.file.names)
+}
+
+#' SPADE: density-dependent downsampling
+#' 
+#' This code was adapted from the spade R package,
+#' available here: https://github.com/nolanlab/spade.
+#' 
 #' Specifically, the code in this file is adapted from downsample.R, but
 #' has been modified to not produce FCS files as a result.
 #' 
@@ -152,10 +206,10 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
 #' license rules, our code is available under GPL-3.0.
 
-DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
-                          channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
-                          target.number = NULL, target.percent = 0.1,
-                          transform = TRUE) {
+DownsampleFCS_OLD <- function(fcs.file.names, clustering.var, channel.annotate,
+                              channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                              target.number = NULL, target.percent = 0.1,
+                              transform = TRUE) {
   downsample.files <- list()
   cat("Downsampling FCS files.", "\n")
   for (i in 1:length(fcs.file.names)) {
@@ -209,10 +263,10 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   return(downsample.files)
 }
 
-MultiDownsampleFCS <- function(list.of.file.names, clustering.var, channel.annotate,
-                               channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
-                               target.number = NULL, target.percent = 0.1,
-                               transform = TRUE) {
+MultiDownsampleFCS_OLD <- function(list.of.file.names, clustering.var, channel.annotate,
+                                   channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                                   target.number = NULL, target.percent = 0.1,
+                                   transform = TRUE) {
   list.of.downsample.files <- list()
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
