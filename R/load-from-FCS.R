@@ -151,7 +151,7 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
 #' license rules, our code is available under GPL-3.0.
 
-DownsampleFCS <- function(fcs.file.names, clustering.var,
+DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
                           distance.metric, exclude.pctile = 0.01,
                           target.pctile = 0.99,
                           target.number = NULL,
@@ -163,7 +163,12 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
     infilename <- paste(base.name, "density.fcs", sep = "_")
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
     print(base.name)
-    SPADE.addDensityToFCS(file.name, infilename, cols = clustering.var, comp = TRUE, transforms = transforms)
+    new.cols <- c()
+    for (i in clustering.var) {
+      new.name <- names(which(var.annotate == clustering.var[[i]]))
+      new.cols <- c(new.cols, new.name)
+    }
+    SPADE.addDensityToFCS(file.name, infilename, cols = new.cols, comp = TRUE, transforms = transforms)
     # spade::SPADE.addDensityToFCS(file.name, infilename,
     #                              cols = clustering.var, comp = TRUE,
     #                              transforms = transforms)
