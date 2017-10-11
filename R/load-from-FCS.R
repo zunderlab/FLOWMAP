@@ -165,7 +165,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
     print(base.name)
     new.cols <- c()
     for (i in clustering.var) {
-      new.name <- names(which(var.annotate == clustering.var[[i]]))
+      new.name <- names(which(var.annotate == i))
       new.cols <- c(new.cols, new.name)
     }
     SPADE.addDensityToFCS(file.name, infilename, cols = new.cols, comp = TRUE, transforms = transforms)
