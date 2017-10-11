@@ -156,6 +156,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
                           target.pctile = 0.99,
                           target.number = NULL,
                           target.percent = 0.1) {
+  print("inside DownsampleFCS function")
   cat("exclude_pctile is", exclude.pctile, "\n")
   cat("target_pctile is", target.pctile, "\n")
   cat("target_number is", target.number, "\n")
@@ -202,16 +203,23 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
 }
 
 MultiDownsampleFCS <- function(list.of.file.names, clustering.var,
-                               distance.metric, exclude.pctile = 0.01,
-                               target.pctile = 0.99,
-                               target.number = NULL,
-                               target.percent = 0.1) {
+                               distance.metric, exclude.pctile = exclude.pctile,
+                               target.pctile = target.pctile,
+                               target.number = target.number,
+                               target.percent = target.percent) {
+  print("inside MultiDownsampleFCS function")
+  cat("exclude_pctile is", exclude.pctile, "\n")
+  cat("target_pctile is", target.pctile, "\n")
+  cat("target_number is", target.number, "\n")
+  cat("target_percent is", target.percent, "\n")
   list.downsample.file.names <- list()
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
     downsample.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
-                                           distance.metric, exclude.pctile, target.pctile,
-                                           target.number, target.percent)
+                                           distance.metric, exclude.pctile = exclude.pctile,
+                                           target.pctile = target.pctile,
+                                           target.number = target.number,
+                                           target.percent = target.percent)
     list.downsample.file.names[[t]] <- downsample.file.names
   }
   return(list.downsample.file.names)
