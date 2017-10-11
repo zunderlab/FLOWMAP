@@ -163,16 +163,24 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
     infilename <- paste(base.name, "density.fcs", sep = "_")
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
     print(base.name)
-    spade::SPADE.addDensityToFCS(file.name, infilename,
-                                 cols = clustering.var, comp = TRUE,
-                                 transforms = transforms)
+    SPADE.addDensityToFCS(file.name, infilename,
+                          cols = clustering.var, comp = TRUE,
+                          transforms = transforms)
+    # spade::SPADE.addDensityToFCS(file.name, infilename,
+    #                              cols = clustering.var, comp = TRUE,
+    #                              transforms = transforms)
     print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
-    spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
-                               exclude_pctile = exclude.pctile,
-                               target_pctile = target.pctile,
-                               target_number = target.number,
-                               target_percent = target.percent)
+    SPADE.downsampleFCS(infilename = infilename, outfilename,
+                        exclude_pctile = exclude.pctile,
+                        target_pctile = target.pctile,
+                        target_number = target.number,
+                        target_percent = target.percent)
+    # spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
+    #                            exclude_pctile = exclude.pctile,
+    #                            target_pctile = target.pctile,
+    #                            target_number = target.number,
+    #                            target_percent = target.percent)
     print("finish downsample")
     downsample.file.names <- c(downsample.file.names, outfilename)
   }
