@@ -165,7 +165,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var,
     print(base.name)
     spade::SPADE.addDensityToFCS(file.name, infilename,
                                  cols = clustering.var, comp = TRUE,
-                               g  transforms = transforms)
+                                 transforms = transforms)
     print("finish add density")
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
