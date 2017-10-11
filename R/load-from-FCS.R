@@ -93,6 +93,8 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
                               subsamples = 1000, transform = TRUE) {
   list.of.FCS.files <- list()
   subsamp.orig <- subsamples
+  print("subsamp.orig")
+  print(subsamp.orig)
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
     if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
