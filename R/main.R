@@ -133,7 +133,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                  target.pctile = target.pctile, target.number = target.number,
                                  target.percent = target.percent)
       subsamples <- FALSE
-      file.name <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
+      fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
     } else {
       fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
