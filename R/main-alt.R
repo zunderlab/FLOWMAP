@@ -33,8 +33,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
-    print("file.clusters")
-    print(file.clusters)
+    print("file.clusters$full.clusters")
+    print(file.clusters$full.clusters)
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
