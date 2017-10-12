@@ -125,8 +125,20 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
-    fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-                             channel.annotate = var.annotate, subsamples = subsamples)
+    
+    if (downsample) {
+      cat("Downsampling all files using SPADE downsampling", "\n")
+      file.name <- DownsampleFCS(file.name, clustering.var,
+                                 distance.metric,  exclude.pctile = exclude.pctile,
+                                 target.pctile = target.pctile, target.number = target.number,
+                                 target.percent = target.percent)
+      subsamples <- FALSE
+      file.name <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
+                                channel.annotate = var.annotate, subsamples = subsamples)
+    } else {
+      fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
+                               channel.annotate = var.annotate, subsamples = subsamples)
+    }
     file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
