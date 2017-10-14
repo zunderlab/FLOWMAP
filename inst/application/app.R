@@ -53,6 +53,7 @@ if(globe.inputs[["mode"]] == "single"){
     })
     ContentDiff <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
       rows <- length(FileOrder(globe.raw.FCS.dir))
       count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
@@ -63,9 +64,14 @@ if(globe.inputs[["mode"]] == "single"){
         print(file.names[i])
         
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
@@ -85,15 +91,22 @@ if(globe.inputs[["mode"]] == "single"){
     })
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
       rows <- length(FileOrder(globe.raw.FCS.dir))
       count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
       for(i in order) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Does same thing as above
       }
@@ -202,10 +215,31 @@ if(globe.inputs[["mode"]] == "single"){
       save.folder <- globe.result.dir
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
+        
       }
-      var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      print("annotate")
+      print(var.annotate)
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("remove")
+      print(var.remove)
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
+      }
+      print("clustering")
+      print(clustering.var)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
@@ -215,9 +249,13 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   print(i)
+      #   print("hello")
+      #   print(clustering.var[i])
+      #   print(var.annotate)
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -361,6 +399,8 @@ if(globe.inputs[["mode"]] == "single"){
     })
     
     ContentDiff <- eventReactive(input$csv.finder, {
+      fcs.list <- list()
+      temp.list = list()
       count = 0
       fcs.list <- list()
       fcs.file.path <- c()
@@ -368,6 +408,7 @@ if(globe.inputs[["mode"]] == "single"){
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
+      print("diff pathway")
       print("Pathway")
       print(fcs.file.path)
       if(paste(levels(fcs.file.path), collapse = "") != ""){
@@ -376,11 +417,22 @@ if(globe.inputs[["mode"]] == "single"){
       print(fcs.file.path)
       test.globe <<- fcs.file.path
       for(i in fcs.file.path) {
+        print(i)
+        setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        print("hello")
+        # fcs.files <- read.FCS(i, emptyValue = FALSE)
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        # count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
       print(fcs.list)
@@ -389,10 +441,13 @@ if(globe.inputs[["mode"]] == "single"){
       diffs <- every
       diffs <- diffs[! every %in% same]
       final.new.diff <<- diffs
+      print("I passed Diffs")
       diffs
       # }
     })
     ContentSame <- eventReactive(input$csv.finder, {
+      fcs.list <- list()
+      temp.list = list()
       fcs.list <- list()
       fcs.file.path <- c()
       for(i in multi.list.global){
@@ -406,11 +461,23 @@ if(globe.inputs[["mode"]] == "single"){
       print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
-        print(i)
+        # print(i)
+        # fcs.files <- read.FCS(i, emptyValue = FALSE)
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        # count <- count + 1
+        setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
@@ -519,10 +586,27 @@ if(globe.inputs[["mode"]] == "single"){
       save.folder <- globe.result.dir
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
       }
-      var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      print("annotated")
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("removed")
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
+      }
+      print("clustered")
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
@@ -532,9 +616,11 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
+      print("after")
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -635,12 +721,19 @@ if(globe.inputs[["mode"]] == "single"){
     
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
+      fcs.list <- list()
+      fcs.file.path <- c()
+      print(globe.raw.FCS.dir)
       setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
       fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
-      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-      fcs.list[[(1)]] <- name.desc
+      fcs.name = as.vector(fcs.files@parameters@data[,1])
+      fcs.param = as.vector(fcs.files@parameters@data[,2])
+      temp.list[[1]] = unlist(fcs.name)
+      temp.list[[(2)]] <- unlist(fcs.param)
+      final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+      fcs.list[[(1)]] <- final
       # Does same thing as above
       same <- Reduce(intersect, fcs.list)
       every <- Reduce(union, fcs.list)
@@ -691,13 +784,28 @@ if(globe.inputs[["mode"]] == "single"){
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
       var.annotate <- list()
+      var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
       }
-      var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      print(var.remove)
-      clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      print(var.annotate)
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("removed")
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
+      }
+      print("clustered")
       print(files)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
@@ -708,9 +816,9 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -994,6 +1102,7 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     })
     ContentDiff <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
       rows <- length(FileOrder(globe.raw.FCS.dir))
       count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
@@ -1004,9 +1113,14 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         print(file.names[i])
         
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
@@ -1026,15 +1140,22 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     })
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
       rows <- length(FileOrder(globe.raw.FCS.dir))
       count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
       for(i in order) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Does same thing as above
       }
@@ -1141,9 +1262,34 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
+      # var.annotate <- list()
+      # for (j in 1:nrow(flowfile)) {
+      #   var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+      # }
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
+        
+      }
+      print("annotate")
+      print(var.annotate)
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("remove")
+      print(var.remove)
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
       }
       var.remove <- flowfile[flowfile$removal == TRUE, 1]
       clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
@@ -1156,9 +1302,9 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -1302,6 +1448,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     })
     
     ContentDiff <- eventReactive(input$csv.finder, {
+      fcs.list <- list()
+      temp.list = list()
       count = 0
       fcs.list <- list()
       fcs.file.path <- c()
@@ -1309,6 +1457,7 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
+      print("diff pathway")
       print("Pathway")
       print(fcs.file.path)
       if(paste(levels(fcs.file.path), collapse = "") != ""){
@@ -1317,11 +1466,22 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       print(fcs.file.path)
       test.globe <<- fcs.file.path
       for(i in fcs.file.path) {
+        print(i)
+        setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        print("hello")
+        # fcs.files <- read.FCS(i, emptyValue = FALSE)
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        # count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
       print(fcs.list)
@@ -1330,10 +1490,13 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       diffs <- every
       diffs <- diffs[! every %in% same]
       final.new.diff <<- diffs
+      print("I passed Diffs")
       diffs
       # }
     })
     ContentSame <- eventReactive(input$csv.finder, {
+      fcs.list <- list()
+      temp.list = list()
       fcs.list <- list()
       fcs.file.path <- c()
       for(i in multi.list.global){
@@ -1347,11 +1510,23 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
-        print(i)
+        # print(i)
+        # fcs.files <- read.FCS(i, emptyValue = FALSE)
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        # count <- count + 1
+        setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        fcs.list[[(count + 1)]] <- name.desc
+        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
+        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
+        # fcs.list[[(count + 1)]] <- name.desc
+        fcs.name = as.vector(fcs.files@parameters@data[,1])
+        fcs.param = as.vector(fcs.files@parameters@data[,2])
+        temp.list[[1]] = unlist(fcs.name)
+        temp.list[[(2)]] <- unlist(fcs.param)
+        final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
@@ -1458,9 +1633,34 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
+      # var.annotate <- list()
+      # for (j in 1:nrow(flowfile)) {
+      #   var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+      # }
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
+        
+      }
+      print("annotate")
+      print(var.annotate)
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("remove")
+      print(var.remove)
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
       }
       var.remove <- flowfile[flowfile$removal == TRUE, 1]
       clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
@@ -1473,9 +1673,9 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -1576,12 +1776,19 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
+      temp.list = list()
+      fcs.list <- list()
+      fcs.file.path <- c()
+      print(globe.raw.FCS.dir)
       setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
       fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
-      fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-      name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-      fcs.list[[(1)]] <- name.desc
+      fcs.name = as.vector(fcs.files@parameters@data[,1])
+      fcs.param = as.vector(fcs.files@parameters@data[,2])
+      temp.list[[1]] = unlist(fcs.name)
+      temp.list[[(2)]] <- unlist(fcs.param)
+      final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
+      fcs.list[[(1)]] <- final
       # Does same thing as above
       same <- Reduce(intersect, fcs.list)
       every <- Reduce(union, fcs.list)
@@ -1631,12 +1838,29 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       save.folder <- globe.result.dir
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        if(grepl("~", flowfile[j, 4])){
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        } else {
+          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
+        }
+        
       }
-      var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      print(var.remove)
-      clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      print("annotate")
       print(var.annotate)
+      var.remove = c()
+      var.remove.temp = strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      for(j in 1:length(var.remove.temp)){
+        if(length(var.remove.temp > 0)){
+          var.remove = c(var.remove, var.remove.temp[[j]][1])
+        }
+      }
+      print("remove")
+      print(var.remove)
+      clustering.var <- c()
+      var.clus.temp = strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      for(j in 1:length(var.clus.temp)){
+        clustering.var = c(clustering.var, var.clus.temp[[j]][1])
+      }
       print(files)
       per <- as.numeric(globe.inputs[["edge.pct.num"]])
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
