@@ -51,7 +51,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
     }
-    stop("TESTING JUST DOWNSAMPLING FOR MODE SINGLE")
+    # stop("TESTING JUST DOWNSAMPLING FOR MODE SINGLE")
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
@@ -97,7 +97,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                      subsamples = subsamples)
     }
-    stop("TESTING JUST DOWNSAMPLING FOR MODE MULTI")
+    # stop("TESTING JUST DOWNSAMPLING FOR MODE MULTI")
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
@@ -144,7 +144,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
                                channel.annotate = var.annotate, subsamples = subsamples)
     }
-    stop("TESTING JUST DOWNSAMPLING FOR MODE ONE")
+    # stop("TESTING JUST DOWNSAMPLING FOR MODE ONE")
     file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
