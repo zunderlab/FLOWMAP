@@ -180,7 +180,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     if (transform) {
       cat("Transforming data from:", current.file, "\n")
       # fcs.file <- apply(fcs.file, 2, Asinh) 
-      transforms <- flowCore::arcsinhTransform(a = 0, b = 1/arcsinh_cofactor)
+      transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
       fcs.file <- apply(fcs.file, 2, transforms) 
       print("using SPADE/flowCore transformation")
     }
