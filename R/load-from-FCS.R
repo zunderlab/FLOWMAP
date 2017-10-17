@@ -153,11 +153,120 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
 #' license rules, our code is available under GPL-3.0.
 
-DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
-                          distance.metric, exclude.pctile = 0.01,
-                          target.pctile = 0.99,
-                          target.number = NULL,
-                          target.percent = 0.1) {
+DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
+                          channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                          target.number = NULL, target.percent = 0.1,
+                          transform = TRUE) {
+  cat("exclude.pctile is", exclude.pctile, "\n")
+  cat("target.pctile is", target.pctile, "\n")
+  cat("target.number is", target.number, "\n")
+  cat("target.percent is", target.percent, "\n")
+  downsample.data <- list()
+  for (file.name in fcs.file.names) {
+    print(file.name)
+    transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
+    SPADE.removeExistingDensityAndClusterColumns(file.name)
+    current.file <- tail(strsplit(file.name, "/")[[1]], n = 1)
+    cat("Reading FCS file data from:", current.file, "\n")
+    fcs.file <- read.FCS(file.name)  
+    fcs.file <- as.data.frame(exprs(fcs.file))
+    cat("Fixing channel names from:", current.file, "\n")
+    for (x in 1:length(colnames(fcs.file))) {
+      if (exists(colnames(fcs.file)[x], where = channel.annotate)) {
+        colnames(fcs.file)[x] <- channel.annotate[[colnames(fcs.file)[x]]]
+      }
+    }
+    cat("Removing unnecessary channel names from:", current.file, "\n")
+    fcs.file <- subset(fcs.file, select = colnames(fcs.file)[!colnames(fcs.file) %in% channel.remove])
+    if (transform) {
+      cat("Transforming data from:", current.file, "\n")
+      fcs.file <- apply(fcs.file, 2, Asinh) 
+    }
+    fcs.file <- RemoveExistingTimeVar(fcs.file) 
+    print("dim(fcs.file)")
+    print(dim(fcs.file))
+    print("colnames(fcs.file)")
+    print(colnames(fcs.file))
+    cat("Calculating density for:", current.file, "\n")
+    density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
+    if (max(density) == 0.0) {
+      warning(paste(current.file, "has degenerate densities, possibly due to many identical observations", sep = " "))
+    }
+    fcs.file <- cbind(fcs.file, "density" = density)
+    boundary <- quantile(fcs.file[, "density"], c(exclude.pctile, target.pctile), names = FALSE)
+    print("dim(fcs.file)")
+    print(dim(fcs.file))
+    cat("Removing outliers for:", current.file, "\n")
+    fcs.file2 <- subset(fcs.file, fcs.file[, "density"] > boundary[1])    
+    print("dim(fcs.file2)")
+    print(dim(fcs.file2))
+    if (!is.null(target.percent)) {
+      target.number = round(target.percent * nrow(fcs.file2))
+      cat("Targeting", target.number, "events for", current.file, "\n")
+    }
+    density <- fcs.file2[, "density"]
+    if (is.null(target.number)) {
+      cat("Downsampling for:", current.file, "\n")
+      boundary <- boundary[2]
+      fcs.file3 <- subset(fcs.file2, boundary/density > runif(nrow(fcs.file2)))
+      print("dim(fcs.file3)")
+      print(dim(fcs.file3))
+    } else if (target.number < nrow(fcs.file2)) {
+      sorted.density <- sort(density)
+      cdf <- rev(cumsum(1.0 / rev(sorted.density)))
+      boundary <- target.number/cdf[1] 
+      if (boundary > sorted.density[1]) {  # Boundary actually falls amongst densities present
+        targets <- (target.number - 1:length(sorted.density)) / cdf 
+        boundary <- targets[which.min(targets - sorted.density > 0)]
+      }
+      cat("Downsampling for:", current.file, "\n")
+      fcs.file3 <- subset(fcs.file2, boundary/density > runif(length(density)))
+      print("dim(fcs.file3)")
+      print(dim(fcs.file3))
+    } else if (target.number > nrow(fcs.file2)) {
+      stop("More events requested than present in file")
+    }
+    downsample.data[[current.file]] <- fcs.file3
+    rm(fcs.file, fcs.file2, fcs.file3)
+  }
+  return(downsample.data)
+}
+
+
+MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
+                               channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+                               target.number = NULL, target.percent = 0.1,
+                               transform = TRUE) {
+  list.downsample.data <- list()
+  for (t in 1:length(list.of.file.names)) {
+    fcs.file.names.t <- fcs.file.names[[t]]
+    downsample.data <- DownsampleFCS(fcs.file.names.t, clustering.var, channel.annotate,
+                                     channel.remove, exclude.pctile, target.pctile,
+                                     target.number, target.percent, transform)
+    list.downsample.data[[t]] <- downsample.data
+  }
+  return(list.downsample.data)
+}
+
+#' SPADE: density-dependent downsampling
+#' 
+#' This code was adapted from the spade R package,
+#' available here: https://github.com/nolanlab/spade.
+#' 
+#' Specifically, the code in this file is adapted from downsample.R.
+#' 
+#' This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
+#' and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
+#' was used under the GNU General Public License v. 2.0
+#' (https://github.com/nolanlab/spade/blob/master/LICENSE) available
+#' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
+#' license rules, our code is available under GPL-3.0.
+
+DownsampleFCS_OLD2 <- function(fcs.file.names, clustering.var, var.annotate,
+                               distance.metric, exclude.pctile = 0.01,
+                               target.pctile = 0.99,
+                               target.number = NULL,
+                               target.percent = 0.1) {
   cat("exclude_pctile is", exclude.pctile, "\n")
   cat("target_pctile is", target.pctile, "\n")
   cat("target_number is", target.number, "\n")
@@ -173,30 +282,24 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, var.annotate,
       new.cols <- c(new.cols, new.name)
     }
     SPADE.addDensityToFCS(file.name, infilename, cols = new.cols, comp = TRUE, transforms = transforms)
-    # spade::SPADE.addDensityToFCS(file.name, infilename,
-    #                              cols = clustering.var, comp = TRUE,
-    #                              transforms = transforms)
+    print("infilename")
+    print(infilename)
     outfilename <- paste(base.name, "downsample.fcs", sep = "_")
     SPADE.downsampleFCS(infilename = infilename, outfilename,
                         exclude_pctile = exclude.pctile,
                         target_pctile = target.pctile,
                         target_number = target.number,
                         target_percent = target.percent)
-    # spade::SPADE.downsampleFCS(infilename = infilename, outfilename,
-    #                            exclude_pctile = exclude.pctile,
-    #                            target_pctile = target.pctile,
-    #                            target_number = target.number,
-    #                            target_percent = target.percent)
     downsample.file.names <- c(downsample.file.names, outfilename)
   }
   return(downsample.file.names)
 }
 
-MultiDownsampleFCS <- function(list.of.file.names, clustering.var,
-                               distance.metric, exclude.pctile = exclude.pctile,
-                               target.pctile = target.pctile,
-                               target.number = target.number,
-                               target.percent = target.percent) {
+MultiDownsampleFCS_OLD2 <- function(list.of.file.names, clustering.var,
+                                    distance.metric, exclude.pctile = exclude.pctile,
+                                    target.pctile = target.pctile,
+                                    target.number = target.number,
+                                    target.percent = target.percent) {
   list.downsample.file.names <- list()
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
