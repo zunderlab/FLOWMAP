@@ -216,9 +216,19 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
                              channel.annotate = var.annotate, subsamples = FALSE)
     cluster.data <- FLOWMAP.clusters$cluster.medians[[f]]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
+    print("table(cluster.assign)")
+    print(table(cluster.assign))
+    print("dim(fcs.file[[1]])")
+    print(dim(fcs.file[[1]]))
+    print("colnames(fcs.file[[1]])")
+    print(colnames(fcs.file[[1]]))
+    print("dim(cluster.data)")
+    print(dim(cluster.data))
+    print("colnames(cluster.data)")
+    print(colnames(cluster.data))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       cluster.data,
-                                                      cluster.assign[[f]])
+                                                      cluster.assign)
     print("all.cells.assign")
     print(all.cells.assign)
     fixed.counts <- table(all.cells.assign)
