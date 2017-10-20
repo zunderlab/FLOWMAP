@@ -228,7 +228,6 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
     rm(fcs.file, cluster.data, cluster.assign)
   }
-  stop("TESTING SPADE UPSAMPLING")
   return(fixed.FLOWMAP.clusters)
 }
 
