@@ -220,6 +220,10 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     print(head(FLOWMAP.clusters$cell.assgn[[f]]))
     print("head(as.integer(FLOWMAP.clusters$cell.assgn[[f]]))")
     print(head(as.integer(FLOWMAP.clusters$cell.assgn[[f]])))
+    print("head(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))")
+    print(head(as.matrix(FLOWMAP.clusters$cell.assgn[[f]])))
+    print("head(t(as.matrix(FLOWMAP.clusters$cell.assgn[[f]])))")
+    print(head(t(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       FLOWMAP.clusters$cluster.medians[[f]],
                                                       FLOWMAP.clusters$cell.assgn[[f]])
