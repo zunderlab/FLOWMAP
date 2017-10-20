@@ -195,6 +195,37 @@ SPADEClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric =
               new.counts = new.counts))
 }
 
+
+Upsample_OLD <- function(FLOWMAP.clusters) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (f in 1:length(FLOWMAP.clusters$cluster.counts)) {
+    counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
+    densities <- FLOWMAP.clusters$cluster.medians[[f]]$density
+    fixed.counts <- round((counts * densities))
+    fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
+  }
+  return(fixed.FLOWMAP.clusters)
+}
+
+Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (f in 1:length(file.names)) {
+    fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
+                             channel.annotate = var.annotate)
+    all.cells.assign <- SPADE.assignToCluster(fcs.file, 
+                                              FLOWMAP.clusters$cell.medians[[f]],
+                                              FLOWMAP.clusters$cell.assgn[[f]])
+    print("all.cells.assign")
+    print(all.cells.assign)
+    fixed.counts <- table(all.cells.assign)
+    print("fixed.counts")
+    print(fixed.counts)
+    fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
+  }
+  stop("TESTING SPADE UPSAMPLING")
+  return(fixed.FLOWMAP.clusters)
+}
+
 #### DF SPECIFIC METHODS ####
 
 ConstructOneFLOWMAPCluster <- function(df) {

@@ -56,7 +56,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
-      file.clusters <- Upsample(file.clusters)
+      file.clusters <- Upsample(fcs.file.names, file.clusters, var.remove, var.annotate)
     }
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
