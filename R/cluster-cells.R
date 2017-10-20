@@ -212,12 +212,12 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
   for (f in 1:length(file.names)) {
     fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
                              channel.annotate = var.annotate)
-    print("fcs.file")
-    print(fcs.file)
-    print("FLOWMAP.clusters$cell.medians[[f]]")
-    print(FLOWMAP.clusters$cell.medians[[f]])
-    print("FLOWMAP.clusters$cell.assgn[[f]]")
-    print(FLOWMAP.clusters$cell.assgn[[f]])
+    print("class(fcs.file)")
+    print(class(fcs.file))
+    print("class(FLOWMAP.clusters$cell.medians[[f]])")
+    print(class(FLOWMAP.clusters$cell.medians[[f]]))
+    print("class(FLOWMAP.clusters$cell.assgn[[f]])")
+    print(class(FLOWMAP.clusters$cell.assgn[[f]]))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file, 
                                                       FLOWMAP.clusters$cell.medians[[f]],
                                                       FLOWMAP.clusters$cell.assgn[[f]])
