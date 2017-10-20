@@ -215,7 +215,12 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
                              channel.annotate = var.annotate, subsamples = FALSE)
     cluster.data <- FLOWMAP.clusters$cluster.medians[[f]]
+    cluster.data <- cluster.data[, 1:(ncol(cluster.data) - 1)]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
+    print("length(cluster.assign)")
+    print(length(cluster.assign))
+    print("head(cluster.assign)")
+    print(head(cluster.assign))
     print("table(cluster.assign)")
     print(table(cluster.assign))
     print("dim(fcs.file[[1]])")

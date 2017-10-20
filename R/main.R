@@ -40,18 +40,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                  channel.remove = var.remove, exclude.pctile = exclude.pctile,
                                  target.pctile = target.pctile, target.number = target.number,
                                  target.percent = target.percent, transform = TRUE)
-      # fcs.file.names <- DownsampleFCS(fcs.file.names, clustering.var,
-      #                                 distance.metric,  exclude.pctile = exclude.pctile,
-      #                                 target.pctile = target.pctile, target.number = target.number,
-      #                                 target.percent = target.percent)
-      # subsamples <- FALSE
-      # fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
-      #                           channel.annotate = var.annotate, subsamples = subsamples)
     } else {
       fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                                 channel.annotate = var.annotate, subsamples = subsamples)
     }
-    # stop("TESTING JUST DOWNSAMPLING FOR MODE SINGLE")
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
@@ -86,18 +78,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                       channel.remove = var.remove, exclude.pctile = exclude.pctile,
                                       target.pctile = target.pctile, target.number = target.number,
                                       target.percent = target.percent, transform = TRUE)
-      # fcs.file.names <- MultiDownsampleFCS(fcs.file.names, clustering.var,
-      #                                      distance.metric,  exclude.pctile = exclude.pctile,
-      #                                      target.pctile = target.pctile, target.number = target.number,
-      #                                      target.percent = target.percent)
-      # subsamples <- FALSE
-      # fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
-      #                                subsamples = subsamples)
     } else {
       fcs.files <- LoadMultiCleanFCS(fcs.file.names, var.remove, var.annotate,
                                      subsamples = subsamples)
     }
-    # stop("TESTING JUST DOWNSAMPLING FOR MODE MULTI")
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
@@ -133,18 +117,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                 channel.remove = var.remove, exclude.pctile = exclude.pctile,
                                 target.pctile = target.pctile, target.number = target.number,
                                 target.percent = target.percent, transform = TRUE)
-      # file.name <- DownsampleFCS(file.name, clustering.var,
-      #                            distance.metric,  exclude.pctile = exclude.pctile,
-      #                            target.pctile = target.pctile, target.number = target.number,
-      #                            target.percent = target.percent)
-      # subsamples <- FALSE
-      # fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
-      #                          channel.annotate = var.annotate, subsamples = subsamples)
     } else {
       fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
                                channel.annotate = var.annotate, subsamples = subsamples)
     }
-    # stop("TESTING JUST DOWNSAMPLING FOR MODE ONE")
     file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
