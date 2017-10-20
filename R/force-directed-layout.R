@@ -1,5 +1,6 @@
 
 ForceDirectedXY <- function(graph) {
+  V(graph)$size <- rep(20, vcount(graph))
   force.graph1 <- scaffold:::layout.forceatlas2(graph, iter = 10000,
                                                 stopping_tolerance = 0.001,
                                                 prevent.overlap = FALSE)
