@@ -220,6 +220,7 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       cluster.data,
                                                       cluster.assign)
+    fixed.counts <- table(all.cells.assign)
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
     print("fixed.counts")
@@ -227,6 +228,7 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
     rm(fcs.file, cluster.data, cluster.assign)
   }
+  stop("TESTING SPADE UPSAMPLING")
   return(fixed.FLOWMAP.clusters)
 }
 
