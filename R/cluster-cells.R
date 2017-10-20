@@ -124,8 +124,9 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   } else {
     method <- "single"
   }
-  distance.metric <- "euclidean"
-  cat("Rclusterpp.hclust with euclidean distance metric")
+  distance.metric <- "manhattan"
+  # distance.metric <- "euclidean"
+  cat("Rclusterpp.hclust with manhattan distance metric", "\n")
   FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
                                     distance = distance.metric)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
