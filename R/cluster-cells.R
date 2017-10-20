@@ -223,14 +223,6 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     print(head(cluster.assign))
     print("table(cluster.assign)")
     print(table(cluster.assign))
-    print("dim(fcs.file[[1]])")
-    print(dim(fcs.file[[1]]))
-    print("colnames(fcs.file[[1]])")
-    print(colnames(fcs.file[[1]]))
-    print("dim(cluster.data)")
-    print(dim(cluster.data))
-    print("colnames(cluster.data)")
-    print(colnames(cluster.data))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       cluster.data,
                                                       cluster.assign)
@@ -239,6 +231,14 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fixed.counts <- table(all.cells.assign)
     print("fixed.counts")
     print(fixed.counts)
+    print("length(fixed.counts)")
+    print(length(fixed.counts))
+    print("dim(fixed.counts)")
+    print(dim(fixed.counts))
+    print("as.matrix(fixed.counts)")
+    print(as.matrix(fixed.counts))
+    print("t(as.matrix(fixed.counts))")
+    print(t(as.matrix(fixed.counts)))
     fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
     rm(fcs.file, cluster.data, cluster.assign)
   }
