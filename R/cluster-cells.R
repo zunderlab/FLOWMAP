@@ -217,34 +217,9 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     cluster.data <- FLOWMAP.clusters$cluster.medians[[f]]
     cluster.data <- cluster.data[, 1:(ncol(cluster.data) - 1)]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
-    print("length(cluster.assign)")
-    print(length(cluster.assign))
-    print("head(cluster.assign)")
-    print(head(cluster.assign))
-    print("table(cluster.assign)")
-    print(table(cluster.assign))
-    print("min(cluster.assign)")
-    print(min(cluster.assign))
-    print("max(cluster.assign)")
-    print(max(cluster.assign))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       cluster.data,
                                                       cluster.assign)
-    print("all.cells.assign")
-    print(all.cells.assign)
-    print("max(all.cells.assign)")
-    print(max(all.cells.assign))
-    print("min(all.cells.assign)")
-    print(min(all.cells.assign))
-    fixed.counts <- table(all.cells.assign)
-    print("fixed.counts")
-    print(fixed.counts)
-    print("sum(fixed.counts)")
-    print(sum(fixed.counts))
-    print("length(fixed.counts)")
-    print(length(fixed.counts))
-    print("dim(fixed.counts)")
-    print(dim(fixed.counts))
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
     print("fixed.counts")
@@ -252,7 +227,6 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
     rm(fcs.file, cluster.data, cluster.assign)
   }
-  stop("TESTING SPADE UPSAMPLING")
   return(fixed.FLOWMAP.clusters)
 }
 
