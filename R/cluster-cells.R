@@ -223,6 +223,10 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     print(head(cluster.assign))
     print("table(cluster.assign)")
     print(table(cluster.assign))
+    print("min(cluster.assign)")
+    print(min(cluster.assign))
+    print("max(cluster.assign)")
+    print(max(cluster.assign))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
                                                       cluster.data,
                                                       cluster.assign)
