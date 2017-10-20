@@ -214,25 +214,18 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     print(file.names[[f]])
     fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
                              channel.annotate = var.annotate, subsamples = FALSE)
-    print("class(fcs.file[[1]])")
-    print(class(fcs.file[[1]]))
-    print("head(FLOWMAP.clusters$cell.assgn[[f]])")
-    print(head(FLOWMAP.clusters$cell.assgn[[f]]))
-    print("head(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))")
-    print(head(as.matrix(FLOWMAP.clusters$cell.assgn[[f]])))
-    # print("head(t(as.matrix(FLOWMAP.clusters$cell.assgn[[f]])))")
-    # print(head(t(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))))
-    print("head(as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]])))")
-    print(head(as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))))
+    cluster.data <- FLOWMAP.clusters$cluster.medians[[f]]
+    cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
     all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
-                                                      FLOWMAP.clusters$cluster.medians[[f]],
-                                                      FLOWMAP.clusters$cell.assgn[[f]])
+                                                      cluster.data,
+                                                      cluster.assign[[f]])
     print("all.cells.assign")
     print(all.cells.assign)
     fixed.counts <- table(all.cells.assign)
     print("fixed.counts")
     print(fixed.counts)
     fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
+    rm(fcs.file, cluster.data, cluster.assign)
   }
   stop("TESTING SPADE UPSAMPLING")
   return(fixed.FLOWMAP.clusters)
