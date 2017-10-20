@@ -213,27 +213,9 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     print("file.names[[f]]")
     print(file.names[[f]])
     fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
-                             channel.annotate = var.annotate)
-    print("class(fcs.file)")
-    print(class(fcs.file))
-    print("names(fcs.file)")
-    print(names(fcs.file))
-    print("head(fcs.file)")
-    print(head(fcs.file))
-    print("class(FLOWMAP.clusters$cell.medians[[f]])")
-    print(class(FLOWMAP.clusters$cell.medians[[f]]))
-    print("is.data.frame(FLOWMAP.clusters$cell.medians[[f]])")
-    print(is.data.frame(FLOWMAP.clusters$cell.medians[[f]]))
-    print("is.matrix(FLOWMAP.clusters$cell.medians[[f]])")
-    print(is.matrix(FLOWMAP.clusters$cell.medians[[f]]))
-    print("head(FLOWMAP.clusters$cell.medians[[f]])")
-    print(head(FLOWMAP.clusters$cell.medians[[f]]))
-    print("class(FLOWMAP.clusters$cell.assgn[[f]])")
-    print(class(FLOWMAP.clusters$cell.assgn[[f]]))
-    print("head(FLOWMAP.clusters$cell.assgn[[f]])")
-    print(head(FLOWMAP.clusters$cell.assgn[[f]]))
-    all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file, 
-                                                      FLOWMAP.clusters$cell.medians[[f]],
+                             channel.annotate = var.annotate, subsamples = FALSE)
+    all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
+                                                      FLOWMAP.clusters$cluster.medians[[f]],
                                                       FLOWMAP.clusters$cell.assgn[[f]])
     print("all.cells.assign")
     print(all.cells.assign)
