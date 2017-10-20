@@ -105,7 +105,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                      distance.metric = distance.metric)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
-      file.clusters <- MultiUpsample(file.clusters)
+      file.clusters <- MultiUpsample(fcs.file.names, file.clusters, var.remove, var.annotate)
     }
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric,
@@ -147,6 +147,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     # stop("TESTING JUST DOWNSAMPLING FOR MODE ONE")
     file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
+    if (downsample) {
+      cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
+      file.clusters <- Upsample(file.name, file.clusters, var.remove, var.annotate)
+    }
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
                                        per = per, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
