@@ -215,7 +215,7 @@ Upsample <- function(file.names, FLOWMAP.clusters, var.remove, var.annotate) {
     fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
                              channel.annotate = var.annotate, subsamples = FALSE)
     print("class(fcs.file[[1]])")
-    print(class(fcs.file[[1]])
+    print(class(fcs.file[[1]]))
     print("head(FLOWMAP.clusters$cell.assgn[[f]])")
     print(head(FLOWMAP.clusters$cell.assgn[[f]]))
     print("head(as.integer(FLOWMAP.clusters$cell.assgn[[f]]))")
