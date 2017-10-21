@@ -113,19 +113,6 @@ BuildMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min,
   return(output.graph)
 }
 
-MultiUpsample <- function(FLOWMAP.clusters) {
-  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
-  for (t in 1:length(FLOWMAP.clusters)) {
-    for (f in 1:length(FLOWMAP.clusters[[t]]$cluster.counts)) {
-      counts <- FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts
-      densities <- FLOWMAP.clusters[[t]]$cluster.medians[[f]]$density
-      fixed.counts <- round((counts * densities))
-      fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
-    }
-  }
-  return(fixed.FLOWMAP.clusters)
-}
-
 AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
                                label.key) {
   # This section annotates the graph

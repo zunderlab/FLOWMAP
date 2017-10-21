@@ -48,7 +48,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
-      file.clusters <- Upsample(fcs.file.names, file.clusters, var.remove, var.annotate)
+      file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
@@ -89,7 +89,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                      distance.metric = distance.metric)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
-      file.clusters <- MultiUpsample(fcs.file.names, file.clusters, var.remove, var.annotate)
+      file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
     graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric,
@@ -125,7 +125,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
-      file.clusters <- Upsample(file.name, file.clusters, var.remove, var.annotate)
+      file.clusters <- Upsample(file.name, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
                                        per = per, min = minimum, max = maximum,

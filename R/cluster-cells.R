@@ -195,48 +195,51 @@ SPADEClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric =
               new.counts = new.counts))
 }
 
-
-Upsample_OLD <- function(FLOWMAP.clusters) {
-  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
-  for (f in 1:length(FLOWMAP.clusters$cluster.counts)) {
-    counts <- FLOWMAP.clusters$cluster.counts[[f]]$Counts
-    densities <- FLOWMAP.clusters$cluster.medians[[f]]$density
-    fixed.counts <- round((counts * densities))
-    fixed.FLOWMAP.clusters$cluster.counts[[f]]$Counts <- fixed.counts
-  }
-  return(fixed.FLOWMAP.clusters)
-}
-
-Upsample <- function(file.names, FLOWMAP.clusters, var.remove,
-                     var.annotate, clustering.var) {
+Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
+                     var.remove, var.annotate, clustering.var) {
   fixed.FLOWMAP.clusters <- FLOWMAP.clusters
   for (f in 1:length(file.names)) {
-    print("file.names[[f]]")
-    print(file.names[[f]])
-    fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
-                             channel.annotate = var.annotate, subsamples = FALSE)
-    fcs.file <- fcs.file[[1]]
-    fcs.file <- fcs.file[, clustering.var]
-    cluster.data <- FLOWMAP.clusters$cluster.medians[[f]]
-    cluster.data <- cluster.data[, 1:(ncol(cluster.data) - 1)]
-    cluster.data <- cluster.data[, clustering.var]
+    original.fcs.file <- LoadCleanFCS(file.names[[f]], channel.remove = var.remove,
+                                      channel.annotate = var.annotate, subsamples = FALSE)
+    original.fcs.file <- original.fcs.file[[1]]
+    original.fcs.file <- original.fcs.file[, clustering.var]
+    downsample.fcs.file <- fcs.files[[f]]
+    downsample.fcs.file <- downsample.fcs.file[, clustering.var]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
-    print("dim(fcs.file)")
-    print(dim(fcs.file))
-    print("dim(cluster.data)")
-    print(dim(cluster.data))
-    all.cells.assign <- spade:::SPADE.assignToCluster(fcs.file[[1]], 
-                                                      cluster.data,
+    all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file, 
+                                                      downsample.fcs.file,
                                                       cluster.assign)
     fixed.counts <- table(all.cells.assign)
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
-    print("fixed.counts")
-    print(fixed.counts)
-    print("sum(fixed.counts)")
-    print(sum(fixed.counts))
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
     rm(fcs.file, cluster.data, cluster.assign)
+  }
+  return(fixed.FLOWMAP.clusters)
+}
+
+
+MultiUpsample <- function(file.names, FLOWMAP.clusters, fcs.files,
+                          var.remove, var.annotate, clustering.var) {
+  fixed.FLOWMAP.clusters <- FLOWMAP.clusters
+  for (t in 1:length(FLOWMAP.clusters)) {
+    for (f in 1:length(FLOWMAP.clusters[[t]]$cluster.counts)) {
+      original.fcs.file <- LoadCleanFCS(file.names[[t]][[f]], channel.remove = var.remove,
+                                        channel.annotate = var.annotate, subsamples = FALSE)
+      original.fcs.file <- original.fcs.file[[1]]
+      original.fcs.file <- original.fcs.file[, clustering.var]
+      downsample.fcs.file <- fcs.files[[t]][[f]]
+      downsample.fcs.file <- downsample.fcs.file[, clustering.var]
+      cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters[[t]]$cell.assgn[[f]]))
+      all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file, 
+                                                        downsample.fcs.file,
+                                                        cluster.assign)
+      fixed.counts <- table(all.cells.assign)
+      fixed.counts <- as.data.frame(as.matrix(fixed.counts))
+      colnames(fixed.counts) <- c("Counts")
+      fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
+      rm(fcs.file, cluster.data, cluster.assign)
+    }
   }
   return(fixed.FLOWMAP.clusters)
 }
