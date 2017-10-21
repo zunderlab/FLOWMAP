@@ -93,8 +93,6 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
                               subsamples = 1000, transform = TRUE) {
   list.of.FCS.files <- list()
   subsamp.orig <- subsamples
-  print("subsamp.orig")
-  print(subsamp.orig)
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
     if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
@@ -179,13 +177,9 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     fcs.file <- subset(fcs.file, select = colnames(fcs.file)[!colnames(fcs.file) %in% channel.remove])
     if (transform) {
       cat("Transforming data from:", current.file, "\n")
-      # fcs.file <- apply(fcs.file, 2, Asinh) 
-      transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
-      fcs.file <- apply(fcs.file, 2, transforms) 
-      print("using SPADE/flowCore transformation")
+      fcs.file <- apply(fcs.file, 2, Asinh)
     }
     fcs.file <- RemoveExistingTimeVar(fcs.file) 
-    print(dim(fcs.file))
     cat("Calculating density for:", current.file, "\n")
     density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
     if (max(density) == 0.0) {
@@ -193,10 +187,8 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     }
     fcs.file <- cbind(fcs.file, "density" = density)
     boundary <- quantile(fcs.file[, "density"], c(exclude.pctile, target.pctile), names = FALSE)
-    print(dim(fcs.file))
     cat("Removing outliers for:", current.file, "\n")
     fcs.file2 <- subset(fcs.file, fcs.file[, "density"] > boundary[1])    
-    print(dim(fcs.file2))
     if (!is.null(target.percent)) {
       target.number = round(target.percent * nrow(fcs.file2))
       cat("Targeting", target.number, "events for", current.file, "\n")
@@ -206,7 +198,6 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
       cat("Downsampling for:", current.file, "\n")
       boundary <- boundary[2]
       fcs.file3 <- subset(fcs.file2, boundary/density > runif(nrow(fcs.file2)))
-      print(dim(fcs.file3))
     } else if (target.number < nrow(fcs.file2)) {
       sorted.density <- sort(density)
       cdf <- rev(cumsum(1.0 / rev(sorted.density)))
@@ -217,7 +208,6 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
       }
       cat("Downsampling for:", current.file, "\n")
       fcs.file3 <- subset(fcs.file2, boundary/density > runif(length(density)))
-      print(dim(fcs.file3))
     } else if (target.number > nrow(fcs.file2)) {
       stop("More events requested than present in file")
     }
