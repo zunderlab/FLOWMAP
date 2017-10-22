@@ -199,8 +199,7 @@ PrintPanel <- function(var.annotate) {
 
 PrintSummary <- function(env = parent.frame()) {
   summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
-  cat("Printing summary.", "\n")
-  # starting.files = c("FCS", "cluster_matrix")
+  cat("Printing summary for FLOWMAPR run from FCS files.", "\n")
   summary[(dim(summary)[1] + 1), ] <- c("mode", env$mode,
                                         "selected FLOW-MAP mode")
   summary[(dim(summary)[1] + 1), ] <- c("files", toString(env$files),
@@ -228,6 +227,108 @@ PrintSummary <- function(env = parent.frame()) {
                                         "number of clusters for all FCS files")
   summary[(dim(summary)[1] + 1), ] <- c("seed.X", env$seed.X,
                                         "set seed value")
+  summary[(dim(summary)[1] + 1), ] <- c("name.sort", env$name.sort,
+                                        "files sorted alphanumerically by name in algorithm")
+  summary[(dim(summary)[1] + 1), ] <- c("save.folder", env$save.folder,
+                                        "directory where results were saved")
+  summary[(dim(summary)[1] + 1), ] <- c("savePDFs", env$savePDFs,
+                                        "whether PDFs of FLOW-MAP graphs were generated")
+  summary[(dim(summary)[1] + 1), ] <- c("downsample", env$downsample,
+                                        "whether results were also downsampled using SPADE")
+  if (downsample) {
+    if (!is.null(exclude.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", env$exclude.pctile,
+                                            "exclude.pctile for SPADE downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile", "NULL",
+                                            "exclude.pctile for SPADE downsampling")
+    }
+    if (!is.null(target.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", env$target.pctile,
+                                            "target.pctile for SPADE downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.pctile", "NULL",
+                                            "target.pctile for SPADE downsampling")
+    }
+    if (!is.null(target.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.number", env$target.number,
+                                            "target.number for SPADE downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.number", "NULL",
+                                            "target.number for SPADE downsampling")
+    }
+    if (!is.null(target.pctile)) {
+      summary[(dim(summary)[1] + 1), ] <- c("target.percent", env$target.percent,
+                                            "target.percent for SPADE downsampling")
+    } else {
+      summary[(dim(summary)[1] + 1), ] <- c("target.percent", "NULL",
+                                            "target.percent for SPADE downsampling")
+    }
+  }
+  if (savePDFs) {
+    summary[(dim(summary)[1] + 1), ] <- c("which.palette", env$which.palette,
+                                          "color of palette used in PDFs")
+  }
+  file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
+  file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
+  file.name <- paste(file.name, ".txt", sep = "")
+  cat("file.name", file.name, "\n")
+  write.table(summary, file = file.name, row.names = FALSE, na = "")
+}
+
+PrintSummaryfromDF <- function(env = parent.frame()) {
+  summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
+  cat("Printing summary for FLOWMAPR run from dataframe.", "\n")
+  summary <- setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Variable", "Value", "Description"))
+  cat("Printing summary.", "\n")
+  summary[(dim(summary)[1] + 1), ] <- c("project.name", env$project.name,
+                                        "descriptive name of project provided by user")
+  summary[(dim(summary)[1] + 1), ] <- c("mode", env$mode,
+                                        "selected FLOW-MAP mode")
+  if (!is.null(time.col.label)) {
+    summary[(dim(summary)[1] + 1), ] <- c("time.col.label", env$time.col.label,
+                                          "channel label for timepoints if relevant")
+  } else {
+    summary[(dim(summary)[1] + 1), ] <- c("time.col.label", "NULL",
+                                          "channel label for timepoints if relevant")
+  }
+  if (!is.null(condition.col.label)) {
+    summary[(dim(summary)[1] + 1), ] <- c("condition.col.label", env$condition.col.label,
+                                          "channel label for conditions if relevant")
+  } else {
+    summary[(dim(summary)[1] + 1), ] <- c("condition.col.label", "NULL",
+                                          "channel label for conditions if relevant")
+  }
+  summary[(dim(summary)[1] + 1), ] <- c("clustering.var", toString(env$clustering.var),
+                                        "markers used for clustering and distance calculation")
+  summary[(dim(summary)[1] + 1), ] <- c("distance.metric", toString(env$distance.metric),
+                                        "distance metric")
+  summary[(dim(summary)[1] + 1), ] <- c("per", env$per,
+                                        "distance for calculated density (n percent)")
+  summary[(dim(summary)[1] + 1), ] <- c("minimum", env$minimum,
+                                        "min number of edges")
+  summary[(dim(summary)[1] + 1), ] <- c("maximum", env$maximum,
+                                        "max number of edges")
+  summary[(dim(summary)[1] + 1), ] <- c("clustering", env$clustering,
+                                        "whether clustering was performed on cells from DF")
+  if (clustering) {
+    summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers", env$cluster.numbers,
+                                          "number of clusters for all DF samples")
+  }
+  summary[(dim(summary)[1] + 1), ] <- c("seed.X", env$seed.X,
+                                        "set seed value")
+  summary[(dim(summary)[1] + 1), ] <- c("name.sort", env$name.sort,
+                                        "files sorted alphanumerically by name in algorithm")
+  summary[(dim(summary)[1] + 1), ] <- c("save.folder", env$save.folder,
+                                        "directory where results were saved")
+  summary[(dim(summary)[1] + 1), ] <- c("savePDFs", env$savePDFs,
+                                        "whether PDFs of FLOW-MAP graphs were generated")
+  summary[(dim(summary)[1] + 1), ] <- c("downsample", env$downsample,
+                                        "whether results were also downsampled using SPADE")
+  if (savePDFs) {
+    summary[(dim(summary)[1] + 1), ] <- c("which.palette", env$which.palette,
+                                          "color of palette used in PDFs")
+  }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
   file.name <- paste(file.name, ".txt", sep = "")

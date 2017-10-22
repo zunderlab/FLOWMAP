@@ -4,10 +4,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
                           minimum = 2, maximum = 5, per = 1, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
-                          name.sort = TRUE, downsample = FALSE, clustering = FALSE,
-                          seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
-                          cluster.numbers = NULL, exclude.pctile = NULL, target.pctile = NULL,
-                          target.number = NULL, target.percent = NULL, ...) {
+                          name.sort = TRUE, clustering = FALSE, seed.X = 1,
+                          savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
@@ -22,21 +20,12 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     setwd(output.folder)
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
-    print("removed times")
-    print("class(df)")
-    print(class(df))
-    print("dim(df)")
-    print(dim(df))
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
-    print("colnames(file.clusters$full.clusters)")
-    print(colnames(file.clusters$full.clusters))
-    print("clustering.var")
-    print(clustering.var)
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
@@ -71,10 +60,6 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     setwd(output.folder)
     fcs.files <- list()
     fcs.files[[1]] <- df
-    print("class(fcs.files)")
-    print(class(fcs.files))
-    print("dim(fcs.files)")
-    print(dim(fcs.files))
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -104,8 +89,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  # PrintSummary(env = parent.frame())
-  # MakeFLOWMAPRFile(env = parent.frame())
+  PrintSummaryfromDF(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
