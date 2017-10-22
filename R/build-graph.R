@@ -145,9 +145,18 @@ CheckMSTEdges <- function(output.graph, cluster.distances.matrix,
   #     connecting them to the closest vertex in timepoint n
   adjacency.n1n <- cluster.distances.matrix[(table.lengths[1] + 1):sum(table.lengths),
                                             1:table.lengths[1]]
-  el.n1n.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
-                            (as.vector(col(adjacency.n1n1)) + offset), 
+  ##### MODIFIED ##### 
+  el.n1n.with.dist <- cbind((as.vector(row(adjacency.n1n)) + table.lengths[1] + offset),
+                            (as.vector(col(adjacency.n1n)) + offset), 
                             as.vector(adjacency.n1n))
+  ##### MODIFIED ##### 
+  
+  ##### ORIGINAL ##### 
+  # el.n1n.with.dist <- cbind((as.vector(row(adjacency.n1n1)) + table.lengths[1] + offset),
+  #                           (as.vector(col(adjacency.n1n1)) + offset), 
+  #                           as.vector(adjacency.n1n))
+  ##### ORIGINAL ##### 
+  
   # rows are n+1 so add offset
   colnames(el.n1n.with.dist) <- c("Vertex 1", "Vertex 2", "Distance")
   # convert row and col to match correct indexing
