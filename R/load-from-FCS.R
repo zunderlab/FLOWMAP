@@ -222,7 +222,7 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                                target.number = NULL, target.percent = 0.1,
                                transform = TRUE) {
   list.downsample.data <- list()
-  for (t in 1:length(list.of.file.names)) {
+  for (t in 1:length(fcs.file.names)) {
     fcs.file.names.t <- fcs.file.names[[t]]
     downsample.data <- DownsampleFCS(fcs.file.names.t, clustering.var, channel.annotate,
                                      channel.remove, exclude.pctile, target.pctile,
