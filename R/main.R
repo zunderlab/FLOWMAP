@@ -9,10 +9,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     target.number = NULL, target.percent = NULL, ...) {
   # optional variables
   # starting.files = c("FCS", "cluster_matrix")
-  cat("exclude_pctile is", exclude.pctile, "\n")
-  cat("target_pctile is", target.pctile, "\n")
-  cat("target_number is", target.number, "\n")
-  cat("target_percent is", target.percent, "\n")
+  cat("exclude.pctile is", exclude.pctile, "\n")
+  cat("target.pctile is", target.pctile, "\n")
+  cat("target.number is", target.number, "\n")
+  cat("target.percent is", target.percent, "\n")
   
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")

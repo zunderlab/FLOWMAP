@@ -27,9 +27,13 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
     for (c in 1:length(list.of.FLOWMAP.clusters[[t]]$cluster.medians)) {
       temp.medians <- rbind(temp.medians, list.of.FLOWMAP.clusters[[t]]$cluster.medians[[c]])
       temp.cell.assgn <- rbind(temp.cell.assgn, list.of.FLOWMAP.clusters[[t]]$cell.assgn[[c]])
-      temp.counts <- rbind(temp.counts, list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]])
+      temp.counts <- c(unlist(temp.counts), unlist(list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]]))
+      temp.counts <- as.data.frame(temp.counts)
+      colnames(temp.counts) <- c("Counts")
+      # temp.counts <- rbind(as.vector(temp.counts), as.vector(list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]]))
     }
     cluster.medians[[t]] <- temp.medians
+    rownames(temp.counts) <- 1:nrow(temp.counts)
     cluster.counts[[t]] <- temp.counts
     cell.assgn[[t]] <- temp.cell.assgn
     table.lengths <- c(table.lengths, dim(temp.medians)[1])
@@ -38,6 +42,7 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
   }
   remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
                                                cluster.medians, cluster.counts, cell.assgn)
+  # stop("DEBUGGING")
   return(remodeled.FLOWMAP.clusters)
 }
 

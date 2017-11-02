@@ -155,10 +155,6 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
                           transform = TRUE) {
-  cat("exclude.pctile is", exclude.pctile, "\n")
-  cat("target.pctile is", target.pctile, "\n")
-  cat("target.number is", target.number, "\n")
-  cat("target.percent is", target.percent, "\n")
   downsample.data <- list()
   for (file.name in fcs.file.names) {
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
@@ -228,6 +224,27 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                                      channel.remove, exclude.pctile, target.pctile,
                                      target.number, target.percent, transform)
     list.downsample.data[[t]] <- downsample.data
+    
+    f.names <- c() 
+    for (i in 1:length(list.downsample.data[[t]])) {
+      Time <- rep(as.numeric(t), times = dim(list.downsample.data[[t]][[i]])[1])
+      list.downsample.data[[t]][[i]] <- cbind.data.frame(list.downsample.data[[t]][[i]],
+                                                         Time, stringsAsFactors = FALSE)
+      this.name <- basename(fcs.file.names.t[i])
+      this.name <- gsub(".fcs", "", this.name)
+      if (grepl("-", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "-"))[1]
+      }
+      if (grepl("\\.", this.name)) {
+        this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+      }
+      Condition <- rep(this.name, times = dim(list.downsample.data[[t]][[i]])[1])
+      list.downsample.data[[t]][[i]] <- cbind.data.frame(list.downsample.data[[t]][[i]],
+                                                         Condition, stringsAsFactors = FALSE)
+      f.names <- c(f.names, this.name)
+      rm(Time, Condition)
+    }
+    names(list.downsample.data[[t]]) <- f.names
   }
   return(list.downsample.data)
 }

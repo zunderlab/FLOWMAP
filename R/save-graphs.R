@@ -250,14 +250,14 @@ PrintSummary <- function(env = parent.frame()) {
       summary[(dim(summary)[1] + 1), ] <- c("target.pctile", "NULL",
                                             "target.pctile for SPADE downsampling")
     }
-    if (!is.null(target.pctile)) {
+    if (!is.null(target.number)) {
       summary[(dim(summary)[1] + 1), ] <- c("target.number", env$target.number,
                                             "target.number for SPADE downsampling")
     } else {
       summary[(dim(summary)[1] + 1), ] <- c("target.number", "NULL",
                                             "target.number for SPADE downsampling")
     }
-    if (!is.null(target.pctile)) {
+    if (!is.null(target.percent)) {
       summary[(dim(summary)[1] + 1), ] <- c("target.percent", env$target.percent,
                                             "target.percent for SPADE downsampling")
     } else {
