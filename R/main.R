@@ -7,12 +7,33 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, ...) {
-  # optional variables
-  # starting.files = c("FCS", "cluster_matrix")
   cat("exclude.pctile is", exclude.pctile, "\n")
   cat("target.pctile is", target.pctile, "\n")
   cat("target.number is", target.number, "\n")
   cat("target.percent is", target.percent, "\n")
+  
+  # if (is.logical(var.remove) && var.remove) {
+  #   
+  # }
+  # if (is.logical(clustering.var) && clustering.var) {
+  #   
+  # } else if (is.null(clustering.var)) {
+  #   stop("No clustering var provided and SuggestClusteringVar not requested!")
+  # }
+  # if (is.logical(var.annotate) && var.annotate) {
+  #   if (grepl(pattern = "\\.fcs", files)) {
+  #     FCS.file.name <- files
+  #     var.annotate <- ConstructVarAnnotate(FCS.file.name)
+  #   } else {
+  #     deeper <- list.files(files, recursive = TRUE, full.names = TRUE)
+  #     if (grepl(pattern = "\\.fcs", deeper)) {
+  #       FCS.file.name <- deeper[grep(pattern = "\\.fcs", deeper)][1]
+  #       var.annotate <- ConstructVarAnnotate(FCS.file.name)
+  #     } else {
+  #       stop("Trying to SuggestVarAnnotate, but can't find FCS files in 'files' specified!")
+  #     }
+  #   }
+  # }
   
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")

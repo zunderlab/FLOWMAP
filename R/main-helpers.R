@@ -135,3 +135,47 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   }
   return(times)
 }
+
+ConstructVarAnnotate <- function(FCS.file.name) {
+  fcs.file <- read.FCS(FCS.file.name)
+  fcs.file.matrix <- exprs(fcs.file)
+  channel.names <- c()
+  marker.names <- c()
+  var.annotate <- list()
+  for (i in 1:length(names(colnames(fcs.file.matrix)))) {
+    this.name <- names(colnames(fcs.file.matrix))[i]
+    channel.names <- c(channel.names, description(fcs.file)[[this.name]])
+    this.name <- gsub(this.name, pattern = "N", replacement = "S")
+    marker.names <- c(marker.names, description(fcs.file)[[this.name]])
+    rm(this.name)
+  }
+  print("channel.names")
+  print(channel.names)
+  print("marker.names")
+  print(marker.names)
+  for (i in 1:length(marker.names)) {
+    if (marker.names[i] == " ") {
+      marker.names[i] <- channel.names[i]
+    }
+    var.annotate[[channel.names[i]]] <- marker.names[i]
+  }
+  print("var.annotate")
+  print(var.annotate)
+  return(var.annotate)
+}
+
+SuggestClusteringVar <- function(fcs.file.names, var.annotate, var.remove) {
+  
+  suggested.clustering.var <- c()
+  
+  return(suggested.clustering.var)
+}
+
+SuggestVarRemove <- function(var.annotate) {
+  usual.var.remove <- c("bead", "DNA", "BC", "Event", "length", "Time")
+  channel.blank <- c("Dd", "Di")
+  
+  suggested.var.remove <- c()
+  
+  return(suggested.var.remove)
+}
