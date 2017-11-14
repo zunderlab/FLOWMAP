@@ -13,8 +13,7 @@ This code was adapted from the spade R package,
 available here: https://github.com/nolanlab/spade.
 }
 \details{
-Specifically, the code in this file is adapted from downsample.R, but
-has been modified to not produce FCS files as a result.
+Specifically, the code in this file is adapted from downsample.R.
 
 This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
 and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
