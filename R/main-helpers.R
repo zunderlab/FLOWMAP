@@ -168,6 +168,8 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove, top.num) {
   suggested.clustering.var <- c()
+  print("var.remove")
+  print(var.remove)
   combined.fcs.files <- c()
   if (mode == "one") {
     fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
@@ -211,7 +213,6 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
     for (i in 1:(length(fcs.files) - 1)) {
       temp.short.df1 <- fcs.files[[i]][, 2:ncol(fcs.files[[i]])]
       temp.short.df2 <- fcs.files[[(i + 1)]][, 2:ncol(fcs.files[[i]])]
-      cat("times are", unique(fcs.files[[i]][, 1]), "and", unique(fcs.files[[(i + 1)]][, 1]), "\n")
       temp.short.df <- rbind(temp.short.df1, temp.short.df2)
       cross.var <- apply(temp.short.df, 2, var)
       var.cross.time <- rbind(var.cross.time, cross.var)
@@ -259,7 +260,7 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
     # take top most varying markers
     top.selected.var <- sort(median.var.time, decreasing = TRUE)[1:top.num]
   }
-  suggested.clustering.var <- top.selected.var
+  suggested.clustering.var <- names(top.selected.var)
   return(suggested.clustering.var)
 }
 
