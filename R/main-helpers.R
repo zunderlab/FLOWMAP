@@ -168,8 +168,6 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove, top.num) {
   suggested.clustering.var <- c()
-  print("var.remove")
-  print(var.remove)
   combined.fcs.files <- c()
   if (mode == "one") {
     fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,

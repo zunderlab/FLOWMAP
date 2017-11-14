@@ -19,6 +19,7 @@ RemoveExistingTimeVar <- function(fcs.file) {
   return(fcs.file)
 }
 
+#' @export
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
   fcs.files <- list.files(path = folder, pattern = "\\.fcs",
@@ -30,6 +31,7 @@ GetFCSNames <- function(folder, sort = TRUE) {
   return(fcs.files)
 }
 
+#' @export
 GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
   subfolders <- list.files(folder, full.names = TRUE)
@@ -47,6 +49,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
   return(list.of.time.file.names)
 }
 
+#' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
   clean.fcs.files <- list()
@@ -89,6 +92,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   return(clean.fcs.files)
 }
 
+#' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, transform = TRUE) {
   list.of.FCS.files <- list()
@@ -248,7 +252,6 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   }
   return(list.downsample.data)
 }
-
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
   label.key <- list()
