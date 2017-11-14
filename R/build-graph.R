@@ -438,8 +438,6 @@ AnnotateGraph <- function(output.graph, FLOWMAP.clusters) {
     anno$medians <- cbind(anno$medians, time.matrix)
     # add median and percent values
     for (col in c("medians", "percent.total")) {
-      # anno.cat is all the annos concatenated, will be
-      # used to make "anno.Rsave" file
       anno.cat[[col]] <- rbind(anno.cat[[col]], anno[[col]])
     }
   }

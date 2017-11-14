@@ -60,6 +60,18 @@ StripTimesfromDFList <- function(list.of.df, time.col.label = "Time") {
   return(fixed.df.list)
 }
 
+RemoveRowNames <- function(df) {
+  fixed.df <- df
+  if (is.list(df) && !is.data.frame(df)) {
+    for (i in 1:length(df)) {
+      rownames(fixed.df[[i]]) <- 1:nrow(df[[i]])
+    }
+  } else if (is.data.frame(df)) {
+    rownames(fixed.df) <- 1:nrow(df)
+  }
+  return(fixed.df)
+}
+
 GetLabelKeyfromDF <- function(multi.list.df, time.col.label, condition.col.label) {
   if (class(multi.list.df) == "list" & class(multi.list.df[[1]]) == "list") {
     label.key <- list()

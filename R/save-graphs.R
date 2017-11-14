@@ -323,8 +323,6 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
                                         "directory where results were saved")
   summary[(dim(summary)[1] + 1), ] <- c("savePDFs", env$savePDFs,
                                         "whether PDFs of FLOW-MAP graphs were generated")
-  summary[(dim(summary)[1] + 1), ] <- c("downsample", env$downsample,
-                                        "whether results were also downsampled using SPADE")
   if (savePDFs) {
     summary[(dim(summary)[1] + 1), ] <- c("which.palette", env$which.palette,
                                           "color of palette used in PDFs")

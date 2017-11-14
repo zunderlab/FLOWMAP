@@ -9,6 +9,9 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
+  
+  df <- RemoveRowNames(df)
+    
   if (mode == "single") {
     check <- CheckDFModeSingle(df)
     cat("check", check, "\n")

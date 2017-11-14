@@ -164,18 +164,115 @@ ConstructVarAnnotate <- function(FCS.file.name) {
   return(var.annotate)
 }
 
-SuggestClusteringVar <- function(fcs.file.names, var.annotate, var.remove) {
-  
+SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove, top.num) {
   suggested.clustering.var <- c()
+  combined.fcs.files <- c()
+  if (mode == "one") {
+    fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
+                             channel.annotate = var.annotate, subsamples = FALSE)
+    combined.fcs.files <- fcs.file
+  } else if (mode == "single") {
+    fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                              channel.annotate = var.annotate, subsamples = FALSE)
+    for (i in 1:length(fcs.files)) {
+      combined.fcs.files <- rbind(combined.fcs.files, fcs.files[[i]])
+    }
+  } else if (mode == "multi") {
+    fcs.files <- LoadMultiCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                                   channel.annotate = var.annotate, subsamples = FALSE)
+    for (i in 1:length(fcs.files)) {
+      for (j in 1:length(fcs.files[[i]])) {
+        combined.fcs.files <- rbind(combined.fcs.files, fcs.files[[i]][[j]])
+      }
+    }
+  } else {
+    stop("User-specified mode not recognized!")
+  }
   
+  if (ncol(combined.fcs.files) < top.num) {
+    stop("Requesting more suggested clustering var than available in data!")
+  }
+  
+  all.var <- apply(combined.fcs.files, 2, var)
+  if (mode == "one") {
+    top.selected.var <- sort(all.var, decreasing = TRUE)[1:top.num]
+  } else if (mode == "single") {
+    # get variance within each timepoint
+    var.over.time <- c()
+    for (i in 1:length(fcs.files)) {
+      temp.short.df <- fcs.files[[i]][, 2:ncol(fcs.files[[i]])]
+      this.var <- apply(temp.short.df, 2, var)
+      var.over.time <- rbind(var.over.time, this.var)
+    }
+    # get variance within adjacent timepoints
+    var.cross.time <- c()
+    for (i in 1:(length(fcs.files) - 1)) {
+      temp.short.df1 <- fcs.files[[i]][, 2:ncol(fcs.files[[i]])]
+      temp.short.df2 <- fcs.files[[(i + 1)]][, 2:ncol(fcs.files[[i]])]
+      cat("times are", unique(fcs.files[[i]][, 1]), "and", unique(fcs.files[[(i + 1)]][, 1]), "\n")
+      temp.short.df <- rbind(temp.short.df1, temp.short.df2)
+      cross.var <- apply(temp.short.df, 2, var)
+      var.cross.time <- rbind(var.cross.time, cross.var)
+    }
+    all.vars.time <- rbind(var.over.time[1, ], var.cross.time[1, ], var.over.time[2, ],
+                           var.cross.time[2, ], var.over.time[3, ], var.cross.time[3, ],
+                           var.over.time[4, ])
+    median.var.time <- apply(all.vars.time, 2, median)
+    # take top most varying markers
+    top.selected.var <- sort(median.var.time, decreasing = TRUE)[1:top.num]
+  } else if (mode == "multi") {
+    var.over.time <- c()
+    # get variance within each timepoint
+    for (i in 1:length(fcs.files)) {
+      temp.combined <- c()
+      for (j in 1:length(fcs.files[[i]])) {
+        temp.combined <- rbind(temp.combined, fcs.files[[i]][[j]])
+      }
+      this.var <- apply(temp.combined, 2, var)
+      var.over.time <- rbind(var.over.time, this.var)
+    }
+    # get variance within adjacent timepoints
+    var.cross.time <- c()
+    for (i in 1:(length(fcs.files) - 1)) {
+      temp.combined.1 <- c()
+      temp.combined.2 <- c()
+      for (j in 1:length(fcs.files[[i]])) {
+        temp.combined.1 <- rbind(temp.combined.1, fcs.files[[i]][[j]])
+      }
+      for (j in 1:length(fcs.files[[i + 1]])) {
+        temp.combined.2 <- rbind(temp.combined.2, fcs.files[[i + 1]][[j]])
+      }
+      temp.combined <- rbind(temp.combined.1, temp.combined.2)
+      cross.var <- apply(temp.combined, 2, var)
+      var.cross.time <- rbind(var.cross.time, cross.var)
+    }
+    
+    all.vars.time <- c()
+    for (i in 1:(nrow(var.over.time) - 1)) {
+      all.vars.time <- rbind(all.vars.time, var.over.time[i, ])
+      all.vars.time <- rbind(all.vars.time, var.cross.time[i, ])
+    }
+    all.vars.time <- rbind(all.vars.time, var.over.time[(nrow(var.over.time)), ])
+    median.var.time <- apply(all.vars.time, 2, median)
+    # take top most varying markers
+    top.selected.var <- sort(median.var.time, decreasing = TRUE)[1:top.num]
+  }
+  suggested.clustering.var <- top.selected.var
   return(suggested.clustering.var)
 }
 
-SuggestVarRemove <- function(var.annotate) {
-  usual.var.remove <- c("bead", "DNA", "BC", "Event", "length", "Time")
-  channel.blank <- c("Dd", "Di")
-  
+SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()
-  
+  final.var.names <- unname(unlist(var.annotate))
+  if (is.null(var.to.remove)) {
+    usual.var.remove <- c("bead", "DNA", "BC", "Event", "length", "Time")
+    channel.blank <- c("Dd", "Di")
+    var.to.remove <- c(usual.var.remove, channel.blank)
+  }
+  for (i in var.to.remove) {
+    suggested.var.remove <- c(suggested.var.remove,
+                              final.var.names[grepl(pattern = i,
+                                                    x = final.var.names)])
+  }
   return(suggested.var.remove)
 }

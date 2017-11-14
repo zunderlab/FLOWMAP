@@ -69,8 +69,6 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     cluster.medians[[i]] <- data.frame()
     tmp.FCS.for.cluster <- subset(x = current.file, select = clustering.var)
     cat("Subsetting for clustering channels only", "\n")
-    # cluster.results <- SPADEClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-    #                                     distance.metric = distance.metric, numcluster = numcluster[i])
     cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
                                         distance.metric = distance.metric, numcluster = numcluster[i])
     cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
@@ -168,38 +166,6 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
               new.counts = new.counts))
 }
 
-SPADEClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
-  if (nrow(tmp.FCS.for.cluster) > 60000) {
-    warning("Potentially too many observations for the clustering step",immediate=TRUE);
-  }
-  if (nrow(tmp.FCS.for.cluster) < numcluster) {
-    stop("Number of requested clusters exceeds number of events")
-  }
-  # Transpose table before call into row major order
-  cluster <- Rclusterpp.hclust(tmp.FCS.for.cluster, distance = distance.metric)
-  clust <- list(assgn = cutree(cluster, k = numcluster))
-  # Invalid clusters have assgn == 0
-  centers <- c()
-  is.na(clust$assgn) <- which(clust$assgn == 0)
-  for (i in c(1:max(clust$assgn, na.rm = TRUE))) {  
-    obs <- which(clust$assgn == i)
-    if (length(obs) > 1) {
-      centers <- rbind(centers, colMeans(current.file[obs, , drop = FALSE]))
-      clust$assgn[obs] <- nrow(centers)
-    } else {
-      is.na(clust$assgn) <- obs
-    }
-  }
-  tmp.cell.assgn <- as.data.frame(clust$assgn)
-  colnames(tmp.cell.assgn) <- c("Cluster")
-  new.counts <- as.matrix(table(clust$assgn))
-  new.counts <- as.data.frame(new.counts)
-  colnames(new.counts) <- c("Counts")
-  return(list(tmp.cell.assgn = tmp.cell.assgn,
-              new.medians = centers,
-              new.counts = new.counts))
-}
-
 Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
                      var.remove, var.annotate, clustering.var) {
   fixed.FLOWMAP.clusters <- FLOWMAP.clusters
@@ -222,7 +188,6 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
   }
   return(fixed.FLOWMAP.clusters)
 }
-
 
 MultiUpsample <- function(file.names, FLOWMAP.clusters, fcs.files,
                           var.remove, var.annotate, clustering.var) {
