@@ -98,6 +98,9 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   vsize <- (vsize - min(vsize, na.rm = TRUE)) / (max(vsize, na.rm = TRUE) ^ (1 / node.size.scale)) * 
     ((max.node.size) ^ 0.5 / pi) + ((min.node.size) ^ (0.5 / pi))
   vsize[is.na(vsize) | (all.attributes[, "percent.total"] == 0)] <- (min.node.size) ^ (0.5 / pi)
+  
+  V(graph)$size <- vsize
+  
   # print out one pdf for each attribute
   for (name in colnames(all.attributes)) {
     # get attribute name and data
@@ -331,5 +334,5 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
   file.name <- paste(file.name, ".txt", sep = "")
   cat("file.name", file.name, "\n")
-  write.table(summary, file = file.name, row.names = FALSE, na = "")
+  write.table(summary, file = file.name, row.names = FALSE, na = "", quote = FALSE)
 }

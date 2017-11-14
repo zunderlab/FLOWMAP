@@ -150,18 +150,12 @@ ConstructVarAnnotate <- function(FCS.file.name) {
     marker.names <- c(marker.names, description(fcs.file)[[this.name]])
     rm(this.name)
   }
-  print("channel.names")
-  print(channel.names)
-  print("marker.names")
-  print(marker.names)
   for (i in 1:length(marker.names)) {
     if (marker.names[i] == " ") {
       marker.names[i] <- channel.names[i]
     }
     var.annotate[[channel.names[i]]] <- marker.names[i]
   }
-  print("var.annotate")
-  print(var.annotate)
   return(var.annotate)
 }
 
@@ -170,9 +164,9 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
   suggested.clustering.var <- c()
   combined.fcs.files <- c()
   if (mode == "one") {
-    fcs.file <- LoadCleanFCS(fcs.file.names = file.name, channel.remove = var.remove,
+    fcs.file <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                              channel.annotate = var.annotate, subsamples = FALSE)
-    combined.fcs.files <- fcs.file
+    combined.fcs.files <- fcs.file[[1]]
   } else if (mode == "single") {
     fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
                               channel.annotate = var.annotate, subsamples = FALSE)
@@ -180,7 +174,7 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
       combined.fcs.files <- rbind(combined.fcs.files, fcs.files[[i]])
     }
   } else if (mode == "multi") {
-    fcs.files <- LoadMultiCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+    fcs.files <- LoadMultiCleanFCS(list.of.file.names = fcs.file.names, channel.remove = var.remove,
                                    channel.annotate = var.annotate, subsamples = FALSE)
     for (i in 1:length(fcs.files)) {
       for (j in 1:length(fcs.files[[i]])) {
