@@ -136,6 +136,7 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   return(times)
 }
 
+#' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
   fcs.file.matrix <- exprs(fcs.file)
@@ -164,6 +165,7 @@ ConstructVarAnnotate <- function(FCS.file.name) {
   return(var.annotate)
 }
 
+#' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove, top.num) {
   suggested.clustering.var <- c()
   combined.fcs.files <- c()
@@ -261,6 +263,7 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
   return(suggested.clustering.var)
 }
 
+#' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()
   final.var.names <- unname(unlist(var.annotate))
