@@ -97,13 +97,6 @@ To currently get the FLOWMAPR R package up and working on your computer, once yo
 6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
 7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
-### Installing the GUI:
-
-The GUI is accessed by running:
-```
-FLOWMAPR::LaunchGUI()
-```
-
 <a name="update"></a>
 ### Updating FLOWMAPR:
 
@@ -128,14 +121,13 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
 * To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters (e.g. "ConditionA-d01.fcs" where "ConditionA" will be the condition label).
 * Do not use any digits (i.e. 0-9) in the name of the FCS file unless they specify time. Change any labels for the conditions in the FCS file name to be alphabetical characters. Ex: Condition1-t24.fcs should be renamed to ConditionOne-t24.fcs or else the time label will be parsed as "124" instead of "24" for this file.
 * Please note that when your FCS files are loaded into FLOWMAPR, any "Time" variables already in the data will be removed and overwritten with the "time" of each FCS file.
-<!--**Note: FLOWMAPR only works if there are no non-FCS files in the directory or subdirectories specified by files.**-->
 1. Once you have successfully installed and loaded FLOWMAPR using `library(FLOWMAPR)`, if you are working in R Studio, you should see `FLOWMAPR::FLOWMAP()` autocomplete if you type it into the command line.
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
   * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
   * `files` - the directory where you can find the FCS files to be used
-  * `var.remove` - any channels you want completely excluded from analysis
-  * `var.annotate` - rename channels as you see fit, the names you provide will the ones used to print out the PDFs
-  * `clustering.var` - which channels to use to influence the graph shape
+  * `var.remove` - any channels you want completely excluded from analysis, you can auto-generate a suggested vector of variables for removal using the `FLOWMAPR::SuggestVarRemove()` function and supplying `var.annotate` as well as an optional `var.to.remove` vector that describes a character string for channels that should be removed (for example, blank channels in FCS files for mass cytometry may retain the "Di" or "Dd" substring in the desc, like in "Ba138Di"), default is to remove these channels with "Di" or "Dd" in the desc
+  * `var.annotate` - rename channels as you see fit, the names you provide will the ones used to print out the PDFs, you can auto-generate a suggested `var.annotate` based on the `desc` attribute in your FCS files by using the `FLOWMAPR::ConstructVarAnnotate()` function and supplying a single FCS file name (full path)
+  * `clustering.var` - which channels to use to influence the graph shape, you can generate a set of suggested `clustering.var` using the `FLOWMAPR::SuggestClusteringVar()` function, supplying the variables `fcs.file.names` (complete set of FCS files to be used in analysis), `mode` (as in FLOWMAPR mode), `var.annotate`, `var.remove`, `top.num` (which specifies how many clustering variables you want to use, less than the total number of variables in the dataset)
   * `cluster.numbers` - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500), default is set to 100
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
