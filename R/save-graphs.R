@@ -261,7 +261,7 @@ PrintSummary <- function(env = parent.frame()) {
 }
 
 PrintSummaryfromDF <- function(env = parent.frame()) {
-  summary <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("Variable", "Value"))
+  summary <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("Variable:", "Value"))
   cat("Printing summary for FLOWMAPR run from dataframe.", "\n")
   summary[(dim(summary)[1] + 1), ] <- c("project.name (descriptive name of project provided by user):",
                                         env$project.name)
