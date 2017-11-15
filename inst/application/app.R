@@ -64,8 +64,6 @@ if(globe.inputs[["mode"]] == "single"){
         print(file.names[i])
         
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -87,7 +85,6 @@ if(globe.inputs[["mode"]] == "single"){
       final.new.diff <<- diffs
       diffs
       # If there is 1 FCS file, then there is no difference
-      
     })
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
@@ -98,9 +95,6 @@ if(globe.inputs[["mode"]] == "single"){
       for(i in order) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -202,7 +196,6 @@ if(globe.inputs[["mode"]] == "single"){
     })
     WriteFile <- eventReactive(input$start.button, {
       file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
-      # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
@@ -220,7 +213,6 @@ if(globe.inputs[["mode"]] == "single"){
         } else {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
-        
       }
       print("annotate")
       print(var.annotate)
@@ -249,13 +241,6 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   print(i)
-      #   print("hello")
-      #   print(clustering.var[i])
-      #   print(var.annotate)
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -291,9 +276,6 @@ if(globe.inputs[["mode"]] == "single"){
       }
       stopApp()
     })
-    # output$TESTPRINT <- renderText({
-    #   TestPrint()
-    # })
     output$writefile <- renderText({
       WriteFile()
       NULL
@@ -308,12 +290,6 @@ if(globe.inputs[["mode"]] == "single"){
     })
     output$fcsorder <- renderText({
       GetFCSinOrder()
-    })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
     })
   }
 } else if(globe.inputs[["mode"]] == "multi"){
@@ -330,7 +306,6 @@ if(globe.inputs[["mode"]] == "single"){
     if (globe.inputs[["quit"]]) {
       stopApp()
     }
-    # multi.start <<- FALSE
     options(shiny.maxRequestSize = 1000 * 1024^2)
     panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
@@ -421,18 +396,13 @@ if(globe.inputs[["mode"]] == "single"){
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
         print("hello")
-        # fcs.files <- read.FCS(i, emptyValue = FALSE)
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
         temp.list[[1]] = unlist(fcs.name)
         temp.list[[(2)]] <- unlist(fcs.param)
         final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
-        # count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
       print(fcs.list)
@@ -443,7 +413,6 @@ if(globe.inputs[["mode"]] == "single"){
       final.new.diff <<- diffs
       print("I passed Diffs")
       diffs
-      # }
     })
     ContentSame <- eventReactive(input$csv.finder, {
       fcs.list <- list()
@@ -461,17 +430,8 @@ if(globe.inputs[["mode"]] == "single"){
       print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
-        # print(i)
-        # fcs.files <- read.FCS(i, emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
-        # count <- count + 1
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -487,8 +447,7 @@ if(globe.inputs[["mode"]] == "single"){
       diff <- diff[! every %in% same]
       final.new.same <<- same
       same
-      # }
-      # gives the same paramters
+      # gives the same parameters
     })
     TableCreate <- eventReactive(input$csv.finder, {
       if (length(final.new.diff) == 0) {
@@ -616,10 +575,6 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       print("after")
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
@@ -656,9 +611,6 @@ if(globe.inputs[["mode"]] == "single"){
       }
       stopApp()
     })
-    # output$TESTPRINT <- renderText({
-    #   TestPrint()
-    # })
     output$writefile <- renderText({
       WriteFile()
       NULL
@@ -674,12 +626,6 @@ if(globe.inputs[["mode"]] == "single"){
     output$fcsorder <- renderText({
       # GetFCSinOrder()
       NULL
-    })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
     })
   }
 } else if(globe.inputs[["mode"]] == "one"){
@@ -752,7 +698,6 @@ if(globe.inputs[["mode"]] == "single"){
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
-      # panel.info.edit <<- panel.info
     })
     observeEvent(input$gener.param.button, {
       panel.info <<- data.frame(channels = c(final.new.same),
@@ -816,9 +761,6 @@ if(globe.inputs[["mode"]] == "single"){
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -869,12 +811,6 @@ if(globe.inputs[["mode"]] == "single"){
     })
     output$fcsorder <- renderText({
       NULL
-    })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
     })
   }
 }
@@ -936,14 +872,10 @@ if(globe.inputs[["mode"]] == "single"){
              br(),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
 } else if(globe.inputs[["mode"]] == "multi"){
-  
   ui <- fluidPage(
     titlePanel("File Uploader"),
     fluidRow(
@@ -999,9 +931,6 @@ if(globe.inputs[["mode"]] == "single"){
              br(),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
@@ -1019,7 +948,6 @@ if(globe.inputs[["mode"]] == "single"){
                          size = 7
              ),
              actionButton("gener.param.button", "Generate Parameters"),
-             # actionButton("default.button", "Use Default Order"),
              textOutput(
                "TESTPRINT"
              ),
@@ -1041,15 +969,11 @@ if(globe.inputs[["mode"]] == "single"){
              br(),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
 }
-# exclude.pctile <- 0.01
-# target.pctile <- 0.99
+
 if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "1"){
   server <- function(input, output, session) {
     print("globe.inputs")
@@ -1113,8 +1037,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         print(file.names[i])
         
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -1136,7 +1058,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       final.new.diff <<- diffs
       diffs
       # If there is 1 FCS file, then there is no difference
-      
     })
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
@@ -1147,9 +1068,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       for(i in order) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -1251,7 +1169,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     })
     WriteFile <- eventReactive(input$start.button, {
       file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
-      # file.order <- as.numeric(unlist(strsplit(input$file.order.input, split = ",")))
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
@@ -1262,10 +1179,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      # var.annotate <- list()
-      # for (j in 1:nrow(flowfile)) {
-      #   var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
-      # }
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
         if(grepl("~", flowfile[j, 4])){
@@ -1302,9 +1215,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -1340,9 +1250,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       }
       stopApp()
     })
-    # output$TESTPRINT <- renderText({
-    #   TestPrint()
-    # })
     output$writefile <- renderText({
       WriteFile()
       NULL
@@ -1357,12 +1264,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     })
     output$fcsorder <- renderText({
       GetFCSinOrder()
-    })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
     })
   }
 } else if(globe.inputs[["mode"]] == "multi" & globe.inputs[["downsample.toggle"]] == "1"){
@@ -1379,7 +1280,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     if (globe.inputs[["quit"]]) {
       stopApp()
     }
-    # multi.start <<- FALSE
     options(shiny.maxRequestSize = 1000 * 1024^2)
     panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
@@ -1470,18 +1370,13 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
         print("hello")
-        # fcs.files <- read.FCS(i, emptyValue = FALSE)
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
         temp.list[[1]] = unlist(fcs.name)
         temp.list[[(2)]] <- unlist(fcs.param)
         final = paste(temp.list[[1]], temp.list[[2]], sep = "~")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
-        # count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
       print(fcs.list)
@@ -1510,17 +1405,8 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
-        # print(i)
-        # fcs.files <- read.FCS(i, emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
-        # count <- count + 1
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        # fcs.files.desc <- pData(parameters(fcs.files))[, c("name")]
-        # name.desc <- do.call(paste, as.data.frame(fcs.files.desc, stringsAsFactors = FALSE))
-        # fcs.list[[(count + 1)]] <- name.desc
         fcs.name = as.vector(fcs.files@parameters@data[,1])
         fcs.param = as.vector(fcs.files@parameters@data[,2])
         temp.list[[1]] = unlist(fcs.name)
@@ -1536,7 +1422,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       diff <- diff[! every %in% same]
       final.new.same <<- same
       same
-      # }
       # gives the same paramters
     })
     TableCreate <- eventReactive(input$csv.finder, {
@@ -1633,10 +1518,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      # var.annotate <- list()
-      # for (j in 1:nrow(flowfile)) {
-      #   var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
-      # }
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
         if(grepl("~", flowfile[j, 4])){
@@ -1644,7 +1525,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         } else {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
-        
       }
       print("annotate")
       print(var.annotate)
@@ -1673,9 +1553,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
       
@@ -1711,9 +1588,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
       }
       stopApp()
     })
-    # output$TESTPRINT <- renderText({
-    #   TestPrint()
-    # })
     output$writefile <- renderText({
       WriteFile()
       NULL
@@ -1729,12 +1603,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     output$fcsorder <- renderText({
       # GetFCSinOrder()
       NULL
-    })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
     })
   }
 } else if(globe.inputs[["mode"]] == "one" & globe.inputs[["downsample.toggle"]] == "1"){
@@ -1807,7 +1675,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
-      # panel.info.edit <<- panel.info
     })
     observeEvent(input$gener.param.button, {
       panel.info <<- data.frame(channels = c(final.new.same),
@@ -1923,12 +1790,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
     output$fcsorder <- renderText({
       NULL
     })
-    output$testprint <- renderText({
-      TestPrint()
-      test.print <- "TEST PRINT"
-      test.print
-      "TEST PRINT"
-    })
   }
 }
 
@@ -1990,9 +1851,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
              actionButton("start.button", "Run FLOWMAPR"),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
@@ -2054,9 +1912,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
              actionButton("start.button", "Run FLOWMAPR"),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
@@ -2076,7 +1931,6 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
              numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
              numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
              actionButton("gener.param.button", "Generate Parameters"),
-             # actionButton("default.button", "Use Default Order"),
              textOutput(
                "TESTPRINT"
              ),
@@ -2097,13 +1951,9 @@ if(globe.inputs[["mode"]] == "single" & globe.inputs[["downsample.toggle"]] == "
              actionButton("start.button", "Run FLOWMAPR"),
              br(),
              rHandsontableOutput("table", width = 600)
-             # br(),
-             # br(),
-             # actionButton("down.gener.param", "Run Downsample")
       )
     )
   )
 }
-# exclude.pctile <- 0.01
-# target.pctile <- 0.99
+
 shinyApp(ui = ui, server = server)
