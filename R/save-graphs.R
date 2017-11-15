@@ -202,7 +202,7 @@ PrintPanel <- function(var.annotate) {
 }
 
 PrintSummary <- function(env = parent.frame()) {
-  summary <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("Variable", "Value"))
+  summary <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("Variable:", "Value"))
   cat("Printing summary for FLOWMAPR run from FCS files.", "\n")
   summary[(dim(summary)[1] + 1), ] <- c("mode (selected FLOW-MAP mode):", env$mode)
   summary[(dim(summary)[1] + 1), ] <- c("files:", toString(env$files))
