@@ -406,16 +406,16 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed, including if the data is "one", "single", or "multi".
 3. When "Submit" is pressed, a new window should appear which runs with Shiny.
 
-**The usage differs depending on if multi or single or one is used.**
+**The usage differs depending on what mode (e.g. "multi" or "single" or "one") is used.**
 
-**For one:**
+**For mode "one" (one condition, one timepoint):**
 1. Select the FCS file that is to be analyzed in "Uploaded Order"
 2. Press "Generate Parameters".
 3. An interactive table will appear with all the parameters and options for selecting and deselecting them for analysis
 4. The user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
 5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOWMAP algorithm and generate the FLOWMAP results (PDFs, graphml files, etc. in a new folder).
 
-**For single:**
+**For mode "single" (one condition, multiple timepoints):**
 1. Enter in the order of the FCS files that you wish to use.
 2. Press "Generate Parameters".
 3. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
@@ -423,7 +423,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 5. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
 6. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
 
-**For multi:**
+**For mode "multi" (multiple conditions, multiple timepoints):**
 1. Select the CSV file that has the corresponding FCS file paths. The arrangement of the CSV will be shown in the following section.
 2. Press "Input CSV" once the CSV is selected in the box.
 3.If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
@@ -451,7 +451,8 @@ The way a CSV file should be formatted is shown below in cells. Assume the timep
 ## Authors
 
 * **Eli Zunder** - *Initial work*
-* **Melissa Ko** - *???*
+* **Melissa Ko** - *R Package Development*
+* **Rohit Rustagi** - *GUI*
 
 See also the list of [contributors](https://github.com/zunderlab/FLOWMAP/graphs/contributors) who participated in this project.
 
