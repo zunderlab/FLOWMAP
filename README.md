@@ -348,7 +348,7 @@ From anecdotal evidence, most datasets work well with setting `per` to 1, and `m
 
 In a SingleFLOW-MAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
 
-For users familiar with R who wish to only iterate through edge settings for the FLOW-MAP algorithm with the same starting dataset, we recommend a shortcut instead of starting with the `FLOWMAPR::FLOWMAP()`. Preprocessing your FCS files in R and saving the intermediate (as an .rds or .rdata object) to load into FLOWMAPR (instead using `FLOWMAPR::FLOWMAPfromDF()`) can save valuable time.
+For users familiar with R who wish to only iterate through edge settings for the FLOW-MAP algorithm with the same starting dataset, we recommend a shortcut instead of starting with the `FLOWMAPR::FLOWMAP()`. Preprocessing your FCS files in R and saving the intermediate (as an .rds or .rdata object) to load into FLOWMAPR (instead using the `FLOWMAPR::FLOWMAPfromDF()` function) can save valuable time.
 
 <a name="gephi-guide"></a>
 ### Practical Guidelines for Post-Processing in Gephi:
@@ -405,26 +405,26 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 1. Select the FCS file to be analyzed in "Uploaded Order".
 2. Press "Generate Parameters".
 3. An interactive table will appear with all the parameters as well as options for selecting and deselecting them as clustering or removed variables. Removed variables will not be in the final generated graph, such as in the graphml file or the image PDFs.
-4. The user must check the parameters for clustering. These variables are used both for clustering and for calculating edge distances during the graph building steps. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
-5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOWMAP algorithm and generate the FLOWMAP results (PDFs, graphml files, etc. in a new folder).
+4. You must check at least one or more of the parameters for clustering. These variables are used both for clustering (calculation of similarity) and for calculating edge distances during the graph building steps. If you want to rename a parameter, you can click on the name under the "annotate" column and type a new name. 
+5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate all requested FLOWMAPR results (PDFs, graphml files, etc. in a new folder).
 
 **For mode "single" (one condition, multiple timepoints):**
-1. Enter in the order of the FCS files that you wish to use.
+1. Enter in the order of the FCS files that you wish to use. Generally, files will be used in an alphanumerical order by time, but here you can specify the ordering if the naming system does not reflect the order you want. 
 2. Press "Generate Parameters".
-3. Two things will now happen: an interactive table will appear with all the parameters and options for selecting and deselecting them for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you choose relevant channels.
-4. If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
-5. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
-6. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+3. Two things will happen: an interactive table will appear with all the parameters and options for selecting how parameters should be used for analysis, and the menus for "Similar Fields" and "Different Fields" will autopopulate as an aid to help you process channels between the files.
+4. If any channel needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
+5. The different parameters will by default be checked for removal. You must check at least one or more of the parameters for clustering. If you want to rename a parameter, click on the name under "annotate" and type a new name. 
+6. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate all requested FLOWMAPR results (PDFs, graphml files, etc. in a new folder).
 
 **For mode "multi" (multiple conditions, multiple timepoints):**
-1. Select the CSV file that has the corresponding FCS file paths. The arrangement of the CSV will be shown in the following section.
+1. Select the CSV file that has the corresponding FCS file paths. How the CSV file should be arranged (i.e. what information is put in the columns/rows) will be shown in the following section.
 2. Press "Input CSV" once the CSV is selected in the box.
-3.If there needs to be any channel that needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
-4. The different parameters will by default be checked for removal, and the user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
-5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate the FLOW-MAP results (PDFs, graphml files, etc. in a new folder).
+3. If any channel needs to be merged, select the files from the "Different Fields" window, enter the new merged name in "Select New Merge Name", and press "Merge Selected Diff". This will automatically remove the channels from "Different Fields", add the merged name to "Similar Fields", and will update the table with new annotations.
+4. The different parameters will by default be checked for removal. You must check at least one or more of the parameters for clustering. If you want to rename a parameter, click on the name under "annotate" and type a new name. 
+5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate all requested FLOWMAPR results (PDFs, graphml files, etc. in a new folder).
 
 ## CSV Format for Multiple Analysis
-The way a CSV file should be formatted is shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. 
+The CSV file should be formatted as shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. 
 
 | First FCS File Path  | Second FCS File Path |
 | ------------- | ------------- |
