@@ -1,13 +1,12 @@
 # FLOWMAPR
 
-This repository houses the FLOW-MAP algorithm code, which was developed in R and originally published in Zunder et al., "A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry." Cell Stem Cell 2015.
+This repository houses the code for the FLOW-MAP algorithm, which was developed in R and originally published in Zunder et al., "A Continuous Molecular Roadmap to iPSC Reprogramming Through Progression Analysis of Single Cell Mass Cytometry." Cell Stem Cell 2015.
 
-This code has been reformatted and compiled into a single R package known as **FLOWMAPR**. This README provides full instructions for how to install, set-up, and use FLOWMAPR. Other details, including a comparison with other visualization tools for single-cell data, will be published imminently and linked when available.
+This code has been reformatted and compiled into a single R package known as **FLOWMAPR**, for extensible analysis of single-cell datasets including FCS files generated from mass/flow cytometry or data.frames of other single-cell data processed in R. This README provides full instructions for how to install, set-up, and use FLOWMAPR. Other details, including a comparison with other visualization tools for single-cell data, will be published imminently and linked when available.
 
 # Navigation
 <!-- [Code Status]() -->
 [Getting Started: Installing FLOWMAPR](#install)  
-[Getting Started: Installing the GUI](#gui-install)  
 [Updating FLOWMAPR](#update)  
 [Running FLOWMAPR: Starting from FCS Files](#FLOWMAPR-FCS)  
 [Running FLOWMAPR: Starting from a Dataframe in R](#FLOWMAPR-DF)  
@@ -46,7 +45,6 @@ Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_
 -->
 
 ## Getting Started
-
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
 
 ### Software and Package Prerequisites:
@@ -67,6 +65,14 @@ install.packages("igraph")
 install.packages("robustbase")
 source("http://bioconductor.org/biocLite.R")
 biocLite("flowCore")
+```
+
+The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
+
+```
+install.packages("shiny")
+install.packages("tcltk")
+install.packages("rhandsontable")
 ```
 
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
@@ -91,16 +97,9 @@ To currently get the FLOWMAPR R package up and working on your computer, once yo
 6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
 7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
-<a name="gui-install"></a>
 ### Installing the GUI:
 
-1. The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
-```
-install.packages("shiny")
-install.packages("tcltk")
-install.packages("rhandsontable")
-```
-2. The GUI is accessed by running:
+The GUI is accessed by running:
 ```
 FLOWMAPR::LaunchGUI()
 ```
