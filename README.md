@@ -429,8 +429,8 @@ The CSV file should be formatted as shown below in cells. Assume the timepoints 
 | Time |            ConditionA             |             ConditionB            |
 |:----:|:---------------------------------:|:---------------------------------:|
 |  01  |  ConditionA Time01 FCS File Path  |  ConditionB Time01 FCS File Path  |
-|  02  |  ConditionA Time02 FCS File Path  |                ---                |
-|  03  |                ---                |  ConditionB Time03 FCS File Path  |
+|  02  |  ConditionA Time02 FCS File Path  |                                   |
+|  03  |                                   |  ConditionB Time03 FCS File Path  |
 |  04  |  ConditionA Time04 FCS File Path  |  ConditionB Time04 FCS File Path  |
 
 ## Contributing
