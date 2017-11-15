@@ -178,7 +178,7 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
 
 3. Run `FLOWMAPR::FLOWMAPfromDF()` as a command in R Studio, but pass the variables that you assigned into FLOWMAPfromDF() function. A full example is provided below.
-4. Check that it saves an output folder with reasonable looking PDFs and graphml files. **As of this most recent update, summaries and reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
+4. Check that it saves an output folder with reasonable-looking PDFs and graphml files. **As of this most recent update, reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
 
 <a name="example-code"></a>
 ### Example Code for FLOWMAP():
@@ -348,6 +348,8 @@ From anecdotal evidence, most datasets work well with setting `per` to 1, and `m
 
 In a SingleFLOW-MAP with no downsampling (uses random subsampling), 1200 total nodes takes about 2 min to produce results (including PDFs). In comparison, 3000 total nodes takes about 6 min to produce all results, 6000 total nodes takes about 21 min, and 12000 total nodes takes about 59 min. These all ran with a `subsample` : `cluster.numbers` ratio of 2:1.
 
+For users familiar with R who wish to only iterate through edge settings for the FLOW-MAP algorithm with the same starting dataset, we recommend a shortcut instead of starting with the `FLOWMAPR::FLOWMAP()`. Preprocessing your FCS files in R and saving the intermediate (as an .rds or .rdata object) to load into FLOWMAPR (instead using `FLOWMAPR::FLOWMAPfromDF()`) can save valuable time.
+
 <a name="gephi-guide"></a>
 ### Practical Guidelines for Post-Processing in Gephi:
 
@@ -392,18 +394,18 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 <a name="gui-guide"></a>
 ## Using the GUI
-0. Make sure all FSC files that are to be tested are within one folder.
-1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box of the header "FLOWMAPR" should appear. 
-2. Enter in all of the relevant information which pertains to the type of experiment that is being analyzed, including if the data is "one", "single", or "multi".
-3. When "Submit" is pressed, a new window should appear which runs with Shiny.
+0. Make sure all FSC files to be used are in one folder.
+1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box with the header "FLOWMAPR" should appear. 
+2. Enter all of the relevant information which pertains to the type of experiment that is being analyzed, including if the data should be analyzed by FLOWMAPR mode "one", "single", or "multi".
+3. When you press "Submit", a new window should appear that runs in the Shiny interface.
 
-**The usage differs depending on what mode (e.g. "multi" or "single" or "one") is used.**
+**The usage from this point on differs depending on what mode (e.g. "multi" or "single" or "one") is used.**
 
 **For mode "one" (one condition, one timepoint):**
-1. Select the FCS file that is to be analyzed in "Uploaded Order"
+1. Select the FCS file to be analyzed in "Uploaded Order".
 2. Press "Generate Parameters".
-3. An interactive table will appear with all the parameters and options for selecting and deselecting them for analysis
-4. The user must check the parameters for clustering. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
+3. An interactive table will appear with all the parameters as well as options for selecting and deselecting them as clustering or removed variables. Removed variables will not be in the final generated graph, such as in the graphml file or the image PDFs.
+4. The user must check the parameters for clustering. These variables are used both for clustering and for calculating edge distances during the graph building steps. If the user wishes to rename a parameter, they can click on the name under "annotate" and type a new name. 
 5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOWMAP algorithm and generate the FLOWMAP results (PDFs, graphml files, etc. in a new folder).
 
 **For mode "single" (one condition, multiple timepoints):**
