@@ -123,7 +123,7 @@ If the above commands run without error, you should have the latest version of F
 
 To run a FLOW-MAP analysis on your data set if you are using FCS files or an example data set:
 
-0. **Make your data available and parseable by FLOWMAP.**
+0. **Make your data available and parseable by FLOWMAPR.**
 * For MultiFLOW-MAP, you must specify the "files" variable as a directory wherein each subfolder represented samples at the same time. If FCS files in the same subdirectory that come from different time points (e.g. "ConditionA-d01.fcs" with "ConditionB-d02.fcs"), FLOWMAPR will pick one time label arbitrarily.
 * Please make sure the time labels can be parsed and sorted with proper labels (e.g. "01", "02", "04", "06", "10" vs. "1", "2", "4", "6", "10" where it would sort as "1" and "10" first instead of "10" last).
 * To properly label each condition within the timepoint, please put the Condition as the first part of the file name separated by "-" or "." characters (e.g. "ConditionA-d01.fcs" where "ConditionA" will be the condition label).
@@ -181,7 +181,6 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `per` - affects connectivity, recommended default is 1
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
   * `name.sort` - sort timepoints according to time label in alphabetical/numerical order, default is set to TRUE for sorting
-  * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
   * `clustering` - cluster within each timepoint, in which case you will want to specify optional variable `cluster.numbers`, default is set to FALSE for clustering
   * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
@@ -213,12 +212,12 @@ downsample <- FALSE
 savePDFs <- TRUE
 which.palette <- "bluered"
 
-FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
-        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-        per = per, save.folder = save.folder, subsamples = subsamples,
-        name.sort = name.sort, downsample = downsample, seed.X = seed.X,
-        savePDFs = savePDFs, which.palette = which.palette)
+FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+                  clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  per = per, save.folder = save.folder, subsamples = subsamples,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  savePDFs = savePDFs, which.palette = which.palette)
 ```
 
 ### Example Code for FLOWMAP() with SPADE downsampling:
@@ -240,21 +239,21 @@ seed.X <- 1
 subsamples <- FALSE
 exclude.pctile <- 0.01
 target.pctile <- 0.99
-target.number <- 200
+target.number <- NULL
 target.percent <- NULL
 name.sort <- FALSE
 downsample <- FALSE
 savePDFs <- TRUE
 which.palette <- "bluered"
 
-FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
-        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-        per = per, save.folder = save.folder, subsamples = subsamples,
-        name.sort = name.sort, downsample = downsample, seed.X = seed.X,
-        savePDFs = savePDFs, which.palette = which.palette,
-        exclude.pctile = exclude.pctile, target.pctile = target.pctile,
-        target.number = target.number, target.percent = target.percent)
+FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+                  clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  per = per, save.folder = save.folder, subsamples = subsamples,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  savePDFs = savePDFs, which.palette = which.palette,
+                  exclude.pctile = exclude.pctile, target.pctile = target.pctile,
+                  target.number = target.number, target.percent = target.percent)
 ```
 
 #### Template for a FLOWMAPR Run using FLOWMAP() function in R
@@ -304,7 +303,6 @@ minimum <- 2
 maximum <- 5
 seed.X <- 1
 name.sort <- FALSE
-downsample <- FALSE
 clustering <- FALSE
 savePDFs <- TRUE
 which.palette <- "bluered"
@@ -323,12 +321,12 @@ df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label,
                               condition.col.label = condition.col.label)$new.df
 
 FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
-                                 time.col.label = time.col.label, condition.col.label = condition.col.label,
-                                 clustering.var = clustering.var, distance.metric = distance.metric,
-                                 minimum = minimum, maximum = maximum, per = per,
-                                 save.folder = save.folder, subsamples = subsamples,
-                                 name.sort = name.sort, downsample = downsample, clustering = clustering,
-                                 seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
+                        time.col.label = time.col.label, condition.col.label = condition.col.label,
+                        clustering.var = clustering.var, distance.metric = distance.metric,
+                        minimum = minimum, maximum = maximum, per = per,
+                        save.folder = save.folder, subsamples = subsamples,
+                        name.sort = name.sort, clustering = clustering,
+                        seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
 
 ```
 
@@ -441,7 +439,7 @@ The way a CSV file should be formatted is shown below in cells. Assume the timep
 
 ## Contributing
 
-????
+???
 
 ## Versioning
 
@@ -462,4 +460,4 @@ This project is licensed under the GNU GPLv3 License - see the [LICENSE.md](LICE
 
 ## Acknowledgments
 
-* ???
+* Our package uses codes from the SPADE R package and scaffold R package. We thank authors Benedict Anchang and Federico Gherardini for their guidance in using their packages.
