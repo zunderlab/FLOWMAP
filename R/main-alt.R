@@ -1,4 +1,38 @@
 
+#' FLOWMAPfromDF - generate FLOWMAPR analysis results from
+#' dataframes in R
+#'
+#' \code{FLOWMAPfromDF} returns the ???
+#'
+#' This function ???
+#'
+#' @param mode ???
+#' @param df ???
+#' @param project.name ???
+#' @param clustering.var ???
+#' @param distance.metric ???
+#' @param minimum ???
+#' @param maximum ???
+#' @param per ???
+#' @param save.folder ???
+#' @param time.col.label ???
+#' @param condition.col.label ???
+#' @param name.sort ???
+#' @param clustering ???
+#' @param seed.X ???
+#' @param savePDFs ???
+#' @param which.palette ???
+#' @param cluster.numbers ???
+#' @return ???
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' FLOWMAPfromDF()
+#'
+#' \dontrun{
+#' FLOWMAPfromDF()
+#' }
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",

@@ -1,4 +1,23 @@
 
+#' Restructure a dataframe into a list of dataframes
+#'
+#' \code{RestructureDF} returns the ???
+#'
+#' This function ???
+#'
+#' @param df ???
+#' @param time.col.label ???
+#' @param condition.col.label ???
+#' @return results
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' RestructureDF(1:10)
+#'
+#' \dontrun{
+#' RestructureDF(df, time.col.label = NULL)
+#' }
 #' @export
 RestructureDF <- function(df, time.col.label = "Time", condition.col.label = NULL) {
   results <- list()

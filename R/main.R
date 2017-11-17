@@ -1,4 +1,41 @@
 
+#' FLOWMAP - generate FLOWMAPR analysis results from FCS files in R
+#'
+#' \code{FLOWMAP} returns the ???
+#'
+#' This function ???
+#'
+#' @param mode ???
+#' @param files ???
+#' @param var.remove ???
+#' @param var.annotate ???
+#' @param clustering.var ???
+#' @param cluster.numbers ???
+#' @param distance.metric ???
+#' @param minimum ???
+#' @param maximum ???
+#' @param per ???
+#' @param save.folder ???
+#' @param subsamples ???
+#' @param name.sort ???
+#' @param downsample ???
+#' @param seed.X ???
+#' @param savePDFs ???
+#' @param which.palette ???
+#' @param exclude.pctile ???
+#' @param target.pctile ???
+#' @param target.number ???
+#' @param target.percent ???
+#' @return ???
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' FLOWMAP()
+#'
+#' \dontrun{
+#' FLOWMAP()
+#' }
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     var.annotate, clustering.var, cluster.numbers = 100,
@@ -7,11 +44,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, ...) {
-  cat("exclude.pctile is", exclude.pctile, "\n")
-  cat("target.pctile is", target.pctile, "\n")
-  cat("target.number is", target.number, "\n")
-  cat("target.percent is", target.percent, "\n")
-  
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)

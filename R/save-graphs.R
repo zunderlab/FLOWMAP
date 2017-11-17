@@ -8,6 +8,24 @@ MakeOutFolder <- function(runtype) {
   return (output.folder)
 }
 
+#' Saving an igraph object as a local graphml file.
+#'
+#' \code{ConvertToGraphML} saves a copy of an igraph graph object
+#' as a local graphml file in the current file directory with the
+#' file name containing the current date, a supplied string in
+#' \code{file.name}, and the current time.
+#'
+#' @param output.graph An igraph graph object to be saved as a local file.
+#' @param file.name A short, descriptive phrase for the file name of
+#' the saved igraph graph object. The user need not include the ".graphml"
+#' file extension as that is automatically appended.
+#' @examples
+#' ConvertToGraphML(current.graph, "Practice_Graph")
+#'
+#' \dontrun{
+#' ConvertToGraphML(current.graph)
+#' ConvertToGraphML("Practice_Graph")
+#' }
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")

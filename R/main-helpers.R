@@ -136,6 +136,23 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   return(times)
 }
 
+#' ConstructVarAnnotate
+#'
+#' \code{ConstructVarAnnotate} returns the ???
+#'
+#' This function ???
+#'
+#' @param FCS.file.name ???
+#' @return ???
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' ConstructVarAnnotate()
+#'
+#' \dontrun{
+#' ConstructVarAnnotate()
+#' }
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -159,8 +176,30 @@ ConstructVarAnnotate <- function(FCS.file.name) {
   return(var.annotate)
 }
 
+#' TITLE TITLE
+#'
+#' \code{SuggestClusteringVar} returns the ???
+#'
+#' This function ???
+#'
+#' @param fcs.file.names ???
+#' @param mode ???
+#' @param var.annotate ???
+#' @param var.remove ???
+#' @param top.num ???
+#' @return ???
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' SuggestClusteringVar()
+#'
+#' \dontrun{
+#' SuggestClusteringVar()
+#' }
 #' @export
-SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove, top.num) {
+SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
+                                 var.remove, top.num) {
   suggested.clustering.var <- c()
   combined.fcs.files <- c()
   if (mode == "one") {
@@ -256,6 +295,24 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate, var.remove,
   return(suggested.clustering.var)
 }
 
+#' TITLE TITLE
+#'
+#' \code{SuggestVarRemove} returns the ???
+#'
+#' This function ???
+#'
+#' @param var.annotate ???
+#' @param var.to.remove ???
+#' @return ???
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' SuggestVarRemove()
+#'
+#' \dontrun{
+#' SuggestVarRemove()
+#' }
 #' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()

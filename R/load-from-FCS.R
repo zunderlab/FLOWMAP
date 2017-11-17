@@ -19,6 +19,24 @@ RemoveExistingTimeVar <- function(fcs.file) {
   return(fcs.file)
 }
 
+#' GetFCSNames
+#'
+#' \code{GetFCSNames} returns the ???
+#'
+#' This function ???
+#'
+#' @param folder ???
+#' @param sort ???
+#' @return results
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' GetFCSNames(folder, sort = FALSE)
+#'
+#' \dontrun{
+#' GetFCSNames()
+#' }
 #' @export
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -31,6 +49,24 @@ GetFCSNames <- function(folder, sort = TRUE) {
   return(fcs.files)
 }
 
+#' GetMultiFCSNames
+#'
+#' \code{GetMultiFCSNames} returns the ???
+#'
+#' This function ???
+#'
+#' @param folder ???
+#' @param sort ???
+#' @return results
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' GetMultiFCSNames(folder, sort = FALSE)
+#'
+#' \dontrun{
+#' GetMultiFCSNames()
+#' }
 #' @export
 GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -49,6 +85,27 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
   return(list.of.time.file.names)
 }
 
+#' LoadCleanFCS
+#'
+#' \code{LoadCleanFCS} returns the ???
+#'
+#' This function ???
+#'
+#' @param fcs.file.names ???
+#' @param channel.remove ???
+#' @param channel.annotate ???
+#' @param subsamples ???
+#' @param transform ???
+#' @return results
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' LoadCleanFCS()
+#'
+#' \dontrun{
+#' LoadCleanFCS()
+#' }
 #' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
@@ -92,6 +149,27 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   return(clean.fcs.files)
 }
 
+#' LoadMultiCleanFCS
+#'
+#' \code{LoadMultiCleanFCS} returns the ???
+#'
+#' This function ???
+#'
+#' @param list.of.file.names ???
+#' @param channel.remove ???
+#' @param channel.annotate ???
+#' @param subsamples ???
+#' @param transform ???
+#' @return results
+#' 
+#' \url{http://en.wikipedia.org/}
+#'   
+#' @examples
+#' LoadMultiCleanFCS()
+#'
+#' \dontrun{
+#' LoadMultiCleanFCS()
+#' }
 #' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, transform = TRUE) {
