@@ -10,7 +10,8 @@
 #' @param files File paths for FCS files to be used or a folder containing
 #' the FCS files to be used in analysis
 #' @param var.remove Vector naming channels to be removed from all downstream analysis
-#' @param var.annotate List mapping channel names to user-specified names
+#' @param var.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
 #' @param clustering.var Vector naming channels to be used to calculate distances/differences
 #' between cells for clustering (if requested) and edge-drawing steps
 #' @param cluster.numbers A single numeric or a vector of numerics

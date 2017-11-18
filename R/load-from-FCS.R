@@ -21,7 +21,7 @@ RemoveExistingTimeVar <- function(fcs.file) {
 
 #' GetFCSNames
 #'
-#' \code{GetFCSNames} returns the ???
+#' \code{GetFCSNames} returns the FCS file names from a given folder.
 #'
 #' @param folder the full path for a folder that contains subfolders, each
 #' containing the FCS files from a specific timepoint to be used
@@ -47,7 +47,8 @@ GetFCSNames <- function(folder, sort = TRUE) {
 
 #' GetMultiFCSNames
 #'
-#' \code{GetMultiFCSNames} returns the ???
+#' \code{GetFCSNames} returns the FCS file names as a list from a given folder,
+#' that contains subfolders corresponding to each timepoint.
 #'
 #' @param folder the full path for a folder that contains the FCS files to be used
 #' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
@@ -79,20 +80,26 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 
 #' LoadCleanFCS
 #'
-#' \code{LoadCleanFCS} returns the ???
+#' \code{LoadCleanFCS} returns a list of FCS file data, where each member is
+#' a dataframe from a different timepoint. In the mode \code{"single"}, the list has
+#' only a single element, a dataframe from the one FCS file path provided.
 #'
-#' @param fcs.file.names ???
-#' @param channel.remove ???
-#' @param channel.annotate ???
-#' @param subsamples ???
-#' @param transform ???
-#' @return results
+#' @param fcs.file.names A vector of full file paths to the FCS files to be used
+#' @param channel.remove Vector naming channels to be removed from all loaded FCS data
+#' @param channel.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
+#' @param subsamples Numeric or vector of numerics specifying how many cells to sample
+#' from each FCS file, default is set to \code{1000}
+#' @param transform Logical specifying whether to transform the data using an Asinh
+#' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
+#' @return a list where each member is a dataframe
 #' @examples
-#' LoadCleanFCS()
-#'
-#' \dontrun{
-#' LoadCleanFCS()
-#' }
+#' fcs.file.names <- c("Desktop/A.fcs", "Desktop/B.fcs")
+#' var.remove <- c("Channel3", "Channel4")
+#' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
+#' "c3" = "Channel3", "c4" = "Channel4")
+#' 
+#' LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 #' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
@@ -138,23 +145,27 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 
 #' LoadMultiCleanFCS
 #'
-#' \code{LoadMultiCleanFCS} returns the ???
+#' \code{LoadMultiCleanFCS} returns a list of FCS file data, where each member is
+#' a list that contains dataframe from different conditions from different timepoints.
 #'
-#' @param list.of.file.names ???
-#' @param channel.remove ???
-#' @param channel.annotate ???
-#' @param subsamples ???
-#' @param transform ???
-#' @return results
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
+#' @param list.of.file.names A list where each member contains a vector of full file paths
+#' to the FCS files to be used
+#' @param channel.remove Vector naming channels to be removed from all loaded FCS data
+#' @param channel.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
+#' @param subsamples Numeric or vector of numerics specifying how many cells to sample
+#' from each FCS file, default is set to \code{1000}
+#' @param transform Logical specifying whether to transform the data using an Asinh
+#' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
+#' @return a list where each member is a dataframe
 #' @examples
-#' LoadMultiCleanFCS()
-#'
-#' \dontrun{
-#' LoadMultiCleanFCS()
-#' }
+#' list.of.file.names <- list("1" = c("Desktop/A-1.fcs", "Desktop/B-1.fcs"),
+#' "2" = c("Desktop/A-2.fcs", "Desktop/B-2.fcs"))
+#' var.remove <- c("Channel3", "Channel4")
+#' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
+#' "c3" = "Channel3", "c4" = "Channel4")
+#' 
+#' LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 #' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, transform = TRUE) {
