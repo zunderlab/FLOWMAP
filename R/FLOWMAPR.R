@@ -1,4 +1,6 @@
-#' FLOWMAPR - Graph-based visualizations of high-dimensional
+#' FLOWMAPR - Graph-based visualizations of high-dimensional single-cell data across time
+#' 
+#' @description
 #' An Implementation of FLOW-MAP Algorithm in R. It takes user-specified
 #' inputs for settings of a FLOW-MAP analysis and generates a FLOW-MAP graph from provided
 #' FCS files or dataframes. Results include graphml files for the FLOW-MAP graph as well

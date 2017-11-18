@@ -36,10 +36,6 @@
 #'   
 #' @examples
 #' FLOWMAP()
-#'
-#' \dontrun{
-#' FLOWMAP()
-#' }
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     var.annotate, clustering.var, cluster.numbers = 100,

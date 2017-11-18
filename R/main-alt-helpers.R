@@ -15,10 +15,6 @@
 #' @return results
 #' @examples
 #' RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")
-#'
-#' \dontrun{
-#' RestructureDF(df, time.col.label = NULL)
-#' }
 #' @export
 RestructureDF <- function(df, time.col.label = "Time", condition.col.label = NULL) {
   results <- list()

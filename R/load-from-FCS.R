@@ -29,10 +29,6 @@ RemoveExistingTimeVar <- function(fcs.file) {
 #' @return Vector with the file paths of FCS files found in the given folder
 #' @examples
 #' GetFCSNames(folder, sort = FALSE)
-#'
-#' \dontrun{
-#' GetFCSNames(sort = TRUE)
-#' }
 #' @export
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -56,10 +52,6 @@ GetFCSNames <- function(folder, sort = TRUE) {
 #' of FCS files found in the given subfolder
 #' @examples
 #' GetMultiFCSNames(folder, sort = FALSE)
-#'
-#' \dontrun{
-#' GetMultiFCSNames()
-#' }
 #' @export
 GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files

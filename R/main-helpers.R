@@ -145,10 +145,6 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
 #' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
 #' ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
-#'
-#' \dontrun{
-#' ConstructVarAnnotate()
-#' }
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -191,9 +187,6 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' 
 #' SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
 #' var.remove, top.num = 20)
-#' \dontrun{
-#' SuggestClusteringVar()
-#' }
 #' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
                                  var.remove, top.num) {
@@ -303,9 +296,6 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
 #' @examples
 #' var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
 #' SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
-#' \dontrun{
-#' SuggestVarRemove(var.to.remove)
-#' }
 #' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()

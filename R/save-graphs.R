@@ -21,11 +21,6 @@ MakeOutFolder <- function(runtype) {
 #' file extension as that is automatically appended.
 #' @examples
 #' ConvertToGraphML(current.graph, "Practice_Graph")
-#'
-#' \dontrun{
-#' ConvertToGraphML(current.graph)
-#' ConvertToGraphML("Practice_Graph")
-#' }
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")

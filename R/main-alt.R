@@ -29,10 +29,6 @@
 #'   
 #' @examples
 #' FLOWMAPfromDF()
-#'
-#' \dontrun{
-#' FLOWMAPfromDF()
-#' }
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
