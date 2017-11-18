@@ -144,9 +144,6 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
 #'
 #' @param FCS.file.name ???
 #' @return ???
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
 #' @examples
 #' ConstructVarAnnotate()
 #'
@@ -188,9 +185,6 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @param var.remove ???
 #' @param top.num ???
 #' @return ???
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
 #' @examples
 #' SuggestClusteringVar()
 #'
@@ -304,9 +298,6 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
 #' @param var.annotate ???
 #' @param var.to.remove ???
 #' @return ???
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
 #' @examples
 #' SuggestVarRemove()
 #'

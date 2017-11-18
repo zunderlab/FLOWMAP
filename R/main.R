@@ -5,27 +5,30 @@
 #'
 #' This function ???
 #'
-#' @param mode ???
-#' @param files ???
-#' @param var.remove ???
-#' @param var.annotate ???
-#' @param clustering.var ???
-#' @param cluster.numbers ???
-#' @param distance.metric ???
-#' @param minimum ???
-#' @param maximum ???
-#' @param per ???
-#' @param save.folder ???
-#' @param subsamples ???
-#' @param name.sort ???
-#' @param downsample ???
-#' @param seed.X ???
-#' @param savePDFs ???
-#' @param which.palette ???
-#' @param exclude.pctile ???
-#' @param target.pctile ???
-#' @param target.number ???
-#' @param target.percent ???
+#' @param mode FLOWMAPR mode to use in analysis based on starting input,
+#' available options include \code{c("single", "multi", "one")}
+#' @param files File paths for FCS files to be used or a folder containing
+#' the FCS files to be used in analysis
+#' @param var.remove Vector naming channels to be removed from all downstream analysis
+#' @param var.annotate List mapping channel names to user-specified names
+#' @param clustering.var Vector naming channels to be used to calculate distances/differences
+#' between cells for clustering (if requested) and edge-drawing steps
+#' @param cluster.numbers A single numeric or a vector of numerics
+#' @param distance.metric Character \code{c("manhattan", "euclidean")}
+#' @param minimum Numeric 
+#' @param maximum Numeric 
+#' @param per Numeric 
+#' @param save.folder Directory where all results generated should be saved
+#' @param subsamples A single numeric or a vector of numerics
+#' @param name.sort Logical
+#' @param downsample Logical
+#' @param seed.X Numeric 
+#' @param savePDFs Logical
+#' @param which.palette Character \code{c("bluered", "jet", "CB")}
+#' @param exclude.pctile Optional variable, numeric
+#' @param target.pctile Optional variable, numeric
+#' @param target.number Optional variable, numeric
+#' @param target.percent Optional variable, numeric
 #' @return ???
 #' 
 #' \url{http://en.wikipedia.org/}

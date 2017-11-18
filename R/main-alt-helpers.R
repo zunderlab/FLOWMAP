@@ -3,17 +3,18 @@
 #'
 #' \code{RestructureDF} returns the ???
 #'
-#' This function ???
+#' This function is a first step before starting a FLOWMAPR analysis
+#' using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
 #'
-#' @param df ???
-#' @param time.col.label ???
-#' @param condition.col.label ???
+#' @param df a single dataframe containing all single-cell data from all treatments
+#' and conditions (if relevant) to be restructured
+#' @param time.col.label Character specifying the channel name that should
+#' be used to find the timepoint label for each cell, default is set to \code{"Time"}
+#' @param condition.col.label Character specifying the channel name that should
+#' be used to find the condition label for each cell, default is set to \code{NULL}
 #' @return results
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
 #' @examples
-#' RestructureDF(1:10)
+#' RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")
 #'
 #' \dontrun{
 #' RestructureDF(df, time.col.label = NULL)

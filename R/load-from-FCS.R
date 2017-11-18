@@ -23,19 +23,15 @@ RemoveExistingTimeVar <- function(fcs.file) {
 #'
 #' \code{GetFCSNames} returns the ???
 #'
-#' This function ???
-#'
-#' @param folder ???
-#' @param sort ???
-#' @return results
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
+#' @param folder the full path for a folder that contains subfolders, each
+#' containing the FCS files from a specific timepoint to be used
+#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
+#' @return Vector with the file paths of FCS files found in the given folder
 #' @examples
 #' GetFCSNames(folder, sort = FALSE)
 #'
 #' \dontrun{
-#' GetFCSNames()
+#' GetFCSNames(sort = TRUE)
 #' }
 #' @export
 GetFCSNames <- function(folder, sort = TRUE) {
@@ -53,14 +49,10 @@ GetFCSNames <- function(folder, sort = TRUE) {
 #'
 #' \code{GetMultiFCSNames} returns the ???
 #'
-#' This function ???
-#'
-#' @param folder ???
-#' @param sort ???
-#' @return results
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
+#' @param folder the full path for a folder that contains the FCS files to be used
+#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
+#' @return List with each member containing a vector with the file paths
+#' of FCS files found in the given subfolder
 #' @examples
 #' GetMultiFCSNames(folder, sort = FALSE)
 #'
@@ -89,17 +81,12 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #'
 #' \code{LoadCleanFCS} returns the ???
 #'
-#' This function ???
-#'
 #' @param fcs.file.names ???
 #' @param channel.remove ???
 #' @param channel.annotate ???
 #' @param subsamples ???
 #' @param transform ???
 #' @return results
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
 #' @examples
 #' LoadCleanFCS()
 #'
@@ -152,8 +139,6 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 #' LoadMultiCleanFCS
 #'
 #' \code{LoadMultiCleanFCS} returns the ???
-#'
-#' This function ???
 #'
 #' @param list.of.file.names ???
 #' @param channel.remove ???
@@ -232,7 +217,6 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' (https://github.com/nolanlab/spade/blob/master/LICENSE) available
 #' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
 #' license rules, our code is available under GPL-3.0.
-
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
