@@ -140,12 +140,11 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
 #'
 #' \code{ConstructVarAnnotate} returns the ???
 #'
-#' This function ???
-#'
-#' @param FCS.file.name ???
-#' @return ???
+#' @param FCS.file.name The full file path to one FCS file intended for analysis
+#' @return List mapping channel names (taken from the "name" field of a
+#' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
-#' ConstructVarAnnotate()
+#' ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
 #'
 #' \dontrun{
 #' ConstructVarAnnotate()
@@ -173,21 +172,25 @@ ConstructVarAnnotate <- function(FCS.file.name) {
   return(var.annotate)
 }
 
-#' TITLE TITLE
+#' SuggestClusteringVar
 #'
 #' \code{SuggestClusteringVar} returns the ???
 #'
-#' This function ???
-#'
-#' @param fcs.file.names ???
-#' @param mode ???
-#' @param var.annotate ???
-#' @param var.remove ???
-#' @param top.num ???
-#' @return ???
+#' @param fcs.file.names A vector of full file paths to the FCS files to be used
+#' @param mode FLOWMAPR mode to use in analysis based on starting input,
+#' available options include \code{c("single", "multi", "one")}
+#' @param var.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
+#' @param var.remove Vector naming channels to be removed from all loaded FCS data
+#' @param top.num Numeric specifying the number of variables in the vector to be returned
+#' @return Vector naming channels that vary the most within and between FCS files
 #' @examples
-#' SuggestClusteringVar()
-#'
+#' fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")
+#' var.annotate <- ConstructVarAnnotate[1]
+#' var.remove <- c("Channel3", "Channel4")
+#' 
+#' SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
+#' var.remove, top.num = 20)
 #' \dontrun{
 #' SuggestClusteringVar()
 #' }
@@ -289,20 +292,19 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
   return(suggested.clustering.var)
 }
 
-#' TITLE TITLE
+#' SuggestVarRemove
 #'
 #' \code{SuggestVarRemove} returns the ???
 #'
-#' This function ???
-#'
-#' @param var.annotate ???
-#' @param var.to.remove ???
-#' @return ???
+#' @param var.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
+#' @param var.to.remove Vector of substrings to, default is set to \code{NULL}
+#' @return Vector naming channels suggested to be removed from downstream FLOWMAPR analysis
 #' @examples
-#' SuggestVarRemove()
-#'
+#' var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
+#' SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
 #' \dontrun{
-#' SuggestVarRemove()
+#' SuggestVarRemove(var.to.remove)
 #' }
 #' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
