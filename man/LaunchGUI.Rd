@@ -6,14 +6,9 @@
 \usage{
 LaunchGUI()
 }
-\arguments{
-\item{message}{A message to determine if open the shiny Application}
-
-\item{dir}{Result direcroty.}
-}
 \description{
 This code was adapted from the cytofkit R package,
-available here: https://github.com/JinmiaoChenLab/cytofkit/.
+available here: \url{https://github.com/JinmiaoChenLab/cytofkit/}.
 }
 \details{
 Specifically, the code in this file is adapted from cytofkit_GUI.R, but
@@ -22,7 +17,7 @@ then interface with the FLOWMAPR library back-end.
 
 This code, authored and maintained by Jinmiao Chen and Hao Chen,
 was used under the Artistic License 2.0 or Artistic-2.0 available
-here: https://opensource.org/licenses/Artistic-2.0.
+here: \url{https://opensource.org/licenses/Artistic-2.0}.
 }
 \examples{
 # LaunchGUI()
