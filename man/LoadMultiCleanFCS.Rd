@@ -23,7 +23,8 @@ from each FCS file, default is set to \code{1000}}
 transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}}
 }
 \value{
-a list where each member is a dataframe
+a list where each member is a list containing multiple dataframes containing
+single-cell data from the same timepoint, but multiple conditions
 }
 \description{
 \code{LoadMultiCleanFCS} returns a list of FCS file data, where each member is

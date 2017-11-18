@@ -138,7 +138,13 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
 
 #' ConstructVarAnnotate
 #'
-#' \code{ConstructVarAnnotate} returns the ???
+#' \code{ConstructVarAnnotate} returns a list that can be used during FLOWMAPR
+#' analysis to change channel names from the default "name" field used in a
+#' flowFrame to the names provided in the "desc" fields. Generally in CyTOF/mass
+#' cytometry or flow cytometry data, the original "name" field corresponds to the
+#' measurement channel (e.g. FITC or Sm154Di) while the "desc" field will correspond
+#' to the name of the marker entered by the user at the machine (e.g. cCaspase3 or
+#' CyclinB1).
 #'
 #' @param FCS.file.name The full file path to one FCS file intended for analysis
 #' @return List mapping channel names (taken from the "name" field of a
@@ -170,7 +176,11 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 
 #' SuggestClusteringVar
 #'
-#' \code{SuggestClusteringVar} returns the ???
+#' \code{SuggestClusteringVar} returns a vector of user-specified length that contains
+#' suggested names of channels to be used as \code{clustering.var} in FLOWMAPR analysis.
+#' Chosen channels are determined based on analysis of the provided FCS files, as the
+#' variance is calculated within and between timepoints. The top varying markers are noted
+#' and tabulated, and the markers that consistently vary the most are selected.
 #'
 #' @param fcs.file.names A vector of full file paths to the FCS files to be used
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
@@ -287,7 +297,10 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
 
 #' SuggestVarRemove
 #'
-#' \code{SuggestVarRemove} returns the ???
+#' \code{SuggestVarRemove} returns a vector of channel names that suggest markers
+#' to remove during FLOWMAPR analysis based on the annotated channel list \code{var.annotate}
+#' and \code{var.to.remove} a user-supplied list of substrings that designate
+#' the names of blank channels.
 #'
 #' @param var.annotate List mapping channel names to user-specified names to properly
 #' annotate all FCS file data

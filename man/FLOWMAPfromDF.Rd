@@ -13,50 +13,61 @@ FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
   cluster.numbers = NULL)
 }
 \arguments{
-\item{mode}{???}
+\item{mode}{FLOWMAPR mode to use in analysis based on starting input,
+available options include \code{c("single", "multi", "one")}}
 
-\item{df}{???}
+\item{df}{single dataframe, list of dataframes with each member belonging to single-cell
+data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,
+but coming from different conditions, to be used in analysis}
 
-\item{project.name}{???}
+\item{project.name}{Character string to label file output of FLOWMAPR analysis}
 
-\item{clustering.var}{???}
+\item{clustering.var}{Vector naming channels to be used to calculate distances/differences
+between cells for clustering (if requested) and edge-drawing steps}
 
-\item{distance.metric}{???}
+\item{distance.metric}{Character \code{c("manhattan", "euclidean")}}
 
-\item{minimum}{???}
+\item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+set to \code{2}, no less than 2 is recommended}
 
-\item{maximum}{???}
+\item{maximum}{Numeric value specifying the maximum number of edges that will be allotted
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is
+set to \code{5}, no less than 3 is recommended}
 
-\item{per}{???}
+\item{per}{Numeric value specifying the top n% of edges by strength that will be used to assess
+density and allot edges during the density-dependent edge-building step of the FLOW-MAP
+graph, default value is set to \code{1}, changing this value is not advised}
 
-\item{save.folder}{???}
+\item{save.folder}{Directory where all results generated should be saved}
 
-\item{time.col.label}{???}
+\item{time.col.label}{Character specifying the name of the channel with the time labels for each cell}
 
-\item{condition.col.label}{???}
+\item{condition.col.label}{Character specifying the name of the channel with the condition labels for each cell}
 
-\item{name.sort}{???}
+\item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
+them in the order supplied by the user}
 
-\item{clustering}{???}
+\item{clustering}{Logical specifying whether to cluster single-cell data}
 
-\item{seed.X}{???}
+\item{seed.X}{Numeric value for the seed to set for reproducible FLOWMAPR runs}
 
-\item{savePDFs}{???}
+\item{savePDFs}{Logical specifying whether to generate PDFs for the resolved graph with
+nodes colored by each parameter}
 
-\item{which.palette}{???}
+\item{which.palette}{Optional variable, character specifying which color palette to use
+in generated PDFs, valid options include \code{c("bluered", "jet", "CB")}, where \code{"CB"}
+is a colorblind-friendly option}
 
-\item{cluster.numbers}{???}
+\item{cluster.numbers}{Optional variable, single numeric or a vector of numerics specifying
+how many clusters to generate from each separate dataframe}
 }
 \value{
-???
-
-\url{http://en.wikipedia.org/}
+the force-directed layout resolved igraph graph object
 }
 \description{
 \code{FLOWMAPfromDF} returns the ???
-}
-\details{
-This function ???
+\url{https://github.com/zunderlab/FLOWMAP/}
 }
 \examples{
 FLOWMAPfromDF()

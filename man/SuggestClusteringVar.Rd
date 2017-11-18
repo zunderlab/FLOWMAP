@@ -23,7 +23,11 @@ annotate all FCS file data}
 Vector naming channels that vary the most within and between FCS files
 }
 \description{
-\code{SuggestClusteringVar} returns the ???
+\code{SuggestClusteringVar} returns a vector of user-specified length that contains
+suggested names of channels to be used as \code{clustering.var} in FLOWMAPR analysis.
+Chosen channels are determined based on analysis of the provided FCS files, as the
+variance is calculated within and between timepoints. The top varying markers are noted
+and tabulated, and the markers that consistently vary the most are selected.
 }
 \examples{
 fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")

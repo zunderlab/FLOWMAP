@@ -84,7 +84,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #' from each FCS file, default is set to \code{1000}
 #' @param transform Logical specifying whether to transform the data using an Asinh
 #' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
-#' @return a list where each member is a dataframe
+#' @return a list where each member is a dataframe containing the single-cell data
 #' @examples
 #' fcs.file.names <- c("Desktop/A.fcs", "Desktop/B.fcs")
 #' var.remove <- c("Channel3", "Channel4")
@@ -149,7 +149,8 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 #' from each FCS file, default is set to \code{1000}
 #' @param transform Logical specifying whether to transform the data using an Asinh
 #' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
-#' @return a list where each member is a dataframe
+#' @return a list where each member is a list containing multiple dataframes containing
+#' single-cell data from the same timepoint, but multiple conditions
 #' @examples
 #' list.of.file.names <- list("1" = c("Desktop/A-1.fcs", "Desktop/B-1.fcs"),
 #' "2" = c("Desktop/A-2.fcs", "Desktop/B-2.fcs"))

@@ -1,10 +1,11 @@
 
 #' Restructure a dataframe into a list of dataframes
 #'
-#' \code{RestructureDF} returns the ???
-#'
-#' This function is a first step before starting a FLOWMAPR analysis
-#' using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
+#' \code{RestructureDF} generates the list of dataframes containing single-cell data
+#' where each consecutive member is a dataframe from a different timepoint, from a single
+#' dataframe where a column designates the timepoints and if relevant, the conditions, of
+#' each individual cell. This function is a pre-processing step before starting a FLOWMAPR
+#' analysis using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
 #'
 #' @param df a single dataframe containing all single-cell data from all treatments
 #' and conditions (if relevant) to be restructured
@@ -12,7 +13,8 @@
 #' be used to find the timepoint label for each cell, default is set to \code{"Time"}
 #' @param condition.col.label Character specifying the channel name that should
 #' be used to find the condition label for each cell, default is set to \code{NULL}
-#' @return results
+#' @return a list of dataframes containing the single-cell data or if \code{condition.col.label}
+#' is provided (not \code{NULL}), a list of lists containing dataframes of single-cell data
 #' @examples
 #' RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")
 #' @export

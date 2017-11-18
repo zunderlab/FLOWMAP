@@ -14,7 +14,13 @@ List mapping channel names (taken from the "name" field of a
 flowFrame) to alternative names from the flowFrame "desc" fields
 }
 \description{
-\code{ConstructVarAnnotate} returns the ???
+\code{ConstructVarAnnotate} returns a list that can be used during FLOWMAPR
+analysis to change channel names from the default "name" field used in a
+flowFrame to the names provided in the "desc" fields. Generally in CyTOF/mass
+cytometry or flow cytometry data, the original "name" field corresponds to the
+measurement channel (e.g. FITC or Sm154Di) while the "desc" field will correspond
+to the name of the marker entered by the user at the machine (e.g. cCaspase3 or
+CyclinB1).
 }
 \examples{
 ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")

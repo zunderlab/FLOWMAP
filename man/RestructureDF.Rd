@@ -17,14 +17,15 @@ be used to find the timepoint label for each cell, default is set to \code{"Time
 be used to find the condition label for each cell, default is set to \code{NULL}}
 }
 \value{
-results
+a list of dataframes containing the single-cell data or if \code{condition.col.label}
+is provided (not \code{NULL}), a list of lists containing dataframes of single-cell data
 }
 \description{
-\code{RestructureDF} returns the ???
-}
-\details{
-This function is a first step before starting a FLOWMAPR analysis
-using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
+\code{RestructureDF} generates the list of dataframes containing single-cell data
+where each consecutive member is a dataframe from a different timepoint, from a single
+dataframe where a column designates the timepoints and if relevant, the conditions, of
+each individual cell. This function is a pre-processing step before starting a FLOWMAPR
+analysis using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
 }
 \examples{
 RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")

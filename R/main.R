@@ -1,10 +1,9 @@
 
 #' FLOWMAP - generate FLOWMAPR analysis results from FCS files in R
 #'
-#' \code{FLOWMAP} returns the ???
-#'
-#' This function ???
-#'
+#' \code{FLOWMAP} generates FLOWMAPR analysis results
+#' \url{https://github.com/zunderlab/FLOWMAP/}
+#' 
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one")}
 #' @param files File paths for FCS files to be used or a folder containing
@@ -14,26 +13,43 @@
 #' annotate all FCS file data
 #' @param clustering.var Vector naming channels to be used to calculate distances/differences
 #' between cells for clustering (if requested) and edge-drawing steps
-#' @param cluster.numbers A single numeric or a vector of numerics
+#' @param cluster.numbers A single numeric or a vector of numerics specifying how many clusters
+#' to generate from each separate FCS file
 #' @param distance.metric Character \code{c("manhattan", "euclidean")}
-#' @param minimum Numeric 
-#' @param maximum Numeric 
-#' @param per Numeric 
+#' @param minimum Numeric value specifying the minimum number of edges that will be allotted
+#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+#' set to \code{2}, no less than 2 is recommended
+#' @param maximum Numeric value specifying the maximum number of edges that will be allotted
+#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
+#' set to \code{5}, no less than 3 is recommended
+#' @param per Numeric value specifying the top n% of edges by strength that will be used to assess
+#' density and allot edges during the density-dependent edge-building step of the FLOW-MAP
+#' graph, default value is set to \code{1}, changing this value is not advised
 #' @param save.folder Directory where all results generated should be saved
-#' @param subsamples A single numeric or a vector of numerics
-#' @param name.sort Logical
-#' @param downsample Logical
-#' @param seed.X Numeric 
-#' @param savePDFs Logical
-#' @param which.palette Character \code{c("bluered", "jet", "CB")}
-#' @param exclude.pctile Optional variable, numeric
-#' @param target.pctile Optional variable, numeric
-#' @param target.number Optional variable, numeric
-#' @param target.percent Optional variable, numeric
-#' @return ???
-#' 
-#' \url{http://en.wikipedia.org/}
-#'   
+#' @param subsamples A single numeric or a vector of numerics specifying how many cells to
+#' subsample from each FCS file
+#' @param name.sort Logical specifying whether to sort FCS file path names alphanumerically or use
+#' them in the order supplied by the user
+#' @param downsample Logical specifying whether to use SPADE density-dependent downsampling
+#' @param seed.X Numeric value for the seed to set for reproducible FLOWMAPR runs
+#' @param savePDFs Logical specifying whether to generate PDFs for the resolved graph with
+#' nodes colored by each parameter
+#' @param which.palette Optional variable, character specifying which color palette to use
+#' in generated PDFs, valid options include \code{c("bluered", "jet", "CB")}, where \code{"CB"}
+#' is a colorblind-friendly option
+#' @param exclude.pctile Optional variable, numeric value for the downsampling_exclude_pctile variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.pctile Optional variable, numeric value for the downsampling_target_pctile variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.number Optional variable, numeric value for the downsampling_target_number variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @return the force-directed layout resolved igraph graph object
 #' @examples
 #' FLOWMAP()
 #' @export

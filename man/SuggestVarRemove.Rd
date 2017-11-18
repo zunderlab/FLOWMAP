@@ -16,7 +16,10 @@ annotate all FCS file data}
 Vector naming channels suggested to be removed from downstream FLOWMAPR analysis
 }
 \description{
-\code{SuggestVarRemove} returns the ???
+\code{SuggestVarRemove} returns a vector of channel names that suggest markers
+to remove during FLOWMAPR analysis based on the annotated channel list \code{var.annotate}
+and \code{var.to.remove} a user-supplied list of substrings that designate
+the names of blank channels.
 }
 \examples{
 var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")

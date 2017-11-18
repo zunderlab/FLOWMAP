@@ -26,48 +26,64 @@ annotate all FCS file data}
 \item{clustering.var}{Vector naming channels to be used to calculate distances/differences
 between cells for clustering (if requested) and edge-drawing steps}
 
-\item{cluster.numbers}{A single numeric or a vector of numerics}
+\item{cluster.numbers}{A single numeric or a vector of numerics specifying how many clusters
+to generate from each separate FCS file}
 
 \item{distance.metric}{Character \code{c("manhattan", "euclidean")}}
 
-\item{minimum}{Numeric}
+\item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+set to \code{2}, no less than 2 is recommended}
 
-\item{maximum}{Numeric}
+\item{maximum}{Numeric value specifying the maximum number of edges that will be allotted
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is
+set to \code{5}, no less than 3 is recommended}
 
-\item{per}{Numeric}
+\item{per}{Numeric value specifying the top n% of edges by strength that will be used to assess
+density and allot edges during the density-dependent edge-building step of the FLOW-MAP
+graph, default value is set to \code{1}, changing this value is not advised}
 
 \item{save.folder}{Directory where all results generated should be saved}
 
-\item{subsamples}{A single numeric or a vector of numerics}
+\item{subsamples}{A single numeric or a vector of numerics specifying how many cells to
+subsample from each FCS file}
 
-\item{name.sort}{Logical}
+\item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
+them in the order supplied by the user}
 
-\item{downsample}{Logical}
+\item{downsample}{Logical specifying whether to use SPADE density-dependent downsampling}
 
-\item{seed.X}{Numeric}
+\item{seed.X}{Numeric value for the seed to set for reproducible FLOWMAPR runs}
 
-\item{savePDFs}{Logical}
+\item{savePDFs}{Logical specifying whether to generate PDFs for the resolved graph with
+nodes colored by each parameter}
 
-\item{which.palette}{Character \code{c("bluered", "jet", "CB")}}
+\item{which.palette}{Optional variable, character specifying which color palette to use
+in generated PDFs, valid options include \code{c("bluered", "jet", "CB")}, where \code{"CB"}
+is a colorblind-friendly option}
 
-\item{exclude.pctile}{Optional variable, numeric}
+\item{exclude.pctile}{Optional variable, numeric value for the downsampling_exclude_pctile variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
 
-\item{target.pctile}{Optional variable, numeric}
+\item{target.pctile}{Optional variable, numeric value for the downsampling_target_pctile variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
 
-\item{target.number}{Optional variable, numeric}
+\item{target.number}{Optional variable, numeric value for the downsampling_target_number variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
 
-\item{target.percent}{Optional variable, numeric}
+\item{target.percent}{Optional variable, numeric value for the downsampling_target_percent variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
 }
 \value{
-???
-
-\url{http://en.wikipedia.org/}
+the force-directed layout resolved igraph graph object
 }
 \description{
-\code{FLOWMAP} returns the ???
-}
-\details{
-This function ???
+\code{FLOWMAP} generates FLOWMAPR analysis results
+\url{https://github.com/zunderlab/FLOWMAP/}
 }
 \examples{
 FLOWMAP()
