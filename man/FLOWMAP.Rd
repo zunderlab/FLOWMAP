@@ -71,8 +71,4 @@ This function ???
 }
 \examples{
 FLOWMAP()
-
-\dontrun{
-FLOWMAP()
-}
 }

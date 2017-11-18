@@ -21,9 +21,4 @@ file name containing the current date, a supplied string in
 }
 \examples{
 ConvertToGraphML(current.graph, "Practice_Graph")
-
-\dontrun{
-ConvertToGraphML(current.graph)
-ConvertToGraphML("Practice_Graph")
-}
 }

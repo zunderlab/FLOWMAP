@@ -28,8 +28,4 @@ using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
 }
 \examples{
 RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")
-
-\dontrun{
-RestructureDF(df, time.col.label = NULL)
-}
 }

@@ -18,8 +18,4 @@ flowFrame) to alternative names from the flowFrame "desc" fields
 }
 \examples{
 ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
-
-\dontrun{
-ConstructVarAnnotate()
-}
 }

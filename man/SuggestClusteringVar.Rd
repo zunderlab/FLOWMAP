@@ -32,7 +32,4 @@ var.remove <- c("Channel3", "Channel4")
 
 SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
 var.remove, top.num = 20)
-\dontrun{
-SuggestClusteringVar()
-}
 }

@@ -20,8 +20,4 @@ Vector with the file paths of FCS files found in the given folder
 }
 \examples{
 GetFCSNames(folder, sort = FALSE)
-
-\dontrun{
-GetFCSNames(sort = TRUE)
-}
 }

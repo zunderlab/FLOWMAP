@@ -21,7 +21,4 @@ Vector naming channels suggested to be removed from downstream FLOWMAPR analysis
 \examples{
 var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
 SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
-\dontrun{
-SuggestVarRemove(var.to.remove)
-}
 }

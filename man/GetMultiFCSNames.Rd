@@ -21,8 +21,4 @@ that contains subfolders corresponding to each timepoint.
 }
 \examples{
 GetMultiFCSNames(folder, sort = FALSE)
-
-\dontrun{
-GetMultiFCSNames()
-}
 }

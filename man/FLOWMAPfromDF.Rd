@@ -60,8 +60,4 @@ This function ???
 }
 \examples{
 FLOWMAPfromDF()
-
-\dontrun{
-FLOWMAPfromDF()
-}
 }
