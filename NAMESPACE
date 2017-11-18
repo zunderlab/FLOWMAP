@@ -2,6 +2,7 @@
 
 export(ConstructVarAnnotate)
 export(ConvertToGraphML)
+export(DownsampleFCS)
 export(FLOWMAP)
 export(FLOWMAPfromDF)
 export(GetFCSNames)

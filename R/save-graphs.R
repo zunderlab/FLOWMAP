@@ -20,7 +20,9 @@ MakeOutFolder <- function(runtype) {
 #' the saved igraph graph object. The user need not include the ".graphml"
 #' file extension as that is automatically appended.
 #' @examples
-#' ConvertToGraphML(current.graph, "Practice_Graph")
+#' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE, multiple = FALSE)
+#' file.name <- "Practice_Graph"
+#' ConvertToGraphML(current.graph, file.name)
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")

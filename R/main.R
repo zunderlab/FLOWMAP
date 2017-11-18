@@ -1,8 +1,9 @@
 
 #' FLOWMAP - generate FLOWMAPR analysis results from FCS files in R
 #'
-#' \code{FLOWMAP} generates FLOWMAPR analysis results
-#' \url{https://github.com/zunderlab/FLOWMAP/}
+#' \code{FLOWMAP} generates FLOWMAPR analysis results from FCS files. For more information,
+#' as well as a guide for how to choose the best settings for your analysis, go to
+#' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #' 
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one")}
@@ -50,8 +51,6 @@
 #' used as described in the SPADE driver function, see the documentation for the spade package at
 #' \url{https://github.com/nolanlab/spade}
 #' @return the force-directed layout resolved igraph graph object
-#' @examples
-#' FLOWMAP()
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
                     var.annotate, clustering.var, cluster.numbers = 100,

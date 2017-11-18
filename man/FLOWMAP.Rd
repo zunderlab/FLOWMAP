@@ -82,9 +82,7 @@ used as described in the SPADE driver function, see the documentation for the sp
 the force-directed layout resolved igraph graph object
 }
 \description{
-\code{FLOWMAP} generates FLOWMAPR analysis results
-\url{https://github.com/zunderlab/FLOWMAP/}
-}
-\examples{
-FLOWMAP()
+\code{FLOWMAP} generates FLOWMAPR analysis results from FCS files. For more information,
+as well as a guide for how to choose the best settings for your analysis, go to
+our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 }

@@ -2,8 +2,9 @@
 #' FLOWMAPfromDF - generate FLOWMAPR analysis results from
 #' dataframes in R
 #'
-#' \code{FLOWMAPfromDF} returns the ???
-#' \url{https://github.com/zunderlab/FLOWMAP/}
+#' \code{FLOWMAP} generates FLOWMAPR analysis results from dataframe(s). For more information,
+#' as well as a guide for how to choose the best settings for your analysis, go to
+#' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one")}
@@ -38,8 +39,6 @@
 #' @param cluster.numbers Optional variable, single numeric or a vector of numerics specifying
 #' how many clusters to generate from each separate dataframe
 #' @return the force-directed layout resolved igraph graph object
-#' @examples
-#' FLOWMAPfromDF()
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",

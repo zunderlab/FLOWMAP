@@ -20,5 +20,6 @@ of FCS files found in the given subfolder
 that contains subfolders corresponding to each timepoint.
 }
 \examples{
-GetMultiFCSNames(folder, sort = FALSE)
+folder <- "Desktop/FCS_Files"
+GetMultiFCSNames(folder, sort = TRUE)
 }

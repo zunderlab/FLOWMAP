@@ -66,9 +66,7 @@ how many clusters to generate from each separate dataframe}
 the force-directed layout resolved igraph graph object
 }
 \description{
-\code{FLOWMAPfromDF} returns the ???
-\url{https://github.com/zunderlab/FLOWMAP/}
-}
-\examples{
-FLOWMAPfromDF()
+\code{FLOWMAP} generates FLOWMAPR analysis results from dataframe(s). For more information,
+as well as a guide for how to choose the best settings for your analysis, go to
+our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 }

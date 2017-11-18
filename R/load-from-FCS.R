@@ -28,7 +28,8 @@ RemoveExistingTimeVar <- function(fcs.file) {
 #' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
 #' @return Vector with the file paths of FCS files found in the given folder
 #' @examples
-#' GetFCSNames(folder, sort = FALSE)
+#' folder <- "Desktop/FCS_Files"
+#' GetFCSNames(folder, sort = TRUE)
 #' @export
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -51,7 +52,8 @@ GetFCSNames <- function(folder, sort = TRUE) {
 #' @return List with each member containing a vector with the file paths
 #' of FCS files found in the given subfolder
 #' @examples
-#' GetMultiFCSNames(folder, sort = FALSE)
+#' folder <- "Desktop/FCS_Files"
+#' GetMultiFCSNames(folder, sort = TRUE)
 #' @export
 GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -211,16 +213,17 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' SPADE: density-dependent downsampling
 #' 
 #' This code was adapted from the spade R package,
-#' available here: https://github.com/nolanlab/spade.
+#' available here: \url{https://github.com/nolanlab/spade}.
 #' 
 #' Specifically, the code in this file is adapted from downsample.R.
 #' 
 #' This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
 #' and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
 #' was used under the GNU General Public License v. 2.0
-#' (https://github.com/nolanlab/spade/blob/master/LICENSE) available
-#' here: https://opensource.org/licenses/GPL-2.0. In accordance with these
+#' (\url{https://github.com/nolanlab/spade/blob/master/LICENSE}) available
+#' here: \url{https://opensource.org/licenses/GPL-2.0}. In accordance with these
 #' license rules, our code is available under GPL-3.0.
+#' @export
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,

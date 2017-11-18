@@ -13,7 +13,7 @@
 #' here: \url{https://opensource.org/licenses/Artistic-2.0}.
 #' 
 #' @examples
-#' # LaunchGUI()
+#' LaunchGUI()
 #' @export
 LaunchGUI <- function() {
   require(shiny)
