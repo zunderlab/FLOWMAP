@@ -222,8 +222,6 @@ PrintSummary <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("mode (selected FLOW-MAP mode):", env$mode)
   summary[(dim(summary)[1] + 1), ] <- c("files:", toString(env$files))
   summary[(dim(summary)[1] + 1), ] <- c("var.annotate (markers included in this analysis):", toString(env$var.annotate))
-  print("env$var.annotate")
-  print(env$var.annotate)
   if (length(env$var.annotate) == 0) {
     summary[(dim(summary)[1] + 1), ] <- c("panel (full panel including metals and corresponding marker):",
                                           "(no marker names changed)")
