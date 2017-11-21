@@ -4,12 +4,13 @@
 \alias{FLOWMAP}
 \title{FLOWMAP - generate FLOWMAPR analysis results from FCS files in R}
 \usage{
-FLOWMAP(mode = c("single", "multi", "one"), files, var.remove, var.annotate,
-  clustering.var, cluster.numbers = 100, distance.metric = "manhattan",
-  minimum = 2, maximum = 5, per = 1, save.folder = getwd(),
-  subsamples = 200, name.sort = TRUE, downsample = FALSE, seed.X = 1,
-  savePDFs = TRUE, which.palette = "bluered", exclude.pctile = NULL,
-  target.pctile = NULL, target.number = NULL, target.percent = NULL, ...)
+FLOWMAP(mode = c("single", "multi", "one"), files, var.remove = c(),
+  var.annotate = NULL, clustering.var, cluster.numbers = 100,
+  distance.metric = "manhattan", minimum = 2, maximum = 5, per = 1,
+  save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+  downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+  which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
+  target.number = NULL, target.percent = NULL, ...)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
@@ -18,10 +19,12 @@ available options include \code{c("single", "multi", "one")}}
 \item{files}{File paths for FCS files to be used or a folder containing
 the FCS files to be used in analysis}
 
-\item{var.remove}{Vector naming channels to be removed from all downstream analysis}
+\item{var.remove}{Vector naming channels to be removed from all downstream analysis, default
+value is an empty vector, meaning that no channels will be removed}
 
 \item{var.annotate}{List mapping channel names to user-specified names to properly
-annotate all FCS file data}
+annotate all FCS file data, default value is \code{NULL}, which will then autogenerate the
+\code{var.annotate} values using the \code{ConstructVarAnnotate()} function}
 
 \item{clustering.var}{Vector naming channels to be used to calculate distances/differences
 between cells for clustering (if requested) and edge-drawing steps}

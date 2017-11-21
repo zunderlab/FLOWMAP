@@ -9,9 +9,11 @@
 #' available options include \code{c("single", "multi", "one")}
 #' @param files File paths for FCS files to be used or a folder containing
 #' the FCS files to be used in analysis
-#' @param var.remove Vector naming channels to be removed from all downstream analysis
+#' @param var.remove Vector naming channels to be removed from all downstream analysis, default
+#' value is an empty vector, meaning that no channels will be removed
 #' @param var.annotate List mapping channel names to user-specified names to properly
-#' annotate all FCS file data
+#' annotate all FCS file data, default value is \code{NULL}, which will then autogenerate the
+#' \code{var.annotate} values using the \code{ConstructVarAnnotate()} function
 #' @param clustering.var Vector naming channels to be used to calculate distances/differences
 #' between cells for clustering (if requested) and edge-drawing steps
 #' @param cluster.numbers A single numeric or a vector of numerics specifying how many clusters
@@ -52,8 +54,8 @@
 #' \url{https://github.com/nolanlab/spade}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
-                    var.annotate, clustering.var, cluster.numbers = 100,
+FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
+                    var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     distance.metric = "manhattan", minimum = 2, maximum = 5,
                     per = 1, save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
@@ -79,6 +81,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     }
     orig.times <- ParseTimes(fcs.file.names, name.sort = name.sort)
     file.name <- fcs.file.names[1]
+    if (is.null(var.annotate)) {
+      var.annotate <- ConstructVarAnnotate(file.name)
+    }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
       fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
@@ -117,6 +122,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
       orig.times <- MultiFolderParseTimes(files, fcs.file.names, name.sort = name.sort)
     }
     file.name <- fcs.file.names[[1]][1]
+    if (is.null(var.annotate)) {
+      var.annotate <- ConstructVarAnnotate(file.name)
+    }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
       fcs.files <- MultiDownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
@@ -155,7 +163,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove,
     runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
-    
+    if (is.null(var.annotate)) {
+      var.annotate <- ConstructVarAnnotate(file.name)
+    }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
       fcs.file <- DownsampleFCS(file.name, clustering.var, channel.annotate = var.annotate,
