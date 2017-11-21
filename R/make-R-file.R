@@ -1,16 +1,22 @@
 
 MakePrintVarAnnotate <- function(var.annotate) {
-  for (i in 1:length(var.annotate)) {
-    marker.i <- paste("'", names(var.annotate)[i], "'", " = ",
-                      "'", unname(unlist(var.annotate))[i], "'", sep = "")
-    if (i == 1) {
-      p.var.annotate <- marker.i
-    } else {
-      p.var.annotate <- paste(p.var.annotate, marker.i, sep = ", ")
+  if (length(var.annotate) == 0 && is.null(var.annotate)) {
+    p.var.annotate <- paste("var.annotate", " <- ", "NULL", sep = "")
+  } else if (length(var.annotate) == 0 && !is.null(var.annotate)) {
+    p.var.annotate <- paste("var.annotate", " <- ", "list()", sep = "")
+  } else {
+    for (i in 1:length(var.annotate)) {
+      marker.i <- paste("'", names(var.annotate)[i], "'", " = ",
+                        "'", unname(unlist(var.annotate))[i], "'", sep = "")
+      if (i == 1) {
+        p.var.annotate <- marker.i
+      } else {
+        p.var.annotate <- paste(p.var.annotate, marker.i, sep = ", ")
+      }
     }
+    p.var.annotate <- paste("list(", p.var.annotate, ")", sep = "")
+    p.var.annotate <- paste("var.annotate", " <- ", p.var.annotate, sep = "")
   }
-  p.var.annotate <- paste("list(", p.var.annotate, ")", sep = "")
-  p.var.annotate <- paste("var.annotate", " <- ", p.var.annotate, sep = "")
   return(p.var.annotate)
 }
 

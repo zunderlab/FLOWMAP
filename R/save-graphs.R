@@ -222,10 +222,17 @@ PrintSummary <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("mode (selected FLOW-MAP mode):", env$mode)
   summary[(dim(summary)[1] + 1), ] <- c("files:", toString(env$files))
   summary[(dim(summary)[1] + 1), ] <- c("var.annotate (markers included in this analysis):", toString(env$var.annotate))
-  panel <- PrintPanel(env$var.annotate)
-  panel <- paste(panel, collapse = ", ")
-  summary[(dim(summary)[1] + 1), ] <- c("panel (full panel including metals and corresponding marker):",
-                                        paste(panel, collapse = ", "))
+  print("env$var.annotate")
+  print(env$var.annotate)
+  if (length(env$var.annotate) == 0) {
+    summary[(dim(summary)[1] + 1), ] <- c("panel (full panel including metals and corresponding marker):",
+                                          "(no marker names changed)")
+  } else {
+    panel <- PrintPanel(env$var.annotate)
+    panel <- paste(panel, collapse = ", ")
+    summary[(dim(summary)[1] + 1), ] <- c("panel (full panel including metals and corresponding marker):",
+                                          paste(panel, collapse = ", "))
+  }
   summary[(dim(summary)[1] + 1), ] <- c("var.remove (removed markers):", toString(env$var.remove))
   summary[(dim(summary)[1] + 1), ] <- c("clustering.var (markers used for clustering and distance calculation):",
                                         toString(env$clustering.var))
