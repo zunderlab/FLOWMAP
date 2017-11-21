@@ -433,6 +433,21 @@ The CSV file should be formatted as shown below in cells. Assume the timepoints 
 |  03  |                                   |  ConditionB Time03 FCS File Path  |
 |  04  |  ConditionA Time04 FCS File Path  |  ConditionB Time04 FCS File Path  |
 
+
+## Troubleshooting
+Here are some common issues and suggestions for how to fix them:
+1. The program crashes during ForceAtlas2.
+<!-- - change seed -->
+
+2. In FLOWMAPfromDF - the software does not recognize input.
+<!-- - the mode not recognized/does not match input -->
+
+3. In FLOWMAP -- the software does not recognize input.
+<!-- - the mode not recognized/does not match input -->
+
+4. The graph from the graphml file or the PDFs have unexpected labels (especially for time or condition).
+<!-- - ??? -->
+
 ## Contributing
 
 ???
