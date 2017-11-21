@@ -83,6 +83,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
     file.name <- fcs.file.names[1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -124,6 +125,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
     file.name <- fcs.file.names[[1]][1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -165,6 +167,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
     setwd(output.folder)
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
