@@ -139,9 +139,15 @@ AnnotateMultiGraph <- function(output.graph, list.of.FLOWMAP.clusters,
   print(label.key)
   output.anno <- ConvertCharacterLabel(output.anno, label.key)
   for (c in colnames(output.anno)) {
-    output.graph <- set.vertex.attribute(output.graph, c,
-                                         index = as.numeric(1:dim(output.anno)[1]),
-                                         value = output.anno[, c])
+    if (c == "Condition") {
+      output.graph <- set.vertex.attribute(output.graph, c,
+                                           index = as.numeric(1:dim(output.anno)[1]),
+                                           value = as.character(output.anno[, c]))
+    } else {
+      output.graph <- set.vertex.attribute(output.graph, c,
+                                           index = as.numeric(1:dim(output.anno)[1]),
+                                           value = output.anno[, c])
+    }
   }
   # add name attribute
   V(output.graph)$name <- 1:length(V(output.graph))

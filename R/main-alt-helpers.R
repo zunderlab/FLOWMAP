@@ -35,14 +35,17 @@ RestructureDF <- function(df, time.col.label = "Time", condition.col.label = NUL
     all.conditions <- unique(df[, condition.col.label])
     results[["all.conditions"]] <- all.conditions
     multi.list.df <- list()
-    for (i in 1:length(all.conditions)) {
+    for (i in 1:length(all.times)) {
       list.of.df <- list()
-      for (i in 1:length(all.times)) {
-        inds <- which(df[, time.col.label] == all.times[i])
-        list.of.df[[i]] <- df[inds, ]
-        rm(inds)
+      inds <- which(df[, time.col.label] == all.times[i])
+      sub.df <- df[inds, ]
+      cond.in.this.time <- unique(sub.df[, condition.col.label])
+      for (j in 1:length(cond.in.this.time)) {
+        cond.inds <- which(sub.df[, condition.col.label] == cond.in.this.time[j])
+        list.of.df[[cond.in.this.time[j]]] <- sub.df[cond.inds, ]
       }
       multi.list.df[[i]] <- list.of.df
+      rm(list.of.df)
     }
     new.df <- multi.list.df
   }
@@ -83,7 +86,13 @@ RemoveRowNames <- function(df) {
   fixed.df <- df
   if (is.list(df) && !is.data.frame(df)) {
     for (i in 1:length(df)) {
-      rownames(fixed.df[[i]]) <- 1:nrow(df[[i]])
+      if (is.list(df[[i]]) && !is.data.frame(df[[i]])) {
+        for (j in 1:length(df[[i]])) {
+          rownames(fixed.df[[i]][[j]]) <- 1:nrow(df[[i]][[j]])
+        }
+      } else {
+        rownames(fixed.df[[i]]) <- 1:nrow(df[[i]])
+      }
     }
   } else if (is.data.frame(df)) {
     rownames(fixed.df) <- 1:nrow(df)
@@ -96,12 +105,13 @@ GetLabelKeyfromDF <- function(multi.list.df, time.col.label, condition.col.label
     label.key <- list()
     all.times <- c()
     for (i in 1:length(multi.list.df)) {
-      label.key[[i]] <- c()
+      condition.labels <- c()
       this.time <- c()
       for (j in 1:length(multi.list.df[[i]])) {
-        label.key[[i]] <- c(label.key[[i]], as.character(unique(multi.list.df[[i]][[j]][, condition.col.label])))
+        condition.labels <- c(condition.labels, as.character(unique(multi.list.df[[i]][[j]][, condition.col.label])))
         this.time <- c(this.time, as.character(unique(multi.list.df[[i]][[j]][, time.col.label])))
       }
+      label.key[[i]] <- condition.labels
       if (unique(this.time) > 1) {
         warning("More than one timepoint detected in sublist of multi.list.df! Using first timepoint found for label.")
         all.times <- c(all.times, this.time[[1]])
@@ -113,6 +123,8 @@ GetLabelKeyfromDF <- function(multi.list.df, time.col.label, condition.col.label
     stop("'multi.list.df' is of unknown type!")
   }
   names(label.key) <- all.times
+  print("label.key")
+  print(label.key)
   return(label.key)
 }
 

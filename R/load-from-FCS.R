@@ -343,9 +343,12 @@ ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
 ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
   data.frame.with.character.labels <- data.frame.with.numeric.labels
   times <- unique(data.frame.with.numeric.labels[, "Time"])
-  for (t in times) {
+  for (t in 1:length(times)) {
+    # for (t in times) {
+    # this.label <- label.key[[t]]
     this.label <- label.key[[t]]
-    this.ind <- which(data.frame.with.numeric.labels[, "Time"] == t)
+    this.ind <- which(data.frame.with.numeric.labels[, "Time"] == times[t])
+    # this.ind <- which(data.frame.with.numeric.labels[, "Time"] == t)
     for (i in 1:length(this.label)) {
       fix.ind <- which(data.frame.with.numeric.labels[, "Condition"] == i)
       use.ind <- intersect(fix.ind, this.ind)

@@ -50,7 +50,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
   df <- RemoveRowNames(df)
-    
+  
   if (mode == "single") {
     check <- CheckDFModeSingle(df)
     cat("check", check, "\n")
@@ -125,7 +125,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode != "one") {
+  if (mode == "single") {
     fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
   } else {
     fixed.graph <- graph.xy

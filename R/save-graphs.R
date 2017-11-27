@@ -53,8 +53,6 @@ ConvertOrigTime <- function(graph, orig.times) {
   for (i in 1:length(times.to.fix)) {
     time.convert[times.to.fix[i]] <- orig.times[i]
   }
-  print("time.convert")
-  print(time.convert)
   fixed.times <- c()
   for (i in 1:length(to.fix)) {
     fixed.times <- c(fixed.times, ChangeTimes(to.fix[i], time.convert))
