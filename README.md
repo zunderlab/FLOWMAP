@@ -422,7 +422,6 @@ Here are some common issues and suggestions for how to fix them:
 
 4. The graph from the graphml file or the PDFs have unexpected labels (especially for time or condition).
 <!-- - ??? -->
--->
 
 <a name="info"></a>
 ## Authors
