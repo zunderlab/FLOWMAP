@@ -408,20 +408,24 @@ The CSV file should be formatted as shown below in cells. Assume the timepoints 
 |  03  |                                   |  ConditionB Time03 FCS File Path  |
 |  04  |  ConditionA Time04 FCS File Path  |  ConditionB Time04 FCS File Path  |
 
-<!--
 ## Troubleshooting
 Here are some common issues and suggestions for how to fix them:
+
 1. The program crashes during ForceAtlas2.
-<!-- - change seed -->
 
-2. In FLOWMAPfromDF - the software does not recognize input.
-<!-- - the mode not recognized/does not match input -->
+Solution: Usually these crashes originate during the ForceAtlas2 algorithm stage, which is programmed in C++ called from R. The source of this bug is still unclear so we recommend trying to circumvent the error by changing the seed of the FLOWMAPR analysis.
 
-3. In FLOWMAP -- the software does not recognize input.
-<!-- - the mode not recognized/does not match input -->
+2. In the `FLOWMAPfromDF()` function - the software does not recognize input.
+
+Solution: This error will appear if the provided input (the dataframe in R) does not match the mode specified by the user. We suggest that you doublecheck that the mode of analysis is what you intended and also check that the input is one of the accepted inputs for that mode. 
+
+3. In the `FLOWMAP()` function -- the software does not recognize input.
+
+Solution: This error will appear if the provided input (the full path of the folder or of the FCS files) does not match the mode specified by the user. We suggest that you doublecheck that the mode of analysis is what you intended and also check that the input is one of the accepted inputs for that mode. 
 
 4. The graph from the graphml file or the PDFs have unexpected labels (especially for time or condition).
-<!-- - ??? -->
+
+Solution: If you are performing a FLOWMAPR run using the `FLOWMAP()` function, check that your FCS files (and folders, if applicable) are named according to the acceptable naming convention. Condition and time names are scraped from these file paths. If you are performing a FLOWMAPR run using the `FLOWMAPfromDF()` function, check that you correctly specify the names of the Condition and Time columns in the dataframe, and that the labels contained in those columns are correct.
 
 <a name="info"></a>
 ## Authors
