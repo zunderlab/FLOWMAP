@@ -18,31 +18,6 @@ This code has been reformatted and compiled into a single R package known as **F
 [Using the GUI](#gui-guide)  
 [Authors and License](#info)  
 
-<!-- Timing for FLOWMAPR Runs -->
-<!-- [Getting Started](#start)
-[Running FLOWMAPR]() -->
-<!-- Contributing -->
-<!-- Versioning -->
-<!-- Example Code for FLOWMAP() with SPADE downsampling -->
-<!-- Template for a FLOWMAPR Run using FLOWMAP() function in R -->
-<!-- Acknowledgments -->
-
-## Code Status
-Please go to the Google Doc (https://docs.google.com/document/d/1O72i3V-hatKQc2_croKxpnPF5-nqCjOr8yxuHh4f67w/edit) and write your bugs/issues/suggestions there until public code release.
-
-<!--
-### Known Issues (“Bugs”)
-
-### Planned Features
-* improve “load” to allow loading cluster tables/matrix 
-
-### Requested Features
-* edges ranked within Gephi to remove/add to scale connectivity as we go
-* add density rank of the vertices to nodes so that amount of downsampling can be changed, to remove/add nodes
-* density rank can also be used to change amount of outlier removal
-* adjust ratio of edges within same time point to edges between time points
-* save template (panel, experimental set-up), at least save FLOWMAPR_run.R with set variables
--->
 
 ## Getting Started
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
@@ -447,14 +422,6 @@ Here are some common issues and suggestions for how to fix them:
 
 4. The graph from the graphml file or the PDFs have unexpected labels (especially for time or condition).
 <!-- - ??? -->
-
-## Contributing
-
-???
-
-## Versioning
-
-???
 
 <a name="info"></a>
 ## Authors
