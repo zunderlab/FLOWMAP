@@ -6,7 +6,6 @@ library(FLOWMAPR)
 files <- '/Users/mesako/Desktop/SingleFLOWMAP' # Change to where your FCS files are located
 mode <- 'single'
 save.folder <- '/Users/mesako/Desktop' # Change to where you want your results saved
-per <- 1
 minimum <- 2
 maximum <- 5
 distance.metric <- 'manhattan'
@@ -22,10 +21,9 @@ downsample <- FALSE
 savePDFs <- TRUE
 which.palette <- 'bluered'
 
-FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
-    var.annotate = var.annotate, clustering.var = clustering.var,
-    cluster.numbers = cluster.numbers, subsamples = subsamples,
-    distance.metric = distance.metric, minimum = minimum,
-    maximum = maximum, per = per, save.folder = save.folder,
-    mode = mode, name.sort = name.sort, downsample = downsample,
-    savePDFs = savePDFs, which.palette = which.palette)
+FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+        save.folder = save.folder, subsamples = subsamples,
+        name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+        savePDFs = savePDFs, which.palette = which.palette)
