@@ -27,12 +27,12 @@ target.percent <- NULL
 savePDFs <- TRUE
 which.palette <- 'bluered'
 
-FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
-        var.annotate = var.annotate, clustering.var = clustering.var,
-        cluster.numbers = cluster.numbers, subsamples = subsamples,
-        distance.metric = distance.metric, minimum = minimum,
-        maximum = maximum, per = per, save.folder = save.folder,
-        mode = mode, name.sort = name.sort, downsample = downsample,
+FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+        clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+        distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+        save.folder = save.folder, subsamples = subsamples,
+        name.sort = name.sort, downsample = downsample, seed.X = seed.X,
         savePDFs = savePDFs, which.palette = which.palette,
         exclude.pctile = exclude.pctile, target.pctile = target.pctile,
         target.number = target.number, target.percent = target.percent)
+
