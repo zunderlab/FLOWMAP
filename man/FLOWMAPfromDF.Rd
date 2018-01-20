@@ -7,7 +7,7 @@ dataframes in R}
 \usage{
 FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
   clustering.var, distance.metric = "manhattan", minimum = 2, maximum = 5,
-  per = 1, save.folder = getwd(), time.col.label = "Time",
+  save.folder = getwd(), time.col.label = "Time",
   condition.col.label = NULL, name.sort = TRUE, clustering = FALSE,
   seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
   cluster.numbers = NULL)
@@ -34,10 +34,6 @@ set to \code{2}, no less than 2 is recommended}
 \item{maximum}{Numeric value specifying the maximum number of edges that will be allotted
 during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 set to \code{5}, no less than 3 is recommended}
-
-\item{per}{Numeric value specifying the top n% of edges by strength that will be used to assess
-density and allot edges during the density-dependent edge-building step of the FLOW-MAP
-graph, default value is set to \code{1}, changing this value is not advised}
 
 \item{save.folder}{Directory where all results generated should be saved}
 

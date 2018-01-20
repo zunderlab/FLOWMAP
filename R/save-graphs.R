@@ -233,7 +233,6 @@ PrintSummary <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("clustering.var (markers used for clustering and distance calculation):",
                                         toString(env$clustering.var))
   summary[(dim(summary)[1] + 1), ] <- c("distance.metric:", toString(env$distance.metric))
-  summary[(dim(summary)[1] + 1), ] <- c("per (distance for calculated density, i.e. 'n percent'):", env$per)
   summary[(dim(summary)[1] + 1), ] <- c("minimum (min number of edges):", env$minimum)
   summary[(dim(summary)[1] + 1), ] <- c("maximum (max number of edges):", env$maximum)
   summary[(dim(summary)[1] + 1), ] <- c("subsamples (subsamples for all FCS files):", env$subsamples)
@@ -299,7 +298,6 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("clustering.var (markers used for clustering and distance calculation):",
                                         toString(env$clustering.var))
   summary[(dim(summary)[1] + 1), ] <- c("distance.metric:", toString(env$distance.metric))
-  summary[(dim(summary)[1] + 1), ] <- c("per (distance for calculated density, i.e. 'n percent'):", env$per)
   summary[(dim(summary)[1] + 1), ] <- c("minimum (min number of edges):", env$minimum)
   summary[(dim(summary)[1] + 1), ] <- c("maximum (max number of edges):", env$maximum)
   summary[(dim(summary)[1] + 1), ] <- c("clustering (whether clustering was performed on cells from DF):",

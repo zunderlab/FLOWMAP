@@ -88,7 +88,6 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.files <- MakePrintFiles(env$files)
   p.mode <- MakePrintChar("mode", env$mode)
   p.save.folder <- MakePrintChar("save.folder", env$save.folder)
-  p.per <- MakePrintNum("per", env$per)
   p.minimum <- MakePrintNum("minimum", env$minimum)
   p.maximum <- MakePrintNum("maximum", env$maximum)
   p.distance.metric <- MakePrintChar("distance.metric", env$distance.metric)
@@ -125,7 +124,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
     var.annotate = var.annotate, clustering.var = clustering.var,
     cluster.numbers = cluster.numbers, subsamples = subsamples,
     distance.metric = distance.metric, minimum = minimum,
-    maximum = maximum, per = per, save.folder = save.folder,
+    maximum = maximum, save.folder = save.folder,
     mode = mode, name.sort = name.sort, downsample = downsample,
     savePDFs = savePDFs, which.palette = which.palette,
     exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -135,7 +134,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
     var.annotate = var.annotate, clustering.var = clustering.var,
     cluster.numbers = cluster.numbers, subsamples = subsamples,
     distance.metric = distance.metric, minimum = minimum,
-    maximum = maximum, per = per, save.folder = save.folder,
+    maximum = maximum, save.folder = save.folder,
     mode = mode, name.sort = name.sort, downsample = downsample,
     savePDFs = savePDFs, which.palette = which.palette)"
   }
@@ -144,7 +143,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.setup1 <- "rm(list = ls())"
   p.setup2 <- "library(FLOWMAPR)"
   if (env$downsample) {
-    writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.per, p.minimum,
+    writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.minimum,
                  p.maximum, p.distance.metric, p.cluster.numbers,
                  p.var.annotate, p.var.remove, p.clustering.var,
                  p.seed.X, p.set.seed.X, p.subsamples, p.name.sort,
@@ -152,7 +151,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
                  p.exclude.pctile, p.target.pctile, p.target.number,
                  p.target.percent, p.FLOWMAP), output)
   } else {
-    writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.per, p.minimum,
+    writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.minimum,
                  p.maximum, p.distance.metric, p.cluster.numbers,
                  p.var.annotate, p.var.remove, p.clustering.var,
                  p.seed.X, p.set.seed.X, p.subsamples, p.name.sort,

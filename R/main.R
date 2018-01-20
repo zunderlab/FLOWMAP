@@ -25,9 +25,6 @@
 #' @param maximum Numeric value specifying the maximum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{5}, no less than 3 is recommended
-#' @param per Numeric value specifying the top n% of edges by strength that will be used to assess
-#' density and allot edges during the density-dependent edge-building step of the FLOW-MAP
-#' graph, default value is set to \code{1}, changing this value is not advised
 #' @param save.folder Directory where all results generated should be saved
 #' @param subsamples A single numeric or a vector of numerics specifying how many cells to
 #' subsample from each FCS file
@@ -57,7 +54,7 @@
 FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
                     var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     distance.metric = "manhattan", minimum = 2, maximum = 5,
-                    per = 1, save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+                    save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, ...) {
@@ -101,7 +98,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
       file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = 1, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
     graph <- results$output.graph
@@ -146,7 +143,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
       file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
-    graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
+    graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
                                max = maximum, distance.metric = distance.metric,
                                label.key = label.key, clustering.var = clustering.var)
   } else if (mode == "one") {
@@ -186,7 +183,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
       file.clusters <- Upsample(file.name, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       per = per, min = minimum, max = maximum,
+                                       per = 1, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
                                        clustering.var = clustering.var)
     output.graph <- first.results$output.graph
