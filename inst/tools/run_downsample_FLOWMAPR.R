@@ -7,7 +7,6 @@ library(FLOWMAPR)
 files <- '/Users/mesako/Desktop/SingleFLOWMAP' # Change to where your FCS files are located
 mode <- 'single'
 save.folder <- '/Users/mesako/Desktop' # Change to where you want your results saved
-per <- 1
 minimum <- 2
 maximum <- 5
 distance.metric <- 'manhattan'
