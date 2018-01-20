@@ -107,7 +107,6 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
-  * `per` - affects connectivity, recommended default is 1
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
   * `subsamples` - how many cells to randomly subsample from each FCS file, default is set to 200
   * `name.sort` - sort FCS files according to name in alphabetical/numerical order, default is set to TRUE for sorting
@@ -144,7 +143,6 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
-  * `per` - affects connectivity, recommended default is 1
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
   * `name.sort` - sort timepoints according to time label in alphabetical/numerical order, default is set to TRUE for sorting
   * `clustering` - cluster within each timepoint, in which case you will want to specify optional variable `cluster.numbers`, default is set to FALSE for clustering
@@ -169,7 +167,6 @@ clustering.var <- c("marker1", "marker2")
 subsamples <- 200
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-per <- 1
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -181,7 +178,7 @@ which.palette <- "bluered"
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  per = per, save.folder = save.folder, subsamples = subsamples,
+                  save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
 ```
@@ -198,7 +195,6 @@ var.remove <- c()
 clustering.var <- c("marker1", "marker2")
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-per <- 1
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -215,7 +211,7 @@ which.palette <- "bluered"
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  per = per, save.folder = save.folder, subsamples = subsamples,
+                  save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -264,7 +260,6 @@ save.folder <- "/Users/mesako/Desktop"
 project.name <- "Example_FLOWMAP_Run"
 clustering.var <- c("marker1", "marker2")
 distance.metric <- "manhattan"
-per <- 1
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -289,7 +284,7 @@ df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label,
 FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
                         time.col.label = time.col.label, condition.col.label = condition.col.label,
                         clustering.var = clustering.var, distance.metric = distance.metric,
-                        minimum = minimum, maximum = maximum, per = per,
+                        minimum = minimum, maximum = maximum,
                         save.folder = save.folder, subsamples = subsamples,
                         name.sort = name.sort, clustering = clustering,
                         seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
@@ -308,16 +303,15 @@ FLOWMAPR is an R package for visualization of high-dimensional data, though ulti
 + **What are some expected trajectories?** That is, what are some cell subpopulations you expect to observe, and what changes should you observe in these cells over time. Any expert knowledge can help you know what to look for (confirmation in your results) after a FLOWMAPR run before you investigate novel findings.
 + **Are there any parameters that are useless or unrelated to your biological question?** You can try not removing any markers, but we generally recommend you include markers with no relevance (e.g. DNA, Event_length, Eubeads) in `var.remove` so that they do not carry through the analysis and no PDFs are generated for them. This step will save small amounts of time and make the graph less inconvenient to navigate in Gephi.
 2. **Start off with a small number of clusters and generally keep the clustering ratio larger (`subsample` close to, either equal to or slightly less than, `cluster.numbers`).** Though the resulting figures may not be fully representative of the variation in the data, these settings will allow you to quickly iterate through different configurations of edge settings and different choices of clustering variables. Given that a graph with about 1200 total nodes or clusters takes 2 minutes to run, try starting with cluster numbers set to approx. 1200 / # of files. For example, if you have a single timecourse with 5 FCS files, try setting `cluster.numbers <- 250` and `subsamples <- 500`.
-3. **You will need to do several iterations of FLOWMAPR to try to arrive at appropriate settings for `minimum`, `maximum`, and `per` as well as `clustering.var`.** The order in which you proceed depends on the results you see, so you may need to reverse the order of the steps (4-5) below. For example, the default edge settings may be wrong for any `clustering.var` you try, in which case you should tweak edge settings and then compare different `clustering.var`.
-4. **Try using the default edge settings for `minimum`, `maximum`, and `per` with different options for `clustering.var`.** These results will show you how informative different sets of markers are. You should try to narrow down to a particular marker set that you can use to refine the edge settings.
-5. **Once you select `clustering.var`, you can change edge settings `minimum`, `maximum`, and `per` to try to arrive at the maximal separation within your data.** Generally you want to arrive at a graph that best resolves difference and allows for spread of different trajectories in the data, so that it captures as much info from the high-dimensional shape of the data as possible. Here are some guides for how to tweak these edge settings:
+3. **You will need to do several iterations of FLOWMAPR to try to arrive at appropriate settings for `minimum`, `maximum`, and `clustering.var`.** The order in which you proceed depends on the results you see, so you may need to reverse the order of the steps (4-5) below. For example, the default edge settings may be wrong for any `clustering.var` you try, in which case you should tweak edge settings and then compare different `clustering.var`.
+4. **Try using the default edge settings for `minimum` and `maximum` with different options for `clustering.var`.** These results will show you how informative different sets of markers are. You should try to narrow down to a particular marker set that you can use to refine the edge settings.
+5. **Once you select `clustering.var`, you can change edge settings `minimum` and `maximum` to try to arrive at the maximal separation within your data.** Generally you want to arrive at a graph that best resolves difference and allows for spread of different trajectories in the data, so that it captures as much info from the high-dimensional shape of the data as possible. Here are some guides for how to tweak these edge settings:
 + If the graph is **too interconnected (hairball-like)**, try reducing `maximum`. You can try reducing `minimum` to 1, but generally we recommend that `minimum` is at least 2. Try moving `maximum` to being at most `minimum` + 1.
 + If the graph is **not interconnected enough (spiky, single nodes radiating out)**, try increasing the `minimum` and/or `maximum`.
-+ We generally suggest keeping `per` at 1, but if you try all reasonable combinations of `minimum` and `maximum`, you can reduce `per` to reduce connectedness or increase `per` to increase connectedness.
 + Be careful as it's possible for graphs to essentially become tangled as they are processed with a force-directed layout. If results do not look useful, check for these tangles that can be resolved in Gephi. Additionally, the force-directed layout step is a computationally intensive and time-consuming step, so it is possible within the R package that the process does not complete. These graphs can be resolved to a stable shape in Gephi.
 6. **Once you arrive at a FLOW-MAP with the "best" settings, repeat the analysis with multiple settings of `seed.X` to produce "technical replicates" of your analysis.** For steps that involve randomness, such as random subsampling of your FCS files, you will want to try to reproduce your FLOW-MAP figures with different samplings.
 
-From anecdotal evidence, most datasets work well with setting `per` to 1, and `minimum` to 2, and setting `maximum` to anything from 5 to 20. Some datasets will show a "saturation point" where more edges allotted (a higher `maximum`) does not significantly change the graph shape so you can start with `maximum` set to 20. If you need more cohesiveness, increase `minimum`. If you need less cohesiveness, reduce `maximum`.
+From anecdotal evidence, most datasets work well with setting `minimum` to 2 and `maximum` to anything from 5 to 20. Some datasets will show a "saturation point" where more edges allotted (a higher `maximum`) does not significantly change the graph shape so you can start with `maximum` set to 20. If you need more cohesiveness, increase `minimum`. If you need less cohesiveness, reduce `maximum`.
 
 #### Timing for FLOWMAPR Runs
 
