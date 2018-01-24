@@ -204,7 +204,7 @@ target.pctile <- 0.99
 target.number <- NULL
 target.percent <- NULL
 name.sort <- FALSE
-downsample <- FALSE
+downsample <- TRUE
 savePDFs <- TRUE
 which.palette <- "bluered"
 
