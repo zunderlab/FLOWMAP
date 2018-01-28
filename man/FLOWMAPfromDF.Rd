@@ -14,7 +14,7 @@ FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one")}}
+available options include \code{c("single", "multi", "one", "one-special")}}
 
 \item{df}{single dataframe, list of dataframes with each member belonging to single-cell
 data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,

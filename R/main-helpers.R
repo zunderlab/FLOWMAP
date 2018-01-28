@@ -136,6 +136,26 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   return(times)
 }
 
+ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
+  label.key.special <- c()
+  for (i in 1:length(list.of.clean.FCS.files)) {
+    this.name <- basename(fcs.file.names[i])
+    this.name <- gsub(".fcs", "", this.name)
+    if (grepl("-", this.name)) {
+      this.name <- unlist(strsplit(this.name, split = "-"))[1]
+    }
+    if (grepl("\\.", this.name)) {
+      this.name <- unlist(strsplit(this.name, split = "\\."))[1]
+    }
+    label.key.special <- c(label.key.special, this.name)
+    list.of.clean.FCS.files[[i]] <- cbind(list.of.clean.FCS.files[[i]],
+                                          Condition = rep(i, times = nrow(list.of.clean.FCS.files[[i]])))
+  }
+  results <- list(fixed.files = list.of.clean.FCS.files,
+                  label.key.special = label.key.special)
+  return(results)
+}
+
 #' ConstructVarAnnotate
 #'
 #' \code{ConstructVarAnnotate} returns a list that can be used during FLOWMAPR

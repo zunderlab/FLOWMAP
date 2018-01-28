@@ -6,7 +6,7 @@
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #' 
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
-#' available options include \code{c("single", "multi", "one")}
+#' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param files File paths for FCS files to be used or a folder containing
 #' the FCS files to be used in analysis
 #' @param var.remove Vector naming channels to be removed from all downstream analysis, default
@@ -60,6 +60,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
                     target.number = NULL, target.percent = NULL, ...) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
+  cat("Mode set to", mode, "\n")
+  
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)
@@ -190,6 +192,55 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
     graph <- output.graph
+  } else if (mode == "one-special") {
+    check <- CheckModeSingle(files) # one-special mode will look the same as single
+    cat("check", check, "\n")
+    if (check[1]) {
+      stop("Unknown 'files' format provided for specified mode!")
+    }
+    if (check[2] == "FCS") {
+      fcs.file.names <- files
+    }
+    if (check[2] == "folder") {
+      fcs.file.names <- GetFCSNames(folder = files, sort = name.sort)
+    }
+    file.name <- fcs.file.names[1]
+    runtype <- "OneTimepoint-MultipleConditions"
+    output.folder <- MakeOutFolder(runtype = runtype)
+    setwd(output.folder)
+    if (is.null(var.annotate)) {
+      var.annotate <- ConstructVarAnnotate(file.name)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
+    }
+    if (downsample) {
+      cat("Downsampling all files using SPADE downsampling", "\n")
+      fcs.files <- DownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
+                                 channel.remove = var.remove, exclude.pctile = exclude.pctile,
+                                 target.pctile = target.pctile, target.number = target.number,
+                                 target.percent = target.percent, transform = TRUE)
+    } else {
+      fcs.files <- LoadCleanFCS(fcs.file.names = fcs.file.names, channel.remove = var.remove,
+                                channel.annotate = var.annotate, subsamples = subsamples)
+    }
+    fcs.files.old <- fcs.files
+    fcs.files.list <- list()
+    process.results <- ProcessConditions(fcs.files.old, fcs.file.names)
+    label.key.special <- process.results$label.key.special
+    fcs.files.list[[1]] <- process.results$fixed.files
+    file.clusters <- MultiClusterFCS(list.of.files = fcs.files.list, clustering.var = clustering.var,
+                                     numcluster = cluster.numbers, distance.metric = distance.metric)
+    if (downsample) {
+      cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
+      file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
+    }
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
+    output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
+                                           per = 1, min = minimum, max = maximum,
+                                           distance.metric = distance.metric,
+                                           clustering.var = clustering.var)
+    output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
+                                         label.key.special)
+    graph <- output.graph
   } else {
     stop("Unknown mode!")
   }
@@ -199,7 +250,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode != "one") {
+  if (mode != "one" && mode != "one-special") {
     fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
   } else {
     fixed.graph <- graph.xy

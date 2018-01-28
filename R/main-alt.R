@@ -7,7 +7,7 @@
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
-#' available options include \code{c("single", "multi", "one")}
+#' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param df single dataframe, list of dataframes with each member belonging to single-cell
 #' data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,
 #' but coming from different conditions, to be used in analysis
@@ -112,6 +112,32 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     output.graph <- first.results$output.graph
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
+    graph <- output.graph
+  } else if (mode == "one-special") {
+    check <- CheckDFModeMulti(df)
+    cat("check", check, "\n")
+    if (check) {
+      stop("Unknown 'df' format provided for specified mode!")
+    }
+    runtype <- "OneTimepoint-MultipleConditions"
+    output.folder <- MakeOutFolder(runtype = runtype)
+    setwd(output.folder)
+    process.results <- GetConditionsfromDF(df.list = df, condition.col.label)
+    fixed.df <- process.results$new.df.list
+    label.key.special <- process.results$label.key.special
+    if (clustering) {
+      file.clusters <- MultiClusterFCS(list.of.files = fixed.df, clustering.var = clustering.var,
+                                       numcluster = cluster.numbers, distance.metric = distance.metric)
+    } else {
+      file.clusters <- ConstructMultiFLOWMAPCluster(fixed.df)
+    }
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
+    output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
+                                           per = 1, min = minimum, max = maximum,
+                                           distance.metric = distance.metric,
+                                           clustering.var = clustering.var)
+    output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
+                                         label.key.special)
     graph <- output.graph
   } else {
     stop("Unknown mode!")

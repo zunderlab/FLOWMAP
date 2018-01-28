@@ -14,7 +14,7 @@ FLOWMAP(mode = c("single", "multi", "one"), files, var.remove = c(),
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one")}}
+available options include \code{c("single", "multi", "one", "one-special")}}
 
 \item{files}{File paths for FCS files to be used or a folder containing
 the FCS files to be used in analysis}

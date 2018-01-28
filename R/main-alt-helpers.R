@@ -128,6 +128,21 @@ GetLabelKeyfromDF <- function(multi.list.df, time.col.label, condition.col.label
   return(label.key)
 }
 
+GetConditionsfromDF <- function(df.list, condition.col.label) {
+  label.key.special <- c()
+  new.df.list <- df.list
+  for (i in 1:length(df.list[[1]])) {
+    this.condition <- as.character(unique(df.list[[1]][[i]][, condition.col.label]))
+    label.key.special <- c(label.key.special, this.condition)
+    new.df.list[[1]][[i]][, condition.col.label] <- i
+  }
+  print("label.key.special")
+  print(label.key.special)
+  results <- list(new.df.list = new.df.list,
+                  label.key.special = label.key.special)
+  return(results)
+}
+
 CheckDFModeOne <- function(df) {
   # "df" variable should be one of the following:
   # dataframe with multiple rows/columns, all from one timepoint

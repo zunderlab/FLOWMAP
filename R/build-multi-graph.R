@@ -12,6 +12,8 @@ BuildFirstMultiFLOWMAP <- function(list.of.FLOWMAP.clusters, per, min, max, dist
   cat("Building first FLOWMAP\n")
   # This section creates a flowmap for the first time point
   clusters <- list.of.FLOWMAP.clusters$cluster.medians[[1]]
+  print("clusters")
+  print(clusters)
   # get distance matrix from clusters
   clusters <- subset(clusters, select = clustering.var)
   cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)

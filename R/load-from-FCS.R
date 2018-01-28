@@ -357,3 +357,12 @@ ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
   }
   return(data.frame.with.character.labels)
 }
+
+ConvertCharacterLabelSpecial <- function(data.frame.with.numeric.labels, label.key.special) {
+  data.frame.with.character.labels <- data.frame.with.numeric.labels
+  for (i in 1:length(label.key.special)) {
+    fix.ind <- which(data.frame.with.numeric.labels[, "Condition"] == i)
+    data.frame.with.character.labels[fix.ind, "Condition"] <- label.key.special[i]
+  }
+  return(data.frame.with.character.labels)
+}
