@@ -284,8 +284,7 @@ df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label,
 FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
                         time.col.label = time.col.label, condition.col.label = condition.col.label,
                         clustering.var = clustering.var, distance.metric = distance.metric,
-                        minimum = minimum, maximum = maximum,
-                        save.folder = save.folder, subsamples = subsamples,
+                        minimum = minimum, maximum = maximum, save.folder = save.folder,
                         name.sort = name.sort, clustering = clustering,
                         seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
 
