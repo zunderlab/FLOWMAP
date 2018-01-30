@@ -166,6 +166,49 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
               new.counts = new.counts))
 }
 
+KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
+  if (distance.metric == "euclidean") {
+    FCS.clusters <- kmeans(tmp.FCS.for.cluster, numcluster)
+  } else {
+    stop("CAN ONLY USE EUCLIDEAN!")
+  }
+  new.counts <- data.frame()
+  new.medians <- data.frame()
+  # Invalid clusters have assgn == 0
+  is.na(FCS.clusters$cluster) <- which(FCS.clusters$cluster == 0)
+  for (p in c(1:max(FCS.clusters$cluster, na.rm = TRUE))) {  
+    obs <- which(FCS.clusters$cluster == p)
+    if (length(obs) > 1) {
+      # Finding clusters containing more than one cell
+      # Saving counts and medians of data
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- colMedians(as.matrix(current.file[obs, ]))
+      new.median <- as.data.frame(new.median)
+      if (!identical(colnames(new.median), colnames(current.file))) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
+      }
+      # Saving cluster data
+    } else {
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- current.file[obs, ]
+      new.median <- as.data.frame(new.median)
+      if (!identical(colnames(new.median), colnames(current.file))) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
+      }
+    }
+    new.medians <- rbind(new.medians, new.median)
+  }
+  tmp.cell.assgn <- data.frame(FCS.clusters$cluster)
+  tmp.cell.assgn <- as.data.frame(tmp.cell.assgn[complete.cases(tmp.cell.assgn), ])
+  colnames(tmp.cell.assgn) <- c("Cluster")
+  return(list(tmp.cell.assgn = tmp.cell.assgn,
+              new.medians = new.medians,
+              new.counts = new.counts))
+}
+
+
 Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
                      var.remove, var.annotate, clustering.var) {
   fixed.FLOWMAP.clusters <- FLOWMAP.clusters
@@ -184,7 +227,7 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
-    rm(fcs.file, cluster.data, cluster.assign)
+    rm(original.fcs.file, downsample.fcs.file, cluster.assign, fixed.counts)
   }
   return(fixed.FLOWMAP.clusters)
 }
@@ -208,7 +251,7 @@ MultiUpsample <- function(file.names, FLOWMAP.clusters, fcs.files,
       fixed.counts <- as.data.frame(as.matrix(fixed.counts))
       colnames(fixed.counts) <- c("Counts")
       fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
-      rm(fcs.file, cluster.data, cluster.assign)
+      rm(original.fcs.file, downsample.fcs.file, cluster.assign, fixed.counts)
     }
   }
   return(fixed.FLOWMAP.clusters)
