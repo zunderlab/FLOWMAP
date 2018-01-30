@@ -47,7 +47,9 @@ The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install th
 ```
 install.packages("shiny")
 install.packages("tcltk")
-install.packages("rhandsontable")
+
+library(devtools)
+install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-project.org")
 ```
 
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
