@@ -141,12 +141,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
     label.key <- fcs.files.conversion$label.key
     file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                      distance.metric = distance.metric)
-    temp <- RemodelFLOWMAPClusterList(file.clusters)
     if (downsample) {
       cat("Upsampling all clusters to reflect Counts prior to SPADE downsampling", "\n")
       file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     }
-    temp <- RemodelFLOWMAPClusterList(file.clusters)
     graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
                                max = maximum, distance.metric = distance.metric,
                                label.key = label.key, clustering.var = clustering.var)
