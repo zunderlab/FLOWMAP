@@ -51,7 +51,7 @@
 #' \url{https://github.com/nolanlab/spade}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
+FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),
                     var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     distance.metric = "manhattan", minimum = 2, maximum = 5,
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
@@ -61,6 +61,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one"), files, var.remove = c(),
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
+  CheckSettings(mode, var.remove, var.annotate,
+                clustering.var, cluster.numbers,
+                distance.metric, minimum, maximum,
+                subsamples, which.palette)
   
   setwd(save.folder)
   if (mode == "single") {

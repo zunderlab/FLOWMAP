@@ -4,11 +4,11 @@
 \alias{FLOWMAP}
 \title{FLOWMAP - generate FLOWMAPR analysis results from FCS files in R}
 \usage{
-FLOWMAP(mode = c("single", "multi", "one"), files, var.remove = c(),
-  var.annotate = NULL, clustering.var, cluster.numbers = 100,
-  distance.metric = "manhattan", minimum = 2, maximum = 5,
-  save.folder = getwd(), subsamples = 200, name.sort = TRUE,
-  downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
+  var.remove = c(), var.annotate = NULL, clustering.var,
+  cluster.numbers = 100, distance.metric = "manhattan", minimum = 2,
+  maximum = 5, save.folder = getwd(), subsamples = 200,
+  name.sort = TRUE, downsample = FALSE, seed.X = 1, savePDFs = TRUE,
   which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
   target.number = NULL, target.percent = NULL, ...)
 }
