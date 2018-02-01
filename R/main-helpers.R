@@ -189,7 +189,10 @@ ConstructVarAnnotate <- function(FCS.file.name) {
     if (marker.names[i] == " ") {
       marker.names[i] <- channel.names[i]
     }
-    var.annotate[[channel.names[i]]] <- marker.names[i]
+    temp <- gsub(marker.names[i], pattern = "-", replacement = "_")
+    temp <- gsub(temp, pattern = " ", replacement = "_")
+    temp <- gsub(temp, pattern = "/", replacement = "_")
+    var.annotate[[channel.names[i]]] <- temp
   }
   return(var.annotate)
 }
