@@ -56,3 +56,25 @@ CheckSettings <- function(mode, var.remove, var.annotate,
   }
   return()
 }
+
+CheckDownsampleSettings <- function(exclude.pctile, target.pctile, target.number, target.percent) {
+  check.percent <- function(x) { return (x < 1 && x > 0) }
+  if (is.null(exclude.pctile)) {
+    stop("exclude.pctile not provided!")
+  } else {
+    if (!check.percent(exclude.pctile)) {
+      stop("exclude.pctile must be value between 0 and 1!")
+    }
+  }
+  if (is.null(target.pctile)) {
+    stop("target.pctile not provided!")
+  } else {
+    if (!check.percent(target.pctile)) {
+      stop("target.pctile must be value between 0 and 1!")
+    }
+  }
+  if (is.null(target.number) && is.null(target.percent)) {
+    warning("both target.number and target.percent are not provided!")
+  }
+  return() 
+}

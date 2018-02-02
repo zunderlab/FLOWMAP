@@ -65,7 +65,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                 clustering.var, cluster.numbers,
                 distance.metric, minimum, maximum,
                 subsamples, which.palette)
-  
+  if (downsample) {
+    CheckDownsampleSettings(exclude.pctile, target.pctile,
+                            target.number, target.percent)
+  }
   setwd(save.folder)
   if (mode == "single") {
     check <- CheckModeSingle(files)

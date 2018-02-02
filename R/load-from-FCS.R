@@ -257,7 +257,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     fcs.file <- cbind(fcs.file, "density" = density)
     boundary <- quantile(fcs.file[, "density"], c(exclude.pctile, target.pctile), names = FALSE)
     cat("Removing outliers for:", current.file, "\n")
-    fcs.file2 <- subset(fcs.file, fcs.file[, "density"] > boundary[1])    
+    fcs.file2 <- subset(fcs.file, fcs.file[, "density"] > boundary[1])
     if (!is.null(target.percent)) {
       target.number = round(target.percent * nrow(fcs.file2))
       cat("Targeting", target.number, "events for", current.file, "\n")
