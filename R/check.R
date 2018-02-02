@@ -46,13 +46,15 @@ CheckSettings <- function(mode, var.remove, var.annotate,
   if (!(which.palette %in% c("bluered", "jet", "CB"))) {
     stop("which.palette is not a recognized value!")
   }
-  temp <- unname(unlist(var.annotate))
-  temp2 <- setdiff(temp, var.remove)
-  if (length(setdiff(clustering.var, temp2)) != 0) {
-    stop("clustering.var contains a marker that is not in var.annotate!")
-  }
-  if (length(setdiff(var.remove, temp)) != 0) {
-    warning("var.remove contains a marker that is not in var.annotate!")
+  if (!is.null(var.annotate)) {
+    temp <- unname(unlist(var.annotate))
+    temp2 <- setdiff(temp, var.remove)
+    if (length(setdiff(clustering.var, temp2)) != 0) {
+      stop("clustering.var contains a marker that is not in var.annotate!")
+    }
+    if (length(setdiff(var.remove, temp)) != 0) {
+      warning("var.remove contains a marker that is not in var.annotate!")
+    }
   }
   return()
 }
