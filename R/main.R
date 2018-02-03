@@ -185,10 +185,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                 numcluster = cluster.numbers, distance.metric = distance.metric)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
-    print("dim(file.clusters$full.clusters)")
-    print(dim(file.clusters$full.clusters))
-    print("head(file.clusters$full.clusters)")
-    print(head(file.clusters$full.clusters))
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
                                        per = 1, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
