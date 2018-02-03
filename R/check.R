@@ -60,7 +60,7 @@ CheckSettings <- function(mode, var.remove, var.annotate,
 }
 
 CheckDownsampleSettings <- function(exclude.pctile, target.pctile, target.number, target.percent) {
-  check.percent <- function(x) { return (x < 1 && x > 0) }
+  check.percent <- function(x) { return (x <= 1 && x >= 0) }
   if (is.null(exclude.pctile)) {
     stop("exclude.pctile not provided!")
   } else {
