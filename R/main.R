@@ -231,7 +231,11 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.clusters <- MultiClusterFCS(list.of.files = fcs.files.list, clustering.var = clustering.var,
                                      numcluster = cluster.numbers, distance.metric = distance.metric)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
-    file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
+    temp.files.list <- list()
+    temp.files.list[[1]] <- fcs.files
+    temp.name.list <- list()
+    temp.name.list[[1]] <- fcs.file.names
+    file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
     output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
                                            per = 1, min = minimum, max = maximum,
