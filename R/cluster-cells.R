@@ -218,6 +218,10 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
     original.fcs.file <- original.fcs.file[[1]]
     original.fcs.file <- original.fcs.file[, clustering.var]
     downsample.fcs.file <- fcs.files[[f]]
+    print("dim(downsample.fcs.file)")
+    print(dim(downsample.fcs.file))
+    print("str(downsample.fcs.file)")
+    print(str(downsample.fcs.file))
     downsample.fcs.file <- downsample.fcs.file[, clustering.var]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
     all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file, 
