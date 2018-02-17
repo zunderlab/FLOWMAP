@@ -61,7 +61,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
-  CheckSettings(mode, var.remove, var.annotate,
+  CheckSettings(mode, save.folder, var.remove, var.annotate,
                 clustering.var, cluster.numbers,
                 distance.metric, minimum, maximum,
                 subsamples, which.palette)
