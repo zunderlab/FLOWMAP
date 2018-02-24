@@ -65,6 +65,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                 clustering.var, cluster.numbers,
                 distance.metric, minimum, maximum,
                 subsamples, which.palette)
+  
   if (downsample) {
     CheckDownsampleSettings(exclude.pctile, target.pctile,
                             target.number, target.percent)
@@ -79,6 +80,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     runtype <- "SingleFLOWMAP"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    PrintSummary(env = parent.frame())
     if (check[2] == "FCS") {
       fcs.file.names <- files
     }
@@ -118,6 +120,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     runtype <- "MultiFLOWMAP"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    PrintSummary(env = parent.frame())
     if (check[2] == "list") {
       fcs.file.names <- files
       orig.times <- MultiListParseTimes(fcs.file.names, name.sort)
@@ -167,6 +170,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
       assign("var.annotate", var.annotate, envir = .GlobalEnv)
@@ -209,6 +213,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     runtype <- "OneTimepoint-MultipleConditions"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
       assign("var.annotate", var.annotate, envir = .GlobalEnv)
@@ -259,7 +264,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  PrintSummary(env = parent.frame())
+  # PrintSummary(env = parent.frame())
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")

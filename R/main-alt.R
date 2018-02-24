@@ -47,6 +47,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
   df <- RemoveRowNames(df)
+  PrintSummaryfromDF(env = parent.frame())
   
   if (mode == "single") {
     check <- CheckDFModeSingle(df)
@@ -59,6 +60,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     setwd(output.folder)
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
+    PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
                                   numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -79,6 +81,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
+    PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                        distance.metric = distance.metric)
@@ -97,6 +100,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     runtype <- "OneTimepoint"
     output.folder <- MakeOutFolder(runtype = runtype)
     setwd(output.folder)
+    PrintSummaryfromDF(env = parent.frame())
     fcs.files <- list()
     fcs.files[[1]] <- df
     if (clustering) {
@@ -125,6 +129,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     process.results <- GetConditionsfromDF(df.list = df, condition.col.label)
     fixed.df <- process.results$new.df.list
     label.key.special <- process.results$label.key.special
+    PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- MultiClusterFCS(list.of.files = fixed.df, clustering.var = clustering.var,
                                        numcluster = cluster.numbers, distance.metric = distance.metric)
@@ -154,7 +159,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  PrintSummaryfromDF(env = parent.frame())
+  # PrintSummaryfromDF(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
