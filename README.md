@@ -20,6 +20,8 @@ This code has been reformatted and compiled into a single R package known as **F
 
 
 ## Getting Started
+FLOWMAPR visualizations can be run on any 32- and 64-bit computer with at least 2.2-GHz processor running Windows or Mac OS X with ≥4 GB of RAM (16 GB preferred). FLOWMAPR was developed and tested on a 64-bit computer with a 2.7-GHz processor running Mac OS X (Version 10.11.6) with 16 GB of RAM.
+
 The instructions below demonstrate how to install this package directly from Github to get the latest release.
 
 ### Software and Package Prerequisites:
