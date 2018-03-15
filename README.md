@@ -12,6 +12,7 @@ This code has been reformatted and compiled into a single R package known as **F
 [Running FLOWMAPR: Starting from a Dataframe in R](#FLOWMAPR-DF)  
 [Example Code for FLOWMAP()](#example-code)  
 [Example Data](#example-data)  
+[Example Output](#example-output)  
 [Example Code for FLOWMAPfromDF()](#example-code2)  
 [Practical Guidelines for Running FLOWMAPR](#FLOWMAPR-guide)  
 [Practical Guidelines for Post-Processing in Gephi](#gephi-guide)  
@@ -255,6 +256,16 @@ files <- system.file("extdata/MultiFLOWMAP", package = "FLOWMAPR")
 ```
 
 Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()` command.
+
+<a name="example-output"></a>
+### Example Output:
+Running the provided example files for SingleFLOW-MAP and MultiFLOW-MAP with the provided code should generate a folder of results in the `save.folder` specified by the user. The results folder will have the naming convention "YYYY-MM-DD_HH.MM.SS_ChosenFLOW-MAPMode_run" with the values filled in accordingly.
+
+Upon successful completion of one of the main `FLOWMAP` functions, FLOWMAPR will generate three graphml files: one is the initial graph produced by the algorithm without force-directed layout applied, one produced after the iterative force-directed layout with x-y coordinates for each node, and a final graphml with x-y coordinates and a relabeling of timepoints/conditions to the names scraped from the FCS files (if relevant).
+
+If the user chooses to save PDF outputs from FLOWMAPR, a folder with the same name as the final graphml generated with the added suffix "\_pdf" will be created that contains PDFs of the final graph colored by each parameter.
+
+In addition, FLOWMAPR creates a text file named "YYYY-MM-DD_HH.MM.SS_FLOW-MAPR_run_settings_summary.txt" that will summarize all provided settings as well as a file named "run_FLOWMAPR.R" that can be used to reproduce the same FLOWMAPR results when opened and executed in R.
 
 <a name="example-code2"></a>
 ### Example Code for FLOWMAPfromDF():
