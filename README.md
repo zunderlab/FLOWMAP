@@ -76,6 +76,8 @@ To currently get the FLOWMAPR R package up and working on your computer, once yo
 6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
 7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
+Typical installation time should take no more than 5 minutes for the most up-to-date FLOWMAPR package. However, total installation time will vary depending on the installation time of other required packages and the speed of your internet connectoin.
+
 <a name="update"></a>
 ### Updating FLOWMAPR:
 
