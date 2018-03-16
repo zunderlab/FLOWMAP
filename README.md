@@ -28,7 +28,7 @@ The instructions below demonstrate how to install this package directly from Git
 ### Software and Package Prerequisites:
 Install version 3.3.0 or later of R. Users can install R by downloading the appropriate R-x.y.z.tar.gz  file from http://www.r-project.org and following the system-specific instructions. FLOWMAPR was developed and tested on version 3.3.0 of R. As of this release, we recommend using version 3.3.0.
 
-FLOWMAPR depends on the following R libraries: igraph (version), Rclusterpp (version), SDMTools (version), robustbase (version), shiny (version), tcltk (version), rhandsontable (version), spade (version) and flowCore (version) from Bioconductor, and scaffold (version) published on the Nolan Lab GitHub.
+FLOWMAPR depends on the following R libraries: igraph (version 1.2.1), Rclusterpp (version 0.2.3), SDMTools (version 1.1.221), robustbase (version 0.92.8), shiny (version 1.0.5), tcltk (version 3.4.3), rhandsontable (version 0.3.6), spade (version 1.10.4) and flowCore (version 1.44.2) from Bioconductor, and scaffold (version 0.1) published on the Nolan Lab GitHub. The versions provided are the R package versions for which this FLOWMAPR code has been tested.
 
 In order to install a package from github, you will need the devtools package. You can install this package with the following commands:
 
