@@ -62,12 +62,9 @@ if (globe.inputs[["mode"]] == "single") {
       file.names <- file.names[!is.na(file.names)]
       for (i in order) {
         setwd(globe.raw.FCS.dir)
-        print(file.names[i])
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
         fcs.name <- as.vector(fcs.files@parameters@data[, 1])
         fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        print("fcs.param")
-        print(fcs.param)
         temp.list[[1]] <- unlist(fcs.name)
         temp.list[[2]] <- unlist(fcs.param)
         final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
@@ -99,8 +96,6 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
         fcs.name <- as.vector(fcs.files@parameters@data[, 1])
         fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        print("fcs.param")
-        print(fcs.param)
         temp.list[[1]] <- unlist(fcs.name)
         temp.list[[2]] <- unlist(fcs.param)
         final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
@@ -505,7 +500,6 @@ if (globe.inputs[["mode"]] == "single") {
       for(j in 1:length(var.clus.temp)){
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
-      print("clustered")
       if (globe.inputs[["downsample.toggle"]] == "1") {
         var.remove <- flowfile[flowfile$removal == TRUE, 1]
         clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
@@ -518,10 +512,8 @@ if (globe.inputs[["mode"]] == "single") {
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      print("after")
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      
       print("output")
       print(output)
       
@@ -542,8 +534,7 @@ if (globe.inputs[["mode"]] == "single") {
                 exclude.pctile = exclude.pctile, target.pctile = target.pctile,
                 target.number = target.number, target.percent = target.percent)
       } else {
-        print("No downsampling")
-        print(files)
+        print("No Downsampling")
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -603,14 +594,11 @@ if (globe.inputs[["mode"]] == "single") {
       temp.list <- list()
       fcs.list <- list()
       fcs.file.path <- c()
-      print(globe.raw.FCS.dir)
       setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
       fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
       fcs.name <- as.vector(fcs.files@parameters@data[, 1])
       fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-      print("fcs.param")
-      print(fcs.param)
       temp.list[[1]] <- unlist(fcs.name)
       temp.list[[2]] <- unlist(fcs.param)
       final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
@@ -651,15 +639,12 @@ if (globe.inputs[["mode"]] == "single") {
       print("flowfile")
       print(flowfile)
       setwd(globe.raw.FCS.dir)
-      print(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
       files <- one.fcs
-      print(files)
       print(paste(globe.raw.FCS.dir, files, sep = "/"))
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      var.annotate <- list()
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
         if (grepl("_", flowfile[j, 4])) {
@@ -675,14 +660,11 @@ if (globe.inputs[["mode"]] == "single") {
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
-      print("removed")
       clustering.var <- c()
       var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for (j in 1:length(var.clus.temp)) {
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
-      print("clustered")
-      print(files)
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -707,7 +689,6 @@ if (globe.inputs[["mode"]] == "single") {
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
         files <- paste(globe.raw.FCS.dir, files, sep = "/")
-        print(files)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -717,9 +698,8 @@ if (globe.inputs[["mode"]] == "single") {
                 exclude.pctile = exclude.pctile, target.pctile = target.pctile,
                 target.number = target.number, target.percent = target.percent)
       } else {
-        print("No downsampling")
+        print("No Downsampling")
         paste(globe.raw.FCS.dir, files, sep = "/")
-        print(files)
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
