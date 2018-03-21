@@ -9,6 +9,14 @@ print(globe.raw.FCS.dir)
 print("globe.result.dir")
 print(globe.result.dir)
 
+FileOrder <- function(dir.now) {
+  file.names <- list.files(dir.now, pattern = "\\.fcs")
+  len.filenames <- seq(1, length(file.names))
+  return(list(len.filenames = len.filenames,
+              file.names = file.names))
+}
+
+
 # build server based on FLOW-MAP mode
 if (globe.inputs[["mode"]] == "single") {
   server <- function(input, output, session) {
@@ -17,16 +25,9 @@ if (globe.inputs[["mode"]] == "single") {
       stopApp()
     }
     options(shiny.maxRequestSize = 1000 * 1024^2)
-    panel.info <- data.frame(channels = c(NA), removal = c(NA),
-                             cluster = c(NA), annotate = c(NA))
+    panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
     final.new.diff <- NULL
-    FileOrder <- function(dir.now) {
-      file.names <- list.files(dir.now, pattern = "\\.fcs")
-      len.filenames <- seq(1, length(file.names))
-      return(list(len.filenames = len.filenames,
-                  file.names = file.names))
-    }
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
@@ -191,8 +192,8 @@ if (globe.inputs[["mode"]] == "single") {
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
-      setwd(globe.raw.FCS.dir)
-      set.seed(globe.inputs[["seed.num"]])
+      # setwd(globe.raw.FCS.dir)
+      # set.seed(globe.inputs[["seed.num"]])
       files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -204,6 +205,8 @@ if (globe.inputs[["mode"]] == "single") {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
+      print("var.annotate")
+      print(var.annotate)
       var.remove <- c()
       var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for (j in 1:length(var.remove.temp)) {
@@ -211,15 +214,19 @@ if (globe.inputs[["mode"]] == "single") {
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
+      print("var.remove")
+      print(var.remove)
       clustering.var <- c()
       var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for(j in 1:length(var.clus.temp)){
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
-      if (globe.inputs[["downsample.toggle"]] == "1") {
-        var.remove <- flowfile[flowfile$removal == TRUE, 1]
-        clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      }
+      print("clustering.var")
+      print(clustering.var)
+      # if (globe.inputs[["downsample.toggle"]] == "1") {
+      #   var.remove <- flowfile[flowfile$removal == TRUE, 1]
+      #   clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      # }
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -230,8 +237,6 @@ if (globe.inputs[["mode"]] == "single") {
       which.palette <- globe.inputs[["color.palette"]]
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      print("output")
-      print(output)
       
       # Run FLOW-MAP
       if (downsample) {
@@ -285,12 +290,12 @@ if (globe.inputs[["mode"]] == "single") {
     panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
     final.new.diff <- NULL
-    FileOrder <- function(dir.now) {
-      file.names <- list.files(dir.now, pattern = "\\.fcs")
-      len.filenames <- seq(1, length(file.names))
-      return(list(len.filenames = len.filenames,
-                  file.names = file.names))
-    }
+    # FileOrder <- function(dir.now) {
+    #   file.names <- list.files(dir.now, pattern = "\\.fcs")
+    #   len.filenames <- seq(1, length(file.names))
+    #   return(list(len.filenames = len.filenames,
+    #               file.names = file.names))
+    # }
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
@@ -473,8 +478,8 @@ if (globe.inputs[["mode"]] == "single") {
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
-      setwd(globe.raw.FCS.dir)
-      set.seed(globe.inputs[["seed.num"]])
+      # setwd(globe.raw.FCS.dir)
+      # set.seed(globe.inputs[["seed.num"]])
       files <- multi.list.global
       print(multi.list.global)
       # NEED MULTI-FLOWMAP FIX FOR FILES
@@ -488,6 +493,8 @@ if (globe.inputs[["mode"]] == "single") {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
+      print("var.annotate")
+      print(var.annotate)
       var.remove <- c()
       var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for(j in 1:length(var.remove.temp)){
@@ -495,15 +502,19 @@ if (globe.inputs[["mode"]] == "single") {
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
+      print("var.remove")
+      print(var.remove)
       clustering.var <- c()
       var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for(j in 1:length(var.clus.temp)){
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
-      if (globe.inputs[["downsample.toggle"]] == "1") {
-        var.remove <- flowfile[flowfile$removal == TRUE, 1]
-        clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      }
+      print("clustering.var")
+      print(clustering.var)
+      # if (globe.inputs[["downsample.toggle"]] == "1") {
+      #   var.remove <- flowfile[flowfile$removal == TRUE, 1]
+      #   clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
+      # }
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -514,8 +525,6 @@ if (globe.inputs[["mode"]] == "single") {
       which.palette <- globe.inputs[["color.palette"]]
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      print("output")
-      print(output)
       
       # Run FLOW-MAP
       if (downsample) {
@@ -570,12 +579,12 @@ if (globe.inputs[["mode"]] == "single") {
     panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
     final.new.same <- NULL
     final.new.diff <- NULL
-    FileOrder <- function(dir.now) {
-      file.names <- list.files(dir.now, pattern = "\\.fcs")
-      len.filenames <- seq(1, length(file.names))
-      return(list(len.filenames = len.filenames,
-                  file.names = file.names))
-    }
+    # FileOrder <- function(dir.now) {
+    #   file.names <- list.files(dir.now, pattern = "\\.fcs")
+    #   len.filenames <- seq(1, length(file.names))
+    #   return(list(len.filenames = len.filenames,
+    #               file.names = file.names))
+    # }
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
@@ -588,7 +597,6 @@ if (globe.inputs[["mode"]] == "single") {
       updateSelectInput(session, "check.group.files",
                         choices = choice)
     })
-    
     ContentSame <- eventReactive(input$gener.param.button, {
       fcs.list <- list()
       temp.list <- list()
@@ -596,9 +604,9 @@ if (globe.inputs[["mode"]] == "single") {
       fcs.file.path <- c()
       setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
-      fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
-      fcs.name <- as.vector(fcs.files@parameters@data[, 1])
-      fcs.param <- as.vector(fcs.files@parameters@data[, 2])
+      fcs.file <- read.FCS(one.fcs, emptyValue = FALSE)
+      fcs.name <- as.vector(fcs.file@parameters@data[, 1])
+      fcs.param <- as.vector(fcs.file@parameters@data[, 2])
       temp.list[[1]] <- unlist(fcs.name)
       temp.list[[2]] <- unlist(fcs.param)
       final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
@@ -638,10 +646,11 @@ if (globe.inputs[["mode"]] == "single") {
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
       print(flowfile)
-      setwd(globe.raw.FCS.dir)
-      set.seed(globe.inputs[["seed.num"]])
+      # setwd(globe.raw.FCS.dir)
+      # set.seed(globe.inputs[["seed.num"]])
       files <- one.fcs
-      print(paste(globe.raw.FCS.dir, files, sep = "/"))
+      print(one.fcs)
+      # print(paste(globe.raw.FCS.dir, files, sep = "/"))
       # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
@@ -653,6 +662,8 @@ if (globe.inputs[["mode"]] == "single") {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
+      print("var.annotate")
+      print(var.annotate)
       var.remove <- c()
       var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for(j in 1:length(var.remove.temp)){
@@ -660,11 +671,15 @@ if (globe.inputs[["mode"]] == "single") {
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
+      print("var.remove")
+      print(var.remove)
       clustering.var <- c()
       var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for (j in 1:length(var.clus.temp)) {
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
+      print("clustering.var")
+      print(clustering.var)
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -673,13 +688,12 @@ if (globe.inputs[["mode"]] == "single") {
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      for (i in 1:length(clustering.var)) {
-        clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      }
+      # for (i in 1:length(clustering.var)) {
+      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
+      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      print("output")
-      print(output)
+      
       # Run FLOW-MAP
       if (downsample) {
         print("Downsampling")
@@ -699,7 +713,7 @@ if (globe.inputs[["mode"]] == "single") {
                 target.number = target.number, target.percent = target.percent)
       } else {
         print("No Downsampling")
-        paste(globe.raw.FCS.dir, files, sep = "/")
+        files <- paste(globe.raw.FCS.dir, files, sep = "/")
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -743,7 +757,7 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
                          placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
                numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
                numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
-               actionButton("gener.param.button", "Generate Parameters"),
+               actionButton("gener.param.button", "Read Panel from FCS Files"),
                textOutput("writefile"),
                textOutput("vartable"),
                textOutput("ordering"),
@@ -823,7 +837,7 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
                                       size = 7),
                numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
                numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
-               actionButton("gener.param.button", "Generate Parameters"),
+               actionButton("gener.param.button", "Read Panel from FCS File"),
                textOutput("writefile"),
                textOutput("vartable"),
                textOutput("ordering"),
@@ -849,7 +863,7 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
                                       size = 7),
                textInput("file.order.input", label = h5("Write the FCS File Order"),
                          placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
-               actionButton("gener.param.button", "Generate Parameters"),
+               actionButton("gener.param.button", "Read Panel from FCS Files"),
                textOutput("writefile"),
                textOutput("vartable"),
                textOutput("ordering"),
@@ -927,7 +941,7 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
                                       multiple = TRUE,
                                       selectize = FALSE,
                                       size = 7),
-               actionButton("gener.param.button", "Generate Parameters"),
+               actionButton("gener.param.button", "Read Panel from FCS File"),
                textOutput("writefile"),
                textOutput("vartable"),
                textOutput("ordering"),
