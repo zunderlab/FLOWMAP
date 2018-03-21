@@ -30,7 +30,7 @@ LaunchGUI <- function() {
   subsample.num <- tclVar("200")
   cluster.num <- tclVar("100")
   seed.num <- tclVar("1")
-  edge.pct.num <- tclVar("1")
+  # edge.pct.num <- tclVar("1")
   edge.num.min <- tclVar("2")
   edge.num.max <- tclVar("5")
   ret.var <- tclVar("")
@@ -62,7 +62,7 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   ResultDirHelp <- function() {
-    tkmessageBox(title = "result.dir", message = "The directory where result files will be generated.", 
+    tkmessageBox(title = "result.dir", message = "The directory where FLOW-MAP results will be saved.", 
                  icon = "info", type = "ok")
   }
   DownsampleHelp <- function() {
@@ -74,21 +74,21 @@ LaunchGUI <- function() {
                  icon = "info", type = "ok")
   }
   SubsampleNumHelp <- function() {
-    tkmessageBox(title = "subsample.num", message = "The number of cells to sample from each FCS file. If SPADE downsampling is selected, this specifies the target number.",
+    tkmessageBox(title = "subsample.num", message = "The number of cells to sample from each FCS file. If SPADE downsampling is selected, this field specifies the target number.",
                  icon = "info", type = "ok")
   }
   ClusterNumHelp <- function() {
-    tkmessageBox(title = "cluster.num", message = "The number of clusters from each FCS file.",
+    tkmessageBox(title = "cluster.num", message = "The number of clusters to generate from each FCS file.",
                  icon = "info", type = "ok")
   }
   SeedNumHelp <- function() {
     tkmessageBox(title = "seed.num", message = "The seed number for reproducible analysis.",
                  icon = "info", type = "ok")
   }
-  EdgePctNumHelp <- function() {
-    tkmessageBox(title = "edge.pct.num", message = "The edge percentile number",
-                 icon = "info", type = "ok")
-  }
+  # EdgePctNumHelp <- function() {
+  #   tkmessageBox(title = "edge.pct.num", message = "The edge percentile number",
+  #                icon = "info", type = "ok")
+  # }
   EdgeNumMinHelp <- function() {
     tkmessageBox(title = "edge.num.min", message = "The lower bound for number of edges during density-dependent edge drawing steps.",
                  icon = "info", type = "ok")
@@ -108,7 +108,7 @@ LaunchGUI <- function() {
     tclvalue(subsample.num) <- "200"
     tclvalue(cluster.num) <- "100"
     tclvalue(seed.num) <- "1"
-    tclvalue(edge.pct.num) <- "1"
+    # tclvalue(edge.pct.num) <- "1"
     tclvalue(edge.num.min) <- "2"
     tclvalue(edge.num.max) <- "5"
   }
@@ -151,7 +151,7 @@ LaunchGUI <- function() {
   tcl(image2, "copy", image1, subsample = 6)
   
   # raw.FCS.dir
-  raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files or CSV Directory:")
+  raw.FCS.dir.label <- tklabel(tt, text = "Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):")
   raw.FCS.dir.entry <- tkentry(tt, textvariable = init.raw.FCS.dir, width = box.length)
   raw.FCS.dir.button <- tkbutton(tt, text = " Choose... ", width = bt.width, command = SetRawFCSDir)
   raw.FCS.dir.hBut <- tkbutton(tt, image = image2, command = RawFCSDirHelp)
@@ -228,14 +228,14 @@ LaunchGUI <- function() {
   cluster.num.hBut <- tkbutton(tt, image = image2, command = ClusterNumHelp)
   
   # seed.num
-  seed.num.label <- tklabel(tt, text = "Seed Number:")
+  seed.num.label <- tklabel(tt, text = "Set Seed Number:")
   seed.num.entry <- tkentry(tt, textvariable = seed.num, width = 9)
   seed.num.hBut <- tkbutton(tt, image = image2, command = SeedNumHelp)
   
   # edge.pct.num
-  edge.pct.num.label <- tklabel(tt, text = "Edge Percentile Number:")
-  edge.pct.num.entry <- tkentry(tt, textvariable = edge.pct.num, width = 9)
-  edge.pct.num.hBut <- tkbutton(tt, image = image2, command = EdgePctNumHelp)
+  # edge.pct.num.label <- tklabel(tt, text = "Edge Percentile Number:")
+  # edge.pct.num.entry <- tkentry(tt, textvariable = edge.pct.num, width = 9)
+  # edge.pct.num.hBut <- tkbutton(tt, image = image2, command = EdgePctNumHelp)
   
   # edge.num.min
   edge.num.min.label <- tklabel(tt, text = "Minimum Number of Edges:")
@@ -302,9 +302,9 @@ LaunchGUI <- function() {
   tkgrid.configure(seed.num.label, seed.num.hBut, sticky = "e")
   tkgrid.configure(seed.num.entry, sticky = "w")
   
-  tkgrid(edge.pct.num.label, edge.pct.num.hBut, edge.pct.num.entry, padx = cell.width)
-  tkgrid.configure(edge.pct.num.label, edge.pct.num.hBut, sticky = "e")
-  tkgrid.configure(edge.pct.num.entry, sticky = "w")
+  # tkgrid(edge.pct.num.label, edge.pct.num.hBut, edge.pct.num.entry, padx = cell.width)
+  # tkgrid.configure(edge.pct.num.label, edge.pct.num.hBut, sticky = "e")
+  # tkgrid.configure(edge.pct.num.entry, sticky = "w")
   
   tkgrid(edge.num.min.label, edge.num.min.hBut, edge.num.min.entry, padx = cell.width)
   tkgrid.configure(edge.num.min.label, edge.num.min.hBut, sticky = "e")
@@ -325,7 +325,7 @@ LaunchGUI <- function() {
   
   # Return parameters
   if (tclvalue(ret.var) != "OK") {
-    okMessage <- "Analysis is cancelled."
+    okMessage <- "Quitting FLOW-MAP analysis."
   } else {
     inputs <- list()
     inputs[["mode"]] <- tclvalue(mode)
@@ -336,21 +336,21 @@ LaunchGUI <- function() {
     inputs[["distance.metric"]] <- tclvalue(distance.metric)
     inputs[["cluster.num"]] <- tclvalue(cluster.num)
     inputs[["seed.num"]] <- tclvalue(seed.num)
-    inputs[["edge.pct.num"]] <- tclvalue(edge.pct.num)
+    # inputs[["edge.pct.num"]] <- tclvalue(edge.pct.num)
     inputs[["edge.max.num"]] <- tclvalue(edge.num.max)
     inputs[["edge.min.num"]] <- tclvalue(edge.num.min)
     inputs[["quit"]] <- quit.var
     globe.inputs <<- inputs
     globe.raw.FCS.dir <<- tclvalue(init.raw.FCS.dir)
-    timeNow <- Sys.time()
     globe.result.dir <<- tclvalue(init.result.dir)
-    timeNow <- gsub("[:]","-", timeNow) 
+    timeNow <- Sys.time()
+    timeNow <- gsub("[:]", "-", timeNow) 
     okMessage <- paste0("Analysis Done, results are saved under ",
                         inputs[["resultDir"]])
   }
-  if(quit.var == FALSE){
+  if (quit.var == FALSE) {
     runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
   } else {
-    stop("Analysis is cancelled")
+    stop("Quitting FLOW-MAP analysis.")
   }
 }
