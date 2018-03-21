@@ -264,7 +264,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  # PrintSummary(env = parent.frame())
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")

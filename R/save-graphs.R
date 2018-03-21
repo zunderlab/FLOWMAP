@@ -244,30 +244,30 @@ PrintSummary <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("save.folder (directory where results were saved):", env$save.folder)
   summary[(dim(summary)[1] + 1), ] <- c("savePDFs (whether PDFs of FLOW-MAP graphs were generated):", env$savePDFs)
   summary[(dim(summary)[1] + 1), ] <- c("downsample (whether results were also downsampled using SPADE):", env$downsample)
-  if (downsample) {
-    if (!is.null(exclude.pctile)) {
+  if (env$downsample) {
+    if (!is.null(env$exclude.pctile)) {
       summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile (for SPADE downsampling):", env$exclude.pctile)
     } else {
       summary[(dim(summary)[1] + 1), ] <- c("exclude.pctile (for SPADE downsampling):", "NULL")
     }
-    if (!is.null(target.pctile)) {
+    if (!is.null(env$target.pctile)) {
       summary[(dim(summary)[1] + 1), ] <- c("target.pctile (for SPADE downsampling):", env$target.pctile,
                                             "")
     } else {
       summary[(dim(summary)[1] + 1), ] <- c("target.pctile (for SPADE downsampling):", "NULL")
     }
-    if (!is.null(target.number)) {
+    if (!is.null(env$target.number)) {
       summary[(dim(summary)[1] + 1), ] <- c("target.number (for SPADE downsampling):", env$target.number)
     } else {
       summary[(dim(summary)[1] + 1), ] <- c("target.number (for SPADE downsampling):", "NULL")
     }
-    if (!is.null(target.percent)) {
+    if (!is.null(env$target.percent)) {
       summary[(dim(summary)[1] + 1), ] <- c("target.percent (for SPADE downsampling):", env$target.percent)
     } else {
       summary[(dim(summary)[1] + 1), ] <- c("target.percent (for SPADE downsampling):", "NULL")
     }
   }
-  if (savePDFs) {
+  if (env$savePDFs) {
     summary[(dim(summary)[1] + 1), ] <- c("which.palette (color of palette used in PDFs):", env$which.palette)
   }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)

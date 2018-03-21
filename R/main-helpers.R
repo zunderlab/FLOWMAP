@@ -126,14 +126,15 @@ MultiListParseTimes <- function(fcs.file.names, name.sort) {
   for (i in 1:length(fcs.file.names)) {
     times <- c(times, ParseTimes(fcs.file.names[[i]], name.sort))
   }
+  times.temp <- unique(times)
   alt.times <- names(fcs.file.names)
   if (name.sort) {
     alt.times <- alt.times[order(as.numeric(alt.times))]
   }
   if (!identical(alt.times, times)) {
-    warning("Times from list names do not match times from FCS file names! Using times from FCS file names.")
+    warning("Times from list names do not match times from FCS file names! Using times from subfolder names.")
   }
-  return(times)
+  return(alt.times)
 }
 
 ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {

@@ -31,9 +31,9 @@ if (globe.inputs[["mode"]] == "single") {
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
     if (identical(file.names, character(0))) {
-      choice = "No FCS Files"
+      choice <- "No FCS Files"
     } else {
-      choice = paste(len.filenames, file.names, sep = " ")
+      choice <- paste(len.filenames, file.names, sep = " ")
     }
     observe({
       updateSelectInput(session, "check.group.files",
@@ -42,7 +42,7 @@ if (globe.inputs[["mode"]] == "single") {
     ChosenOrder <- eventReactive(input$gener.param.button, {
       print(paste(len.filenames, sep = "", collapse = ", "))
       actual.input <- input$file.order.input
-      if( actual.input == ""){
+      if ( actual.input == "") {
         actual.input <- paste(len.filenames, sep = "", collapse = ",")
       }
       actual.input
@@ -66,9 +66,11 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
         fcs.name <- as.vector(fcs.files@parameters@data[, 1])
         fcs.param <- as.vector(fcs.files@parameters@data[, 2])
+        print("fcs.param")
+        print(fcs.param)
         temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[(2)]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        temp.list[[2]] <- unlist(fcs.param)
+        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
@@ -95,11 +97,13 @@ if (globe.inputs[["mode"]] == "single") {
       for(i in order) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[,1])
-        fcs.param <- as.vector(fcs.files@parameters@data[,2])
+        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
+        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
+        print("fcs.param")
+        print(fcs.param)
         temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[(2)]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        temp.list[[2]] <- unlist(fcs.param)
+        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Does same thing as above
@@ -157,32 +161,25 @@ if (globe.inputs[["mode"]] == "single") {
       merge.name <- input$file.merge
       new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
       print(new.diff)
-      print("DIFF WORKS")
       new.diff
     })
     FileMergeSame <- eventReactive(input$merge.button, {
       new.same <- c(input$file.merge, ContentSame())
       print(new.same)
-      print("SAME WORKS")
       new.same
     })
     FileMergeTable <- eventReactive(input$merge.button, {
-      print("TABLE STARTED")
       files.tbm <- input$check.group.diff
       new.panel.info <- panel.info.edit
       print(input$check.group.diff)
-      print("got here")
       for (i in files.tbm) {
-        print("round")
         new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
         panel.info.edit <<- new.panel.info
       }
-      print("NEW DF MADE")
       output$table <- renderRHandsontable({
         rhandsontable(new.panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
-      print("TABLE SUCCESS")
     })
     observe({
       updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
@@ -202,36 +199,28 @@ if (globe.inputs[["mode"]] == "single") {
       setwd(globe.raw.FCS.dir)
       set.seed(globe.inputs[["seed.num"]])
       files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
-      print(files)
-      # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        if (grepl("~", flowfile[j, 4])) {
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        if (grepl("_", flowfile[j, 4])) {
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
         } else {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
-      print("annotate")
-      print(var.annotate)
       var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for (j in 1:length(var.remove.temp)) {
         if (length(var.remove.temp > 0)) {
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
-      print("remove")
-      print(var.remove)
       clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for(j in 1:length(var.clus.temp)){
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
-      print("clustering")
-      print(clustering.var)
       if (globe.inputs[["downsample.toggle"]] == "1") {
         var.remove <- flowfile[flowfile$removal == TRUE, 1]
         clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
@@ -246,7 +235,6 @@ if (globe.inputs[["mode"]] == "single") {
       which.palette <- globe.inputs[["color.palette"]]
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      
       print("output")
       print(output)
       
@@ -267,8 +255,7 @@ if (globe.inputs[["mode"]] == "single") {
                 exclude.pctile = exclude.pctile, target.pctile = target.pctile,
                 target.number = target.number, target.percent = target.percent)
       } else {
-        print("No downsampling")
-        print(files)
+        print("No Downsampling")
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -330,40 +317,19 @@ if (globe.inputs[["mode"]] == "single") {
       print("Parsing CSV")
       csv.path <- paste(globe.raw.FCS.dir, SelectCSV(), sep = "/")
       print(csv.path)
-      csv.data <- read.csv(csv.path, header = FALSE)
-      print(csv.data)
+      csv.data <- read.csv(csv.path, header = TRUE)
+      temp.csv <- csv.data[, 2:ncol(csv.data)]
       multi.list <- list()
-      temp.vec <- c()
-      print("starting loop")
-      for(i in 1:nrow(csv.data)){
-        for(j in 1:length(csv.data[i,])){
-          if(csv.data[i, ][j] != ""){
-            if(paste(levels(csv.data[i, ][j]), collapse = "") != ""){
-              temp.vec <- c(temp.vec, levels(droplevels(csv.data[i, ][j])))
-              print("fcs path")
-              print(csv.data[i, ][j])
-              print("temp vec")
-              print(temp.vec)
-              print("There are levels")
-            } else {
-              temp.vec <- c(temp.vec, csv.data[i, ][j])
-              print("fcs path")
-              print(csv.data[i, ][j])
-              print("temp vec")
-              print(temp.vec)
-              print("There are no levels")
-            } 
-          }
-        }
-        multi.list[[i]] <- (temp.vec)
-        temp.vec <- c()
+      for (i in 1:nrow(temp.csv)) {
+        temp.vec <- as.vector(temp.csv[i, ])
+        temp.vec <- temp.vec[temp.vec != ""] 
+        multi.list[[i]] <- temp.vec
       }
-      print("loop done")
+      names(multi.list) <- csv.data[, 1]
       print(multi.list)
-      print("list complete")
       multi.list.global <<- multi.list
       updateSelectInput(session, "check.group.files", 
-                        choices = c("MultiFlowMap"))  
+                        choices = c("MultiFLOWMAP"))  
     })
     
     ContentDiff <- eventReactive(input$csv.finder, {
@@ -376,35 +342,27 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.file.path <- c(fcs.file.path, i)
       }
       fcs.file.path <- unlist(fcs.file.path) 
-      print("diff pathway")
-      print("Pathway")
-      print(fcs.file.path)
       if(paste(levels(fcs.file.path), collapse = "") != ""){
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
-      print(fcs.file.path)
       test.globe <<- fcs.file.path
       for(i in fcs.file.path) {
-        print(i)
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        print("hello")
-        fcs.name <- as.vector(fcs.files@parameters@data[,1])
-        fcs.param <- as.vector(fcs.files@parameters@data[,2])
+        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
+        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
         temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[(2)]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        temp.list[[2]] <- unlist(fcs.param)
+        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
       }
-      print(fcs.list)
       same <- Reduce(intersect, fcs.list)
       every <- Reduce(union, fcs.list)
       diffs <- every
       diffs <- diffs[! every %in% same]
       final.new.diff <<- diffs
-      print("I passed Diffs")
       diffs
     })
     ContentSame <- eventReactive(input$csv.finder, {
@@ -420,16 +378,15 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
       all.files <<- fcs.file.path
-      print(fcs.file.path)
       count = 0
       for(i in fcs.file.path) {
         setwd(globe.raw.FCS.dir)
         fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[,1])
-        fcs.param <- as.vector(fcs.files@parameters@data[,2])
+        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
+        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
         temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[(2)]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "~")
+        temp.list[[2]] <- unlist(fcs.param)
+        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
         fcs.list[[(count + 1)]] <- final
         count <- count + 1
         # Reads FCS Files, gets name and Description, add to a list of different FCS files
@@ -487,32 +444,25 @@ if (globe.inputs[["mode"]] == "single") {
       merge.name <- input$file.merge
       new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
       print(new.diff)
-      print("DIFF WORKS")
       new.diff
     })
     FileMergeSame <- eventReactive(input$merge.button, {
       new.same <- c(input$file.merge, ContentSame())
       print(new.same)
-      print("SAME WORKS")
       new.same
     })
     FileMergeTable <- eventReactive(input$merge.button, {
-      print("TABLE STARTED")
       files.tbm <- input$check.group.diff
       new.panel.info <- panel.info.edit
       print(input$check.group.diff)
-      print("got here")
       for (i in files.tbm) {
-        print("round")
         new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
         panel.info.edit <<- new.panel.info
       }
-      print("NEW DF MADE")
       output$table <- renderRHandsontable({
         rhandsontable(new.panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
-      print("TABLE SUCCESS")
     })
     observe({
       updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
@@ -537,23 +487,21 @@ if (globe.inputs[["mode"]] == "single") {
       save.folder <- globe.result.dir
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        if(grepl("~", flowfile[j, 4])){
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        if (grepl("_", flowfile[j, 4])) {
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
         } else {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
-      print("annotated")
       var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for(j in 1:length(var.remove.temp)){
         if(length(var.remove.temp > 0)){
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
         }
       }
-      print("removed")
       clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
+      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
       for(j in 1:length(var.clus.temp)){
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
@@ -659,11 +607,13 @@ if (globe.inputs[["mode"]] == "single") {
       setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
       fcs.files <- read.FCS(input$check.group.files, emptyValue = FALSE)
-      fcs.name <- as.vector(fcs.files@parameters@data[,1])
-      fcs.param <- as.vector(fcs.files@parameters@data[,2])
+      fcs.name <- as.vector(fcs.files@parameters@data[, 1])
+      fcs.param <- as.vector(fcs.files@parameters@data[, 2])
+      print("fcs.param")
+      print(fcs.param)
       temp.list[[1]] <- unlist(fcs.name)
-      temp.list[[(2)]] <- unlist(fcs.param)
-      final <- paste(temp.list[[1]], temp.list[[2]], sep = "~")
+      temp.list[[2]] <- unlist(fcs.param)
+      final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
       fcs.list[[(1)]] <- final
       # Does same thing as above
       same <- Reduce(intersect, fcs.list)
@@ -672,7 +622,7 @@ if (globe.inputs[["mode"]] == "single") {
       diff <- diff[! every %in% same]
       final.new.same <<- same
       same
-      # gives the same paramters
+      # gives the same parameters
     })
     TableCreate <- eventReactive(input$gener.param.button, {
       panel.info <<- data.frame(channels = c(final.new.same),
@@ -690,15 +640,12 @@ if (globe.inputs[["mode"]] == "single") {
                                 cluster = logical(length = length(final.new.same)),
                                 annotate = c(final.new.same), stringsAsFactors = FALSE)
     })
-    
     observeEvent(input$gener.param.button, {
       updateSelectInput(session, "check.group.files", choices = ContentSame())
     })
-    
     observeEvent(input$gener.param.button, {
       updateSelectInput(session, "check.group.files", choices = choice)
     })
-    
     WriteFile <- eventReactive(input$start.button, {
       flowfile <- (hot_to_r(input$table))
       print("flowfile")
@@ -715,14 +662,14 @@ if (globe.inputs[["mode"]] == "single") {
       var.annotate <- list()
       var.annotate <- list()
       for (j in 1:nrow(flowfile)) {
-        if(grepl("~", flowfile[j, 4])){
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "~"))[1]
+        if (grepl("_", flowfile[j, 4])) {
+          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
         } else {
           var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
         }
       }
       var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "~")
+      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
       for(j in 1:length(var.remove.temp)){
         if(length(var.remove.temp > 0)){
           var.remove <- c(var.remove, var.remove.temp[[j]][1])
@@ -730,8 +677,8 @@ if (globe.inputs[["mode"]] == "single") {
       }
       print("removed")
       clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "~")
-      for(j in 1:length(var.clus.temp)){
+      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
+      for (j in 1:length(var.clus.temp)) {
         clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
       }
       print("clustered")
@@ -749,7 +696,6 @@ if (globe.inputs[["mode"]] == "single") {
       }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
-      
       print("output")
       print(output)
       # Run FLOW-MAP
@@ -806,152 +752,106 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.files",
-                           label = h5("Uploaded Order"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
+        column(width = 3, selectInput("check.group.files",
+                                      label = h5("Uploaded Order"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
                textInput("file.order.input", label = h5("Write the FCS File Order"),
                          placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
                numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
                numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
                actionButton("gener.param.button", "Generate Parameters"),
-               textOutput(
-                 "TESTPRINT"
-               ),
-               textOutput(
-                 "writefile"
-               ),
-               textOutput(
-                 "vartable"
-               ),
-               textOutput(
-                 "ordering"
-               ),
-               textOutput(
-                 "fcsorder"
-               )
-        ),
-        column(width = 3,
-               selectInput("check.group.sim",
-                           label = h5("Similar Fields"),
+               textOutput("writefile"),
+               textOutput("vartable"),
+               textOutput("ordering"),
+               textOutput("fcsorder")),
+        column(width = 3, selectInput("check.group.sim",
+                                      label = h5("Matching Channels in FCS Files"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
+               selectInput("check.group.diff",
+                           label = h5("Different Channels in FCS Files"),
                            choices = "Pending Upload",
                            selected = NULL,
                            multiple = TRUE,
                            selectize = FALSE,
-                           size = 7
-               ),
-               selectInput("check.group.diff",
-                           label = h5("Different Fields"),
-                           choices = "Pending upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
-               textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-               actionButton("merge.button", "Merge Selected Diff")
-        ),
+                           size = 7),
+               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+               actionButton("merge.button", "Merge Selected Channels")),
         column(width = 5,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   } else if (globe.inputs[["mode"]] == "multi") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.csv",
-                           label = h5("Import CSV"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = FALSE,
-                           selectize = FALSE,
-                           size = 3
-               ),
+        column(width = 3, selectInput("check.group.csv",
+                                      label = h5("Import CSV"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = FALSE,
+                                      selectize = FALSE,
+                                      size = 3),
                numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
                numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
                actionButton("csv.finder", "Input CSV"),
-               
-               textOutput(
-                 "TESTPRINT"
-               ),
-               textOutput(
-                 "writefile"
-               ),
-               textOutput(
-                 "vartable"
-               ),
-               textOutput(
-                 "ordering"
-               ),
-               textOutput(
-                 "fcsorder"
-               )
-        ),
-        column(width = 3,
-               selectInput("check.group.sim",
-                           label = h5("Similar Fields"),
+               textOutput("writefile"),
+               textOutput("vartable"),
+               textOutput("ordering"),
+               textOutput("fcsorder")),
+        column(width = 3, selectInput("check.group.sim",
+                                      label = h5("Matching Channels in FCS Files"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
+               selectInput("check.group.diff",
+                           label = h5("Different Channels in FCS Files"),
                            choices = "Pending Upload",
                            selected = NULL,
                            multiple = TRUE,
                            selectize = FALSE,
-                           size = 7
-               ),
-               selectInput("check.group.diff",
-                           label = h5("Different Fields"),
-                           choices = "Pending upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
-               textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-               actionButton("merge.button", "Merge Selected Diff")
-        ),
+                           size = 7),
+               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+               actionButton("merge.button", "Merge Selected Channels")),
         column(width = 5,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   } else if (globe.inputs[["mode"]] == "one") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.files",
-                           label = h5("Uploaded Order"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
+        column(width = 3, selectInput("check.group.files",
+                                      label = h5("Uploaded Order"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
                numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
                numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01),
                actionButton("gener.param.button", "Generate Parameters"),
-               textOutput(
-                 "TESTPRINT"
-               ),
                textOutput("writefile"),
                textOutput("vartable"),
                textOutput("ordering"),
-               textOutput("fcsorder")
-        ),
+               textOutput("fcsorder")),
         column(width = 5,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   }
@@ -960,164 +860,108 @@ if (globe.inputs[["downsample.toggle"]] == "1") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.files",
-                           label = h5("Uploaded Order"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
+        column(width = 3, selectInput("check.group.files",
+                                      label = h5("Uploaded Order"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
                textInput("file.order.input", label = h5("Write the FCS File Order"),
                          placeholder = "Ex: 4, 2, 7, 5, 3, 1, 6"),
                actionButton("gener.param.button", "Generate Parameters"),
-               textOutput(
-                 "TESTPRINT"
-               ),
-               textOutput(
-                 "writefile"
-               ),
-               textOutput(
-                 "vartable"
-               ),
-               textOutput(
-                 "ordering"
-               ),
-               textOutput(
-                 "fcsorder"
-               )
-        ),
-        column(width = 3,
-               selectInput("check.group.sim",
-                           label = h5("Similar Fields"),
+               textOutput("writefile"),
+               textOutput("vartable"),
+               textOutput("ordering"),
+               textOutput("fcsorder")),
+        column(width = 3, selectInput("check.group.sim",
+                                      label = h5("Matching Channels in FCS Files"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
+               selectInput("check.group.diff",
+                           label = h5("Different Channels in FCS Files"),
                            choices = "Pending Upload",
                            selected = NULL,
                            multiple = TRUE,
                            selectize = FALSE,
-                           size = 7
-               ),
-               selectInput("check.group.diff",
-                           label = h5("Different Fields"),
-                           choices = "Pending upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
-               textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-               actionButton("merge.button", "Merge Selected Diff")
-        ),
+                           size = 7),
+               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+               actionButton("merge.button", "Merge Selected Channels")),
         column(width = 5,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   } else if (globe.inputs[["mode"]] == "multi") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.csv",
-                           label = h5("Import CSV"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = FALSE,
-                           selectize = FALSE,
-                           size = 3
-               ),
+        column(width = 3, selectInput("check.group.csv",
+                                      label = h5("Import CSV"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = FALSE,
+                                      selectize = FALSE,
+                                      size = 3),
                actionButton("csv.finder", "Input CSV"),
-               
-               textOutput(
-                 "TESTPRINT"
-               ),
-               textOutput(
-                 "writefile"
-               ),
-               textOutput(
-                 "vartable"
-               ),
-               textOutput(
-                 "ordering"
-               ),
-               textOutput(
-                 "fcsorder"
-               )
-        ),
-        column(width = 3,
-               selectInput("check.group.sim",
-                           label = h5("Similar Fields"),
+               textOutput("writefile"),
+               textOutput("vartable"),
+               textOutput("ordering"),
+               textOutput("fcsorder")),
+        column(width = 3, selectInput("check.group.sim",
+                                      label = h5("Matching Channels in FCS Files"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
+               selectInput("check.group.diff",
+                           label = h5("Different Channels in FCS Files"),
                            choices = "Pending Upload",
                            selected = NULL,
                            multiple = TRUE,
                            selectize = FALSE,
-                           size = 7
-               ),
-               selectInput("check.group.diff",
-                           label = h5("Different Fields"),
-                           choices = "Pending upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
-               textInput("file.merge", label = h5("Select New Merge Name"), placeholder = "New Name"),
-               actionButton("merge.button", "Merge Selected Diff")
-        ),
+                           size = 7),
+               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+               actionButton("merge.button", "Merge Selected Channels")),
         column(width = 5,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   } else if (globe.inputs[["mode"]] == "one") {
     ui <- fluidPage(
       titlePanel("File Uploader"),
       fluidRow(
-        column(width = 3,
-               selectInput("check.group.files",
-                           label = h5("Uploaded Order"),
-                           choices = "Pending Upload",
-                           selected = NULL,
-                           multiple = TRUE,
-                           selectize = FALSE,
-                           size = 7
-               ),
+        column(width = 3, selectInput("check.group.files",
+                                      label = h5("Uploaded Order"),
+                                      choices = "Pending Upload",
+                                      selected = NULL,
+                                      multiple = TRUE,
+                                      selectize = FALSE,
+                                      size = 7),
                actionButton("gener.param.button", "Generate Parameters"),
-               textOutput(
-                 "TESTPRINT"
-               ),
-               textOutput(
-                 "writefile"
-               ),
-               textOutput(
-                 "vartable"
-               ),
-               textOutput(
-                 "ordering"
-               ),
-               textOutput(
-                 "fcsorder"
-               )
-        ),
+               textOutput("writefile"),
+               textOutput("vartable"),
+               textOutput("ordering"),
+               textOutput("fcsorder")),
         column(width = 8,
                actionButton("start.button", "Run FLOWMAPR"),
                br(),
                br(),
-               rHandsontableOutput("table", width = 600)
-        )
+               rHandsontableOutput("table", width = 600))
       )
     )
   }
 } else {
   stop("Unrecognized downsampling selection!")
 }
-
-
 
 shinyApp(ui = ui, server = server)
