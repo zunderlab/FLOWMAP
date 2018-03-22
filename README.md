@@ -412,6 +412,8 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 4. The different parameters will by default be checked for removal. You must check at least one or more of the parameters for clustering. If you want to rename a parameter, click on the name under "annotate" and type a new name. 
 5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate all requested FLOWMAPR results (PDFs, graphml files, etc. in a new folder).
 
+**Mode "one-special" (multiple conditions, one timepoint) is not currently implemented in the GUI. Please used the package in R.**
+
 ## CSV Format for Multiple Analysis
 The CSV file should be formatted as shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. The labels under time will be used to label the timepoints in the final FLOW-MAP graph. 
 
