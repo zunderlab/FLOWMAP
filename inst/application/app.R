@@ -16,6 +16,86 @@ FileOrder <- function(dir.now) {
               file.names = file.names))
 }
 
+InitializePanel <- function() {
+  panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
+  return(panel.info)
+}
+
+GetMarkerNameParam <- function(file.iter, order, folder.name) {
+  fcs.list <- list()
+  temp.list <- list()
+  file.iter <- file.iter[!is.na(file.iter)]
+  # Reads FCS Files, gets name and Description, add to a list of different FCS files
+  setwd(folder.name)
+  for (i in 1:length(file.iter)) {
+    fcs.file <- read.FCS(file.iter[order[i]], emptyValue = FALSE)
+    fcs.name <- as.vector(fcs.file@parameters@data[, 1])
+    fcs.param <- as.vector(fcs.file@parameters@data[, 2])
+    temp.list[[1]] <- unlist(fcs.name)
+    temp.list[[2]] <- unlist(fcs.param)
+    final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
+    fcs.list[[i]] <- final
+  }
+  return(list(fcs.list = fcs.list,
+              temp.list = temp.list))
+}
+
+BuildVarAnnotate <- function(fcs.file, flowfile) {
+  var.annotate <- list()
+  original.names <- read.FCS(fcs.file)
+  original.names <- unname(original.names@parameters@data[, 1])
+  for (i in 1:nrow(flowfile)) {
+    var.annotate[[original.names[i]]] <- flowfile$annotate[i]
+  }
+  return(var.annotate)
+}
+
+SelectClusteringVar <- function(flowfile, var.annotate) {
+  clustering.var.ind <- which(flowfile$cluster == TRUE)
+  all.var <- unname(unlist(var.annotate))
+  clustering.var <- all.var[clustering.var.ind]
+  return(clustering.var)
+}
+
+SelectVarRemove <- function(flowfile, var.annotate) {
+  var.remove.ind <- which(flowfile$removal == TRUE)
+  all.var <- unname(unlist(var.annotate))
+  var.remove <- all.var[var.remove.ind]
+  return(var.remove)
+}
+
+ComparePanels <- function(fcs.list) {
+  same <- Reduce(intersect, fcs.list)
+  every <- Reduce(union, fcs.list)
+  diff <- every[! every %in% same]
+  return(list(same = same,
+              diff = diff))
+}
+
+UpdatePanel <- function(final.new.same, final.new.diff) {
+  if (length(final.new.diff) == 0) {
+    panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
+                             removal = logical(length = length(final.new.same)),
+                             cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                             annotate = c(final.new.same, final.new.diff))
+  } else {
+    panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
+                             removal = c(logical(length = length(final.new.same)),
+                                         !logical(length = length(final.new.diff))),
+                             cluster = logical(length = length(final.new.diff) + length(final.new.same)),
+                             annotate = c(final.new.same, final.new.diff))
+  }
+  return(panel.info)
+}
+
+MakePanelOneMode <- function(final.new.same) {
+  panel.info <- data.frame(channels = c(final.new.same),
+                           removal = logical(length = length(final.new.same)),
+                           cluster = logical(length = length(final.new.same)),
+                           annotate = c(final.new.same), stringsAsFactors = FALSE)
+  return(panel.info)
+}
+
 
 # build server based on FLOW-MAP mode
 if (globe.inputs[["mode"]] == "single") {
@@ -25,7 +105,7 @@ if (globe.inputs[["mode"]] == "single") {
       stopApp()
     }
     options(shiny.maxRequestSize = 1000 * 1024^2)
-    panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
+    panel.info <- InitializePanel()
     final.new.same <- NULL
     final.new.diff <- NULL
     file.info <- FileOrder(globe.raw.FCS.dir)
@@ -54,77 +134,29 @@ if (globe.inputs[["mode"]] == "single") {
       fcs.list
     })
     ContentDiff <- eventReactive(input$gener.param.button, {
-      fcs.list <- list()
-      temp.list <- list()
-      rows <- length(FileOrder(globe.raw.FCS.dir))
-      count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
       print(order)
-      file.names <- file.names[!is.na(file.names)]
-      for (i in order) {
-        setwd(globe.raw.FCS.dir)
-        fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
-        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[2]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
-        fcs.list[[(count + 1)]] <- final
-        count <- count + 1
-        # Reads FCS Files, gets name and Description, add to a list of different FCS files
-      }
-      if (rows > 1) {
-        same <- Reduce(intersect, fcs.list)
-        every <- Reduce(union, fcs.list)
-        diffs <- every
-        diffs <- diffs[! every %in% same]
-      } else {
-        diffs <- NULL
-      }
+      temp.result <- GetMarkerNameParam(file.iter = file.names, order = order, folder.name = globe.raw.FCS.dir)
+      fcs.list <- temp.result$fcs.list
+      temp.list <- temp.result$temp.list
+      diffs <- ComparePanels(fcs.list)$diff
       # Gets different parameters from the FCS files
       final.new.diff <<- diffs
       diffs
-      # If there is 1 FCS file, then there is no difference
     })
     ContentSame <- eventReactive(input$gener.param.button, {
-      fcs.list <- list()
-      temp.list <- list()
       rows <- length(FileOrder(globe.raw.FCS.dir))
-      count <- 0
       order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
-      for(i in order) {
-        setwd(globe.raw.FCS.dir)
-        fcs.files <- read.FCS(file.names[i], emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
-        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[2]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
-        fcs.list[[(count + 1)]] <- final
-        count <- count + 1
-        # Does same thing as above
-      }
-      same <- Reduce(intersect, fcs.list)
-      every <- Reduce(union, fcs.list)
-      diff <- every
-      diff <- diff[! every %in% same]
+      temp.result <- GetMarkerNameParam(file.iter = file.names, order = order, folder.name = globe.raw.FCS.dir)
+      fcs.list <- temp.result$fcs.list
+      temp.list <- temp.result$temp.list
+      same <- ComparePanels(fcs.list)$same
       final.new.same <<- same
       same
       # gives the same paramters
     })
     TableCreate <- eventReactive(input$gener.param.button, {
-      if (length(final.new.diff) == 0) {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = logical(length = length(final.new.same)),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      } else {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = c(logical(length = length(final.new.same)),
-                                              !logical(length = length(final.new.diff))),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      }
+      panel.info <<- UpdatePanel(final.new.same, final.new.diff)
       output$table <- renderRHandsontable({
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
@@ -132,18 +164,7 @@ if (globe.inputs[["mode"]] == "single") {
       panel.info.edit <<- panel.info
     })
     observeEvent(input$gener.param.button, {
-      if (length(final.new.diff) == 0) {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = logical(length = length(final.new.same)),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      } else {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = c(logical(length = length(final.new.same)),
-                                             !logical(length = length(final.new.diff))),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      }
+      panel.info <<- UpdatePanel(final.new.same, final.new.diff)
     })
     observe({
       updateSelectInput(session, "check.group.sim", choices = ContentSame())
@@ -172,6 +193,8 @@ if (globe.inputs[["mode"]] == "single") {
         new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
         panel.info.edit <<- new.panel.info
       }
+      print("new.panel.info")
+      print(new.panel.info)
       output$table <- renderRHandsontable({
         rhandsontable(new.panel.info) %>%
           hot_col("channels", readOnly = TRUE)
@@ -190,43 +213,12 @@ if (globe.inputs[["mode"]] == "single") {
     WriteFile <- eventReactive(input$start.button, {
       file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
       flowfile <- (hot_to_r(input$table))
-      print("flowfile")
-      print(flowfile)
-      # setwd(globe.raw.FCS.dir)
-      # set.seed(globe.inputs[["seed.num"]])
       files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      var.annotate <- list()
-      for (j in 1:nrow(flowfile)) {
-        if (grepl("_", flowfile[j, 4])) {
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
-        } else {
-          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
-        }
-      }
-      print("var.annotate")
-      print(var.annotate)
-      var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
-      for (j in 1:length(var.remove.temp)) {
-        if (length(var.remove.temp > 0)) {
-          var.remove <- c(var.remove, var.remove.temp[[j]][1])
-        }
-      }
-      print("var.remove")
-      print(var.remove)
-      clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
-      for(j in 1:length(var.clus.temp)){
-        clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
-      }
-      print("clustering.var")
-      print(clustering.var)
-      # if (globe.inputs[["downsample.toggle"]] == "1") {
-      #   var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      #   clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      # }
+      var.annotate <- BuildVarAnnotate(files[1], flowfile)
+      var.remove <- SelectVarRemove(flowfile, var.annotate)
+      clustering.var <- SelectClusteringVar(flowfile, var.annotate)
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -237,6 +229,11 @@ if (globe.inputs[["mode"]] == "single") {
       which.palette <- globe.inputs[["color.palette"]]
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
+      
+      print("var.annotate")
+      print(var.annotate)
+      print("clustering.var")
+      print(clustering.var)
       
       # Run FLOW-MAP
       if (downsample) {
@@ -287,19 +284,12 @@ if (globe.inputs[["mode"]] == "single") {
       stopApp()
     }
     options(shiny.maxRequestSize = 1000 * 1024^2)
-    panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
+    panel.info <- InitializePanel()
     final.new.same <- NULL
     final.new.diff <- NULL
-    # FileOrder <- function(dir.now) {
-    #   file.names <- list.files(dir.now, pattern = "\\.fcs")
-    #   len.filenames <- seq(1, length(file.names))
-    #   return(list(len.filenames = len.filenames,
-    #               file.names = file.names))
-    # }
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
-    
     csv.order <- list.files(globe.raw.FCS.dir, pattern = "\\.csv")
     if(identical(csv.order, character(0))){
       choice <- "No CSV Files in Provided Folder!"
@@ -331,12 +321,7 @@ if (globe.inputs[["mode"]] == "single") {
       updateSelectInput(session, "check.group.files", 
                         choices = c("MultiFLOWMAP"))  
     })
-    
     ContentDiff <- eventReactive(input$csv.finder, {
-      fcs.list <- list()
-      temp.list <- list()
-      count <- 0
-      fcs.list <- list()
       fcs.file.path <- c()
       for(i in multi.list.global){
         fcs.file.path <- c(fcs.file.path, i)
@@ -346,29 +331,16 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
       test.globe <<- fcs.file.path
-      for(i in fcs.file.path) {
-        setwd(globe.raw.FCS.dir)
-        fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
-        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[2]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
-        fcs.list[[(count + 1)]] <- final
-        count <- count + 1
-        # Reads FCS Files, gets name and Description, add to a list of different FCS files
-      }
-      same <- Reduce(intersect, fcs.list)
-      every <- Reduce(union, fcs.list)
-      diffs <- every
-      diffs <- diffs[! every %in% same]
-      final.new.diff <<- diffs
+      temp.result <- GetMarkerNameParam(file.iter = fcs.file.path,
+                                        order = seq(1, length(fcs.file.path)),
+                                        folder.name = globe.raw.FCS.dir)
+      fcs.list <- temp.result$fcs.list
+      temp.list <- temp.result$temp.list
+      diffs <- ComparePanels(fcs.list)$diff
+      final.new.diff <<- diff
       diffs
     })
     ContentSame <- eventReactive(input$csv.finder, {
-      fcs.list <- list()
-      temp.list <- list()
-      fcs.list <- list()
       fcs.file.path <- c()
       for(i in multi.list.global){
         fcs.file.path <- c(fcs.file.path, i)
@@ -378,40 +350,18 @@ if (globe.inputs[["mode"]] == "single") {
         fcs.file.path <- levels(droplevels(fcs.file.path))
       }
       all.files <<- fcs.file.path
-      count = 0
-      for(i in fcs.file.path) {
-        setwd(globe.raw.FCS.dir)
-        fcs.files <- read.FCS(i, emptyValue = FALSE)
-        fcs.name <- as.vector(fcs.files@parameters@data[, 1])
-        fcs.param <- as.vector(fcs.files@parameters@data[, 2])
-        temp.list[[1]] <- unlist(fcs.name)
-        temp.list[[2]] <- unlist(fcs.param)
-        final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
-        fcs.list[[(count + 1)]] <- final
-        count <- count + 1
-        # Reads FCS Files, gets name and Description, add to a list of different FCS files
-      }
-      same <- Reduce(intersect, fcs.list)
-      every <- Reduce(union, fcs.list)
-      diff <- every
-      diff <- diff[! every %in% same]
+      temp.result <- GetMarkerNameParam(file.iter = fcs.file.path,
+                                        order = seq(1, length(fcs.file.path)),
+                                        folder.name = globe.raw.FCS.dir)
+      fcs.list <- temp.result$fcs.list
+      temp.list <- temp.result$temp.list
+      same <- ComparePanels(fcs.list)$same
       final.new.same <<- same
       same
       # gives the same parameters
     })
     TableCreate <- eventReactive(input$csv.finder, {
-      if (length(final.new.diff) == 0) {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = logical(length = length(final.new.same)),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      } else {
-        panel.info <<- data.frame(channels = c(final.new.same, final.new.diff),
-                                  removal = c(logical(length = length(final.new.same)),
-                                              !logical(length = length(final.new.diff))),
-                                  cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                  annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
-      }
+      panel.info <<- UpdatePanel(final.new.same, final.new.diff)
       output$table <- renderRHandsontable({
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
@@ -419,18 +369,7 @@ if (globe.inputs[["mode"]] == "single") {
       panel.info.edit <<- panel.info
     })
     observeEvent(input$csv.finder, {
-      if (length(final.new.diff) == 0) {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = logical(length = length(final.new.same)),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      } else {
-        panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
-                                 removal = c(logical(length = length(final.new.same)),
-                                             !logical(length = length(final.new.diff))),
-                                 cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                                 annotate = c(final.new.same, final.new.diff))
-      }
+      panel.info <<- UpdatePanel(final.new.same, final.new.diff)
     })
     observe({
       updateSelectInput(session, "check.group.sim", choices = ContentSame())
@@ -459,6 +398,8 @@ if (globe.inputs[["mode"]] == "single") {
         new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
         panel.info.edit <<- new.panel.info
       }
+      print("new.panel.info")
+      print(new.panel.info)
       output$table <- renderRHandsontable({
         rhandsontable(new.panel.info) %>%
           hot_col("channels", readOnly = TRUE)
@@ -476,45 +417,13 @@ if (globe.inputs[["mode"]] == "single") {
     })
     WriteFile <- eventReactive(input$start.button, {
       flowfile <- (hot_to_r(input$table))
-      print("flowfile")
-      print(flowfile)
-      # setwd(globe.raw.FCS.dir)
-      # set.seed(globe.inputs[["seed.num"]])
       files <- multi.list.global
       print(multi.list.global)
-      # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      var.annotate <- list()
-      for (j in 1:nrow(flowfile)) {
-        if (grepl("_", flowfile[j, 4])) {
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
-        } else {
-          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
-        }
-      }
-      print("var.annotate")
-      print(var.annotate)
-      var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
-      for(j in 1:length(var.remove.temp)){
-        if(length(var.remove.temp > 0)){
-          var.remove <- c(var.remove, var.remove.temp[[j]][1])
-        }
-      }
-      print("var.remove")
-      print(var.remove)
-      clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
-      for(j in 1:length(var.clus.temp)){
-        clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
-      }
-      print("clustering.var")
-      print(clustering.var)
-      # if (globe.inputs[["downsample.toggle"]] == "1") {
-      #   var.remove <- flowfile[flowfile$removal == TRUE, 1]
-      #   clustering.var <- flowfile[flowfile$cluster == TRUE, 1]
-      # }
+      var.annotate <- BuildVarAnnotate(files[[1]][1], flowfile)
+      var.remove <- SelectVarRemove(flowfile, var.annotate)
+      clustering.var <- SelectClusteringVar(flowfile, var.annotate)
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -525,6 +434,11 @@ if (globe.inputs[["mode"]] == "single") {
       which.palette <- globe.inputs[["color.palette"]]
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
+      
+      print("var.annotate")
+      print(var.annotate)
+      print("clustering.var")
+      print(clustering.var)
       
       # Run FLOW-MAP
       if (downsample) {
@@ -562,11 +476,9 @@ if (globe.inputs[["mode"]] == "single") {
       NULL
     })
     output$ordering <- renderText({
-      # ChosenOrder()
       NULL
     })
     output$fcsorder <- renderText({
-      # GetFCSinOrder()
       NULL
     })
   }
@@ -576,19 +488,13 @@ if (globe.inputs[["mode"]] == "single") {
       stopApp()
     }
     options(shiny.maxRequestSize = 1000 * 1024^2)
-    panel.info <- data.frame(channels = c(NA), removal = c(NA), cluster = c(NA), annotate = c(NA))
+    panel.info <- InitializePanel()
     final.new.same <- NULL
     final.new.diff <- NULL
-    # FileOrder <- function(dir.now) {
-    #   file.names <- list.files(dir.now, pattern = "\\.fcs")
-    #   len.filenames <- seq(1, length(file.names))
-    #   return(list(len.filenames = len.filenames,
-    #               file.names = file.names))
-    # }
     file.info <- FileOrder(globe.raw.FCS.dir)
     len.filenames <- file.info$len.filenames
     file.names <- file.info$file.names
-    if(identical(file.names, character(0))){
+    if (identical(file.names, character(0))) {
       choice <<- "No FCS Files"
     } else {
       choice <<- file.names
@@ -598,43 +504,26 @@ if (globe.inputs[["mode"]] == "single") {
                         choices = choice)
     })
     ContentSame <- eventReactive(input$gener.param.button, {
-      fcs.list <- list()
-      temp.list <- list()
-      fcs.list <- list()
-      fcs.file.path <- c()
-      setwd(globe.raw.FCS.dir)
       one.fcs <<- input$check.group.files
-      fcs.file <- read.FCS(one.fcs, emptyValue = FALSE)
-      fcs.name <- as.vector(fcs.file@parameters@data[, 1])
-      fcs.param <- as.vector(fcs.file@parameters@data[, 2])
-      temp.list[[1]] <- unlist(fcs.name)
-      temp.list[[2]] <- unlist(fcs.param)
-      final <- paste(temp.list[[1]], temp.list[[2]], sep = "_")
-      fcs.list[[(1)]] <- final
-      # Does same thing as above
-      same <- Reduce(intersect, fcs.list)
-      every <- Reduce(union, fcs.list)
-      diff <- every
-      diff <- diff[! every %in% same]
+      temp.result <- GetMarkerNameParam(file.iter = one.fcs,
+                                        order = c(1),
+                                        folder.name = globe.raw.FCS.dir)
+      fcs.list <- temp.result$fcs.list
+      temp.list <- temp.result$temp.list
+      same <- ComparePanels(fcs.list)$same
       final.new.same <<- same
       same
       # gives the same parameters
     })
     TableCreate <- eventReactive(input$gener.param.button, {
-      panel.info <<- data.frame(channels = c(final.new.same),
-                                removal = logical(length = length(final.new.same)),
-                                cluster = logical(length = length(final.new.same)),
-                                annotate = c(final.new.same), stringsAsFactors = FALSE)
+      panel.info <<- MakePanelOneMode(final.new.same)
       output$table <- renderRHandsontable({
         rhandsontable(panel.info) %>%
           hot_col("channels", readOnly = TRUE)
       })
     })
     observeEvent(input$gener.param.button, {
-      panel.info <<- data.frame(channels = c(final.new.same),
-                                removal = logical(length = length(final.new.same)),
-                                cluster = logical(length = length(final.new.same)),
-                                annotate = c(final.new.same), stringsAsFactors = FALSE)
+      panel.info <<- MakePanelOneMode(final.new.same)
     })
     observeEvent(input$gener.param.button, {
       updateSelectInput(session, "check.group.files", choices = ContentSame())
@@ -644,42 +533,13 @@ if (globe.inputs[["mode"]] == "single") {
     })
     WriteFile <- eventReactive(input$start.button, {
       flowfile <- (hot_to_r(input$table))
-      print("flowfile")
-      print(flowfile)
-      # setwd(globe.raw.FCS.dir)
-      # set.seed(globe.inputs[["seed.num"]])
       files <- one.fcs
       print(one.fcs)
-      # print(paste(globe.raw.FCS.dir, files, sep = "/"))
-      # NEED MULTI-FLOWMAP FIX FOR FILES
       mode <- globe.inputs[["mode"]]
       save.folder <- globe.result.dir
-      var.annotate <- list()
-      for (j in 1:nrow(flowfile)) {
-        if (grepl("_", flowfile[j, 4])) {
-          var.annotate[[flowfile[j, 1]]] <- unlist(strsplit(flowfile[j, 4], "_"))[1]
-        } else {
-          var.annotate[[flowfile[j, 1]]] <- flowfile[j, 4]
-        }
-      }
-      print("var.annotate")
-      print(var.annotate)
-      var.remove <- c()
-      var.remove.temp <- strsplit(flowfile[flowfile$removal == TRUE, 1], "_")
-      for(j in 1:length(var.remove.temp)){
-        if(length(var.remove.temp > 0)){
-          var.remove <- c(var.remove, var.remove.temp[[j]][1])
-        }
-      }
-      print("var.remove")
-      print(var.remove)
-      clustering.var <- c()
-      var.clus.temp <- strsplit(flowfile[flowfile$cluster == TRUE, 1], "_")
-      for (j in 1:length(var.clus.temp)) {
-        clustering.var <- c(clustering.var, var.clus.temp[[j]][1])
-      }
-      print("clustering.var")
-      print(clustering.var)
+      var.annotate <- BuildVarAnnotate(files, flowfile)
+      var.remove <- SelectVarRemove(flowfile, var.annotate)
+      clustering.var <- SelectClusteringVar(flowfile, var.annotate)
       maximum <- as.numeric(globe.inputs[["edge.max.num"]])
       minimum <- as.numeric(globe.inputs[["edge.min.num"]])
       distance.metric <- globe.inputs[["distance.metric"]]
@@ -688,11 +548,14 @@ if (globe.inputs[["mode"]] == "single") {
       seed.X <- as.numeric(globe.inputs[["seed.num"]])
       savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
       which.palette <- globe.inputs[["color.palette"]]
-      # for (i in 1:length(clustering.var)) {
-      #   clustering.var[i] <- var.annotate[[clustering.var[i]]]
-      # }
       name.sort <- FALSE
       downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
+      files <- paste(globe.raw.FCS.dir, files, sep = "/")
+      
+      print("var.annotate")
+      print(var.annotate)
+      print("clustering.var")
+      print(clustering.var)
       
       # Run FLOW-MAP
       if (downsample) {
@@ -702,7 +565,6 @@ if (globe.inputs[["mode"]] == "single") {
         target.percent <- NULL
         exclude.pctile <- input$exclude.pctile
         target.pctile <- input$target.pctile
-        files <- paste(globe.raw.FCS.dir, files, sep = "/")
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -713,7 +575,6 @@ if (globe.inputs[["mode"]] == "single") {
                 target.number = target.number, target.percent = target.percent)
       } else {
         print("No Downsampling")
-        files <- paste(globe.raw.FCS.dir, files, sep = "/")
         FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                 clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                 distance.metric = distance.metric, minimum = minimum, maximum = maximum,
@@ -739,6 +600,7 @@ if (globe.inputs[["mode"]] == "single") {
     })
   }
 }
+
 
 # build UI based on FLOW-MAP mode
 if (globe.inputs[["downsample.toggle"]] == "1") {
