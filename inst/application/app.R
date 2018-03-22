@@ -96,6 +96,33 @@ MakePanelOneMode <- function(final.new.same) {
   return(panel.info)
 }
 
+GetMultiFilePaths <- function(multi.list.global) {
+  fcs.file.path <- c()
+  for (i in multi.list.global) {
+    fcs.file.path <- c(fcs.file.path, i)
+  }
+  fcs.file.path <- unlist(fcs.file.path) 
+  if (paste(levels(fcs.file.path), collapse = "") != "") {
+    fcs.file.path <- levels(droplevels(fcs.file.path))
+  }
+  return(fcs.file.path)
+}
+
+GetFilePathsfromCSV <- function(globe.raw.FCS.dir) {
+  csv.path <- paste(globe.raw.FCS.dir, SelectCSV(), sep = "/")
+  print(csv.path)
+  csv.data <- read.csv(csv.path, header = TRUE)
+  temp.csv <- csv.data[, 2:ncol(csv.data)]
+  multi.list <- list()
+  for (i in 1:nrow(temp.csv)) {
+    temp.vec <- as.vector(temp.csv[i, ])
+    temp.vec <- temp.vec[temp.vec != ""] 
+    multi.list[[i]] <- temp.vec
+  }
+  names(multi.list) <- csv.data[, 1]
+  return(multi.list)
+}
+
 
 # build server based on FLOW-MAP mode
 if (globe.inputs[["mode"]] == "single") {
@@ -305,31 +332,13 @@ if (globe.inputs[["mode"]] == "single") {
     })
     observeEvent(input$csv.finder, {
       print("Parsing CSV")
-      csv.path <- paste(globe.raw.FCS.dir, SelectCSV(), sep = "/")
-      print(csv.path)
-      csv.data <- read.csv(csv.path, header = TRUE)
-      temp.csv <- csv.data[, 2:ncol(csv.data)]
-      multi.list <- list()
-      for (i in 1:nrow(temp.csv)) {
-        temp.vec <- as.vector(temp.csv[i, ])
-        temp.vec <- temp.vec[temp.vec != ""] 
-        multi.list[[i]] <- temp.vec
-      }
-      names(multi.list) <- csv.data[, 1]
-      print(multi.list)
+      multi.list <- GetFilePathsfromCSV(globe.raw.FCS.dir)
       multi.list.global <<- multi.list
       updateSelectInput(session, "check.group.files", 
                         choices = c("MultiFLOWMAP"))  
     })
     ContentDiff <- eventReactive(input$csv.finder, {
-      fcs.file.path <- c()
-      for(i in multi.list.global){
-        fcs.file.path <- c(fcs.file.path, i)
-      }
-      fcs.file.path <- unlist(fcs.file.path) 
-      if(paste(levels(fcs.file.path), collapse = "") != ""){
-        fcs.file.path <- levels(droplevels(fcs.file.path))
-      }
+      fcs.file.path <- GetMultiFilePaths(multi.list.global)
       test.globe <<- fcs.file.path
       temp.result <- GetMarkerNameParam(file.iter = fcs.file.path,
                                         order = seq(1, length(fcs.file.path)),
@@ -341,14 +350,7 @@ if (globe.inputs[["mode"]] == "single") {
       diffs
     })
     ContentSame <- eventReactive(input$csv.finder, {
-      fcs.file.path <- c()
-      for(i in multi.list.global){
-        fcs.file.path <- c(fcs.file.path, i)
-      }
-      fcs.file.path <- unlist(fcs.file.path) 
-      if(paste(levels(fcs.file.path), collapse = "") != ""){
-        fcs.file.path <- levels(droplevels(fcs.file.path))
-      }
+      fcs.file.path <- GetMultiFilePaths(multi.list.global)
       all.files <<- fcs.file.path
       temp.result <- GetMarkerNameParam(file.iter = fcs.file.path,
                                         order = seq(1, length(fcs.file.path)),
