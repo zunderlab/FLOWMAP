@@ -108,8 +108,7 @@ GetMultiFilePaths <- function(multi.list.global) {
   return(fcs.file.path)
 }
 
-GetFilePathsfromCSV <- function(globe.raw.FCS.dir) {
-  csv.path <- paste(globe.raw.FCS.dir, SelectCSV(), sep = "/")
+GetFilePathsfromCSV <- function(csv.path) {
   print(csv.path)
   csv.data <- read.csv(csv.path, header = TRUE)
   temp.csv <- csv.data[, 2:ncol(csv.data)]
@@ -332,7 +331,8 @@ if (globe.inputs[["mode"]] == "single") {
     })
     observeEvent(input$csv.finder, {
       print("Parsing CSV")
-      multi.list <- GetFilePathsfromCSV(globe.raw.FCS.dir)
+      csv.path <- paste(globe.raw.FCS.dir, SelectCSV(), sep = "/")
+      multi.list <- GetFilePathsfromCSV(csv.path)
       multi.list.global <<- multi.list
       updateSelectInput(session, "check.group.files", 
                         choices = c("MultiFLOWMAP"))  
