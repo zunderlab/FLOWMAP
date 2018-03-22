@@ -382,6 +382,8 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 <a name="gui-guide"></a>
 ## Using the GUI
 0. Make sure all FSC files to be used are in one folder.
+* If you plan to analyze files using FLOW-MAP mode "multi" (multiple conditions, multiple timepoints), you will need to set up a CSV file that outlines the FCS file paths (see section "CSV Format for Multiple Analysis") and select this folder instead of the FCS file folder.
+* Regardless of the mode, make sure that your FCS files meet the naming conventions described at the beginning of the section ["Running FLOWMAPR: Starting from FCS Files"](#FLOWMAPR-FCS).
 1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box with the header "FLOWMAPR" should appear. 
 2. Enter all of the relevant information which pertains to the type of experiment that is being analyzed, including if the data should be analyzed by FLOWMAPR mode "one", "single", or "multi".
 3. When you press "Submit", a new window should appear that runs in the Shiny interface.
@@ -411,7 +413,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 5. Press "Run FLOWMAPR" once the appropriate parameters have been checked and renamed to run the FLOW-MAP algorithm and generate all requested FLOWMAPR results (PDFs, graphml files, etc. in a new folder).
 
 ## CSV Format for Multiple Analysis
-The CSV file should be formatted as shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. 
+The CSV file should be formatted as shown below in cells. Assume the timepoints are to the left of the cells, and increase downwards starting with the first timepoint. The labels under time will be used to label the timepoints in the final FLOW-MAP graph. 
 
 | Time |            ConditionA             |             ConditionB            |
 |:----:|:---------------------------------:|:---------------------------------:|
