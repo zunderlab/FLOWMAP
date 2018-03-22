@@ -67,9 +67,9 @@ SelectVarRemove <- function(flowfile, var.annotate) {
 ComparePanels <- function(fcs.list) {
   same <- Reduce(intersect, fcs.list)
   every <- Reduce(union, fcs.list)
-  diff <- every[! every %in% same]
+  diffs <- every[! every %in% same]
   return(list(same = same,
-              diff = diff))
+              diffs = diffs))
 }
 
 UpdatePanel <- function(final.new.same, final.new.diff) {
@@ -139,7 +139,7 @@ if (globe.inputs[["mode"]] == "single") {
       temp.result <- GetMarkerNameParam(file.iter = file.names, order = order, folder.name = globe.raw.FCS.dir)
       fcs.list <- temp.result$fcs.list
       temp.list <- temp.result$temp.list
-      diffs <- ComparePanels(fcs.list)$diff
+      diffs <- ComparePanels(fcs.list)$diffs
       # Gets different parameters from the FCS files
       final.new.diff <<- diffs
       diffs
@@ -336,8 +336,8 @@ if (globe.inputs[["mode"]] == "single") {
                                         folder.name = globe.raw.FCS.dir)
       fcs.list <- temp.result$fcs.list
       temp.list <- temp.result$temp.list
-      diffs <- ComparePanels(fcs.list)$diff
-      final.new.diff <<- diff
+      diffs <- ComparePanels(fcs.list)$diffs
+      final.new.diff <<- diffs
       diffs
     })
     ContentSame <- eventReactive(input$csv.finder, {
