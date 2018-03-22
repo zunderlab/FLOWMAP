@@ -44,6 +44,7 @@ BuildVarAnnotate <- function(fcs.file, flowfile) {
   var.annotate <- list()
   original.names <- read.FCS(fcs.file)
   original.names <- unname(original.names@parameters@data[, 1])
+  flowfile$annotate <- as.character(flowfile$annotate)
   for (i in 1:nrow(flowfile)) {
     var.annotate[[original.names[i]]] <- flowfile$annotate[i]
   }
@@ -77,13 +78,13 @@ UpdatePanel <- function(final.new.same, final.new.diff) {
     panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
                              removal = logical(length = length(final.new.same)),
                              cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                             annotate = c(final.new.same, final.new.diff))
+                             annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
   } else {
     panel.info <- data.frame(channels = c(final.new.same, final.new.diff),
                              removal = c(logical(length = length(final.new.same)),
                                          !logical(length = length(final.new.diff))),
                              cluster = logical(length = length(final.new.diff) + length(final.new.same)),
-                             annotate = c(final.new.same, final.new.diff))
+                             annotate = c(final.new.same, final.new.diff), stringsAsFactors = FALSE)
   }
   return(panel.info)
 }
