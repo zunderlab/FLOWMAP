@@ -63,7 +63,7 @@ ConvertOrigTime <- function(graph, orig.times) {
 
 ConvertToPDF <- function(graphml.file, scale = NULL,
                          which.palette = "bluered") {
-  pctile.color <- c(0.2, 0.98)
+  pctile.color <- c(0.02, 0.98)
   node.size.scale <- 2
   min.node.size <- 12
   max.node.size <- 24
@@ -81,7 +81,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   for (attribute in list.vertex.attributes(graph)) {
     if (is.numeric(get.vertex.attribute(graph, attribute, index = V(graph)))) {
       all.attributes <- cbind(all.attributes, get.vertex.attribute(graph, attribute, index = V(graph)))
-      attrs.colnames <- c(attrs.colnames, attribute) 
+      attrs.colnames <- c(attrs.colnames, attribute)
     } else if (is.character(get.vertex.attribute(graph, attribute, index = V(graph)))) {
       remember.attr <- c(remember.attr, attribute)
     } else {
@@ -108,7 +108,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   color.scale <- my.palette(100)
   # set up node size
   vsize <- all.attributes[, "percent.total"]
-  vsize <- (vsize - min(vsize, na.rm = TRUE)) / (max(vsize, na.rm = TRUE) ^ (1 / node.size.scale)) * 
+  vsize <- (vsize - min(vsize, na.rm = TRUE)) / (max(vsize, na.rm = TRUE) ^ (1 / node.size.scale)) *
     ((max.node.size) ^ 0.5 / pi) + ((min.node.size) ^ (0.5 / pi))
   vsize[is.na(vsize) | (all.attributes[, "percent.total"] == 0)] <- (min.node.size) ^ (0.5 / pi)
   V(graph)$size <- vsize
@@ -123,7 +123,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
         attribute <- vsize
       }
       # set up color boundaries
-      ifelse (!is.null(scale), 
+      ifelse (!is.null(scale),
               boundary <- scale,
               boundary <- quantile(attribute, probs = pctile.color, na.rm = TRUE)
       )
@@ -147,10 +147,10 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
         bg = "transparent")
     graph.aspect <- ((max(graph.l[, 2]) - min(graph.l[, 2])) / (max(graph.l[, 1]) - min(graph.l[, 1])))
     par(mar = c(1.5, 1.5, 1.5, 1.5))
-    plot(graph, layout = graph.l, vertex.shape = "circle", 
-         vertex.color = fill.color, vertex.frame.color = frame.color, 
-         edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
-         vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
+    plot(graph, layout = graph.l, vertex.shape = "circle",
+         vertex.color = fill.color, vertex.frame.color = frame.color,
+         edge.color = "#FF000000", vertex.size = vsize, edge.label = NA,
+         vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1,
          asp = graph.aspect)
     pnts <- cbind(x = c(0.85, 0.9, 0.9, 0.85), y = c(1.2, 1.2, 0.9, 0.9))
     legend.gradient(pnts = pnts, cols = my.palette(20), title = name, round(c(min(attribute), max(attribute)), 4), cex = 10)
@@ -182,10 +182,10 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
           bg = "transparent")
       graph.aspect <- ((max(graph.l[, 2]) - min(graph.l[, 2])) / (max(graph.l[, 1]) - min(graph.l[, 1])))
       par(mar = c(1.5, 1.5, 1.5, 1.5))
-      plot(graph, layout = graph.l, vertex.shape = "circle", 
-           vertex.color = fill.color, vertex.frame.color = frame.color, 
-           edge.color = "#FF000000", vertex.size = vsize, edge.label = NA, 
-           vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1, 
+      plot(graph, layout = graph.l, vertex.shape = "circle",
+           vertex.color = fill.color, vertex.frame.color = frame.color,
+           edge.color = "#FF000000", vertex.size = vsize, edge.label = NA,
+           vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1,
            asp = graph.aspect)
       if (grepl(name, pattern = "Time")) {
         legend(0.875, 1.25, legend = unique(attribute),
