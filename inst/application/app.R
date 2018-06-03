@@ -1,3 +1,5 @@
+#SMG modified 6.3.18
+
 require(flowCore)
 require(shiny)
 require(rhandsontable)
