@@ -155,7 +155,7 @@ GetFilePathsfromCSV <- function(csv.path) {
 #Initialize globe.inputs  ====
 globe.toggle <- 0
 globe.inputs <- list()
-globe.inputs[["mode"]] <- 'NA'
+#globe.inputs[["mode"]] <- 'NA'
 # globe.inputs[["color.palette"]] <- 'NA'
 # globe.inputs[["downsample.toggle"]] <- 'NA'
 # globe.inputs[["savePDFs.toggle"]] <- 'NA'
@@ -607,11 +607,9 @@ server <- function(input, output, session) {
     params$inputs[["edge.min.num"]] <- input$minEdgeNum
     params$inputs[["exclude.pctile"]] <- input$exclude.pctile
     params$inputs[["target.pctile"]] <- input$target.pctile
+    print("params$inputs")
     print(params$inputs)
-    globe.toggle <<- 1
-    globe.inputs <<- params$inputs
-    print(globe.inputs)
-
+    #globe.inputs <<- params$inputs
 
     if ((length(which(params$inputs == "")) == 0) | (length(which(params$inputs == "NA")) == 0)) {
       output$emptyParam <- renderText({"Successful parameter and directory selection!"})
@@ -622,12 +620,26 @@ server <- function(input, output, session) {
 
   })##observeEvent
 
+  checkGlobals <- eventReactive(input$submitParams, {
+    globe.inputs <<- params$inputs
+    globe.inputs
+  })
+  observe({
+    checkGlobals()
+    print("globe.inputs")
+    print(globe.inputs)
+  })
+
+  # observe({
+  #         globe.inputs <<- params$inputs
+  #         print(globe.inputs)})
+
 ######################################################### Build file process tab =====
     output$ui <- renderUI({
       # build UI based on FLOW-MAP mode
       #print("globe.toggle")
 #Downsample+single  ====
-      if (globe.inputs[["mode"]] != "NA") {
+      if (length(params$inputs[["mode"]]) != 0) {
        # if (globe.inputs[["downsample.toggle"]] == TRUE) {
           if (globe.inputs[["mode"]] == "single") {
             ui <- fluidPage(
