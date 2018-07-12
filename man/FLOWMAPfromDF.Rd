@@ -10,7 +10,7 @@ FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
   save.folder = getwd(), time.col.label = "Time",
   condition.col.label = NULL, name.sort = TRUE, clustering = FALSE,
   seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
-  cluster.numbers = NULL)
+  cluster.numbers = NULL, cluster.mode)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
@@ -28,7 +28,7 @@ between cells for clustering (if requested) and edge-drawing steps}
 \item{distance.metric}{Character \code{c("manhattan", "euclidean")}}
 
 \item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
-during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 set to \code{2}, no less than 2 is recommended}
 
 \item{maximum}{Numeric value specifying the maximum number of edges that will be allotted
@@ -57,6 +57,8 @@ is a colorblind-friendly option}
 
 \item{cluster.numbers}{Optional variable, single numeric or a vector of numerics specifying
 how many clusters to generate from each separate dataframe}
+
+\item{cluster.mode}{???}
 }
 \value{
 the force-directed layout resolved igraph graph object

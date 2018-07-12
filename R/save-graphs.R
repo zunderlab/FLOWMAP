@@ -253,6 +253,8 @@ PrintSummary <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("subsamples (subsamples for all FCS files):", env$subsamples)
   summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers (number of clusters for all FCS files):",
                                         env$cluster.numbers)
+  summary[(dim(summary)[1] + 1), ] <- c("cluster.mode (which clustering algorithm):",
+                                        env$cluster.mode)
   summary[(dim(summary)[1] + 1), ] <- c("seed.X (set seed value):", env$seed.X)
   summary[(dim(summary)[1] + 1), ] <- c("name.sort (files sorted alphanumerically by name in algorithm):",
                                         env$name.sort)

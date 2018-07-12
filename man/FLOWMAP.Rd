@@ -6,9 +6,10 @@
 \usage{
 FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
   var.remove = c(), var.annotate = NULL, clustering.var,
-  cluster.numbers = 100, distance.metric = "manhattan", minimum = 2,
-  maximum = 5, save.folder = getwd(), subsamples = 200,
-  name.sort = TRUE, downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+  cluster.numbers = 100, cluster.mode = "hclust",
+  distance.metric = "manhattan", minimum = 2, maximum = 5,
+  save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+  downsample = FALSE, seed.X = 1, savePDFs = TRUE,
   which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
   target.number = NULL, target.percent = NULL, ...)
 }
@@ -32,10 +33,12 @@ between cells for clustering (if requested) and edge-drawing steps}
 \item{cluster.numbers}{A single numeric or a vector of numerics specifying how many clusters
 to generate from each separate FCS file}
 
+\item{cluster.mode}{???}
+
 \item{distance.metric}{Character \code{c("manhattan", "euclidean")}}
 
 \item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
-during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 set to \code{2}, no less than 2 is recommended}
 
 \item{maximum}{Numeric value specifying the maximum number of edges that will be allotted
