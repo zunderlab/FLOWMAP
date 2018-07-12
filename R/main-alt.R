@@ -14,7 +14,7 @@
 #' @param project.name Character string to label file output of FLOWMAPR analysis
 #' @param clustering.var Vector naming channels to be used to calculate distances/differences
 #' between cells for clustering (if requested) and edge-drawing steps
-#' @param distance.metric Character \code{c("manhattan", "euclidean")}
+#' @param distance.metric Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}
 #' @param minimum Numeric value specifying the minimum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{2}, no less than 2 is recommended
@@ -35,7 +35,7 @@
 #' is a colorblind-friendly option
 #' @param cluster.numbers Optional variable, single numeric or a vector of numerics specifying
 #' how many clusters to generate from each separate dataframe
-#' @param cluster.mode ???
+#' @param cluster.mode Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
