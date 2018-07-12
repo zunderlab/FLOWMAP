@@ -33,9 +33,9 @@ between cells for clustering (if requested) and edge-drawing steps}
 \item{cluster.numbers}{A single numeric or a vector of numerics specifying how many clusters
 to generate from each separate FCS file}
 
-\item{cluster.mode}{???}
+\item{cluster.mode}{Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}}
 
-\item{distance.metric}{Character \code{c("manhattan", "euclidean")}}
+\item{distance.metric}{Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}}
 
 \item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
 during each density-dependent edge-building step of the FLOW-MAP graph, default value is

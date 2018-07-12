@@ -1,5 +1,5 @@
 #' FLOWMAPR - Graph-based visualizations of high-dimensional single-cell data across time
-#' 
+#'
 #' @description
 #' An Implementation of FLOW-MAP Algorithm in R. It takes user-specified
 #' inputs for settings of a FLOW-MAP analysis and generates a FLOW-MAP graph from provided
@@ -10,7 +10,7 @@
 #' FLOW-MAP settings and begin a FLOW-MAP analysis. Please see the accompanying README.md
 #' file and our GitHub repo at \url{https://github.com/zunderlab/FLOWMAP/} for
 #' more detailed instructions and examples.
-#' 
+#'
 #' @name FLOWMAPR
 #' @docType package
 #' @import flowCore
@@ -20,7 +20,6 @@
 #' @import scaffold
 #' @import spade
 #' @import SDMTools
-#' @import tcltk
 #' @import rhandsontable
 #' @import shiny
 NULL
