@@ -177,10 +177,10 @@ header <- dashboardHeader(title = "FLOWMAPR")
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    #menuItem("Instructions", tabName = "instructions", icon = icon("dashboard")),
-    menuItem("Directory Selection", tabName = "directory", icon = icon("th")),
+    menuItem("Instructions", tabName = "instructions", icon = icon("info-circle")),
+    menuItem("Directory Selection", tabName = "directory", icon = icon("folder-open", lib = "glyphicon")),
     menuItem("Settings", tabName = "params", icon = icon("cog", lib = "glyphicon")),
-    menuItem("File Processing", tabName = "files", icon = icon("folder-open", lib = "glyphicon")),
+    menuItem("File Processing", tabName = "files", icon = icon("edit", lib = "font-awesome")),
     #menuItem("Help", tabName = "help", icon = icon("question-sign", lib = "glyphicon")),
     #tags$br,
     actionButton("reset", "Reset"),
@@ -192,14 +192,116 @@ body <- dashboardBody(
   tabItems(
     # First tab content
     tabItem(tabName = "instructions",
-            fluidRow(
-                   box(
-                     width = '12',
-                     #title = "xx",
-                     #includeMarkdown("~/GitHub/FLOWMAP/www/TestMarkdown.Rmd")
-                     includeHTML("FLOWMAP_GUI_Instructions.html")
-                   )#,
-            )#fluidRow
+        fluidRow(
+           box(
+             width = '12',
+             title = "Using The GUI",
+             helpText(HTML("	1.	Navigate to the 'Directory Selection' tab to choose the directory containing
+                                  your FCS/CSV files and the destination directory for your results.
+                                  When completed, click the ‘Load Directories’ button. Once you see
+                                  the confirmation message, proceed to step 2.
+                              <br>
+                            	2.	Navigate to the 'Settings' tab and enter all of the relevant
+                                  information for you FLOWMAP analysis. When completed,
+                                  click the ‘Submit’ button. Once you see the confirmation
+                                  message, proceed to step 3.
+                              <br>
+                              3.	Navigate to the 'File Processing' tab and select whether the data should be analyzed
+                                  by FLOWMAPR mode 'one', 'single', or 'multi'. Once selected, this tab will
+                                  populate with the relevant fields for that mode. The usage from this point
+                                  on differs depending on what mode (e.g. 'multi' or 'single' or 'one') is used.
+                           <br><br>")),
+
+             tabBox(width=12, id="info_modes",
+               tabPanel(
+                 title = "One",
+                 helpText(HTML("<b>For mode 'one' (one condition, one timepoint):</b>")),
+                 helpText(HTML("1.	Select the FCS file to be analyzed in 'Uploaded Order'.
+                                <br>
+                                2.	Press 'Generate Parameters'.
+                                <br>
+                                3.	An interactive table will appear with all the parameters as well as
+                                    options for selecting and deselecting them as clustering or removed
+                                    variables. Removed variables will not be in the final generated graph,
+                                    such as in the graphml file or the image PDFs.
+                               <br>
+                                4.	You must check at least one or more of the parameters for clustering.
+                                    These variables are used both for clustering (calculation of similarity)
+                                    and for calculating edge distances during the graph building steps. If
+                                    you want to rename a parameter, you can click on the name under the
+                                    'annotate' column and type a new name.
+                                <br>
+                                5.	Press 'Run FLOWMAPR' once the appropriate parameters have been checked
+                                    and renamed to run the FLOW-MAP algorithm and generate all requested
+                                    FLOWMAPR results (PDFs, graphml files, etc. in a new folder)."))
+
+               ),#tabPanel
+               tabPanel(
+                 title = "Single",
+                 helpText(HTML("<b>For mode 'one' (one condition, multiple timepoints):</b>")),
+                 helpText(HTML("1.	Enter in the order of the FCS files that you wish to use.
+                                  Generally, files will be used in an alphanumerical
+                                  order by time, but here you can specify the ordering
+                                  if the naming system does not reflect the order you want.
+                               <br>
+                            	2.	Press 'Generate Parameters'.
+                            <br>
+                            	3.	Two things will happen: an interactive table will appear
+                                  with all the parameters and options for selecting how
+                                  parameters should be used for analysis, and the menus
+                                  for 'Similar Fields' and 'Different Fields' will
+                                  autopopulate as an aid to help you process channels
+                                  between the files.
+                              <br>
+                               4.	If any channel needs to be merged, select the files from the
+                                  'Different Fields' window, enter the new merged name in
+                                  'Select New Merge Name', and press 'Merge Selected Diff'.
+                                  This will automatically remove the channels from
+                                  'Different Fields', add the merged name to 'Similar Fields',
+                                  and will update the table with new annotations.
+                              <br>
+                               5.	The different parameters will by default be checked for removal.
+                                  You must check at least one or more of the parameters
+                                  for clustering. If you want to rename a parameter,
+                                  click on the name under 'annotate' and type a new name.
+                              <br>
+                               6.	Press 'Run FLOWMAPR' once the appropriate parameters have been
+                                  checked and renamed to run the FLOW-MAP algorithm
+                                  and generate all requested FLOWMAPR results
+                                  (PDFs, graphml files, etc. in a new folder)."))
+
+                 ),#tabPanel
+               tabPanel(
+                 title = "Multi",
+                 helpText(HTML("<b>For mode 'multi' (multiple conditions, multiple timepoints):</b>")),
+                 helpText(HTML("1.	Select the CSV file that has the corresponding FCS file paths. How
+                                    the CSV file should be arranged (i.e. what information is put in
+                                    the columns/rows) will be shown in the following section.
+                                    <br>
+                              	2.	Press 'Input CSV' once the CSV is selected in the box.
+                              <br>
+                               3.	If any channel needs to be merged, select the files from the
+                                  'Different Fields' window, enter the new merged name in
+                                  'Select New Merge Name', and press 'Merge Selected Diff'.
+                                  This will automatically remove the channels from
+                                  'Different Fields', add the merged name to 'Similar Fields',
+                                  and will update the table with new annotations.
+                                  <br>
+                               4.	The different parameters will by default be checked for removal.
+                                  You must check at least one or more of the
+                                  parameters for clustering. If you want to
+                                  rename a parameter, click on the name under
+                                  'annotate' and type a new name.
+                                  <br>
+                               5.	Press 'Run FLOWMAPR' once the appropriate parameters have been
+                                  checked and renamed to run the FLOW-MAP algorithm
+                                  and generate all requested FLOWMAPR results
+                                  (PDFs, graphml files, etc. in a new folder)."))
+
+                 )#tabPanel
+             )#tabBox
+           )#box
+        )#fluidRow
     ),#tabItem
     # Second tab content
     tabItem(tabName = "directory",
@@ -260,6 +362,11 @@ ui <- dashboardPage(header, sidebar, body, skin = "black")
 
 #SERVER  ====
 server <- function(input, output, session) {
+  #instructions tab
+  # output$showfile <- renderUI({
+  #   file_to_show = 'gui_instructions.html'
+  #   HTML(readLines(file_to_show))
+  # })
   #quit button
   observeEvent(input$quit, {
     print("Exiting FLOWMAP")
@@ -317,21 +424,21 @@ server <- function(input, output, session) {
               #SPADE Downsampling:
               tabPanel(
                 "Downsampling",
-                useShinyalert(),  # Set up shinyalert
-                div(style="display:inline-block",actionButton("DownsampleHelp", label = "?")),
-                div(style="display:inline-block",
-                checkboxInput("spade", "SPADE Downsampling", FALSE)),
+                #fluidRow(
+                  useShinyalert(),  # Set up shinyalert
+                  div(style="display:inline-block",actionButton("DownsampleHelp", label = "?")),
+                  div(style="display:inline-block",
+                      checkboxInput("spade", "SPADE Downsampling", FALSE)),
+                #),
                 tags$h5(),
-                conditionalPanel(condition = "input.spade == TRUE",
-                                 #Subsample Number (Downsample Target Number)
-                                 #numericInput
-                                 useShinyalert(),  # Set up shinyalert
-                                 div(style="display:inline-block",actionButton("SubsampleNumHelp", label = "?")),
-                                 div(style="display:inline-block",
-                                     numericInput("subsampNum", "Subsample Number (Downsample Target Number):", 200)),
-                                 numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
-                                 numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01)
-                )
+                #Subsample Number (Downsample Target Number)
+                #numericInput
+                useShinyalert(),  # Set up shinyalert
+                div(style="display:inline-block",
+                    actionButton("SubsampleNumHelp", label = "?")),
+                div(style="display:inline-block",
+                    numericInput("subsampNum", "Subsample Number (Downsample Target Number):", 200)),
+                uiOutput('conditionalDownsampleUI')
               ),#tabPanel
               tabPanel(
                 "Graph Output",
@@ -355,18 +462,22 @@ server <- function(input, output, session) {
         column(
              width = 12,
              align = 'center',
-             #div(style = "background-color:gray; text-align:center;",
-                 actionButton("submitParams", "Submit"),
-             # div(style="display: inline-block;vertical-align:top; width: 10px;",
-             #     HTML("<br>")),
-             # div(style="display: inline-block;vertical-align:top; width: 300px;",
-             #     verbatimTextOutput("emptyParam", placeholder = FALSE))
-             #uiOutput("MissingParams")
+             actionButton("submitParams", "Submit"),
              verbatimTextOutput("emptyParam", placeholder = FALSE)
         )#box
       )#fluidRow
     )#div
   })#renderUI
+
+  output$conditionalDownsampleUI <- renderUI({
+        if (input$spade) {
+          ui <- box( width = 12,
+                   numericInput("target.pctile", label = h5("Downsample Target Percentile"), value = 0.99),
+                   numericInput("exclude.pctile", label = h5("Downsample Exclude Percentile"), value = 0.01)
+                  )
+       }#if
+  })#renderUI
+
 
 #########################################################HELP FUNCTIONS ====
   # button functions
@@ -479,7 +590,6 @@ server <- function(input, output, session) {
       output$dirLoaded <- renderText("Successful directory selection!")
     }
   })#observeEvent
-
 
   #collect parameters locally to pass to flowmap algorithm ====
   params <- reactiveValues(inputs=list())
