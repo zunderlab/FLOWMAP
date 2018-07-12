@@ -30,7 +30,6 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
       temp.counts <- c(unlist(temp.counts), unlist(list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]]))
       temp.counts <- as.data.frame(temp.counts)
       colnames(temp.counts) <- c("Counts")
-      # temp.counts <- rbind(as.vector(temp.counts), as.vector(list.of.FLOWMAP.clusters[[t]]$cluster.counts[[c]]))
     }
     cluster.medians[[t]] <- temp.medians
     rownames(temp.counts) <- 1:nrow(temp.counts)
@@ -42,12 +41,11 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
   }
   remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
                                                cluster.medians, cluster.counts, cell.assgn)
-  # stop("DEBUGGING")
   return(remodeled.FLOWMAP.clusters)
 }
 
 ClusterFCS <- function(fcs.files, clustering.var, numcluster,
-                       distance.metric) {
+                       distance.metric, cluster.mode) {
   full.clusters <- data.frame()
   table.breaks <- c()
   table.lengths <- c()
@@ -69,8 +67,16 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     cluster.medians[[i]] <- data.frame()
     tmp.FCS.for.cluster <- subset(x = current.file, select = clustering.var)
     cat("Subsetting for clustering channels only", "\n")
-    cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
-                                        distance.metric = distance.metric, numcluster = numcluster[i])
+    cat("Using clustering method:", cluster.mode, "\n")
+    if (cluster.mode == "hclust") {
+      cluster.results <- HclustClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+                                          distance.metric = distance.metric, numcluster = numcluster[i])
+    } else if (cluster.mode == "kmeans") {
+      cluster.results <- KMeansClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
+                                          distance.metric = distance.metric, numcluster = numcluster[i])
+    } else {
+      stop("Unrecognized clustering method!")
+    }
     cell.assgn[[i]] <- cluster.results$tmp.cell.assgn
     cluster.medians[[i]] <- cluster.results$new.medians
     cluster.counts[[i]] <- cluster.results$new.counts
@@ -86,7 +92,7 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
   }
   for (i in 1:length(cluster.medians)) {
     rownames(cluster.medians[[i]]) <- seq(1, table.lengths[i])
-  }    
+  }
   rownames(full.clusters) <- seq(1, dim(full.clusters)[1])
   FLOWMAP.clusters <- FLOWMAPcluster(full.clusters = full.clusters,
                                      table.breaks = table.breaks,
@@ -94,15 +100,16 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
                                      cluster.medians = cluster.medians,
                                      cluster.counts = cluster.counts,
                                      cell.assgn = cell.assgn)
-  return(FLOWMAP.clusters)  
+  return(FLOWMAP.clusters)
 }
 
-MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.metric) {
+MultiClusterFCS <- function(list.of.files, clustering.var, numcluster,
+                            distance.metric, cluster.mode) {
   list.of.FLOWMAP.clusters <- list()
   numcluster.orig <- numcluster
   if (length(numcluster.orig) == 1) {
     cat("Clustering all files to:", numcluster, "\n")
-  } 
+  }
   for (t in 1:length(list.of.files)) {
     cat("Clustering all files from time", t, "\n")
     fcs.files <- list.of.files[[t]]
@@ -115,7 +122,7 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster, distance.
     if (length(numcluster) != length(fcs.files)) {
       stop("Cluster number not specified for all FCS files!")
     }
-    file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric)
+    file.clusters <- ClusterFCS(fcs.files, clustering.var, numcluster, distance.metric, cluster.mode)
     list.of.FLOWMAP.clusters[[t]] <- file.clusters
   }
   return(list.of.FLOWMAP.clusters)
@@ -134,7 +141,7 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   new.medians <- data.frame()
   # Invalid clusters have assgn == 0
   is.na(clust$assgn) <- which(clust$assgn == 0)
-  for (p in c(1:max(clust$assgn, na.rm = TRUE))) {  
+  for (p in c(1:max(clust$assgn, na.rm = TRUE))) {
     obs <- which(clust$assgn == p)
     if (length(obs) > 1) {
       # Finding clusters containing more than one cell
@@ -176,7 +183,51 @@ KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   new.medians <- data.frame()
   # Invalid clusters have assgn == 0
   is.na(FCS.clusters$cluster) <- which(FCS.clusters$cluster == 0)
-  for (p in c(1:max(FCS.clusters$cluster, na.rm = TRUE))) {  
+  for (p in c(1:max(FCS.clusters$cluster, na.rm = TRUE))) {
+    obs <- which(FCS.clusters$cluster == p)
+    if (length(obs) > 1) {
+      # Finding clusters containing more than one cell
+      # Saving counts and medians of data
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- colMedians(as.matrix(current.file[obs, ]))
+      new.median <- as.data.frame(new.median)
+      if (!identical(colnames(new.median), colnames(current.file))) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
+      }
+      # Saving cluster data
+    } else {
+      new.counts <- rbind(new.counts, data.frame(length(obs)))
+      new.median <- current.file[obs, ]
+      new.median <- as.data.frame(new.median)
+      if (!identical(colnames(new.median), colnames(current.file))) {
+        new.median <- t(new.median)
+        colnames(new.median) <- colnames(current.file)
+      }
+    }
+    new.medians <- rbind(new.medians, new.median)
+  }
+  tmp.cell.assgn <- data.frame(FCS.clusters$cluster)
+  tmp.cell.assgn <- as.data.frame(tmp.cell.assgn[complete.cases(tmp.cell.assgn), ])
+  colnames(tmp.cell.assgn) <- c("Cluster")
+  return(list(tmp.cell.assgn = tmp.cell.assgn,
+              new.medians = new.medians,
+              new.counts = new.counts))
+}
+
+
+DensClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
+  if (distance.metric == "euclidean") {
+    FCS.clusters <- kmeans(tmp.FCS.for.cluster, numcluster)
+    # dbscan(x, eps, minPts = 5, weights = NULL, borderPoints = TRUE)
+  } else {
+    stop("CAN ONLY USE EUCLIDEAN!")
+  }
+  new.counts <- data.frame()
+  new.medians <- data.frame()
+  # Invalid clusters have assgn == 0
+  is.na(FCS.clusters$cluster) <- which(FCS.clusters$cluster == 0)
+  for (p in c(1:max(FCS.clusters$cluster, na.rm = TRUE))) {
     obs <- which(FCS.clusters$cluster == p)
     if (length(obs) > 1) {
       # Finding clusters containing more than one cell
@@ -220,7 +271,7 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
     downsample.fcs.file <- fcs.files[[f]]
     downsample.fcs.file <- downsample.fcs.file[, clustering.var]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
-    all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file, 
+    all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file,
                                                       downsample.fcs.file,
                                                       cluster.assign)
     fixed.counts <- table(all.cells.assign)
@@ -244,7 +295,7 @@ MultiUpsample <- function(file.names, FLOWMAP.clusters, fcs.files,
       downsample.fcs.file <- fcs.files[[t]][[f]]
       downsample.fcs.file <- downsample.fcs.file[, clustering.var]
       cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters[[t]]$cell.assgn[[f]]))
-      all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file, 
+      all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file,
                                                         downsample.fcs.file,
                                                         cluster.assign)
       fixed.counts <- table(all.cells.assign)

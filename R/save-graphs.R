@@ -32,6 +32,21 @@ ConvertToGraphML <- function(output.graph, file.name) {
   return(file.name)
 }
 
+ExportClusterTables <- function(output.graph, file.name) {
+  cat("Saving cluster tables to file:", file.name, "\n")
+  file.name <- paste(Sys.Date(), file.name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
+  file.name <- paste(file.name, "_cluster_tables.csv", sep = "")
+  all.attr <- get.vertex.attribute(output.graph)
+  this.df <- c()
+  for (x in 1:length(all.attr)) {
+    this.df <- cbind(this.df, all.attr[[x]])
+    this.df <- as.data.frame(this.df)
+  }
+  colnames(this.df) <- names(all.attr)
+  write.csv(this.df, file = file.name, quote = FALSE)
+  return(file.name)
+}
+
 ChangeTimes <- function(num, time.convert) {
   # ind <- match(num, as.numeric(names(time.convert)))
   convert.num <- time.convert[[num]]

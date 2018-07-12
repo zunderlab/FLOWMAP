@@ -1,15 +1,15 @@
 
 CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
-                          clustering.var, cluster.numbers,
+                          clustering.var, cluster.numbers, cluster.mode,
                           distance.metric, minimum, maximum,
                           subsamples, which.palette) {
   check.whole.number <- function(x) { return (x %% 1 == 0) }
   check.pos.number <- function(x) { return (x > 0) }
-  
+
   # need to add to checksettings
   # - maximum edges can’t be more than number of clusters in each time point
   # - clustering.var are all numerical values in files
-  
+
   if (!dir.exists(save.folder)) {
     # stop("save.folder does not exist!")
     stop(paste("save.folder", save.folder, "does not exist!"))
@@ -32,6 +32,11 @@ CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
   if (is.numeric(cluster.numbers)) {
     if (!check.pos.number(cluster.numbers) || !check.whole.number(cluster.numbers)) {
       stop("cluster.numbers must be positive whole number!")
+    }
+  }
+  if (!is.null(cluster.mode)) {
+    if (cluster.mode != "hclust" && cluster.mode != "kmeans") {
+      stop("cluster.mode must 'hclust' and 'kmeans'!")
     }
   }
   if (is.numeric(subsamples)) {
@@ -79,5 +84,5 @@ CheckDownsampleSettings <- function(exclude.pctile, target.pctile, target.number
   if (is.null(target.number) && is.null(target.percent)) {
     warning("both target.number and target.percent are not provided!")
   }
-  return() 
+  return()
 }

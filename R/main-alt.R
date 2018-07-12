@@ -16,7 +16,7 @@
 #' between cells for clustering (if requested) and edge-drawing steps
 #' @param distance.metric Character \code{c("manhattan", "euclidean")}
 #' @param minimum Numeric value specifying the minimum number of edges that will be allotted
-#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{2}, no less than 2 is recommended
 #' @param maximum Numeric value specifying the maximum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
@@ -35,6 +35,7 @@
 #' is a colorblind-friendly option
 #' @param cluster.numbers Optional variable, single numeric or a vector of numerics specifying
 #' how many clusters to generate from each separate dataframe
+#' @param cluster.mode ???
 #' @return the force-directed layout resolved igraph graph object
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
@@ -42,13 +43,14 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           minimum = 2, maximum = 5, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, clustering = FALSE, seed.X = 1,
-                          savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL) {
+                          savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL,
+                          cluster.mode) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
   df <- RemoveRowNames(df)
   PrintSummaryfromDF(env = parent.frame())
-  
+
   if (mode == "single") {
     check <- CheckDFModeSingle(df)
     cat("check", check, "\n")
@@ -63,7 +65,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = df, clustering.var = clustering.var,
-                                  numcluster = cluster.numbers, distance.metric = distance.metric)
+                                  numcluster = cluster.numbers, distance.metric = distance.metric,
+                                  cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
@@ -84,7 +87,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
-                                       distance.metric = distance.metric)
+                                       distance.metric = distance.metric, cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
@@ -105,7 +108,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     fcs.files[[1]] <- df
     if (clustering) {
       file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
-                                  numcluster = cluster.numbers, distance.metric = distance.metric)
+                                  numcluster = cluster.numbers, distance.metric = distance.metric,
+                                  cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructOneFLOWMAPCluster(df)
     }
@@ -132,7 +136,8 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
       file.clusters <- MultiClusterFCS(list.of.files = fixed.df, clustering.var = clustering.var,
-                                       numcluster = cluster.numbers, distance.metric = distance.metric)
+                                       numcluster = cluster.numbers, distance.metric = distance.metric,
+                                       cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(fixed.df)
     }
@@ -159,7 +164,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  # PrintSummaryfromDF(env = parent.frame())
+  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
     ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)

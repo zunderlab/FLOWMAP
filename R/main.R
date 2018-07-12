@@ -4,7 +4,7 @@
 #' \code{FLOWMAP} generates FLOWMAPR analysis results from FCS files. For more information,
 #' as well as a guide for how to choose the best settings for your analysis, go to
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
-#' 
+#'
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param files File paths for FCS files to be used or a folder containing
@@ -18,9 +18,10 @@
 #' between cells for clustering (if requested) and edge-drawing steps
 #' @param cluster.numbers A single numeric or a vector of numerics specifying how many clusters
 #' to generate from each separate FCS file
+#' @param cluster.mode ???
 #' @param distance.metric Character \code{c("manhattan", "euclidean")}
 #' @param minimum Numeric value specifying the minimum number of edges that will be allotted
-#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is 
+#' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{2}, no less than 2 is recommended
 #' @param maximum Numeric value specifying the maximum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
@@ -53,7 +54,7 @@
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),
                     var.annotate = NULL, clustering.var, cluster.numbers = 100,
-                    distance.metric = "manhattan", minimum = 2, maximum = 5,
+                    cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5,
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
@@ -62,10 +63,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
   CheckSettings(mode, save.folder, var.remove, var.annotate,
-                clustering.var, cluster.numbers,
+                clustering.var, cluster.numbers, cluster.mode,
                 distance.metric, minimum, maximum,
                 subsamples, which.palette)
-  
+
   if (downsample) {
     CheckDownsampleSettings(exclude.pctile, target.pctile,
                             target.number, target.percent)
@@ -104,7 +105,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                 channel.annotate = var.annotate, subsamples = subsamples)
     }
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
-                                numcluster = cluster.numbers, distance.metric = distance.metric)
+                                numcluster = cluster.numbers, distance.metric = distance.metric,
+                                cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = 1, min = minimum,
@@ -148,7 +150,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
     file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
-                                     distance.metric = distance.metric)
+                                     distance.metric = distance.metric, cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
     graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
@@ -186,7 +188,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                channel.annotate = var.annotate, subsamples = subsamples)
     }
     file.clusters <- ClusterFCS(fcs.files = fcs.file, clustering.var = clustering.var,
-                                numcluster = cluster.numbers, distance.metric = distance.metric)
+                                numcluster = cluster.numbers, distance.metric = distance.metric,
+                                cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
@@ -234,7 +237,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     label.key.special <- process.results$label.key.special
     fcs.files.list[[1]] <- process.results$fixed.files
     file.clusters <- MultiClusterFCS(list.of.files = fcs.files.list, clustering.var = clustering.var,
-                                     numcluster = cluster.numbers, distance.metric = distance.metric)
+                                     numcluster = cluster.numbers, distance.metric = distance.metric,
+                                     cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     temp.files.list <- list()
     temp.files.list[[1]] <- fcs.files
@@ -264,6 +268,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     fixed.graph <- graph.xy
   }
   fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
+  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
