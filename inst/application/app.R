@@ -549,17 +549,7 @@ server <- function(input, output, session) {
   output$dirIn <- renderText({
     parseDirPath(roots, dirIn())
   })#renderText
-  # observeEvent(ignoreNULL = TRUE,
-  #              eventExpr = {
-  #                input$dirIn
-  #              },
-  #              handlerExpr = {
-  #                print("global$datapath")
-  #                print(global$datapath)
-  #                home <- normalizePath("~")
-  #                global$datapath <-
-  #                  file.path(home, paste(unlist(dirIn()$path[-1]), collapse = .Platform$file.sep))
-  # })#observeEvent
+
   #Access directory specifying desired results file location ====
   roots = getVolumes()
   shinyDirChoose(input, 'dirOut', roots = roots)
@@ -568,17 +558,7 @@ server <- function(input, output, session) {
   output$dirOut <- renderText({
     parseDirPath(roots, dirOut())
   })#renderText
-  # observeEvent(ignoreNULL = TRUE,
-  #              eventExpr = {
-  #                input$dirOut
-  #              },
-  #              handlerExpr = {
-  #                home <- normalizePath("~")
-  #                global$datapath <-
-  #                  file.path(home, paste(unlist(dirOut()$path[-1]), collapse = .Platform$file.sep))
-  #                #print(global$datapath)
-  #                #print(parseDirPath(roots, dirOut()))
-  #  })#observeEvent
+
   observeEvent(input$loadDir, {
     if(is.null(input$dirIn) | is.null(input$dirOut))
     {
