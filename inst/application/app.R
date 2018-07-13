@@ -201,7 +201,7 @@ body <- dashboardBody(
                                   the confirmation message, proceed to step 2.
                               <br>
                             	2.	Navigate to the 'Settings' tab and enter all of the relevant
-                                  information for you FLOWMAP analysis. When completed,
+                                  information for your FLOWMAP analysis. When completed,
                                   click the ‘Submit’ button. Once you see the confirmation
                                   message, proceed to step 3.
                               <br>
@@ -544,6 +544,7 @@ server <- function(input, output, session) {
   #print(roots)
   shinyDirChoose(input, 'dirIn', roots = roots)
   global <- reactiveValues(datapath = getwd())
+
   dirIn <- reactive(input$dirIn)
   output$dirIn <- renderText({
     parseDirPath(roots, dirIn())
@@ -553,6 +554,8 @@ server <- function(input, output, session) {
                  input$dirIn
                },
                handlerExpr = {
+                 print("global$datapath")
+                 print(global$datapath)
                  home <- normalizePath("~")
                  global$datapath <-
                    file.path(home, paste(unlist(dirIn()$path[-1]), collapse = .Platform$file.sep))
