@@ -6,7 +6,6 @@ library(shinyFiles)
 library(shinydashboard)
 library(shinyalert)
 library(flowCore)
-library(ShinyInputDir)
 library(rhandsontable)
 
 #Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):
