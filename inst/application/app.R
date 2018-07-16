@@ -445,7 +445,7 @@ server <- function(input, output, session) {
                 useShinyalert(),  # Set up shinyalert
                 div(style="display:inline-block",actionButton("ColorHelp", label = "?")),
                 div(style="display:inline-block",
-                selectInput("colors", "Color Palette:", c("Choose one" = "", "bluered", "jet", "cb"))),
+                selectInput("colors", "Color Palette:", c("bluered", "jet", "cb"), selected = "bluered")),
                 tags$h5(),
                 #Save Graph PDFs:
                 #checkbox
