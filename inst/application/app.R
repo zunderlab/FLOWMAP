@@ -317,17 +317,8 @@ body <- dashboardBody(
                    div(style="display: inline-block;vertical-align:top; width: 1;",
                        HTML("<br>")),
                    div(style="display: inline-block;vertical-align:top; width: 9;",
-                       verbatimTextOutput("dirIn", placeholder = FALSE)),
-                   #actionButton("uploadFile", "Upload Files"),
-                   tags$h5("Result Directory:"),
-                   useShinyalert(),  # Set up shinyalert
-                   div(style="display:inline-block",actionButton("ResultDirHelp", label = "?")),
-                   div(style="display: inline-block;vertical-align:top; width: 2;",
-                       shinyDirButton("dirOut", "Choose...", "Upload")),
-                   div(style="display: inline-block;vertical-align:top; width: 1;",
-                       HTML("<br>")),
-                   div(style="display: inline-block;vertical-align:top; width: 9;",
-                       verbatimTextOutput("dirOut", placeholder = FALSE))
+                       verbatimTextOutput("dirIn", placeholder = FALSE))
+
               )#box
             ),#fluidRow
             fluidRow(
@@ -545,33 +536,16 @@ server <- function(input, output, session) {
   shinyDirChoose(input, 'dirIn', roots = roots)
   global <- reactiveValues(datapath = getwd())
 
-  dirIn <- reactive(input$dirIn)
+  dirInChoose <- reactive(input$dirIn)
   output$dirIn <- renderText({
-    parseDirPath(roots, dirIn())
+    parseDirPath(roots, dirInChoose())
   })#renderText
-
-  #Access directory specifying desired results file location ====
-  roots = getVolumes()
-  shinyDirChoose(input, 'dirOut', roots = roots)
-  global <- reactiveValues(datapath = getwd())
-  dirOut <- reactive(input$dirOut)
-  output$dirOut <- renderText({
-    parseDirPath(roots, dirOut())
-  })#renderText
-
   observeEvent(input$loadDir, {
-    if(is.null(input$dirIn) | is.null(input$dirOut))
-    {
-      output$dirLoaded <- renderText("One or more directories not selected.")
-    }
-    else
-    {
-      globe.raw.FCS.dir <<- parseDirPath(roots, dirIn())
-      #print(globe.raw.FCS.dir)
-      globe.result.dir <<- parseDirPath(roots, dirOut())
-      output$dirLoaded <- renderText("Successful directory selection!")
-    }
-  })#observeEvent
+    globe.raw.FCS.dir <<- parseDirPath(roots, dirInChoose())
+    output$dirLoaded <- renderText("Successful directory selection!")
+    mkdir_results <- dir.create(file.path(globe.raw.FCS.dir, paste("/results_", Sys.time())))
+    globe.result.dir <<- file.path(globe.raw.FCS.dir, paste("/results_", Sys.time()))
+  })
 
   #collect parameters locally to pass to flowmap algorithm ====
   params <- reactiveValues(inputs=list())
@@ -988,12 +962,12 @@ server <- function(input, output, session) {
         observeEvent(input$loadFiles, {
           options(shiny.maxRequestSize = 1000 * 1024^2)
           panel.info <- InitializePanel()
-          final.new.same <- NULL
-          final.new.diff <- NULL
+          final.new.same <<- NULL
+          final.new.diff <<- NULL
           file.info <- FileOrder(globe.raw.FCS.dir)
           #print(file.info)
-          len.filenames <- file.info$len.filenames
-          file.names <- file.info$file.names
+          len.filenames <<- file.info$len.filenames
+          file.names <<- file.info$file.names
           csv.order <- list.files(globe.raw.FCS.dir, pattern = "\\.csv")
           if(identical(csv.order, character(0))){
             choice <- "No CSV Files in Provided Folder!"
@@ -1170,15 +1144,15 @@ server <- function(input, output, session) {
       observeEvent(input$loadFiles, {
         options(shiny.maxRequestSize = 1000 * 1024^2)
         panel.info <- InitializePanel()
-        final.new.same <- NULL
-        final.new.diff <- NULL
+        final.new.same <<- NULL
+        final.new.diff <<- NULL
         file.info <- FileOrder(globe.raw.FCS.dir)
-        len.filenames <- file.info$len.filenames
-        file.names <- file.info$file.names
+        len.filenames <<- file.info$len.filenames
+        file.names <<- file.info$file.names
         if (identical(file.names, character(0))) {
-          choice <<- "No FCS Files"
+          choice <- "No FCS Files"
         } else {
-          choice <<- file.names
+          choice <- file.names
         }
 
         updateSelectInput(session, "check.group.files",
