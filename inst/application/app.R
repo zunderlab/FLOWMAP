@@ -323,7 +323,7 @@ body <- dashboardBody(
             ),#fluidRow
             fluidRow(
               column(12, align="center",
-                     actionButton("loadDir", "Load Directories")
+                     actionButton("loadDir", "Load Directory")
                )#col
              ),#fluidRow verbatimTextOutput("emptyParam", placeholder = FALSE)
              fluidRow(
@@ -543,8 +543,9 @@ server <- function(input, output, session) {
   observeEvent(input$loadDir, {
     globe.raw.FCS.dir <<- parseDirPath(roots, dirInChoose())
     output$dirLoaded <- renderText("Successful directory selection!")
-    mkdir_results <- dir.create(file.path(globe.raw.FCS.dir, paste("/results_", Sys.time())))
-    globe.result.dir <<- file.path(globe.raw.FCS.dir, paste("/results_", Sys.time()))
+    mkdir_results <- dir.create(file.path(globe.raw.FCS.dir, gsub(":", "_", paste("results_", Sys.time(), sep = ''))))
+    #mkdir_results <- gsub(":", "_", mkdir_results)
+    globe.result.dir <<- file.path(globe.raw.FCS.dir, gsub(":", "_", paste("results_", Sys.time(), sep = '')))
   })
 
   #collect parameters locally to pass to flowmap algorithm ====
@@ -784,9 +785,9 @@ server <- function(input, output, session) {
         file.names <<- file.info$file.names
         print(file.names)
         if (identical(file.names, character(0))) {
-          choice <- "No FCS Files"
+          choice <<- "No FCS Files"
         } else {
-          choice <-  paste(len.filenames, file.names, sep = " ")
+          choice <<-  paste(len.filenames, file.names, sep = " ")
         }
         print(choice)
         updateSelectInput(session, "check.group.files",
@@ -970,9 +971,9 @@ server <- function(input, output, session) {
           file.names <<- file.info$file.names
           csv.order <- list.files(globe.raw.FCS.dir, pattern = "\\.csv")
           if(identical(csv.order, character(0))){
-            choice <- "No CSV Files in Provided Folder!"
+            choice <<- "No CSV Files in Provided Folder!"
           } else {
-            choice <- csv.order
+            choice <<- csv.order
           }
           #print(choice)
           updateSelectInput(session, "check.group.csv",
@@ -1150,9 +1151,9 @@ server <- function(input, output, session) {
         len.filenames <<- file.info$len.filenames
         file.names <<- file.info$file.names
         if (identical(file.names, character(0))) {
-          choice <- "No FCS Files"
+          choice <<- "No FCS Files"
         } else {
-          choice <- file.names
+          choice <<- file.names
         }
 
         updateSelectInput(session, "check.group.files",
