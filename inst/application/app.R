@@ -69,6 +69,7 @@ GetMarkerNameParam <- function(file.iter, order, folder.name) {
 }
 
 BuildVarAnnotate <- function(fcs.file, flowfile) {
+  print(fcs.file)
   var.annotate <- list()
   original.names <- read.FCS(fcs.file)
   original.names <- unname(original.names@parameters@data[, 1])
@@ -176,8 +177,9 @@ header <- dashboardHeader(title = "FLOWMAPR")
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
+    id = "tabs",
     menuItem("Instructions", tabName = "instructions", icon = icon("info-circle")),
-    menuItem("Directory Selection", tabName = "directory", icon = icon("folder-open", lib = "glyphicon")),
+    #menuItem("Directory Selection", tabName = "directory", icon = icon("folder-open", lib = "glyphicon")),
     menuItem("Settings", tabName = "params", icon = icon("cog", lib = "glyphicon")),
     menuItem("File Processing", tabName = "files", icon = icon("edit", lib = "font-awesome")),
     #menuItem("Help", tabName = "help", icon = icon("question-sign", lib = "glyphicon")),
@@ -200,14 +202,14 @@ body <- dashboardBody(
                                   When completed, click the ‘Load Directories’ button. Once you see
                                   the confirmation message, proceed to step 2.
                               <br>
-                            	2.	Navigate to the 'Settings' tab and enter all of the relevant
-                                  information for your FLOWMAP analysis. When completed,
+                            	2.	Navigate to the 'Settings' tab and select whether the data should be analyzed
+                                  by FLOWMAPR mode 'one', 'single', or 'multi'. Look through defaults for other
+                                  settings and change as necessary. When completed,
                                   click the ‘Submit’ button. Once you see the confirmation
                                   message, proceed to step 3.
                               <br>
-                              3.	Navigate to the 'File Processing' tab and select whether the data should be analyzed
-                                  by FLOWMAPR mode 'one', 'single', or 'multi'. Once selected, this tab will
-                                  populate with the relevant fields for that mode. The usage from this point
+                              3.	Navigate to the 'File Processing' tab, which should now be populated with
+                                  the relevant fields for that mode selected in 'Settings'. The usage from this point
                                   on differs depending on what mode (e.g. 'multi' or 'single' or 'one') is used.
                            <br><br>")),
 
@@ -217,7 +219,7 @@ body <- dashboardBody(
                  helpText(HTML("<b>For mode 'one' (one condition, one timepoint):</b>")),
                  helpText(HTML("1.	Select the FCS file to be analyzed in 'Uploaded Order'.
                                 <br>
-                                2.	Press 'Generate Parameters'.
+                                2.	Press 'Read panel from fcs'.
                                 <br>
                                 3.	An interactive table will appear with all the parameters as well as
                                     options for selecting and deselecting them as clustering or removed
@@ -243,7 +245,7 @@ body <- dashboardBody(
                                   order by time, but here you can specify the ordering
                                   if the naming system does not reflect the order you want.
                                <br>
-                            	2.	Press 'Generate Parameters'.
+                            	2.	Press 'Read panel from fcs'.
                             <br>
                             	3.	Two things will happen: an interactive table will appear
                                   with all the parameters and options for selecting how
@@ -303,36 +305,36 @@ body <- dashboardBody(
         )#fluidRow
     ),#tabItem
     # Second tab content
-    tabItem(tabName = "directory",
-            fluidRow(
-              box( # Input: Select a file ----
-                   width = '12',
-                   title = "Directory Selection",
-                   #tags$hr(),
-                   tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
-                   useShinyalert(),  # Set up shinyalert
-                   div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
-                   div(style="display: inline-block;vertical-align:top; width: 2;",
-                       shinyDirButton("dirIn", "Choose...", "Upload")),
-                   div(style="display: inline-block;vertical-align:top; width: 1;",
-                       HTML("<br>")),
-                   div(style="display: inline-block;vertical-align:top; width: 9;",
-                       verbatimTextOutput("dirIn", placeholder = FALSE))
-
-              )#box
-            ),#fluidRow
-            fluidRow(
-              column(12, align="center",
-                     actionButton("loadDir", "Load Directory")
-               )#col
-             ),#fluidRow verbatimTextOutput("emptyParam", placeholder = FALSE)
-             fluidRow(
-               column(12, align="center",
-                      verbatimTextOutput("dirLoaded", placeholder = FALSE)
-
-                )#col
-              )#fluidRow
-    ),#tabItem
+    # tabItem(tabName = "directory",
+    #         fluidRow(
+    #           box( # Input: Select a file ----
+    #                width = '12',
+    #                title = "Directory Selection",
+    #                #tags$hr(),
+    #                tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+    #                useShinyalert(),  # Set up shinyalert
+    #                div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
+    #                div(style="display: inline-block;vertical-align:top; width: 2;",
+    #                    shinyDirButton("dirIn", "Choose...", "Upload")),
+    #                div(style="display: inline-block;vertical-align:top; width: 1;",
+    #                    HTML("<br>")),
+    #                div(style="display: inline-block;vertical-align:top; width: 9;",
+    #                    verbatimTextOutput("dirIn", placeholder = FALSE))
+    #
+    #           )#box
+    #         ),#fluidRow
+    #         fluidRow(
+    #           column(12, align="center",
+    #                  actionButton("loadDir", "Load Directory")
+    #            )#col
+    #          ),#fluidRow verbatimTextOutput("emptyParam", placeholder = FALSE)
+    #          fluidRow(
+    #            column(12, align="center",
+    #                   verbatimTextOutput("dirLoaded", placeholder = FALSE)
+    #
+    #             )#col
+    #           )#fluidRow
+    # ),#tabItem
     tabItem(tabName = "params",
               uiOutput('resetable_input')
 
@@ -352,6 +354,8 @@ ui <- dashboardPage(header, sidebar, body, skin = "black")
 
 #SERVER  ====
 server <- function(input, output, session) {
+  #initialize reactive trigger
+  myTrigger <- makeReactiveTrigger()
   #instructions tab
   # output$showfile <- renderUI({
   #   file_to_show = 'gui_instructions.html'
@@ -546,6 +550,19 @@ server <- function(input, output, session) {
     mkdir_results <- dir.create(file.path(globe.raw.FCS.dir, gsub(":", "_", paste("results_", Sys.time(), sep = ''))))
     #mkdir_results <- gsub(":", "_", mkdir_results)
     globe.result.dir <<- file.path(globe.raw.FCS.dir, gsub(":", "_", paste("results_", Sys.time(), sep = '')))
+
+    print("observing Files...")
+    options(shiny.maxRequestSize = 1000 * 1024^2)
+    panel.info <- InitializePanel()
+    final.new.same <<- NULL
+    final.new.diff <<- NULL
+    print(globe.raw.FCS.dir)
+    file.info <- FileOrder(globe.raw.FCS.dir)
+    #print(file.info)
+    len.filenames <<- file.info$len.filenames
+    print(len.filenames)
+    file.names <<- file.info$file.names
+    print(file.names)
   })
 
   #collect parameters locally to pass to flowmap algorithm ====
@@ -605,8 +622,24 @@ server <- function(input, output, session) {
                 #column(width = 3,
                 tabBox( width=12, id="process_tabset",
                     tabPanel(
+                         title = "Directory Selection",
+                         #tags$hr(),
+                         tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                         useShinyalert(),  # Set up shinyalert
+                         div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
+                         div(style="display: inline-block;vertical-align:top; width: 2;",
+                             shinyDirButton("dirIn", "Choose...", "Upload")),
+                         div(style="display: inline-block;vertical-align:top; width: 1;",
+                             HTML("<br>")),
+                         div(style="display: inline-block;vertical-align:top; width: 9;",
+                             verbatimTextOutput("dirIn", placeholder = FALSE)),
+                         tags$br(),
+                         actionButton("loadDir", "Load Directory"),
+                         tags$br(),
+                         verbatimTextOutput("dirLoaded", placeholder = FALSE)
+                    ),
+                    tabPanel(
                       "File Order",
-                      actionButton("loadFiles", "Load Files"),
                       selectInput("check.group.files",
                                   label = h5("Uploaded Order"),
                                   choices = "Pending Upload",
@@ -620,7 +653,8 @@ server <- function(input, output, session) {
                       #textOutput("writefile"),
                       textOutput("vartable"),
                       textOutput("ordering"),
-                      textOutput("fcsorder")
+                      textOutput("fcsorder"),
+                      textOutput("panel.loaded")
                     ),#tabPanel
                     tabPanel(
                       "Check Panel",
@@ -665,9 +699,25 @@ server <- function(input, output, session) {
               fluidRow(
                 #column(width = 3,
                 tabBox( width=12, id="process_tabset",
+                      tabPanel( id = "dir.select.tab",
+                                          title = "Directory Selection",
+                                          #tags$hr(),
+                                          tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                                          useShinyalert(),  # Set up shinyalert
+                                          div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
+                                          div(style="display: inline-block;vertical-align:top; width: 2;",
+                                              shinyDirButton("dirIn", "Choose...", "Upload")),
+                                          div(style="display: inline-block;vertical-align:top; width: 1;",
+                                              HTML("<br>")),
+                                          div(style="display: inline-block;vertical-align:top; width: 9;",
+                                              verbatimTextOutput("dirIn", placeholder = FALSE)),
+                                          tags$br(),
+                                          actionButton("loadDir", "Load Directory"),
+                                          tags$br(),
+                                          verbatimTextOutput("dirLoaded", placeholder = FALSE)
+                        ),
                         tabPanel(
                           "File Order",
-                          actionButton("loadFiles", "Load Files"),
                           selectInput("check.group.csv",
                                       label = h5("Import CSV"),
                                       choices = "Pending Upload",
@@ -719,23 +769,37 @@ server <- function(input, output, session) {
               fluidRow(
                 #column(width = 3,
                 tabBox( width=12, id="process_tabset",
-                        tabPanel(
-                          "File Order",
-                          actionButton("loadFiles", "Load Files"),
+                        tabPanel( id = "dir.select.tab",
+                                  title = "Directory Selection",
+                                  #tags$hr(),
+                                  tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                                  useShinyalert(),  # Set up shinyalert
+                                  div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
+                                  div(style="display: inline-block;vertical-align:top; width: 2;",
+                                      shinyDirButton("dirIn", "Choose...", "Upload")),
+                                  div(style="display: inline-block;vertical-align:top; width: 1;",
+                                      HTML("<br>")),
+                                  div(style="display: inline-block;vertical-align:top; width: 9;",
+                                      verbatimTextOutput("dirIn", placeholder = FALSE)),
+                                  tags$br(),
+                                  actionButton("loadDir", "Load Directory"),
+                                  tags$br(),
+                                  verbatimTextOutput("dirLoaded", placeholder = FALSE)
+                        ),
+                        tabPanel( id = "file.order.tab",
+                          "Files",
                           selectInput("check.group.files",
-                                      label = h5("Uploaded Order"),
-                                      choices = "Pending Upload",
-                                      #selected = NULL,
-                                      multiple = TRUE,
-                                      selectize = FALSE,
-                                      size = 7),
+                                      "Choose file to analyze:",
+                                      choices =
+                                        c("Choose"='')),
                           actionButton("gener.param.button", "Read Panel from FCS File"),
                           #textOutput("writefile"),
                           textOutput("vartable"),
                           textOutput("ordering"),
-                          textOutput("fcsorder")
+                          textOutput("fcsorder"),
+                          textOutput("panel.loaded")
                         ),#tabPanel
-                        tabPanel(
+                        tabPanel( id = "select.remove.tab",
                           "Select/Remove Markers",
                           rHandsontableOutput("table", width = 600)
                         )#tabPanel
@@ -765,13 +829,17 @@ server <- function(input, output, session) {
   # build server based on FLOW-MAP mode
   # if (length(globe.inputs) != 0) { (exists(globe.inputs[["mode"]])) & (
   #   print("1")
+
+  observeEvent(input$submitParams, {
+    updateTabItems(session, "tabs", "files")
+  })
+
   observeEvent(input$submitParams,{
-
-
   if (globe.inputs[["mode"]] == "single") {
       print("single")
     print("observing Dirs...")
-      observeEvent(input$loadFiles, {
+      observeEvent(input$loadDir, {
+        updateTabItems(session, "process_tabset", "File Order")
         print("observing Files...")
         options(shiny.maxRequestSize = 1000 * 1024^2)
         panel.info <- InitializePanel()
@@ -784,6 +852,8 @@ server <- function(input, output, session) {
         print(len.filenames)
         file.names <<- file.info$file.names
         print(file.names)
+      # })#observeEvent
+      # observeEvent(input$submitParams, {
         if (identical(file.names, character(0))) {
           choice <<- "No FCS Files"
         } else {
@@ -805,6 +875,10 @@ server <- function(input, output, session) {
         order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
         fcs.list <- file.names[order]
         fcs.list
+      })
+      PanelLoaded <- eventReactive(input$gener.param.button, {
+        panel_loaded <- "Panel loaded"
+        panel_loaded
       })
       ContentDiff <- eventReactive(input$gener.param.button, {
         order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
@@ -838,6 +912,7 @@ server <- function(input, output, session) {
       })
       observeEvent(input$gener.param.button, {
         panel.info <<- UpdatePanel(final.new.same, final.new.diff)
+        updateTabItems(session, "process_tabset", "Check Panel")
       })
       observe({
         updateSelectInput(session, "check.group.sim", choices = ContentSame())
@@ -872,6 +947,9 @@ server <- function(input, output, session) {
           rhandsontable(new.panel.info) %>%
             hot_col("channels", readOnly = TRUE)
         })
+      })
+      observeEvent(input$merge.button, {
+        updateTabItems(session, "process_tabset", "Select/Remove Markers")
       })
       observe({
         updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
@@ -956,11 +1034,16 @@ server <- function(input, output, session) {
       })
       output$fcsorder <- renderText({
         GetFCSinOrder()
+        NULL
+      })
+      output$panel.loaded <- renderText({
+        PanelLoaded()
       })
 
     } else if (globe.inputs[["mode"]] == "multi") {
 
-        observeEvent(input$loadFiles, {
+        observeEvent(input$loadDir, {
+          updateTabItems(session, "process_tabset", "File Order")
           options(shiny.maxRequestSize = 1000 * 1024^2)
           panel.info <- InitializePanel()
           final.new.same <<- NULL
@@ -1026,6 +1109,7 @@ server <- function(input, output, session) {
       })
       observeEvent(input$csv.finder, {
         panel.info <<- UpdatePanel(final.new.same, final.new.diff)
+        updateTabItems(session, "process_tabset", "Check Panel")
       })
       observe({
         updateSelectInput(session, "check.group.sim", choices = ContentSame())
@@ -1071,8 +1155,9 @@ server <- function(input, output, session) {
       observe({
         FileMergeTable()
       })
-      #WriteFile <- eventReactive(input$start.button, {
-      #Not sure why this was event reactive since there is no value output
+      observeEvent(input$merge.button, {
+        updateTabItems(session, "process_tabset", "Select/Remove Markers")
+      })
       observeEvent(input$start.button, {
         flowfile <- (hot_to_r(input$table))
         files <- multi.list.global
@@ -1142,11 +1227,12 @@ server <- function(input, output, session) {
 
     } else if (globe.inputs[["mode"]] == "one") {
 
-      observeEvent(input$loadFiles, {
+      observeEvent(input$loadDir, {
+        updateTabsetPanel(session, "process_tabset", "Files")
         options(shiny.maxRequestSize = 1000 * 1024^2)
         panel.info <- InitializePanel()
-        final.new.same <<- NULL
-        final.new.diff <<- NULL
+        #final.new.same <<- NULL
+        #final.new.diff <<- NULL
         file.info <- FileOrder(globe.raw.FCS.dir)
         len.filenames <<- file.info$len.filenames
         file.names <<- file.info$file.names
@@ -1155,25 +1241,30 @@ server <- function(input, output, session) {
         } else {
           choice <<- file.names
         }
-
         updateSelectInput(session, "check.group.files",
                             choices = choice)
-
       })#observeEvent "loadFiles" button
-      ContentSame <- eventReactive(input$gener.param.button, {
+      ContentSame <- observeEvent(input$gener.param.button, {
         one.fcs <<- input$check.group.files
-        temp.result <- GetMarkerNameParam(file.iter = one.fcs,
+        print(one.fcs)
+        temp.result <<- GetMarkerNameParam(file.iter = one.fcs,
                                           order = c(1),
                                           folder.name = globe.raw.FCS.dir)
         fcs.list <- temp.result$fcs.list
         temp.list <- temp.result$temp.list
         same <- ComparePanels(fcs.list)$same
         final.new.same <<- same
-        same
+        print(final.new.same)
+       # same
         # gives the same parameters
+      })
+      PanelLoaded <- eventReactive(input$gener.param.button, {
+        panel_loaded <- "Panel loaded"
+        panel_loaded
       })
       TableCreate <- eventReactive(input$gener.param.button, {
         panel.info <<- MakePanelOneMode(final.new.same)
+       # panel.info <<- MakePanelOneMode(input$check.group.files)
         output$table <- renderRHandsontable({
           rhandsontable(panel.info) %>%
             hot_col("channels", readOnly = TRUE)
@@ -1183,17 +1274,11 @@ server <- function(input, output, session) {
         panel.info <<- MakePanelOneMode(final.new.same)
       })
       observeEvent(input$gener.param.button, {
-        updateSelectInput(session, "check.group.files", choices = ContentSame())
+        updateTabItems(session, "process_tabset", "Select/Remove Markers")
       })
-      observeEvent(input$gener.param.button, {
-        updateSelectInput(session, "check.group.files", choices = choice)
-      })
-      #WriteFile <- eventReactive(input$start.button, {
-      #Not sure why this was event reactive since there is no value output
       observeEvent(input$start.button, {
         flowfile <- (hot_to_r(input$table))
         files <- one.fcs
-        print(one.fcs)
         mode <- globe.inputs[["mode"]]
         save.folder <- globe.result.dir
         var.annotate <- BuildVarAnnotate(files, flowfile)
@@ -1256,6 +1341,9 @@ server <- function(input, output, session) {
       })
       output$fcsorder <- renderText({
         NULL
+      })
+      output$panel.loaded <- renderText({
+        PanelLoaded()
       })
     }# else
   })#observeEvent loadDir button
