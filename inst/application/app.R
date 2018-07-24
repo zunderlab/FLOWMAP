@@ -8,33 +8,6 @@ library(shinyalert)
 library(flowCore)
 library(rhandsontable)
 
-#Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):
-# help button
-# files/directory select
-#Results Directory:
-# help button
-# files/directory select
-#SPADE Downsampling:
-#help
-#checkbox
-#Save Graph PDFs:
-#help
-#checkbox
-#Distance Metric
-#select input
-#manhattan, euclidean
-#FLOW-MAP Mode
-#selectInput
-#bluered, jet, cb
-#Subsample Number (Downsample Target Number)
-#numericInput
-#Number of Clusters
-#Set Seed Number
-#Minimun Number of Edges
-#Maximum Number of Edges
-
-#Reset, Quit, Submit buttons
-
 #Functions ====
 
 FileOrder <- function(dir.now) {
@@ -151,18 +124,6 @@ GetFilePathsfromCSV <- function(csv.path) {
   names(multi.list) <- csv.data[, 1]
   return(multi.list)
 }
-# makeReactiveTrigger <- function() {
-#   rv <- reactiveValues(a = 0)
-#   list(
-#     depend = function() {
-#       rv$a
-#       invisible()
-#     },
-#     trigger = function() {
-#       rv$a <- isolate(rv$a + 1)
-#     }
-#   )
-# }
 
 #Initialize globe.inputs  ====
 globe.toggle <- 0
@@ -196,107 +157,95 @@ body <- dashboardBody(
            box(
              width = '12',
              title = "Using The GUI",
-             helpText(HTML("	1.	Navigate to the 'Directory Selection' tab to choose the directory containing
-                                  your FCS/CSV files and the destination directory for your results.
-                                  When completed, click the ‘Load Directories’ button. Once you see
-                                  the confirmation message, proceed to step 2.
-                              <br>
-                            	2.	Navigate to the 'Settings' tab and select whether the data should be analyzed
+             helpText(HTML("	<ol>
+                               <li>   Navigate to the 'Settings' page and select whether the data should be analyzed
                                   by FLOWMAPR mode 'one', 'single', or 'multi'. Look through defaults for other
-                                  settings and change as necessary. When completed,
-                                  click the ‘Submit’ button. Once you see the confirmation
-                                  message, proceed to step 3.
-                              <br>
-                              3.	Navigate to the 'File Processing' tab, which should now be populated with
-                                  the relevant fields for that mode selected in 'Settings'. The usage from this point
-                                  on differs depending on what mode (e.g. 'multi' or 'single' or 'one') is used.
+                                  settings and change as necessary. When completed, click the ‘Submit’ button.
+                                  If one or more settings is missing, you will see a message alerting you to check
+                                  your selections. Otherwise, you will be brought to the 'File Processing' page.</li>
+                              <li>	The first tab on this page will be for 'Directory Selection' -- choose the directory
+                                  containing your FCS/CSV files then press 'Load Directories' button. If there were any
+                                  issues loading the directories, you will see a message alerting you to try again.
+                                  Otherwise, you will be brought to the next tab. The remaining tabs on this page will
+                                  be formatted specifically the mode selected in 'Settings', and the usage from this
+                                  point on differs depending on what mode (e.g. 'multi' or 'single' or 'one') is used.</li>
                            <br><br>")),
 
              tabBox(width=12, id="info_modes",
                tabPanel(
                  title = "One",
                  helpText(HTML("<b>For mode 'one' (one condition, one timepoint):</b>")),
-                 helpText(HTML("1.	Select the FCS file to be analyzed in 'Uploaded Order'.
-                                <br>
-                                2.	Press 'Read panel from fcs'.
-                                <br>
-                                3.	An interactive table will appear with all the parameters as well as
+                 helpText(HTML("<ol>
+                                 <li>   Select the FCS file to be analyzed in 'Files'.</li>
+                                <li>	Press 'Read panel from fcs'.</li>
+                                <li>	An interactive table will appear with all the parameters as well as
                                     options for selecting and deselecting them as clustering or removed
                                     variables. Removed variables will not be in the final generated graph,
-                                    such as in the graphml file or the image PDFs.
-                               <br>
-                                4.	You must check at least one or more of the parameters for clustering.
+                                    such as in the graphml file or the image PDFs.</li>
+                                <li>	You must check at least one or more of the parameters for clustering.
                                     These variables are used both for clustering (calculation of similarity)
                                     and for calculating edge distances during the graph building steps. If
                                     you want to rename a parameter, you can click on the name under the
-                                    'annotate' column and type a new name.
-                                <br>
-                                5.	Press 'Run FLOWMAPR' once the appropriate parameters have been checked
+                                    'annotate' column and type a new name.</li>
+                                <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been checked
                                     and renamed to run the FLOW-MAP algorithm and generate all requested
-                                    FLOWMAPR results (PDFs, graphml files, etc. in a new folder)."))
+                                    FLOWMAPR results (PDFs, graphml files, etc. in a new folder).</li>"))
 
                ),#tabPanel
                tabPanel(
                  title = "Single",
-                 helpText(HTML("<b>For mode 'one' (one condition, multiple timepoints):</b>")),
-                 helpText(HTML("1.	Enter in the order of the FCS files that you wish to use.
+                 helpText(HTML("<b>For mode 'single' (one condition, multiple timepoints):</b>")),
+                 helpText(HTML("<ol>
+                                  <li>	Enter in the order of the FCS files that you wish to use.
                                   Generally, files will be used in an alphanumerical
                                   order by time, but here you can specify the ordering
-                                  if the naming system does not reflect the order you want.
-                               <br>
-                            	2.	Press 'Read panel from fcs'.
-                            <br>
-                            	3.	Two things will happen: an interactive table will appear
+                                  if the naming system does not reflect the order you want. </li>
+                            	<li>	Press 'Read panel from fcs'. </li>
+                            	<li>	Two things will happen: an interactive table will appear
                                   with all the parameters and options for selecting how
                                   parameters should be used for analysis, and the menus
                                   for 'Similar Fields' and 'Different Fields' will
                                   autopopulate as an aid to help you process channels
-                                  between the files.
-                              <br>
-                               4.	If any channel needs to be merged, select the files from the
+                                  between the files. </li>
+                               <li>	If any channel needs to be merged, select the files from the
                                   'Different Fields' window, enter the new merged name in
                                   'Select New Merge Name', and press 'Merge Selected Diff'.
                                   This will automatically remove the channels from
                                   'Different Fields', add the merged name to 'Similar Fields',
-                                  and will update the table with new annotations.
-                              <br>
-                               5.	The different parameters will by default be checked for removal.
+                                  and will update the table with new annotations. </li>
+                               <li>	The different parameters will by default be checked for removal.
                                   You must check at least one or more of the parameters
                                   for clustering. If you want to rename a parameter,
-                                  click on the name under 'annotate' and type a new name.
-                              <br>
-                               6.	Press 'Run FLOWMAPR' once the appropriate parameters have been
+                                  click on the name under 'annotate' and type a new name.</li>
+                               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
                                   checked and renamed to run the FLOW-MAP algorithm
                                   and generate all requested FLOWMAPR results
-                                  (PDFs, graphml files, etc. in a new folder)."))
+                                  (PDFs, graphml files, etc. in a new folder).</li>"))
 
                  ),#tabPanel
                tabPanel(
                  title = "Multi",
                  helpText(HTML("<b>For mode 'multi' (multiple conditions, multiple timepoints):</b>")),
-                 helpText(HTML("1.	Select the CSV file that has the corresponding FCS file paths. How
+                 helpText(HTML("<ol>
+                                 <li>   Select the CSV file that has the corresponding FCS file paths. How
                                     the CSV file should be arranged (i.e. what information is put in
-                                    the columns/rows) will be shown in the following section.
-                                    <br>
-                              	2.	Press 'Input CSV' once the CSV is selected in the box.
-                              <br>
-                               3.	If any channel needs to be merged, select the files from the
+                                    the columns/rows) will be shown in the following section.</li>
+                              	<li>	Press 'Input CSV' once the CSV is selected in the box.</li>
+                               <li>	If any channel needs to be merged, select the files from the
                                   'Different Fields' window, enter the new merged name in
                                   'Select New Merge Name', and press 'Merge Selected Diff'.
                                   This will automatically remove the channels from
                                   'Different Fields', add the merged name to 'Similar Fields',
-                                  and will update the table with new annotations.
-                                  <br>
-                               4.	The different parameters will by default be checked for removal.
+                                  and will update the table with new annotations.</li>
+                              <li>	The different parameters will by default be checked for removal.
                                   You must check at least one or more of the
                                   parameters for clustering. If you want to
                                   rename a parameter, click on the name under
-                                  'annotate' and type a new name.
-                                  <br>
-                               5.	Press 'Run FLOWMAPR' once the appropriate parameters have been
+                                  'annotate' and type a new name.</li>
+                              <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
                                   checked and renamed to run the FLOW-MAP algorithm
                                   and generate all requested FLOWMAPR results
-                                  (PDFs, graphml files, etc. in a new folder)."))
+                                  (PDFs, graphml files, etc. in a new folder).</li>"))
 
                  )#tabPanel
              )#tabBox
@@ -421,8 +370,22 @@ server <- function(input, output, session) {
              align = 'center',
              actionButton("submitParams", "Submit"),
              verbatimTextOutput("emptyParam", placeholder = FALSE)
+        )#col
+      ),#fluidRow
+      tags$br(),
+      fluidRow(
+        box(
+          width = '12',
+          title = "Directions:",
+          helpText(HTML("	<p> Select whether the data should be analyzed
+                        by FLOWMAPR mode 'one', 'single', or 'multi'. Look through defaults for other
+                        settings and change as necessary. When completed, click the ‘Submit’ button.
+                        If one or more settings is missing, you will see a message alerting you to check
+                        your selections. Otherwise, you will be brought to the 'File Processing' page. <p>"
+                        )#HTML
+                    )#helpText
         )#box
-      )#fluidRow
+      )#fluidrow
     )#div
   })#renderUI
 
@@ -491,6 +454,85 @@ server <- function(input, output, session) {
     # Show a modal when the button is pressed
     shinyalert("The upper bound for number of edges during \
                density-dependent edge drawing steps.", type = "info")
+  })
+  observeEvent(input$OneModeHelp, {
+    # Show a modal when the button is pressed
+    shinyalert(title = "'One' mode: one condition, one timepoint",
+               text = "<small> <ol ALIGN=LEFT>
+                             <li>   Select the FCS file to be analyzed in 'Files'.</li>
+                             <li>	Press 'Read panel from fcs'.</li>
+                             <li>	An interactive table will appear with all the parameters as well as
+                             options for selecting and deselecting them as clustering or removed
+                             variables. Removed variables will not be in the final generated graph,
+                             such as in the graphml file or the image PDFs.</li>
+                             <li>	You must check at least one or more of the parameters for clustering.
+                             These variables are used both for clustering (calculation of similarity)
+                             and for calculating edge distances during the graph building steps. If
+                             you want to rename a parameter, you can click on the name under the
+                             'annotate' column and type a new name.</li>
+                             <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been checked
+                             and renamed to run the FLOW-MAP algorithm and generate all requested
+                             FLOWMAPR results (PDFs, graphml files, etc. in a new folder).</li> </small>",
+               html = TRUE,
+               type = "info")
+  })
+  observeEvent(input$SingleModeHelp, {
+    # Show a modal when the button is pressed
+    shinyalert(title = "'Single' mode: one condition, multiple timepoints",
+               text = "<small> <ol ALIGN=LEFT>
+               <li>	Enter in the order of the FCS files that you wish to use.
+                    Generally, files will be used in an alphanumerical
+               order by time, but here you can specify the ordering
+               if the naming system does not reflect the order you want. </li>
+               <li>	Press 'Read panel from fcs'. </li>
+               <li>	Two things will happen: an interactive table will appear
+               with all the parameters and options for selecting how
+               parameters should be used for analysis, and the menus
+               for 'Similar Fields' and 'Different Fields' will
+               autopopulate as an aid to help you process channels
+               between the files. </li>
+               <li>	If any channel needs to be merged, select the files from the
+               'Different Fields' window, enter the new merged name in
+               'Select New Merge Name', and press 'Merge Selected Diff'.
+               This will automatically remove the channels from
+               'Different Fields', add the merged name to 'Similar Fields',
+               and will update the table with new annotations. </li>
+               <li>	The different parameters will by default be checked for removal.
+               You must check at least one or more of the parameters
+               for clustering. If you want to rename a parameter,
+               click on the name under 'annotate' and type a new name.</li>
+               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
+               checked and renamed to run the FLOW-MAP algorithm
+               and generate all requested FLOWMAPR results
+               (PDFs, graphml files, etc. in a new folder).</li> </small>",
+               html = TRUE,
+               type = "info")
+  })
+  observeEvent(input$MultiModeHelp, {
+    # Show a modal when the button is pressed
+    shinyalert(title = "'Multi' mode: multiple conditions, multiple timepoints",
+               text = "<small> <ol ALIGN=LEFT>
+               <li>   Select the CSV file that has the corresponding FCS file paths. How
+                    the CSV file should be arranged (i.e. what information is put in
+               the columns/rows) will be shown in the following section.</li>
+               <li>	Press 'Input CSV' once the CSV is selected in the box.</li>
+               <li>	If any channel needs to be merged, select the files from the
+               'Different Fields' window, enter the new merged name in
+               'Select New Merge Name', and press 'Merge Selected Diff'.
+               This will automatically remove the channels from
+               'Different Fields', add the merged name to 'Similar Fields',
+               and will update the table with new annotations.</li>
+               <li>	The different parameters will by default be checked for removal.
+               You must check at least one or more of the
+               parameters for clustering. If you want to
+               rename a parameter, click on the name under
+               'annotate' and type a new name.</li>
+               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
+               checked and renamed to run the FLOW-MAP algorithm
+               and generate all requested FLOWMAPR results
+               (PDFs, graphml files, etc. in a new folder).</li> </small>",
+               html = TRUE,
+               type = "info")
   })
 
 ######################################################### File Input and settings tabs server functionality ====
@@ -597,6 +639,8 @@ server <- function(input, output, session) {
                          div(style="display: inline-block;vertical-align:top; width: 9;",
                              verbatimTextOutput("dirIn", placeholder = FALSE)),
                          tags$br(),
+                         tags$br(),
+                         tags$br(),
                          actionButton("loadDir", "Load Directory"),
                          tags$br(),
                          verbatimTextOutput("dirLoaded", placeholder = FALSE)
@@ -620,28 +664,33 @@ server <- function(input, output, session) {
                       textOutput("panel.loaded")
                     ),#tabPanel
                     tabPanel(
-                      "Check Panel",
-                      selectInput("check.group.sim",
-                                  label = h5("Matching Channels in FCS Files"),
-                                  choices = "Pending Upload",
-                                  selected = NULL,
-                                  multiple = TRUE,
-                                  selectize = FALSE,
-                                  size = 7),
-                      selectInput("check.group.diff",
-                                  label = h5("Different Channels in FCS Files"),
-                                  choices = "Pending Upload",
-                                  selected = NULL,
-                                  multiple = TRUE,
-                                  selectize = FALSE,
-                                  size = 7),
-                      textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
-                      actionButton("merge.button", "Merge Selected Channels")
-                    ),#tabPanel
-                    tabPanel(
-                      "Select/Remove Markers",
-                      rHandsontableOutput("table", width = 600)
-                    )#tabPanel
+                      "Check/Select/Remove Markers",
+                      fluidRow(
+                        column(width = 6,
+                               tags$h4("Check Panel"),
+                               selectInput("check.group.sim",
+                                           label = h5("Matching Channels in FCS Files"),
+                                           choices = "Pending Upload",
+                                           selected = NULL,
+                                           multiple = TRUE,
+                                           selectize = FALSE,
+                                           size = 7),
+                               selectInput("check.group.diff",
+                                           label = h5("Different Channels in FCS Files"),
+                                           choices = "Pending Upload",
+                                           selected = NULL,
+                                           multiple = TRUE,
+                                           selectize = FALSE,
+                                           size = 7),
+                               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+                               actionButton("merge.button", "Merge Selected Channels")
+                        ),#col
+                        column(width = 6,
+                               tags$h4("Select/Remove Markers"),
+                               rHandsontableOutput("table", width = 600)
+                        )#col
+                      )#fluidRow
+                    )##tabPanel
                 )#tabBox
               ),#fluidRow
               fluidRow(
@@ -653,7 +702,23 @@ server <- function(input, output, session) {
                 column(12, align="center",
                        textOutput('isRunning')
                 )#col
-              )#fluidRow
+              ),#fluidRow
+              tags$br(),
+              fluidRow(
+                box(
+                  width = '12',
+                  title = "Directions:",
+                  helpText(HTML("	<p> The first tab on this page is for 'Directory Selection' -- choose the directory
+                                  containing your FCS/CSV files, then press 'Load Directories' button. If there were any
+                                issues loading the directories, you will see a message alerting you to try again.
+                                Otherwise, you will be brought to the next tab. For mode-specific instructions for
+                                remaining tabs, press 'More Info' button. <p>"
+                          )#HTML
+                  ),#helpText
+                  tags$br(),
+                  actionButton("SingleModeHelp", "More Info")
+                )#box
+              )#fluidrow
             )#fluidPage
 #Downsample+multi  ====
           } else if (globe.inputs[["mode"]] == "multi") {
@@ -675,6 +740,7 @@ server <- function(input, output, session) {
                                           div(style="display: inline-block;vertical-align:top; width: 9;",
                                               verbatimTextOutput("dirIn", placeholder = FALSE)),
                                           tags$br(),
+                                          tags$br(),
                                           actionButton("loadDir", "Load Directory"),
                                           tags$br(),
                                           verbatimTextOutput("dirLoaded", placeholder = FALSE)
@@ -695,27 +761,32 @@ server <- function(input, output, session) {
                           textOutput("fcsorder")
                 ),#tabPanel
                 tabPanel(
-                  "Check Panel",
-                  selectInput("check.group.sim",
-                              label = h5("Matching Channels in FCS Files"),
-                              choices = "Pending Upload",
-                              selected = NULL,
-                              multiple = TRUE,
-                              selectize = FALSE,
-                              size = 7),
-                  selectInput("check.group.diff",
-                              label = h5("Different Channels in FCS Files"),
-                              choices = "Pending Upload",
-                              selected = NULL,
-                              multiple = TRUE,
-                              selectize = FALSE,
-                              size = 7),
-                  textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
-                  actionButton("merge.button", "Merge Selected Channels")
-              ),#tabPanel
-              tabPanel(
-                "Select/Remove Markers",
-                rHandsontableOutput("table", width = 600)
+                  "Check/Select/Remove Markers",
+                  fluidRow(
+                    column(width = 6,
+                           tags$h4("Check Panel"),
+                           selectInput("check.group.sim",
+                                       label = h5("Matching Channels in FCS Files"),
+                                       choices = "Pending Upload",
+                                       selected = NULL,
+                                       multiple = TRUE,
+                                       selectize = FALSE,
+                                       size = 7),
+                           selectInput("check.group.diff",
+                                       label = h5("Different Channels in FCS Files"),
+                                       choices = "Pending Upload",
+                                       selected = NULL,
+                                       multiple = TRUE,
+                                       selectize = FALSE,
+                                       size = 7),
+                           textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+                           actionButton("merge.button", "Merge Selected Channels")
+                    ),#col
+                    column(width = 6,
+                           tags$h4("Select/Remove Markers"),
+                           rHandsontableOutput("table", width = 600)
+                    )#col
+                  )#fluidRow
               )#tabPanel
             )#tabBox
         ),#fluidRow
@@ -723,7 +794,23 @@ server <- function(input, output, session) {
         column(12, align="center",
                actionButton("start.button", "Run FLOWMAPR")
         )#col
-      )#fluidRow
+      ),#fluidRow
+      tags$br(),
+      fluidRow(
+        box(
+          width = '12',
+          title = "Directions:",
+          helpText(HTML("	<p> The first tab on this page is for 'Directory Selection' -- choose the directory
+                        containing your FCS/CSV files, then press 'Load Directories' button. If there were any
+                        issues loading the directories, you will see a message alerting you to try again.
+                        Otherwise, you will be brought to the next tab. For mode-specific instructions for
+                        remaining tabs, press 'More Info' button. <p>"
+                  )#HTML
+          ),#helpText
+          tags$br(),
+          actionButton("MultiModeHelp", "More Info")
+        )#box
+      )#fluidrow
     )#fluidPage
 #Downsample+one  ====
           } else if (globe.inputs[["mode"]] == "one") {
@@ -744,6 +831,7 @@ server <- function(input, output, session) {
                                       HTML("<br>")),
                                   div(style="display: inline-block;vertical-align:top; width: 9;",
                                       verbatimTextOutput("dirIn", placeholder = FALSE)),
+                                  tags$br(),
                                   tags$br(),
                                   actionButton("loadDir", "Load Directory"),
                                   tags$br(),
@@ -772,7 +860,23 @@ server <- function(input, output, session) {
                 column(12, align="center",
                        actionButton("start.button", "Run FLOWMAPR")
                 )#col
-              )#fluidRow
+              ),#fluidRow
+              tags$br(),
+              fluidRow(
+                box(
+                  width = '12',
+                  title = "Directions:",
+                  helpText(HTML("	<p> The first tab on this page is for 'Directory Selection' -- choose the directory
+                                containing your FCS/CSV files, then press 'Load Directories' button. If there were any
+                                issues loading the directories, you will see a message alerting you to try again.
+                                Otherwise, you will be brought to the next tab. For mode-specific instructions for
+                                remaining tabs, press 'More Info' button. <p>"
+                            )#HTML
+                  ),#helpText
+                  tags$br(),
+                  actionButton("OneModeHelp", "More Info")
+                )#box
+              )#fluidrow
             )
           }
       }#if (globe.inputs[["mode"]] != "NA")
@@ -783,6 +887,7 @@ server <- function(input, output, session) {
                  textOutput("infoText")
           )#column
         )#fluidRow
+
       }#else
     })#renderUI
 
@@ -875,7 +980,7 @@ server <- function(input, output, session) {
       })
       observeEvent(input$gener.param.button, {
         panel.info <<- UpdatePanel(final.new.same, final.new.diff)
-        updateTabItems(session, "process_tabset", "Check Panel")
+        updateTabItems(session, "process_tabset", "Check/Select/Remove Markers")
       })
       observe({
         updateSelectInput(session, "check.group.sim", choices = ContentSame())
@@ -911,9 +1016,9 @@ server <- function(input, output, session) {
             hot_col("channels", readOnly = TRUE)
         })
       })
-      observeEvent(input$merge.button, {
-        updateTabItems(session, "process_tabset", "Select/Remove Markers")
-      })
+      # observeEvent(input$merge.button, {
+      #   updateTabItems(session, "process_tabset", "Select/Remove Markers")
+      # })
       observe({
         updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
       })
