@@ -151,22 +151,22 @@ GetFilePathsfromCSV <- function(csv.path) {
   names(multi.list) <- csv.data[, 1]
   return(multi.list)
 }
+# makeReactiveTrigger <- function() {
+#   rv <- reactiveValues(a = 0)
+#   list(
+#     depend = function() {
+#       rv$a
+#       invisible()
+#     },
+#     trigger = function() {
+#       rv$a <- isolate(rv$a + 1)
+#     }
+#   )
+# }
 
 #Initialize globe.inputs  ====
 globe.toggle <- 0
 globe.inputs <- list()
-#globe.inputs[["mode"]] <- 'NA'
-# globe.inputs[["color.palette"]] <- 'NA'
-# globe.inputs[["downsample.toggle"]] <- 'NA'
-# globe.inputs[["savePDFs.toggle"]] <- 'NA'
-# globe.inputs[["subsample.num"]] <- 'NA'
-# globe.inputs[["distance.metric"]] <- 'NA'
-# globe.inputs[["cluster.num"]] <- 'NA'
-# globe.inputs[["seed.num"]] <- 'NA'
-# globe.inputs[["edge.max.num"]] <- 'NA'
-# globe.inputs[["edge.min.num"]] <- 'NA'
-
-
 
 ###########################################################################
 
@@ -179,7 +179,6 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     id = "tabs",
     menuItem("Instructions", tabName = "instructions", icon = icon("info-circle")),
-    #menuItem("Directory Selection", tabName = "directory", icon = icon("folder-open", lib = "glyphicon")),
     menuItem("Settings", tabName = "params", icon = icon("cog", lib = "glyphicon")),
     menuItem("File Processing", tabName = "files", icon = icon("edit", lib = "font-awesome")),
     #menuItem("Help", tabName = "help", icon = icon("question-sign", lib = "glyphicon")),
@@ -304,41 +303,8 @@ body <- dashboardBody(
            )#box
         )#fluidRow
     ),#tabItem
-    # Second tab content
-    # tabItem(tabName = "directory",
-    #         fluidRow(
-    #           box( # Input: Select a file ----
-    #                width = '12',
-    #                title = "Directory Selection",
-    #                #tags$hr(),
-    #                tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
-    #                useShinyalert(),  # Set up shinyalert
-    #                div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
-    #                div(style="display: inline-block;vertical-align:top; width: 2;",
-    #                    shinyDirButton("dirIn", "Choose...", "Upload")),
-    #                div(style="display: inline-block;vertical-align:top; width: 1;",
-    #                    HTML("<br>")),
-    #                div(style="display: inline-block;vertical-align:top; width: 9;",
-    #                    verbatimTextOutput("dirIn", placeholder = FALSE))
-    #
-    #           )#box
-    #         ),#fluidRow
-    #         fluidRow(
-    #           column(12, align="center",
-    #                  actionButton("loadDir", "Load Directory")
-    #            )#col
-    #          ),#fluidRow verbatimTextOutput("emptyParam", placeholder = FALSE)
-    #          fluidRow(
-    #            column(12, align="center",
-    #                   verbatimTextOutput("dirLoaded", placeholder = FALSE)
-    #
-    #             )#col
-    #           )#fluidRow
-    # ),#tabItem
     tabItem(tabName = "params",
               uiOutput('resetable_input')
-
-
     ),#tabItem
     tabItem(tabName = "files",
             # "FLOW-MAP Mode",
@@ -354,8 +320,6 @@ ui <- dashboardPage(header, sidebar, body, skin = "black")
 
 #SERVER  ====
 server <- function(input, output, session) {
-  #initialize reactive trigger
-  myTrigger <- makeReactiveTrigger()
   #instructions tab
   # output$showfile <- renderUI({
   #   file_to_show = 'gui_instructions.html'
@@ -373,7 +337,6 @@ server <- function(input, output, session) {
     print(times)
     div(id=letters[(times %% length(letters)) + 1],
       fluidRow(
-
         tabBox( width=12, id="settings_tabset",
               tabPanel(
                 "FLOW-MAP Mode",
