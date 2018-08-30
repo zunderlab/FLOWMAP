@@ -540,17 +540,25 @@ server <- function(input, output, session) {
   options(shiny.maxRequestSize=300*1024^2)
 
   #Access directory containing files to upload ====
-  roots = getVolumes()
-  #print(roots)
-  shinyDirChoose(input, 'dirIn', roots = roots)
-  global <- reactiveValues(datapath = getwd())
 
-  dirInChoose <- reactive(input$dirIn)
-  output$dirIn <- renderText({
-    parseDirPath(roots, dirInChoose())
-  })#renderText
+  dirs <- reactiveValues(In = '')
+
+
+  #chooseFileInDir <- eventReactive(input$fileInButton, {
+  observeEvent(input$fileInButton, {
+    result <- try(file.choose())
+    is(result, 'try-error')
+    dirs$In <- result
+    print(dirs$In)
+  })
+
   observeEvent(input$loadDir, {
-    globe.raw.FCS.dir <<- parseDirPath(roots, dirInChoose())
+    inFile <- dirs$In
+    print(inFile)
+    dirIn <- dirname(inFile)
+    print(dirIn)
+    globe.raw.FCS.dir <<- dirIn
+    #print(globe.raw.FCS.dir)
     output$dirLoaded <- renderText("Successful directory selection!")
     mkdir_results <- dir.create(file.path(globe.raw.FCS.dir, gsub(":", "_", paste("results_", Sys.time(), sep = ''))))
     #mkdir_results <- gsub(":", "_", mkdir_results)
@@ -591,7 +599,7 @@ server <- function(input, output, session) {
     #globe.inputs <<- params$inputs
 
     if ((length(which(params$inputs == "")) == 0) | (length(which(params$inputs == "NA")) == 0)) {
-      output$emptyParam <- renderText({"Successful parameter and directory selection!"})
+      output$emptyParam <- renderText({"Successful parameter selection!"})
     }
     if (input$flowmapMode == ''){
       output$emptyParam <- renderText({"Missing parameters!"})
@@ -618,9 +626,12 @@ server <- function(input, output, session) {
       # build UI based on FLOW-MAP mode
       #print("globe.toggle")
 #Downsample+single  ====
+      print("first if")
       if (length(params$inputs[["mode"]]) != 0) {
        # if (globe.inputs[["downsample.toggle"]] == TRUE) {
+        print("second if")
           if (globe.inputs[["mode"]] == "single") {
+            print("single")
             ui <- fluidPage(
               titlePanel("File Uploader"),
               fluidRow(
@@ -629,11 +640,12 @@ server <- function(input, output, session) {
                     tabPanel(
                          title = "Directory Selection",
                          #tags$hr(),
-                         tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                         tags$h5("Select a file in the directory containing your raw FCS Files or
+                                 CSV Directory (for mode multiFLOW-MAP):"),
                          useShinyalert(),  # Set up shinyalert
                          div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
                          div(style="display: inline-block;vertical-align:top; width: 2;",
-                             shinyDirButton("dirIn", "Choose...", "Upload")),
+                             actionButton("fileInButton", "Browse files...")),
                          div(style="display: inline-block;vertical-align:top; width: 1;",
                              HTML("<br>")),
                          div(style="display: inline-block;vertical-align:top; width: 9;",
@@ -730,11 +742,12 @@ server <- function(input, output, session) {
                       tabPanel( id = "dir.select.tab",
                                           title = "Directory Selection",
                                           #tags$hr(),
-                                          tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                                          tags$h5("Select a file in the directory containing your raw FCS
+                                                  Files or CSV Directory (for mode multiFLOW-MAP):"),
                                           useShinyalert(),  # Set up shinyalert
                                           div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
                                           div(style="display: inline-block;vertical-align:top; width: 2;",
-                                              shinyDirButton("dirIn", "Choose...", "Upload")),
+                                              actionButton("fileInButton", "Browse files...")),
                                           div(style="display: inline-block;vertical-align:top; width: 1;",
                                               HTML("<br>")),
                                           div(style="display: inline-block;vertical-align:top; width: 9;",
@@ -822,11 +835,12 @@ server <- function(input, output, session) {
                         tabPanel( id = "dir.select.tab",
                                   title = "Directory Selection",
                                   #tags$hr(),
-                                  tags$h5("Raw FCS Files or CSV Directory (for mode multiFLOW-MAP):"),
+                                  tags$h5("Select a file in the directory containing your raw FCS Files
+                                          or CSV Directory (for mode multiFLOW-MAP):"),
                                   useShinyalert(),  # Set up shinyalert
                                   div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
                                   div(style="display: inline-block;vertical-align:top; width: 2;",
-                                      shinyDirButton("dirIn", "Choose...", "Upload")),
+                                      actionButton("fileInButton", "Browse files...")),
                                   div(style="display: inline-block;vertical-align:top; width: 1;",
                                       HTML("<br>")),
                                   div(style="display: inline-block;vertical-align:top; width: 9;",
