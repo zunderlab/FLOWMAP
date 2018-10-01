@@ -75,7 +75,7 @@ RemoveWithinNEdges <- function(arr.inds.with.values, inds.in.n) {
 ## kNN density function ====
 KnnDensity <- function(k, min, max, nn.ids.df, nn.dists.df,
                        numcluster = numcluster,
-                       table.lengths, offset) { #, numcluster, table.lengths, table.breaks, offset
+                       table.lengths, offset) {
   all.densities.list <<- list()
   for(i in 1:nrow(nn.ids.df)) {
     compile.dists <<- c()
@@ -91,7 +91,7 @@ KnnDensity <- function(k, min, max, nn.ids.df, nn.dists.df,
     longest.dist <- compile.dists[[k]]
     #density.by.Xshift <- (1/(n*(longest.dist^d))) * (sum(c(1:k)^d)/sum(compile.dists))^d
     density.by.knn <- sum(compile.dists)
-    all.densities.list[[col]] <<- density.by.knn
+    all.densities.list[[paste(i,".nn", sep='')]] <<- density.by.knn
   }
   densities.df <<- rbind(matrix(unlist(all.densities.list), byrow=T))
   normalized.densities <- round(densities.df / max(densities.df) * (max - min) + min)
@@ -114,7 +114,7 @@ DrawNormalizedEdges <- function(output.graph, nn.ids.df, nn.dists.df,
     #                       sort(cluster.distances.matrix[, i]))[1:normalized.densities[i], ]
     # final.edgelist.with.distances <- rbind(final.edgelist.with.distances, tmp.edgelist)
     ##new not relying on cluster dist matrix
-    tmp.edgelist <- cbind(as.numeric(i), as.numeric(nn.ids.df[i,]),nn.dists.df)[1:normalized.densities[i], ]
+    tmp.edgelist <- cbind(as.numeric(i), as.numeric(nn.ids.df[i,]),as.numeric(nn.dists.df[i,]))[1:normalized.densities[i], ]
     final.edgelist.with.distances <- rbind(final.edgelist.with.distances, tmp.edgelist)
   }
   colnames(final.edgelist.with.distances) <- c("row.inds", "col.inds", "values")
@@ -338,9 +338,9 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, k, min, max, distance.metric,
   table.lengths <- FLOWMAP.clusters$table.lengths
   ## Old full dist matrix calculation
   # # get distance matrix from clusters
-  clusters <- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
-  clusters <- subset(clusters, select = clustering.var)
-  cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
+  clusters.old <<- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
+  clusters.old <<- subset(clusters.old, select = clustering.var)
+  cluster.distances <- dist(clusters.old, method = distance.metric, diag = TRUE, upper = TRUE)
   cluster.distances.matrix <- as.matrix(cluster.distances)
   cluster.distances.matrix <- as.data.frame(cluster.distances.matrix)
   # set i-i distances to Inf instead of 0 so they aren't the closest neighbors
@@ -354,16 +354,18 @@ BuildFirstFLOWMAP <- function(FLOWMAP.clusters, k, min, max, distance.metric,
 
   ##Replace with approximate nearest neighbors
   clusters <- FLOWMAP.clusters$full.clusters[1:table.lengths[1], ]
-  clusters <- subset(clusters, select = clustering.var)
+  clusters.new <<- subset(clusters, select = clustering.var)
   if (distance.metric == 'manhattan') {
-    nns <- RANN.L1::nn2(data=clusters, k=(max + 1), searchtype="priority", eps=0.1)
+    nns <<- RANN.L1::nn2(data=clusters.new, k=(max + 1), searchtype="priority", eps=0.1)
   } else if (distance.metric == 'euclidean') {
-    nns <- RANN::nn2(data=clusters, k=(max + 1), searchtype="priority", eps=0.1)
+    nns <<- RANN::nn2(data=clusters.new, k=(max + 1), searchtype="priority", eps=0.1)
   }
-  nn.ids.df <- as.data.frame(nns$nn.idx[,2:length(nns$nn.idx)])
-  nn.dists.df <- as.data.frame(nns$nn.dists[,2:length(nns$nn.idx)])
-  numcluster <- nrow(clusters)
-  normalized.densities <- KnnDensity(k=k, clusters, min, max,
+  temp_nnids.df <- as.data.frame(nns$nn.idx)
+  temp_nndists.df <- as.data.frame(nns$nn.dists)
+  nn.ids.df <<- temp_nnids.df[,2:length(temp_nnids.df)]
+  nn.dists.df <<- temp_nndists.df[,2:length(temp_nndists.df)]
+  numcluster <- nrow(clusters.new)
+  normalized.densities <- KnnDensity(k=k, min, max,
                                    nn.ids.df = nn.ids.df,
                                    nn.dists.df = nn.dists.df,
                                    numcluster = numcluster,
@@ -421,8 +423,8 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, k, min, max,
     # go through sequential cluster sets, add edges for each a-a and a-a+1 set, and also label sequential MST
     cat("Building FLOWMAP from", n, "to", n + 1, "\n")
     # # get clusters for time a and a+1
-    # clusters <- rbind(FLOWMAP.clusters$cluster.medians[[n]], FLOWMAP.clusters$cluster.medians[[n + 1]])
-    # clusters <- subset(clusters, select = clustering.var)
+     clusters <- rbind(FLOWMAP.clusters$cluster.medians[[n]], FLOWMAP.clusters$cluster.medians[[n + 1]])
+     clusters <- subset(clusters, select = clustering.var)
     # numcluster <- nrow(clusters)
     # make adjacency matrix from clusters
     cluster.distances <- dist(clusters, method = distance.metric, diag = TRUE, upper = TRUE)
@@ -454,12 +456,14 @@ BuildFLOWMAP <- function(FLOWMAP.clusters, k, min, max,
     } else if (distance.metric == 'euclidean') {
       nns <- RANN::nn2(data=clusters, k=(max + 1), searchtype="priority", eps=0.1)
     }
-    nn.ids.df <- as.data.frame(nns$nn.idx[,2:length(nns$nn.idx)])
-    nn.dists.df <- as.data.frame(nns$nn.dists[,2:length(nns$nn.idx)])
+    temp_nnids.df <- as.data.frame(nns$nn.idx)
+    temp_nndists.df <- as.data.frame(nns$nn.dists)
+    nn.ids.df <<- temp_nnids.df[,2:length(temp_nnids.df)]
+    nn.dists.df <<- temp_nndists.df[,2:length(temp_nndists.df)]
     rownames(nn.ids.df) <- (offset + 1):table.breaks[n + 2]
     rownames(nn.dists.df) <- (offset + 1):table.breaks[n + 2]
     numcluster <- nrow(clusters)
-    normalized.densities <- KnnDensity(k=k, clusters, min, max,
+    normalized.densities <- KnnDensity(k=k, min, max,
                                        nn.ids.df = nn.ids.df,
                                        nn.dists.df = nn.dists.df,
                                        numcluster = numcluster,
