@@ -6,11 +6,11 @@
 dataframes in R}
 \usage{
 FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
-  clustering.var, distance.metric = "manhattan", minimum = 2, maximum = 5,
-  save.folder = getwd(), time.col.label = "Time",
+  clustering.var, distance.metric = "manhattan", minimum = 2,
+  maximum = 5, save.folder = getwd(), time.col.label = "Time",
   condition.col.label = NULL, name.sort = TRUE, clustering = FALSE,
   seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
-  cluster.numbers = NULL, cluster.mode)
+  cluster.numbers = NULL, cluster.mode, k = 10)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,

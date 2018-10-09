@@ -44,7 +44,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, clustering = FALSE, seed.X = 1,
                           savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL,
-                          cluster.mode) {
+                          cluster.mode, k = 10) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
@@ -70,7 +70,20 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = 1, min = minimum,
+    ###global vars for testing====
+    global.output.graph.iteration <<- list()
+    global.output.graph.full <<- list()
+    global.edge.list <<- list()
+    global.offset <<- list()
+    global.table.breaks <<- list()
+    global.n <<- list()
+    global.distance.metric <<- list()
+    global.clusters <<- list()
+    global.inter.sub.nns <<- list()
+    global.is.conn.pre <<- list()
+    global.is.conn.post <<- list()
+    #Build FLOWMAP====
+    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, k = maximum, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
     graph <- results$output.graph
@@ -91,7 +104,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
-    graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
+    graph <- BuildMultiFLOWMAP(file.clusters, k = maximum, min = minimum,
                                max = maximum, distance.metric = distance.metric,
                                label.key = label.key, clustering.var = clustering.var)
   } else if (mode == "one") {
@@ -114,7 +127,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
       file.clusters <- ConstructOneFLOWMAPCluster(df)
     }
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       per = 1, min = minimum, max = maximum,
+                                       k = maximum, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
                                        clustering.var = clustering.var)
     output.graph <- first.results$output.graph
@@ -152,22 +165,22 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
   } else {
     stop("Unknown mode!")
   }
-  file.name <- paste(project.name, "FLOW-MAP", sep = "_")
-  ConvertToGraphML(output.graph = graph, file.name = file.name)
-  graph.xy <- ForceDirectedXY(graph = graph)
-  file.name.xy <- paste(file.name, "xy", sep = "_")
-  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode == "single") {
-    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
-  } else {
-    fixed.graph <- graph.xy
-  }
-  fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
-  if (savePDFs) {
-    cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
-  }
-  return(graph.xy)
+  # file.name <- paste(project.name, "FLOW-MAP", sep = "_")
+  # ConvertToGraphML(output.graph = graph, file.name = file.name)
+  # graph.xy <- ForceDirectedXY(graph = graph)
+  # file.name.xy <- paste(file.name, "xy", sep = "_")
+  # final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
+  # fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+  # if (mode == "single") {
+  #   fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
+  # } else {
+  #   fixed.graph <- graph.xy
+  # }
+  # fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
+  # ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
+  # if (savePDFs) {
+  #   cat("Printing pdfs.", "\n")
+  #   ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
+  # }
+  # return(graph.xy)
 }

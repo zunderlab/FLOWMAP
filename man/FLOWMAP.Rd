@@ -10,8 +10,9 @@ FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
   distance.metric = "manhattan", minimum = 2, maximum = 5,
   save.folder = getwd(), subsamples = 200, name.sort = TRUE,
   downsample = FALSE, seed.X = 1, savePDFs = TRUE,
-  which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
-  target.number = NULL, target.percent = NULL, ...)
+  which.palette = "bluered", exclude.pctile = NULL,
+  target.pctile = NULL, target.number = NULL, target.percent = NULL,
+  k = 10, ...)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,

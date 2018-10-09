@@ -58,7 +58,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
-                    target.number = NULL, target.percent = NULL, ...) {
+                    target.number = NULL, target.percent = NULL, k = 10, ...) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")

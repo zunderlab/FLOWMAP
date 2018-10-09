@@ -4,9 +4,9 @@
 \alias{DownsampleFCS}
 \title{SPADE: density-dependent downsampling}
 \usage{
-DownsampleFCS(fcs.file.names, clustering.var, channel.annotate, channel.remove,
-  exclude.pctile = 0.01, target.pctile = 0.99, target.number = NULL,
-  target.percent = 0.1, transform = TRUE)
+DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
+  channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+  target.number = NULL, target.percent = 0.1, transform = TRUE)
 }
 \description{
 This code was adapted from the spade R package,
