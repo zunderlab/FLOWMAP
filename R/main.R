@@ -20,6 +20,7 @@
 #' to generate from each separate FCS file
 #' @param cluster.mode Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}
 #' @param distance.metric Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}
+#' @param density.metric Character string specifying which method to use for local density estimation for edge assignment in graph building
 #' @param minimum Numeric value specifying the minimum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{2}, no less than 2 is recommended
@@ -52,13 +53,14 @@
 #' \url{https://github.com/nolanlab/spade}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),
-                    var.annotate = NULL, clustering.var, cluster.numbers = 100,
-                    cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5,
+FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
+                    var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
+                    cluster.mode = "hclust", distance.metric = "manhattan",
+                    files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
-                    target.number = NULL, target.percent = NULL, k = 10, ...) {
+                    target.number = NULL, target.percent = NULL, k = 10, per = 5, ...) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
@@ -79,7 +81,13 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
       stop("Unknown 'files' format provided for specified mode!")
     }
     runtype <- "SingleFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    #Build FLOWMAP single====
+    if (density.metric == "radius") {
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+    } else if (density.metric == "kNN") {
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+    }
+
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (check[2] == "FCS") {
@@ -107,12 +115,23 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric,
                                 cluster.mode = cluster.mode)
-    cat("Upsampling all clusters to reflect Counts of entire file", "\n")
-    file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, k = maximum, min = minimum,
-                            max = maximum, distance.metric = distance.metric,
-                            clustering.var = clustering.var)
+    if (cluster.mode != "none") {
+      cat("Upsampling all clusters to reflect Counts of entire file", "\n")
+      file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
+    }
+
+    #Build FLOWMAP single====
+    if (density.metric == "radius") {
+      results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 clustering.var = clustering.var)
+    } else if (density.metric == "kNN") {
+      results <- BuildFLOWMAPkNN(FLOWMAP.clusters = file.clusters, k = k, min = minimum,
+                              max = maximum, distance.metric = distance.metric,
+                              clustering.var = clustering.var)
+    }
     graph <- results$output.graph
+    return(graph)
   } else if (mode == "multi") {
     check <- CheckModeMulti(files)
     cat("check", check, "\n")
@@ -120,7 +139,11 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
       stop("Unknown 'files' format provided for specified mode!")
     }
     runtype <- "MultiFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    if (density.metric == "radius") {
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+    } else if (density.metric == "kNN") {
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+    }
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (check[2] == "list") {
@@ -153,9 +176,18 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                      distance.metric = distance.metric, cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    graph <- BuildMultiFLOWMAP(file.clusters, k = maximum, min = minimum,
-                               max = maximum, distance.metric = distance.metric,
-                               label.key = label.key, clustering.var = clustering.var)
+    #Build FLOWMAP multi====
+    if (density.metric == "radius") {
+      graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 label.key = label.key, clustering.var = clustering.var)
+    }
+    # else if (density.metric == "kNN") {
+    #   graph <- BuildMultiFLOWMAPkNN(file.clusters, k = maximum, min = minimum,
+    #                              max = maximum, distance.metric = distance.metric,
+    #                              label.key = label.key, clustering.var = clustering.var)
+    # }
+
   } else if (mode == "one") {
     check <- CheckModeOne(files)
     cat("check", check, "\n")
@@ -170,7 +202,11 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     }
     file.name <- fcs.file.names
     runtype <- "OneTimepoint"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    if (density.metric == "radius") {
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+    } else if (density.metric == "kNN") {
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+    }
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
@@ -192,10 +228,18 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                 cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
-    first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       k = maximum, min = minimum, max = maximum,
-                                       distance.metric = distance.metric,
-                                       clustering.var = clustering.var)
+    #Build FLOWMAP one====
+    if (density.metric == "radius") {
+      first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
+                                         per = per, min = minimum, max = maximum,
+                                         distance.metric = distance.metric,
+                                         clustering.var = clustering.var)
+    } else if (density.metric == "kNN") {
+      first.results <- BuildFirstFLOWMAPkNN(FLOWMAP.clusters = file.clusters,
+                                         k = k, min = minimum, max = maximum,
+                                         distance.metric = distance.metric,
+                                         clustering.var = clustering.var)
+    }
     output.graph <- first.results$output.graph
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
@@ -246,16 +290,21 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     temp.name.list[[1]] <- fcs.file.names
     file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
-    output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                           k = maximum, min = minimum, max = maximum,
-                                           distance.metric = distance.metric,
-                                           clustering.var = clustering.var)
+    #Build FLOWMAP one-special ====
+    if (density.metric == "radius") {
+      output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
+                                             k = maximum, min = minimum, max = maximum,
+                                             distance.metric = distance.metric,
+                                             clustering.var = clustering.var)
+    }
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
                                          label.key.special)
     graph <- output.graph
+    #return(graph)
   } else {
     stop("Unknown mode!")
   }
+  #Make graph output ====
   file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
   ConvertToGraphML(output.graph = graph, file.name = file.name)
   graph.xy <- ForceDirectedXY(graph = graph)
@@ -272,7 +321,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
   MakeFLOWMAPRFile(env = parent.frame())
   if (savePDFs) {
     cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
+    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette, k = k, maximum = maximum)
   }
   return(graph.xy)
 }

@@ -15,6 +15,7 @@
 #' @param clustering.var Vector naming channels to be used to calculate distances/differences
 #' between cells for clustering (if requested) and edge-drawing steps
 #' @param distance.metric Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}
+#' @param density.metric Character string specifying which method to use for local density estimation for edge assignment in graph building
 #' @param minimum Numeric value specifying the minimum number of edges that will be allotted
 #' during each density-dependent edge-building step of the FLOW-MAP graph, default value is
 #' set to \code{2}, no less than 2 is recommended
@@ -40,16 +41,22 @@
 #' @export
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
+                          density.metric = c("kNN", "radius"),
                           minimum = 2, maximum = 5, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, clustering = FALSE, seed.X = 1,
                           savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL,
-                          cluster.mode, k = 10) {
+                          cluster.mode, k = 10, per = 5) {
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   setwd(save.folder)
   df <- RemoveRowNames(df)
   PrintSummaryfromDF(env = parent.frame())
+
+  global.graphs.ls <<- list()
+  global.subgraphs.ls.el <<- list()
+  global.graphs.ls.first <<- list()
+  global.subgraphs.ls.el.first <<- list()
 
   if (mode == "single") {
     check <- CheckDFModeSingle(df)
@@ -70,23 +77,18 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
-    ###global vars for testing====
-    global.output.graph.iteration <<- list()
-    global.output.graph.full <<- list()
-    global.edge.list <<- list()
-    global.offset <<- list()
-    global.table.breaks <<- list()
-    global.n <<- list()
-    global.distance.metric <<- list()
-    global.clusters <<- list()
-    global.inter.sub.nns <<- list()
-    global.is.conn.pre <<- list()
-    global.is.conn.post <<- list()
-    #Build FLOWMAP====
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, k = maximum, min = minimum,
-                            max = maximum, distance.metric = distance.metric,
-                            clustering.var = clustering.var)
+    #Build FLOWMAP single====
+    if (density.metric == "radius") {
+      results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 clustering.var = clustering.var)
+    } else if (density.metric == "kNN") {
+      results <- BuildFLOWMAPkNN(FLOWMAP.clusters = file.clusters, k = k, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 clustering.var = clustering.var)
+    }
     graph <- results$output.graph
+
   } else if (mode == "multi") {
     check <- CheckDFModeMulti(df)
     cat("check", check, "\n")
@@ -104,9 +106,17 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
-    graph <- BuildMultiFLOWMAP(file.clusters, k = maximum, min = minimum,
-                               max = maximum, distance.metric = distance.metric,
-                               label.key = label.key, clustering.var = clustering.var)
+    #Build FLOWMAP multi====
+    if (density.metric == "radius") {
+      graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 label.key = label.key, clustering.var = clustering.var)
+    }
+    # else if (density.metric == "kNN") {
+    #   graph <- BuildMultiFLOWMAPkNN(file.clusters, k = maximum, min = minimum,
+    #                              max = maximum, distance.metric = distance.metric,
+    #                              label.key = label.key, clustering.var = clustering.var)
+    # }
   } else if (mode == "one") {
     check <- CheckDFModeOne(df)
     cat("check", check, "\n")
@@ -126,10 +136,18 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructOneFLOWMAPCluster(df)
     }
-    first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       k = maximum, min = minimum, max = maximum,
-                                       distance.metric = distance.metric,
-                                       clustering.var = clustering.var)
+    #Build FLOWMAP one====
+    if (density.metric == "radius") {
+      first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
+                                         per = per, min = minimum, max = maximum,
+                                         distance.metric = distance.metric,
+                                         clustering.var = clustering.var)
+    } else if (density.metric == "kNN") {
+      first.results <- BuildFirstFLOWMAPkNN(FLOWMAP.clusters = file.clusters,
+                                         k = k, min = minimum, max = maximum,
+                                         distance.metric = distance.metric,
+                                         clustering.var = clustering.var)
+    }
     output.graph <- first.results$output.graph
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
@@ -155,32 +173,35 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
       file.clusters <- ConstructMultiFLOWMAPCluster(fixed.df)
     }
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
-    output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                           per = 1, min = minimum, max = maximum,
-                                           distance.metric = distance.metric,
-                                           clustering.var = clustering.var)
+    #Build FLOWMAP one-special ====
+    if (density.metric == "radius") {
+      output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
+                                             per = 1, min = minimum, max = maximum,
+                                             distance.metric = distance.metric,
+                                             clustering.var = clustering.var)
+    }
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
                                          label.key.special)
     graph <- output.graph
   } else {
     stop("Unknown mode!")
   }
-  # file.name <- paste(project.name, "FLOW-MAP", sep = "_")
-  # ConvertToGraphML(output.graph = graph, file.name = file.name)
-  # graph.xy <- ForceDirectedXY(graph = graph)
-  # file.name.xy <- paste(file.name, "xy", sep = "_")
-  # final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  # fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  # if (mode == "single") {
-  #   fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
-  # } else {
-  #   fixed.graph <- graph.xy
-  # }
-  # fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  # ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
-  # if (savePDFs) {
-  #   cat("Printing pdfs.", "\n")
-  #   ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
-  # }
-  # return(graph.xy)
+  file.name <- paste(project.name, "FLOW-MAP", sep = "_")
+  ConvertToGraphML(output.graph = graph, file.name = file.name)
+  graph.xy <- ForceDirectedXY(graph = graph)
+  file.name.xy <- paste(file.name, "xy", sep = "_")
+  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
+  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+  if (mode == "single") {
+    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
+  } else {
+    fixed.graph <- graph.xy
+  }
+  fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
+  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
+  if (savePDFs) {
+    cat("Printing pdfs.", "\n")
+    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
+  }
+  return(graph.xy)
 }
