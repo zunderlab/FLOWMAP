@@ -74,6 +74,11 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     } else if (cluster.mode == "kmeans") {
       cluster.results <- KMeansClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
                                           distance.metric = distance.metric, numcluster = numcluster[i])
+    } else if (cluster.mode == "none") {
+      new.counts <- data.frame()
+      cluster.results <- list(tmp.cell.assgn = data.frame(1:dim(tmp.FCS.for.cluster)[1]),
+                              new.medians = tmp.FCS.for.cluster,
+                              new.counts = data.frame(rep.int(1,dim(tmp.FCS.for.cluster)[1])))
     } else {
       stop("Unrecognized clustering method!")
     }
