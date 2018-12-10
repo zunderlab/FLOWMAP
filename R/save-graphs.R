@@ -1,8 +1,8 @@
 
-MakeOutFolder <- function(runtype) {
+MakeOutFolder <- function(runtype, maximum, k = "", per = "") {
   name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
   name <- gsub(":", ".", name, fixed = TRUE)
-  output.folder <- paste(name, "_", runtype, "_run", sep = "")
+  output.folder <- paste("max", maximum, k, per, name, runtype, "run", sep = "_")
   dir.create(output.folder)
   cat("output.folder is", output.folder, "\n")
   return (output.folder)
@@ -85,7 +85,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   pdf.width <- 100
   pdf.height <- 100
   graph <- read.graph(graphml.file, format = "graphml")
-  out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
+  out.folder <- paste(basename(graphml.file), "pdf", sep = "_")
   cat("Making output folder:", out.folder, "\n")
   dir.create(out.folder)
   setwd(out.folder)
