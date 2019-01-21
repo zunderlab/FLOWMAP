@@ -42,7 +42,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
                           minimum = 2, maximum = 5, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
-                          name.sort = TRUE, clustering = FALSE, seed.X = 1,
+                          name.sort = TRUE, per = 10, clustering = FALSE, seed.X = 1,
                           savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL,
                           cluster.mode) {
   set.seed(seed.X)
@@ -70,7 +70,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructSingleFLOWMAPCluster(df)
     }
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = 1, min = minimum,
+    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
     graph <- results$output.graph
@@ -91,7 +91,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
-    graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
+    graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric,
                                label.key = label.key, clustering.var = clustering.var)
   } else if (mode == "one") {
@@ -114,7 +114,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
       file.clusters <- ConstructOneFLOWMAPCluster(df)
     }
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       per = 1, min = minimum, max = maximum,
+                                       per = per, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
                                        clustering.var = clustering.var)
     output.graph <- first.results$output.graph
@@ -143,7 +143,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     }
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
     output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                           per = 1, min = minimum, max = maximum,
+                                           per = per, min = minimum, max = maximum,
                                            distance.metric = distance.metric,
                                            clustering.var = clustering.var)
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,

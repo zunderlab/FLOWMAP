@@ -55,7 +55,7 @@
 FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),
                     var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5,
-                    save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+                    save.folder = getwd(), subsamples = 200, name.sort = TRUE, per = 10,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, ...) {
@@ -109,7 +109,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                 cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = 1, min = minimum,
+    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
                             max = maximum, distance.metric = distance.metric,
                             clustering.var = clustering.var)
     graph <- results$output.graph
@@ -153,7 +153,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                      distance.metric = distance.metric, cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    graph <- BuildMultiFLOWMAP(file.clusters, per = 1, min = minimum,
+    graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
                                max = maximum, distance.metric = distance.metric,
                                label.key = label.key, clustering.var = clustering.var)
   } else if (mode == "one") {
@@ -193,7 +193,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
     first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       per = 1, min = minimum, max = maximum,
+                                       per = per, min = minimum, max = maximum,
                                        distance.metric = distance.metric,
                                        clustering.var = clustering.var)
     output.graph <- first.results$output.graph
@@ -247,7 +247,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
     output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                           per = 1, min = minimum, max = maximum,
+                                           per = per, min = minimum, max = maximum,
                                            distance.metric = distance.metric,
                                            clustering.var = clustering.var)
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,

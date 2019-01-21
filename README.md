@@ -114,7 +114,7 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
   * `clustering.var` - which channels to use to influence the graph shape, you can generate a set of suggested `clustering.var` using the `FLOWMAPR::SuggestClusteringVar()` function, supplying the variables `fcs.file.names` (complete set of FCS files to be used in analysis), `mode` (as in FLOWMAPR mode), `var.annotate`, `var.remove`, `top.num` (which specifies how many clustering variables you want to use, less than the total number of variables in the dataset)
   * `cluster.numbers` - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500), default is set to 100
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
-  * `density.metric` -  choose "radius" or kNN" depending on preferred method for local density estimation to determine number of edges assigned to each cell or cluster in graph building
+  * `per` -  lower values for the “per” provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations.
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
@@ -151,7 +151,7 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `condition.col.label` - variable that is only required for MultiFLOW-MAP runs to distinguish data from different conditions/treatments/timecourses, function will use the column with this label as the condition label for each cell, default is set to NULL
   * `clustering.var` - which channels to use to influence the graph shape
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
-  * `density.metric` -  choose "radius" or kNN" depending on preferred method for local density estimation to determine number of edges assigned to each cell or cluster in graph building
+  * `per` -  lower values for the “per” provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations.
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
@@ -178,7 +178,7 @@ clustering.var <- c("marker1", "marker2")
 subsamples <- 200
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-density.metric <- "kNN"
+per <- 5
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -189,9 +189,9 @@ which.palette <- "bluered"
 
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                  distance.metric = distance.metric, density.metric = density.metric, minimum = minimum, 
+                  distance.metric = distance.metric, minimum = minimum, 
                   maximum = maximum, save.folder = save.folder, subsamples = subsamples,
-                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  name.sort = name.sort, per = per, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
 ```
 
@@ -207,7 +207,7 @@ var.remove <- c()
 clustering.var <- c("marker1", "marker2")
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-density.metric <- "kNN"
+per <- 5
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -223,9 +223,9 @@ which.palette <- "bluered"
 
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                  distance.metric = distance.metric, density.metric = density.metric, minimum = minimum, 
+                  distance.metric = distance.metric, minimum = minimum, 
                   maximum = maximum, save.folder = save.folder, subsamples = subsamples,
-                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  name.sort = name.sort, per = per, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
                   target.number = target.number, target.percent = target.percent)
@@ -283,7 +283,7 @@ save.folder <- "/Users/mesako/Desktop"
 project.name <- "Example_FLOWMAP_Run"
 clustering.var <- c("marker1", "marker2")
 distance.metric <- "manhattan"
-density.metric <- "kNN"
+per <- 5
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -308,8 +308,8 @@ df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label,
 FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
                         time.col.label = time.col.label, condition.col.label = condition.col.label,
                         clustering.var = clustering.var, distance.metric = distance.metric, 
-                        density.metric = density.metric, minimum = minimum, maximum = maximum, 
-                        save.folder = save.folder, name.sort = name.sort, clustering = clustering,
+                        minimum = minimum, maximum = maximum, save.folder = save.folder, 
+                        name.sort = name.sort, per = per, clustering = clustering,
                         seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
 
 ```
