@@ -247,6 +247,31 @@ body <- dashboardBody(
                                   and generate all requested FLOWMAPR results
                                   (PDFs, graphml files, etc. in a new folder).</li>"))
 
+                 ),#tabPanel
+               tabPanel(
+                 title = "Static-Multi",
+                 helpText(HTML("<b>For mode 'static-multi' (multiple conditions, one timepoint):</b>")),
+                 helpText(HTML("<ol>
+                               <li>   Select the CSV file that has the corresponding FCS file paths. How
+                               the CSV file should be arranged (i.e. what information is put in
+                               the columns/rows) will be shown in the following section.</li>
+                               <li>	Press 'Input CSV' once the CSV is selected in the box.</li>
+                               <li>	If any channel needs to be merged, select the files from the
+                               'Different Fields' window, enter the new merged name in
+                               'Select New Merge Name', and press 'Merge Selected Diff'.
+                               This will automatically remove the channels from
+                               'Different Fields', add the merged name to 'Similar Fields',
+                               and will update the table with new annotations.</li>
+                               <li>	The different parameters will by default be checked for removal.
+                               You must check at least one or more of the
+                               parameters for clustering. If you want to
+                               rename a parameter, click on the name under
+                               'annotate' and type a new name.</li>
+                               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
+                               checked and renamed to run the FLOW-MAP algorithm
+                               and generate all requested FLOWMAPR results
+                               (PDFs, graphml files, etc. in a new folder).</li>"))
+
                  )#tabPanel
              )#tabBox
            )#box
@@ -292,7 +317,9 @@ server <- function(input, output, session) {
                 useShinyalert(),  # Set up shinyalert
                 div(style="display:inline-block",actionButton("ModeHelp", label = "?")),
                 div(style="display:inline-block",
-                selectInput("flowmapMode", "Select Analysis Mode:", c("Choose one" = "", "multi", "single", "one")))
+                #selectInput("flowmapMode", "Select Analysis Mode:", c("Choose one" = "", "multi", "single", "one")))
+                numericInput("conditions", "Number of conditions:", value = 1, min = 1),
+                numericInput("timepoints", "Number of timepoints:", value = 1, min = 1))
               ),
               tabPanel(
                 "Analysis Settings",
@@ -534,6 +561,33 @@ server <- function(input, output, session) {
                html = TRUE,
                type = "info")
   })
+  observeEvent(input$StaticMultiModeHelp, {
+    # Show a modal when the button is pressed
+    shinyalert(title = "'Static-Multi' mode: multiple conditions, one timepoint",
+               text = "<small> <ol ALIGN=LEFT>
+               <li>   Select the CSV file that has the corresponding FCS file paths. How
+                    the CSV file should be arranged (i.e. what information is put in
+               the columns/rows) will be shown in the following section.</li>
+               <li>	Press 'Input CSV' once the CSV is selected in the box.</li>
+               <li>	If any channel needs to be merged, select the files from the
+               'Different Fields' window, enter the new merged name in
+               'Select New Merge Name', and press 'Merge Selected Diff'.
+               This will automatically remove the channels from
+               'Different Fields', add the merged name to 'Similar Fields',
+               and will update the table with new annotations.</li>
+               <li>	The different parameters will by default be checked for removal.
+               You must check at least one or more of the
+               parameters for clustering. If you want to
+               rename a parameter, click on the name under
+               'annotate' and type a new name.</li>
+               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
+               checked and renamed to run the FLOW-MAP algorithm
+               and generate all requested FLOWMAPR results
+               (PDFs, graphml files, etc. in a new folder).</li> </small>",
+               html = TRUE,
+               type = "info")
+  })
+
 
 ######################################################### File Input and settings tabs server functionality ====
   #Allow for files as large as FCS file
@@ -582,7 +636,16 @@ server <- function(input, output, session) {
   params <- reactiveValues(inputs=list())
 
   observeEvent(input$submitParams, {
-    params$inputs[["mode"]] <- input$flowmapMode
+    if (input$conditions > 1 & input$timepoints > 1 ) {
+      flowmapMode <- "multi"
+    } else if (input$conditions == 1 & input$timepoints > 1 ) {
+      flowmapMode <- "single"
+    } else if (input$conditions > 1 & input$timepoints == 1 ) {
+      flowmapMode <- "static-multi"
+    } else if (input$conditions == 1 & input$timepoints == 1 ) {
+      flowmapMode <- "one"
+    }
+    params$inputs[["mode"]] <- flowmapMode
     params$inputs[["color.palette"]] <- input$colors
     params$inputs[["downsample.toggle"]] <- input$spade
     params$inputs[["savePDFs.toggle"]] <- input$saveGraphPDFs
@@ -600,9 +663,6 @@ server <- function(input, output, session) {
 
     if ((length(which(params$inputs == "")) == 0) | (length(which(params$inputs == "NA")) == 0)) {
       output$emptyParam <- renderText({"Successful parameter selection!"})
-    }
-    if (input$flowmapMode == ''){
-      output$emptyParam <- renderText({"Missing parameters!"})
     }
 
   })##observeEvent
@@ -892,8 +952,108 @@ server <- function(input, output, session) {
                 )#box
               )#fluidrow
             )
-          }
-      }#if (globe.inputs[["mode"]] != "NA")
+      } else if (globe.inputs[["mode"]] == "static-multi") {
+        print("in static-multi loop")
+        ui <- fluidPage(
+          titlePanel("File Uploader"),
+          fluidRow(
+            #column(width = 3,
+            tabBox( width=12, id="process_tabset",
+                    tabPanel(
+                      title = "Directory Selection",
+                      #tags$hr(),
+                      tags$h5("Select a file in the directory containing your raw FCS Files or
+                              CSV Directory (for mode multiFLOW-MAP):"),
+                      useShinyalert(),  # Set up shinyalert
+                      div(style="display:inline-block",actionButton("RawFCSDirHelp", label = "?")),
+                      div(style="display: inline-block;vertical-align:top; width: 2;",
+                          actionButton("fileInButton", "Browse files...")),
+                      div(style="display: inline-block;vertical-align:top; width: 1;",
+                          HTML("<br>")),
+                      div(style="display: inline-block;vertical-align:top; width: 9;",
+                          verbatimTextOutput("dirIn", placeholder = FALSE)),
+                      tags$br(),
+                      tags$br(),
+                      tags$br(),
+                      actionButton("loadDir", "Load Directory"),
+                      tags$br(),
+                      verbatimTextOutput("dirLoaded", placeholder = FALSE)
+                      ),
+                    tabPanel(
+                      "Check Files",
+                      selectInput("check.group.files",
+                                  label = h5("Uploaded Files"),
+                                  choices = "Pending Upload",
+                                  #selected = NULL,
+                                  multiple = TRUE,
+                                  selectize = FALSE,
+                                  size = 7),
+                      actionButton("gener.param.button", "Read Panel from FCS Files"),
+                      #textOutput("writefile"),
+                      textOutput("vartable"),
+                      textOutput("ordering"),
+                      textOutput("fcsorder"),
+                      textOutput("panel.loaded")
+                    ),#tabPanel
+                    tabPanel(
+                      "Check/Select/Remove Markers",
+                      fluidRow(
+                        column(width = 6,
+                               tags$h4("Check Panel"),
+                               selectInput("check.group.sim",
+                                           label = h5("Matching Channels in FCS Files"),
+                                           choices = "Pending Upload",
+                                           selected = NULL,
+                                           multiple = TRUE,
+                                           selectize = FALSE,
+                                           size = 7),
+                               selectInput("check.group.diff",
+                                           label = h5("Different Channels in FCS Files"),
+                                           choices = "Pending Upload",
+                                           selected = NULL,
+                                           multiple = TRUE,
+                                           selectize = FALSE,
+                                           size = 7),
+                               textInput("file.merge", label = h5("Select New Merged Channel Name"), placeholder = "New Name"),
+                               actionButton("merge.button", "Merge Selected Channels")
+                        ),#col
+                        column(width = 6,
+                               tags$h4("Select/Remove Markers"),
+                               rHandsontableOutput("table", width = 600)
+                        )#col
+                      )#fluidRow
+                    )##tabPanel
+            )#tabBox
+          ),#fluidRow
+          fluidRow(
+            column(12, align="center",
+                   actionButton("start.button", "Run FLOWMAPR")
+            )#col
+          ),#fluidRow
+          fluidRow(
+            column(12, align="center",
+                   textOutput('isRunning')
+            )#col
+          ),#fluidRow
+          tags$br(),
+          fluidRow(
+            box(
+              width = '12',
+              title = "Directions:",
+              helpText(HTML("	<p> The first tab on this page is for 'Directory Selection' -- choose the directory
+                                  containing your FCS/CSV files, then press 'Load Directories' button. If there were any
+                                issues loading the directories, you will see a message alerting you to try again.
+                                Otherwise, you will be brought to the next tab. For mode-specific instructions for
+                                remaining tabs, press 'More Info' button. <p>"
+              )#HTML
+              ),#helpText
+              tags$br(),
+              actionButton("StaticMultiModeHelp", "More Info")
+            )#box
+          )#fluidrow
+    )#fluidPage
+      }
+     #if (globe.inputs[["mode"]] != "NA")
       else  {
         fluidRow(
           column(8, align="center",
@@ -903,6 +1063,7 @@ server <- function(input, output, session) {
         )#fluidRow
 
       }#else
+    }
     })#renderUI
 
   #print info text regarding upload files page ("server" for "else" GUI above ^^)
@@ -1427,7 +1588,207 @@ server <- function(input, output, session) {
       output$panel.loaded <- renderText({
         PanelLoaded()
       })
-    }# else
+    } else if (globe.inputs[["mode"]] == "static-multi") {
+      print("observing Dirs...")
+      observeEvent(input$loadDir, {
+        updateTabItems(session, "process_tabset", "Check Files")
+        print("observing Files...")
+        options(shiny.maxRequestSize = 1000 * 1024^2)
+        panel.info <- InitializePanel()
+        final.new.same <<- NULL
+        final.new.diff <<- NULL
+        print(globe.raw.FCS.dir)
+        file.info <- FileOrder(globe.raw.FCS.dir)
+        #print(file.info)
+        len.filenames <<- file.info$len.filenames
+        print(len.filenames)
+        file.names <<- file.info$file.names
+        print(file.names)
+        # })#observeEvent
+        # observeEvent(input$submitParams, {
+        if (identical(file.names, character(0))) {
+          choice <<- "No FCS Files"
+        } else {
+          choice <<-  paste(len.filenames, file.names, sep = " ")
+        }
+        print(choice)
+        updateSelectInput(session, "check.group.files",
+                          choices = choice)
+      })#observeEvent "loadFiles" button
+      ChosenOrder <- eventReactive(input$gener.param.button, {
+        print(paste(len.filenames, sep = "", collapse = ", "))
+        actual.input <- paste(len.filenames, sep = "", collapse = ",")
+        actual.input
+      })
+      GetFCSinOrder <- eventReactive(input$gener.param.button, {
+        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+        fcs.list <- file.names[order]
+        fcs.list
+      })
+      PanelLoaded <- eventReactive(input$gener.param.button, {
+        panel_loaded <- "Panel loaded"
+        panel_loaded
+      })
+      ContentDiff <- eventReactive(input$gener.param.button, {
+        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+        print(order)
+        temp.result <- GetMarkerNameParam(file.iter = file.names, order = order, folder.name = globe.raw.FCS.dir)
+        fcs.list <- temp.result$fcs.list
+        temp.list <- temp.result$temp.list
+        diffs <- ComparePanels(fcs.list)$diffs
+        # Gets different parameters from the FCS files
+        final.new.diff <<- diffs
+        diffs
+      })
+      ContentSame <- eventReactive(input$gener.param.button, {
+        rows <- length(FileOrder(globe.raw.FCS.dir))
+        order <- as.numeric(unlist(strsplit(ChosenOrder(), ",")))
+        temp.result <- GetMarkerNameParam(file.iter = file.names, order = order, folder.name = globe.raw.FCS.dir)
+        fcs.list <- temp.result$fcs.list
+        temp.list <- temp.result$temp.list
+        same <- ComparePanels(fcs.list)$same
+        final.new.same <<- same
+        same
+        # gives the same paramters
+      })
+      TableCreate <- eventReactive(input$gener.param.button, {
+        panel.info <<- UpdatePanel(final.new.same, final.new.diff)
+        output$table <- renderRHandsontable({
+          rhandsontable(panel.info) %>%
+            hot_col("channels", readOnly = TRUE)
+        })
+        panel.info.edit <<- panel.info
+      })
+      observeEvent(input$gener.param.button, {
+        panel.info <<- UpdatePanel(final.new.same, final.new.diff)
+        updateTabItems(session, "process_tabset", "Check/Select/Remove Markers")
+      })
+      observe({
+        updateSelectInput(session, "check.group.sim", choices = ContentSame())
+      })
+      # updates the checkbox group to show same
+      observe({
+        updateSelectInput(session, "check.group.diff", choices = ContentDiff())
+      })
+      FileMergeDiff <- eventReactive(input$merge.button, {
+        files.tbm <- input$check.group.diff
+        merge.name <- input$file.merge
+        new.diff <- ContentDiff() [! ContentDiff() %in% files.tbm]
+        print(new.diff)
+        new.diff
+      })
+      FileMergeSame <- eventReactive(input$merge.button, {
+        new.same <- c(input$file.merge, ContentSame())
+        print(new.same)
+        new.same
+      })
+      FileMergeTable <- eventReactive(input$merge.button, {
+        files.tbm <- input$check.group.diff
+        new.panel.info <- panel.info.edit
+        print(input$check.group.diff)
+        for (i in files.tbm) {
+          new.panel.info[new.panel.info$channels == i, "annotate"] <- input$file.merge
+          panel.info.edit <<- new.panel.info
+        }
+        print("new.panel.info")
+        print(new.panel.info)
+        output$table <- renderRHandsontable({
+          rhandsontable(new.panel.info) %>%
+            hot_col("channels", readOnly = TRUE)
+        })
+      })
+      # observeEvent(input$merge.button, {
+      #   updateTabItems(session, "process_tabset", "Select/Remove Markers")
+      # })
+      observe({
+        updateSelectInput(session, "check.group.sim", choices = FileMergeSame())
+      })
+      # updates the checkbox group to show same
+      observe({
+        updateSelectInput(session, "check.group.diff", choices = FileMergeDiff())
+      })
+      observe({
+        FileMergeTable()
+      })
+      #WriteFile <- eventReactive(input$start.button, {
+      #Not sure why this was event reactive since there is no value output
+      observeEvent(input$start.button, {
+        output$isRunning <- renderText({"FLOWMAP is running..."})
+
+        file.order <- as.numeric(unlist(strsplit(ChosenOrder(), split = ",")))
+        flowfile <- (hot_to_r(input$table))
+        files <- list.files(globe.raw.FCS.dir, full.names = TRUE, pattern = "\\.fcs")[file.order]
+        mode <- globe.inputs[["mode"]]
+        save.folder <- globe.result.dir
+        var.annotate <- BuildVarAnnotate(files[1], flowfile)
+        var.remove <- SelectVarRemove(flowfile, var.annotate)
+        print(var.remove)
+        clustering.var <- SelectClusteringVar(flowfile, var.annotate)
+        print(clustering.var)
+        maximum <- as.numeric(globe.inputs[["edge.max.num"]])
+        minimum <- as.numeric(globe.inputs[["edge.min.num"]])
+        distance.metric <- globe.inputs[["distance.metric"]]
+        subsamples <- as.numeric(globe.inputs[["subsample.num"]])
+        cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
+        seed.X <- as.numeric(globe.inputs[["seed.num"]])
+        savePDFs <- as.logical(as.numeric(globe.inputs[["savePDFs.toggle"]]))
+        which.palette <- globe.inputs[["color.palette"]]
+        name.sort <- FALSE
+        downsample <- as.logical(as.numeric(globe.inputs[["downsample.toggle"]]))
+
+        print("var.annotate")
+        print(var.annotate)
+        print("clustering.var")
+        print(clustering.var)
+
+        # Run FLOW-MAP
+        if (downsample) {
+          print("Downsampling")
+          target.number <- subsamples
+          subsamples <- FALSE
+          target.percent <- NULL
+          exclude.pctile <- globe.inputs[["exclude.pctile"]]
+          target.pctile <- globe.inputs[["target.pctile"]]
+          FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+                  clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  save.folder = save.folder, subsamples = subsamples,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  savePDFs = savePDFs, which.palette = which.palette,
+                  exclude.pctile = exclude.pctile, target.pctile = target.pctile,
+                  target.number = target.number, target.percent = target.percent)
+        } else {
+          print("No Downsampling")
+          FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
+                  clustering.var = clustering.var, cluster.numbers = cluster.numbers,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  save.folder = save.folder, subsamples = subsamples,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
+                  savePDFs = savePDFs, which.palette = which.palette)
+        }
+
+        stopApp()
+      })
+      # output$writefile <- renderText({
+      #   WriteFile()
+      #   NULL
+      # })
+      output$vartable <- renderText({
+        TableCreate()
+        NULL
+      })
+      output$ordering <- renderText({
+        ChosenOrder()
+        NULL
+      })
+      output$fcsorder <- renderText({
+        GetFCSinOrder()
+        NULL
+      })
+      output$panel.loaded <- renderText({
+        PanelLoaded()
+      })
+    }#else
   })#observeEvent loadDir button
 }#server
 #}

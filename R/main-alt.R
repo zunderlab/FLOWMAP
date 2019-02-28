@@ -152,7 +152,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
     graph <- output.graph
-  } else if (mode == "one-special") {
+  } else if (mode == "static-multi") {
     check <- CheckDFModeMulti(df)
     cat("check", check, "\n")
     if (check) {
