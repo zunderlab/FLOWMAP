@@ -6,7 +6,7 @@
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
-#' available options include \code{c("single", "multi", "one", "one-special")}
+#' available options include \code{c("single", "multi", "one", "static-multi")}
 #' @param files File paths for FCS files to be used or a folder containing
 #' the FCS files to be used in analysis
 #' @param var.remove Vector naming channels to be removed from all downstream analysis, default
@@ -53,7 +53,7 @@
 #' \url{https://github.com/nolanlab/spade}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
+FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                     var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     cluster.mode = "hclust", distance.metric = "manhattan",
                     files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
@@ -83,9 +83,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
     runtype <- "SingleFLOWMAP"
     #Build FLOWMAP single====
     if (density.metric == "radius") {
-      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum, minimum = minimum)
     } else if (density.metric == "kNN") {
-      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     }
 
     setwd(output.folder)
@@ -140,9 +140,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
     }
     runtype <- "MultiFLOWMAP"
     if (density.metric == "radius") {
-      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum, minimum = minimum)
     } else if (density.metric == "kNN") {
-      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     }
     setwd(output.folder)
     PrintSummary(env = parent.frame())
@@ -203,9 +203,9 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
     file.name <- fcs.file.names
     runtype <- "OneTimepoint"
     if (density.metric == "radius") {
-      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum, minimum = minimum)
     } else if (density.metric == "kNN") {
-      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum)
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     }
     setwd(output.folder)
     PrintSummary(env = parent.frame())
@@ -244,8 +244,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
     graph <- output.graph
-  } else if (mode == "one-special") {
-    check <- CheckModeSingle(files) # one-special mode will look the same as single
+  } else if (mode == "static-multi") {
+    check <- CheckModeSingle(files) # static-multi mode will look the same as single
     cat("check", check, "\n")
     if (check[1]) {
       stop("Unknown 'files' format provided for specified mode!")
@@ -258,7 +258,11 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"),
     }
     file.name <- fcs.file.names[1]
     runtype <- "OneTimepoint-MultipleConditions"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    if (density.metric == "radius") {
+      output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum, minimum = minimum)
+    } else if (density.metric == "kNN") {
+      output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
+    }
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {

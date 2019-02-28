@@ -7,7 +7,7 @@
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
-#' available options include \code{c("single", "multi", "one", "one-special")}
+#' available options include \code{c("single", "multi", "one", "static-multi")}
 #' @param df single dataframe, list of dataframes with each member belonging to single-cell
 #' data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,
 #' but coming from different conditions, to be used in analysis
@@ -39,7 +39,7 @@
 #' @param cluster.mode Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
+FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
                           density.metric = c("kNN", "radius"),
                           minimum = 2, maximum = 5, save.folder = getwd(),
