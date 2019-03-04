@@ -170,7 +170,7 @@ body <- dashboardBody(
                                   be formatted specifically for the analysis mode selected in 'Settings' based on the
                                   number of conditions and timepoints to be analyzed, and the usage from this
                                   point on will differ depending on which is used.</li>
-                           <br><br>")),
+                           <br><br>"))
 
            )#box
         )#fluidRow
