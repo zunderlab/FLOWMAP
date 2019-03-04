@@ -29,7 +29,8 @@ Imports:
     shinyalert (>= 1.0),
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
-    shinythemes (>= 1.1.1)
+    shinythemes (>= 1.1.1),
+    spade (>= 1.10.4)
 License: GNU General Public License v3 (GPL-3)
 Encoding: UTF-8
 LazyData: true

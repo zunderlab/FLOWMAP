@@ -4,22 +4,19 @@
 \alias{FLOWMAP}
 \title{FLOWMAP - generate FLOWMAPR analysis results from FCS files in R}
 \usage{
-FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
+FLOWMAP(mode = c("single", "multi", "one", "static-multi"),
   var.remove = c(), var.annotate = NULL, clustering.var,
   cluster.numbers = 100, cluster.mode = "hclust",
-  distance.metric = "manhattan", minimum = 2, maximum = 5,
-  save.folder = getwd(), subsamples = 200, name.sort = TRUE,
-  downsample = FALSE, seed.X = 1, savePDFs = TRUE,
-  which.palette = "bluered", exclude.pctile = NULL,
-  target.pctile = NULL, target.number = NULL, target.percent = NULL,
-  k = 10, ...)
+  distance.metric = "manhattan", files, density.metric = c("kNN",
+  "radius"), minimum = 2, maximum = 5, save.folder = getwd(),
+  subsamples = 200, name.sort = TRUE, downsample = FALSE,
+  seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
+  exclude.pctile = NULL, target.pctile = NULL, target.number = NULL,
+  target.percent = NULL, k = 10, per = 5, ...)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one", "one-special")}}
-
-\item{files}{File paths for FCS files to be used or a folder containing
-the FCS files to be used in analysis}
+available options include \code{c("single", "multi", "one", "static-multi")}}
 
 \item{var.remove}{Vector naming channels to be removed from all downstream analysis, default
 value is an empty vector, meaning that no channels will be removed}
@@ -37,6 +34,11 @@ to generate from each separate FCS file}
 \item{cluster.mode}{Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}}
 
 \item{distance.metric}{Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}}
+
+\item{files}{File paths for FCS files to be used or a folder containing
+the FCS files to be used in analysis}
+
+\item{density.metric}{Character string specifying which method to use for local density estimation for edge assignment in graph building}
 
 \item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
 during each density-dependent edge-building step of the FLOW-MAP graph, default value is
