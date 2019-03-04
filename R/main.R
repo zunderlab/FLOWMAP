@@ -56,7 +56,7 @@
 FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                     var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     cluster.mode = "hclust", distance.metric = "manhattan",
-                    files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
+                    files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 10,
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
