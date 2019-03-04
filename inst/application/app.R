@@ -549,7 +549,7 @@ server <- function(input, output, session) {
     params$inputs[["savePDFs.toggle"]] <- input$saveGraphPDFs
     params$inputs[["subsample.num"]] <- input$subsampNum
     params$inputs[["distance.metric"]] <- input$distMetric
-    params$inputs[["density.metric"]] <- "per" #this version doesnt have functioning BuildGraphKNN
+    params$inputs[["density.metric"]] <- "radius" #this version doesnt have functioning BuildGraphKNN
     params$inputs[["cluster.num"]] <- input$clusterNum
     params$inputs[["seed.num"]] <- input$seedNum
     params$inputs[["edge.max.num"]] <- input$maxEdgeNum

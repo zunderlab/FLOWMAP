@@ -297,7 +297,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
     #Build FLOWMAP one-special ====
     if (density.metric == "radius") {
       output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                             k = maximum, min = minimum, max = maximum,
+                                             per = per, min = minimum, max = maximum,
                                              distance.metric = distance.metric,
                                              clustering.var = clustering.var)
     }
@@ -315,7 +315,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
   fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode != "one" && mode != "one-special") {
+  if (mode != "one" && mode != "static-multi") {
     fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
   } else {
     fixed.graph <- graph.xy
