@@ -374,7 +374,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 * We recommend using the bluered palette used in the FLOWMAPR package to color by marker expression. Cells with lowest expression levels will be blue, intermediate will be grey, and high will be red. You can set this up by clicking on the left, middle, and right arrows and assigning them to Hex values 1500FB, C3C3C7, D10100 respectively. **Press the Apply button to have the graph update with these new color settings.**
 
-* However, to produce more accessible figures, you may want to consider using a **colorblind-friendly palette**. The colorblind option used in FLOWMAPR uses a blue-yellow scale. The hex color code for each arrow from left to right is 0072B2, C3C3C7, E69F00.
+* However, to produce more accessible figures, you may want to consider using a **colorblind-friendly palette**. The colorblind option used in FLOWMAPR uses a blue-yellow scale. The hex color code for each arrow from left to right is 0072B2, C3C3C7, E69F00. The Viridis palette (good for white backgrounds), from left to right, is 440154, 21908C, FDE725.
 
 5. **Save PDFs or image files of your graph colored by each marker.** Once you have your desired visual settings, click on the "Preview" button on the top bar. **Click the Refresh button on the bottom left to make your graph appear.** This graph will essentially be a duplicate of what you produced in the "Overview" mode with a few exceptions.
 
