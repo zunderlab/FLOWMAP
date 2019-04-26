@@ -43,8 +43,9 @@ FLOWMAPR package depends on several packages, which can be installed using the b
 install.packages("SDMTools") 
 install.packages("igraph")
 install.packages("robustbase")
-source("http://bioconductor.org/biocLite.R")
-biocLite("flowCore")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("flowCore", version = "3.8")
 ```
 
 The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
