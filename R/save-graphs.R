@@ -290,7 +290,7 @@ PrintSummary <- function(env = parent.frame()) {
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
   file.name <- paste(file.name, ".txt", sep = "")
   cat("file.name", file.name, "\n")
-  write.table(summary, file = paste0(getwd(),"/",file.name), row.names = FALSE, na = "", quote = FALSE)
+  write.table(summary, file = file.name, row.names = FALSE, na = "", quote = FALSE)
 }
 
 PrintSummaryfromDF <- function(env = parent.frame()) {
