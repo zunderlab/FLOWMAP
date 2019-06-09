@@ -45,7 +45,7 @@ install.packages("igraph")
 install.packages("robustbase")
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-BiocManager::install("flowCore", version = "3.9")
+BiocManager::install("flowCore", version = "3.8")
 ```
 
 The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
