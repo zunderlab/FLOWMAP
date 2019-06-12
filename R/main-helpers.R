@@ -171,7 +171,8 @@ ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
 #' @return List mapping channel names (taken from the "name" field of a
 #' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
-#' ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
+#' ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
+#' package = "FLOWMAPR"))
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -206,6 +207,8 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' variance is calculated within and between timepoints. The top varying markers are noted
 #' and tabulated, and the markers that consistently vary the most are selected.
 #'
+#' @importFrom stats median
+#' @importFrom stats var
 #' @param fcs.file.names A vector of full file paths to the FCS files to be used
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one")}
@@ -215,7 +218,8 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @param top.num Numeric specifying the number of variables in the vector to be returned
 #' @return Vector naming channels that vary the most within and between FCS files
 #' @examples
-#' fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")
+#' fcs.file.names <- c(system.file("extdata/SingleFLOWMAP/d1.fcs", package = "FLOWMAPR"), 
+#' system.file("extdata/SingleFLOWMAP/d2.fcs", package = "FLOWMAPR"))
 #' var.annotate <- ConstructVarAnnotate[1]
 #' var.remove <- c("Channel3", "Channel4")
 #' 

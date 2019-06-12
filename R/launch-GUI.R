@@ -16,6 +16,6 @@
 #' LaunchGUI()
 #' @export
 LaunchGUI <- function() {
-  require(shiny)
+  requireNamespace("shiny")
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
 }

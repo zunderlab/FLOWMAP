@@ -128,6 +128,7 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster,
   return(list.of.FLOWMAP.clusters)
 }
 
+#' @importFrom stats cutree
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
     method <- "ward"
@@ -215,7 +216,8 @@ KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
               new.counts = new.counts))
 }
 
-
+#' @importFrom stats kmeans
+#' @importFrom stats complete.cases
 DensClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
     FCS.clusters <- kmeans(tmp.FCS.for.cluster, numcluster)

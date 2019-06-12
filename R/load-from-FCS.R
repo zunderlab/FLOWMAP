@@ -1,4 +1,4 @@
-
+#' @importFrom stats rnorm
 Asinh <- function(value) {
   # Define a function for arcsinh transformation (based on definition from Nikolay).
   value <- value - 1
@@ -223,6 +223,27 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' (\url{https://github.com/nolanlab/spade/blob/master/LICENSE}) available
 #' here: \url{https://opensource.org/licenses/GPL-2.0}. In accordance with these
 #' license rules, our code is available under GPL-3.0.
+#' @param fcs.file.names A vector of full file paths to the FCS files to be used
+#' @param clustering.var Vector naming channels to be used to calculate distances/differences
+#' between cells for clustering (if requested) and edge-drawing steps
+#' @param channel.annotate List mapping channel names to user-specified names to properly
+#' annotate all FCS file data
+#' @param channel.remove Vector naming channels to be removed from all loaded FCS data
+#' @param exclude.pctile Optional variable, numeric value for the downsampling_exclude_pctile variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.pctile Optional variable, numeric value for the downsampling_target_pctile variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.number Optional variable, numeric value for the downsampling_target_number variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
+#' used as described in the SPADE driver function, see the documentation for the spade package at
+#' \url{https://github.com/nolanlab/spade}
+#' @param transform Logical specifying whether to transform the data using an Asinh
+#' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
+#' @importFrom stats runif
 #' @export
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,

@@ -4,9 +4,39 @@
 \alias{DownsampleFCS}
 \title{SPADE: density-dependent downsampling}
 \usage{
-DownsampleFCS(fcs.file.names, clustering.var, channel.annotate, channel.remove,
-  exclude.pctile = 0.01, target.pctile = 0.99, target.number = NULL,
-  target.percent = 0.1, transform = TRUE)
+DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
+  channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
+  target.number = NULL, target.percent = 0.1, transform = TRUE)
+}
+\arguments{
+\item{fcs.file.names}{A vector of full file paths to the FCS files to be used}
+
+\item{clustering.var}{Vector naming channels to be used to calculate distances/differences
+between cells for clustering (if requested) and edge-drawing steps}
+
+\item{channel.annotate}{List mapping channel names to user-specified names to properly
+annotate all FCS file data}
+
+\item{channel.remove}{Vector naming channels to be removed from all loaded FCS data}
+
+\item{exclude.pctile}{Optional variable, numeric value for the downsampling_exclude_pctile variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
+
+\item{target.pctile}{Optional variable, numeric value for the downsampling_target_pctile variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
+
+\item{target.number}{Optional variable, numeric value for the downsampling_target_number variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
+
+\item{target.percent}{Optional variable, numeric value for the downsampling_target_percent variable
+used as described in the SPADE driver function, see the documentation for the spade package at
+\url{https://github.com/nolanlab/spade}}
+
+\item{transform}{Logical specifying whether to transform the data using an Asinh
+transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}}
 }
 \description{
 This code was adapted from the spade R package,

@@ -9,9 +9,10 @@ FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
   cluster.numbers = 100, cluster.mode = "hclust",
   distance.metric = "manhattan", minimum = 2, maximum = 5,
   save.folder = getwd(), subsamples = 200, name.sort = TRUE,
-  downsample = FALSE, seed.X = 1, savePDFs = TRUE,
-  which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
-  target.number = NULL, target.percent = NULL, ...)
+  per = 10, downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+  which.palette = "bluered", exclude.pctile = NULL,
+  target.pctile = NULL, target.number = NULL, target.percent = NULL,
+  ...)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
@@ -53,6 +54,9 @@ subsample from each FCS file}
 \item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
 them in the order supplied by the user}
 
+\item{per}{Percentile of edge length in fully connected graph that determines hypersphere radius
+in density calculation}
+
 \item{downsample}{Logical specifying whether to use SPADE density-dependent downsampling}
 
 \item{seed.X}{Numeric value for the seed to set for reproducible FLOWMAPR runs}
@@ -79,6 +83,8 @@ used as described in the SPADE driver function, see the documentation for the sp
 \item{target.percent}{Optional variable, numeric value for the downsampling_target_percent variable
 used as described in the SPADE driver function, see the documentation for the spade package at
 \url{https://github.com/nolanlab/spade}}
+
+\item{...}{flexibility to add more parameters}
 }
 \value{
 the force-directed layout resolved igraph graph object

@@ -30,8 +30,9 @@ Imports:
     shinyalert (>= 1.0),
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
-    shinythemes (>= 1.1.1)
-License: MIT
+    shinythemes (>= 1.1.1),
+    spade (>= 1.10.4)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

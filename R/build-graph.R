@@ -293,6 +293,7 @@ InitializeGraph <- function(FLOWMAP.clusters) {
   return(initial.graph)
 }
 
+#' @importFrom stats dist
 BuildFirstFLOWMAP <- function(FLOWMAP.clusters, per, min, max, distance.metric,
                               clustering.var) {
   n <- 0

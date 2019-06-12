@@ -23,5 +23,6 @@ to the name of the marker entered by the user at the machine (e.g. cCaspase3 or
 CyclinB1).
 }
 \examples{
-ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
+ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
+package = "FLOWMAPR"))
 }

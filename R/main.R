@@ -31,6 +31,8 @@
 #' subsample from each FCS file
 #' @param name.sort Logical specifying whether to sort FCS file path names alphanumerically or use
 #' them in the order supplied by the user
+#' @param per Percentile of edge length in fully connected graph that determines hypersphere radius
+#' in density calculation
 #' @param downsample Logical specifying whether to use SPADE density-dependent downsampling
 #' @param seed.X Numeric value for the seed to set for reproducible FLOWMAPR runs
 #' @param savePDFs Logical specifying whether to generate PDFs for the resolved graph with
@@ -50,6 +52,7 @@
 #' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
 #' used as described in the SPADE driver function, see the documentation for the spade package at
 #' \url{https://github.com/nolanlab/spade}
+#' @param ... flexibility to add more parameters
 #' @return the force-directed layout resolved igraph graph object
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),

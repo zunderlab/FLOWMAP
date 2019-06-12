@@ -5,7 +5,7 @@
 #' \code{FLOWMAP} generates FLOWMAPR analysis results from dataframe(s). For more information,
 #' as well as a guide for how to choose the best settings for your analysis, go to
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
-#'
+#' 
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param df single dataframe, list of dataframes with each member belonging to single-cell
@@ -26,6 +26,8 @@
 #' @param condition.col.label Character specifying the name of the channel with the condition labels for each cell
 #' @param name.sort Logical specifying whether to sort FCS file path names alphanumerically or use
 #' them in the order supplied by the user
+#' @param per Percentile of edge length in fully connected graph that determines hypersphere radius
+#' in density calculation
 #' @param clustering Logical specifying whether to cluster single-cell data
 #' @param seed.X Numeric value for the seed to set for reproducible FLOWMAPR runs
 #' @param savePDFs Logical specifying whether to generate PDFs for the resolved graph with
@@ -86,7 +88,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one"), df, project.name,
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
     PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
-      file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
+      file.clusters <- MultiClusterFCS(.data$fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                        distance.metric = distance.metric, cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)

@@ -4,7 +4,8 @@
 \alias{SuggestClusteringVar}
 \title{SuggestClusteringVar}
 \usage{
-SuggestClusteringVar(fcs.file.names, mode, var.annotate, var.remove, top.num)
+SuggestClusteringVar(fcs.file.names, mode, var.annotate, var.remove,
+  top.num)
 }
 \arguments{
 \item{fcs.file.names}{A vector of full file paths to the FCS files to be used}
@@ -30,7 +31,8 @@ variance is calculated within and between timepoints. The top varying markers ar
 and tabulated, and the markers that consistently vary the most are selected.
 }
 \examples{
-fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")
+fcs.file.names <- c(system.file("extdata/SingleFLOWMAP/d1.fcs", package = "FLOWMAPR"), 
+system.file("extdata/SingleFLOWMAP/d2.fcs", package = "FLOWMAPR"))
 var.annotate <- ConstructVarAnnotate[1]
 var.remove <- c("Channel3", "Channel4")
 

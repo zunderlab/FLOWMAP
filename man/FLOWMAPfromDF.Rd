@@ -6,11 +6,11 @@
 dataframes in R}
 \usage{
 FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
-  clustering.var, distance.metric = "manhattan", minimum = 2, maximum = 5,
-  save.folder = getwd(), time.col.label = "Time",
-  condition.col.label = NULL, name.sort = TRUE, clustering = FALSE,
-  seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
-  cluster.numbers = NULL, cluster.mode)
+  clustering.var, distance.metric = "manhattan", minimum = 2,
+  maximum = 5, save.folder = getwd(), time.col.label = "Time",
+  condition.col.label = NULL, name.sort = TRUE, per = 10,
+  clustering = FALSE, seed.X = 1, savePDFs = TRUE,
+  which.palette = "bluered", cluster.numbers = NULL, cluster.mode)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
@@ -43,6 +43,9 @@ set to \code{5}, no less than 3 is recommended}
 
 \item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
 them in the order supplied by the user}
+
+\item{per}{Percentile of edge length in fully connected graph that determines hypersphere radius
+in density calculation}
 
 \item{clustering}{Logical specifying whether to cluster single-cell data}
 
