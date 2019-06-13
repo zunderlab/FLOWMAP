@@ -28,8 +28,8 @@ RemoveExistingTimeVar <- function(fcs.file) {
 #' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
 #' @return Vector with the file paths of FCS files found in the given folder
 #' @examples
-#' folder <- "Desktop/FCS_Files"
-#' GetFCSNames(folder, sort = TRUE)
+#' \dontrun{folder <- "Desktop/FCS_Files"}
+#' \dontrun{GetFCSNames(folder, sort = TRUE)}
 #' @export
 GetFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -52,8 +52,8 @@ GetFCSNames <- function(folder, sort = TRUE) {
 #' @return List with each member containing a vector with the file paths
 #' of FCS files found in the given subfolder
 #' @examples
-#' folder <- "Desktop/FCS_Files"
-#' GetMultiFCSNames(folder, sort = TRUE)
+#' \dontrun{folder <- "Desktop/FCS_Files"}
+#' \dontrun{GetMultiFCSNames(folder, sort = TRUE)}
 #' @export
 GetMultiFCSNames <- function(folder, sort = TRUE) {
   # get FCS files
@@ -93,7 +93,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
 #' 
-#' LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
+#' \dontrun{LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)}
 #' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
@@ -160,7 +160,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
 #' 
-#' LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
+#' \dontrun{LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)}
 #' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, transform = TRUE) {
