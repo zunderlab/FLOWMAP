@@ -22,7 +22,7 @@ MakeOutFolder <- function(runtype) {
 #' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE, 
 #' multiple = FALSE)
 #' file.name <- "Practice_Graph"
-#' ConvertToGraphML(current.graph, file.name)
+#' \dontrun{ConvertToGraphML(current.graph, file.name)}
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")
