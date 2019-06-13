@@ -83,7 +83,7 @@ Typical installation time should take no more than 5 minutes for the most up-to-
 To quickly update your FLOWMAPR R package up and get the latest version from GitHub:
 
 1. Open R studio and load devtools using `library(devtools)`.
-2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP"`.
+2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP")`.
 3. Load FLOWMAPR using `library(FLOWMAPR)`.
 
 If the above commands run without error, you should have the latest version of FLOWMAPR.
