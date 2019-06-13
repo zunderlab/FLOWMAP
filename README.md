@@ -449,7 +449,9 @@ Here are some common issues and suggestions for how to fix them:
 
 * **Eli Zunder** - *Initial work*
 * **Melissa Ko** - *R Package Development*
-* **Rohit Rustagi** - *GUI*
+* **Corey Williams** - *R Package Development*
+* **Sarah Goggin** - *GUI*
+* **Rohit Rustagi** - *Initial GUI work*
 
 See also the list of [contributors](https://github.com/zunderlab/FLOWMAP/graphs/contributors) who participated in this project.
 
