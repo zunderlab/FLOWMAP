@@ -71,13 +71,9 @@ install_github("nolanlab/spade")
 
 To currently get the FLOWMAPR R package up and working on your computer, once you have installed all package dependencies (see above):
 
-1. Make a github account if you haven't already.
-2. Get access to repo zunderlab/FLOWMAP for your github account.
-3. Create a token by going to this site when logged into your github account: https://github.com/settings/tokens/new
-4. Check off "repo" in the settings for your token.
-5. Click generate token and copy/save the provided code (your PAT) somewhere.
-6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
-7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
+1. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
+2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP")`. 
+3. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
 Typical installation time should take no more than 5 minutes for the most up-to-date FLOWMAPR package. However, total installation time will vary depending on the installation time of other required packages and the speed of your internet connectoin.
 
@@ -87,7 +83,7 @@ Typical installation time should take no more than 5 minutes for the most up-to-
 To quickly update your FLOWMAPR R package up and get the latest version from GitHub:
 
 1. Open R studio and load devtools using `library(devtools)`.
-2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations.
+2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP"`.
 3. Load FLOWMAPR using `library(FLOWMAPR)`.
 
 If the above commands run without error, you should have the latest version of FLOWMAPR.
