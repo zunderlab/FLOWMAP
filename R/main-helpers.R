@@ -171,8 +171,8 @@ ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
 #' @return List mapping channel names (taken from the "name" field of a
 #' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
-#' ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
-#' package = "FLOWMAPR"))
+#' \dontrun{ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
+#' package = "FLOWMAPR"))}
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -218,13 +218,13 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @param top.num Numeric specifying the number of variables in the vector to be returned
 #' @return Vector naming channels that vary the most within and between FCS files
 #' @examples
-#' fcs.file.names <- c(system.file("extdata/SingleFLOWMAP/d1.fcs", package = "FLOWMAPR"), 
-#' system.file("extdata/SingleFLOWMAP/d2.fcs", package = "FLOWMAPR"))
-#' var.annotate <- ConstructVarAnnotate[1]
+#' \dontrun{fcs.file.names <- c(system.file("extdata/SingleFLOWMAP/d1.fcs", package = "FLOWMAPR"), 
+#' system.file("extdata/SingleFLOWMAP/d2.fcs", package = "FLOWMAPR"))}
+#' \dontrun{var.annotate <- ConstructVarAnnotate[1]}
 #' var.remove <- c("Channel3", "Channel4")
 #' 
-#' SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
-#' var.remove, top.num = 20)
+#' \dontrun{SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
+#' var.remove, top.num = 20)}
 #' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
                                  var.remove, top.num) {
@@ -335,8 +335,8 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
 #' @param var.to.remove Vector of substrings to, default is set to \code{NULL}
 #' @return Vector naming channels suggested to be removed from downstream FLOWMAPR analysis
 #' @examples
-#' var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
-#' SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
+#' \dontrun{var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")}
+#' \dontrun{SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")}
 #' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()
