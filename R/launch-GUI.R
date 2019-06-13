@@ -13,7 +13,7 @@
 #' here: \url{https://opensource.org/licenses/Artistic-2.0}.
 #'
 #' @examples
-#' LaunchGUI()
+#' \dontrun{LaunchGUI()}
 #' @export
 LaunchGUI <- function() {
   requireNamespace("shiny")
