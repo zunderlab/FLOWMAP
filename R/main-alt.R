@@ -6,6 +6,7 @@
 #' as well as a guide for how to choose the best settings for your analysis, go to
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #' 
+#' @importFrom rlang .data
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param df single dataframe, list of dataframes with each member belonging to single-cell

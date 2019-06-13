@@ -5,6 +5,7 @@
 #' as well as a guide for how to choose the best settings for your analysis, go to
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
+#' @importFrom rlang .data
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one", "one-special")}
 #' @param files File paths for FCS files to be used or a folder containing
@@ -62,6 +63,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE,
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, ...) {
+  FLOWMAPenv <- new.env(parent = emptyenv())
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
@@ -95,7 +97,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.name <- fcs.file.names[1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = .GlobalEnv)
+      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -137,7 +139,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.name <- fcs.file.names[[1]][1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = .GlobalEnv)
+      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -178,7 +180,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = .GlobalEnv)
+      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -222,7 +224,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = .GlobalEnv)
+      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")

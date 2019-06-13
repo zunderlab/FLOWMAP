@@ -93,7 +93,8 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
 #' 
-#' \dontrun{LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)}
+#' \dontrun{LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, 
+#' transform = TRUE)}
 #' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
@@ -160,7 +161,8 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
 #' 
-#' \dontrun{LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)}
+#' \dontrun{LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, 
+#' transform = TRUE)}
 #' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
                               subsamples = 1000, transform = TRUE) {

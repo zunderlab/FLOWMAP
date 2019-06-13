@@ -19,6 +19,6 @@ Vector with the file paths of FCS files found in the given folder
 \code{GetFCSNames} returns the FCS file names from a given folder.
 }
 \examples{
-folder <- "Desktop/FCS_Files"
-GetFCSNames(folder, sort = TRUE)
+\dontrun{folder <- "Desktop/FCS_Files"}
+\dontrun{GetFCSNames(folder, sort = TRUE)}
 }

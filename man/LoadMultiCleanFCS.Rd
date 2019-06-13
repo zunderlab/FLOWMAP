@@ -37,5 +37,6 @@ var.remove <- c("Channel3", "Channel4")
 var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 "c3" = "Channel3", "c4" = "Channel4")
 
-LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
+\dontrun{LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, 
+transform = TRUE)}
 }

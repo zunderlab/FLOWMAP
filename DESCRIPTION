@@ -26,6 +26,7 @@ Imports:
     Rcpp (>= 0.12.6),
     igraph (>= 1.0.1),
     rhandsontable (>= 0.3.4),
+    rlang (>= 0.3.0),
     shiny (>= 1.1.0),
     shinyalert (>= 1.0),
     shinydashboard (>= 0.7.0),

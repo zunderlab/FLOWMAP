@@ -22,6 +22,6 @@ and \code{var.to.remove} a user-supplied list of substrings that designate
 the names of blank channels.
 }
 \examples{
-var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
-SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
+\dontrun{var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")}
+\dontrun{SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")}
 }
