@@ -16,8 +16,8 @@
 #' @return a list of dataframes containing the single-cell data or if \code{condition.col.label}
 #' is provided (not \code{NULL}), a list of lists containing dataframes of single-cell data
 #' @examples
-#' df <- read.csv(file = "/single-cell-data.csv", header = TRUE, sep = ",")
-#' RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")
+#' \dontrun{df <- read.csv(file = "/single-cell-data.csv", header = TRUE, sep = ",")}
+#' \dontrun{RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")}
 #' @export
 RestructureDF <- function(df, time.col.label = "Time", condition.col.label = NULL) {
   results <- list()
