@@ -77,7 +77,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #' \code{LoadCleanFCS} returns a list of FCS file data, where each member is
 #' a dataframe from a different timepoint. In the mode \code{"single"}, the list has
 #' only a single element, a dataframe from the one FCS file path provided.
-#'
+#' 
 #' @param fcs.file.names A vector of full file paths to the FCS files to be used
 #' @param channel.remove Vector naming channels to be removed from all loaded FCS data
 #' @param channel.annotate List mapping channel names to user-specified names to properly
@@ -246,6 +246,10 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' @param transform Logical specifying whether to transform the data using an Asinh
 #' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
 #' @importFrom stats runif
+#' @importFrom utils tail
+#' @importFrom flowCore exprs
+#' @importFrom flowCore read.FCS
+#' @importFrom flowCore arcsinhTransform
 #' @export
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
@@ -253,7 +257,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           transform = TRUE) {
   downsample.data <- list()
   for (file.name in fcs.file.names) {
-    transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
+    transforms <- arcsinhTransform(a = 0, b = 0.2)
     SPADE.removeExistingDensityAndClusterColumns(file.name)
     current.file <- tail(strsplit(file.name, "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")

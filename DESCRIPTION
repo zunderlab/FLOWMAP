@@ -32,7 +32,8 @@ Imports:
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
     shinythemes (>= 1.1.1),
-    spade (>= 1.10.4)
+    spade (>= 1.10.4),
+    vite(>= 0.1)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

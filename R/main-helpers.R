@@ -173,6 +173,7 @@ ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
 #' @examples
 #' \dontrun{ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
 #' package = "FLOWMAPR"))}
+#' @importFrom flowCore description
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
