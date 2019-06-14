@@ -4,7 +4,8 @@ Version: 1.2.0
 Authors@R: c(person("Eli", "Zunder", email = "ezunder@virginia.edu", role = "cre"),
   person("Melissa", "Ko", email = "melissa.e.ko@gmail.com", role = "aut"),
   person("Corey", "Williams", email = "cmw6pa@virginia.edu", role = "aut"),
-  person("Rohit", "Rustagi", role = "ctb"))
+  person("Sarah", "Goggin", email = "sg4dm@virginia.edu" role = "ctb")
+  person("Rohit", "Rustagi", email = "rsr8gx@virginia.edu" role = "ctb"))
 Description: An Implementation of FLOW-MAP Algorithm in R. It takes user-specified inputs
     for settings of a FLOW-MAP analysis and generates a FLOW-MAP graph from provided FCS files
     or dataframes. Results include graphml files for the FLOW-MAP graph as well as a graph resolved
@@ -13,6 +14,7 @@ Description: An Implementation of FLOW-MAP Algorithm in R. It takes user-specifi
     particular run. A Shiny GUI is also available to establish FLOW-MAP settings and begin a FLOW-MAP
     analysis. Please see the accompanying README.md file and our GitHub repo for more detailed
     instructions and examples.
+Maintainer: Corey Williams <cmw6pa@virginia.edu>
 URL: https://github.com/zunderlab/FLOWMAP/
 Depends:
     R (>= 3.3.0)
