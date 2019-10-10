@@ -19,7 +19,7 @@ MakeOutFolder <- function(runtype) {
 #' the saved igraph graph object. The user need not include the ".graphml"
 #' file extension as that is automatically appended.
 #' @examples
-#' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE, 
+#' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE,
 #' multiple = FALSE)
 #' file.name <- "Practice_Graph"
 #' \dontrun{ConvertToGraphML(current.graph, file.name)}
@@ -328,17 +328,21 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("maximum (max number of edges):", env$maximum)
   summary[(dim(summary)[1] + 1), ] <- c("clustering (whether clustering was performed on cells from DF):",
                                         env$clustering)
-  if (.data$clustering) {
-    summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers (number of clusters for all DF samples):",
-                                          env$cluster.numbers)
+  if (!is.null(.data$clustering)) {
+    if (.data$clustering) {
+      summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers (number of clusters for all DF samples):",
+                                            env$cluster.numbers)
+    }
   }
   summary[(dim(summary)[1] + 1), ] <- c("seed.X (set seed value):", env$seed.X)
   summary[(dim(summary)[1] + 1), ] <- c("name.sort (files sorted alphanumerically by name in algorithm):",
                                         env$name.sort)
   summary[(dim(summary)[1] + 1), ] <- c("save.folder (directory where results were saved):", env$save.folder)
   summary[(dim(summary)[1] + 1), ] <- c("savePDFs (whether PDFs of FLOW-MAP graphs were generated):", env$savePDFs)
-  if (.data$savePDFs) {
-    summary[(dim(summary)[1] + 1), ] <- c("which.palette (color of palette used in PDFs):", env$which.palette)
+  if (!is.null(.data$savePDFs)) {
+    if (.data$savePDFs) {
+      summary[(dim(summary)[1] + 1), ] <- c("which.palette (color of palette used in PDFs):", env$which.palette)
+    }
   }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")
