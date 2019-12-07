@@ -274,41 +274,29 @@ In addition, FLOWMAPR creates a text file named "YYYY-MM-DD_HH.MM.SS_FLOW-MAPR_r
 ### Example Code for FLOWMAPfromDF():
 ```
 library(FLOWMAPR)
-library(readxl)
+
+#FLOWMAP parameters
 mode <- "single"
-save.folder <- "/Users/mesako/Desktop"
-project.name <- "Example_FLOWMAP_Run"
-clustering.var <- c("marker1", "marker2")
+project.name <- "Striped Single"
+time.col.label <- "Timepoint"
+condition.col.label <- NULL
+clustering.var <- c("marker1","marker2")
 distance.metric <- "manhattan"
-per <- 5
 minimum <- 2
 maximum <- 5
-seed.X <- 1
+save.folder <- getwd()
 name.sort <- FALSE
 clustering <- FALSE
+seed.X <- 1
 savePDFs <- TRUE
 which.palette <- "bluered"
-
-time.col.label <- "Time"
-condition.col.label <- NULL
-
-file <- "/Users/mesako/Downloads/Example-dataset.xlsx"
-df <- read_excel(file)
-df <- as.data.frame(df)
-df.keep <- subset.data.frame(df, select = c("Time"))
-df.transform <- subset.data.frame(df, select = setdiff(colnames(df), c("Time")))
-df.transform <- apply(df.transform, 2, log) 
-final.df <- cbind(df.keep, df.transform)
-df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label, 
-                              condition.col.label = condition.col.label)$new.df
-
-FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
+FLOWMAPR::FLOWMAPfromDF(mode = mode, df = FLOWMAPfromDF.Clover, project.name = project.name,
                         time.col.label = time.col.label, condition.col.label = condition.col.label,
-                        clustering.var = clustering.var, distance.metric = distance.metric, 
-                        minimum = minimum, maximum = maximum, save.folder = save.folder, 
-                        name.sort = name.sort, per = per, clustering = clustering,
-                        seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
-
+                        clustering.var = clustering.var, distance.metric = distance.metric,
+                        minimum = minimum, maximum = maximum,save.folder = save.folder,
+                        name.sort = name.sort, clustering = clustering,seed.X = seed.X, 
+                        savePDFs = savePDFs, which.palette = which.palette)
+setwd("./..")
 ```
 
 <a name="FLOWMAPR-guide"></a>
