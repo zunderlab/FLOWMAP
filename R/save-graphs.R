@@ -1,8 +1,8 @@
 
-MakeOutFolder <- function(runtype, maximum, k = "", per = "") {
+MakeOutFolder <- function(runtype, maximum, minimum, k = "", per = "") {
   name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
   name <- gsub(":", ".", name, fixed = TRUE)
-  output.folder <- paste("max", maximum, k, per, name, runtype, "run", sep = "_")
+  output.folder <- paste("max", maximum, "_k", k, "_per", per, name, runtype, "run", sep = "_")
   dir.create(output.folder)
   cat("output.folder is", output.folder, "\n")
   return (output.folder)

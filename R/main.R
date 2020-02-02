@@ -51,14 +51,17 @@
 #' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
 #' used as described in the SPADE driver function, see the documentation for the spade package at
 #' \url{https://github.com/nolanlab/spade}
+#' @param umap.settings
+#' @param umap.k
+#' @param graph.out
 #' @return the force-directed layout resolved igraph graph object
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                     var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
-                    cluster.mode = "hclust", distance.metric = "manhattan",
+                    cluster.mode = "hclust", distance.metric = "manhattan", umap.settings,
                     files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
-                    downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+                    downsample = FALSE, seed.X = 1, savePDFs = TRUE, graph.out = c("ForceDirected"),
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, k = 10, per = 5, ...) {
   set.seed(seed.X)
@@ -74,6 +77,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                             target.number, target.percent)
   }
   setwd(save.folder)
+#SINGLE====
   if (mode == "single") {
     check <- CheckModeSingle(files)
     cat("check", check, "\n")
@@ -81,7 +85,6 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
       stop("Unknown 'files' format provided for specified mode!")
     }
     runtype <- "SingleFLOWMAP"
-    #Build FLOWMAP single====
     if (density.metric == "radius") {
       output.folder <- MakeOutFolder(runtype = runtype, per = per, maximum = maximum, minimum = minimum)
     } else if (density.metric == "kNN") {
@@ -131,7 +134,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                               clustering.var = clustering.var)
     }
     graph <- results$output.graph
-    return(graph)
+    knn.indexes <- results$knn.indexes
+    knn.distances <- results$knn.distances
+
+#MULTI====
   } else if (mode == "multi") {
     check <- CheckModeMulti(files)
     cat("check", check, "\n")
@@ -182,12 +188,13 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                                  max = maximum, distance.metric = distance.metric,
                                  label.key = label.key, clustering.var = clustering.var)
     }
+    ##kNN does not yet work with multi
     # else if (density.metric == "kNN") {
     #   graph <- BuildMultiFLOWMAPkNN(file.clusters, k = maximum, min = minimum,
     #                              max = maximum, distance.metric = distance.metric,
     #                              label.key = label.key, clustering.var = clustering.var)
     # }
-
+#ONE====
   } else if (mode == "one") {
     check <- CheckModeOne(files)
     cat("check", check, "\n")
@@ -228,7 +235,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                                 cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
-    #Build FLOWMAP one====
+    ##Build FLOWMAP one====
     if (density.metric == "radius") {
       first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
                                          per = per, min = minimum, max = maximum,
@@ -244,6 +251,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
     graph <- output.graph
+    knn.indexes <- results$knn.indexes
+    knn.distances <- results$knn.distances
+
+#STATIC-MULTI====
   } else if (mode == "static-multi") {
     check <- CheckModeSingle(files) # static-multi mode will look the same as single
     cat("check", check, "\n")
@@ -294,7 +305,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
     temp.name.list[[1]] <- fcs.file.names
     file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
-    #Build FLOWMAP one-special ====
+    ##Build FLOWMAP one-special ====
     if (density.metric == "radius") {
       output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
                                              k = maximum, min = minimum, max = maximum,
@@ -304,28 +315,21 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
                                          label.key.special)
     graph <- output.graph
-    #return(graph)
+
   } else {
     stop("Unknown mode!")
   }
-  #Make graph output ====
-  file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
-  ConvertToGraphML(output.graph = graph, file.name = file.name)
-  graph.xy <- ForceDirectedXY(graph = graph)
-  file.name.xy <- paste(file.name, "xy", sep = "_")
-  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode != "one" && mode != "one-special") {
-    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
-  } else {
-    fixed.graph <- graph.xy
+  #Make layout output ====
+  if ("ForceDirected" %in% graph.out) {
+    graph.xy <- RunForceDirectedLayout(mode=mode, file.name=file.name, graph=graph,
+                                       orig.times=orig.times, which.palette=which.palette)
   }
-  fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
-  MakeFLOWMAPRFile(env = parent.frame())
-  if (savePDFs) {
-    cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette, k = k, maximum = maximum)
+  if ("UMAP"  %in% graph.out) {
+    if (umap.k > minimum) {
+      stop("Too few edges in input graph to generate UMAP layout with specified umap.k value!")
+    } else {
+      RunUMAPlayout(graph=graph, file.clusters=file.clusters, file.name=file.name,umap.settings=umap.settings)
+    }
   }
-  return(graph.xy)
-}
+
+}#end FLOWMAP function

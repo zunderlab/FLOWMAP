@@ -8,7 +8,7 @@ Asinh <- function(value) {
     }
   }
   value <- value / 5
-  value <- asinh(value) # value <- log(value + sqrt(value^2 + 1))  
+  value <- asinh(value) # value <- log(value + sqrt(value^2 + 1))
   return(value)
 }
 
@@ -25,7 +25,7 @@ RemoveExistingTimeVar <- function(fcs.file) {
 #'
 #' @param folder the full path for a folder that contains subfolders, each
 #' containing the FCS files from a specific timepoint to be used
-#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
+#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order
 #' @return Vector with the file paths of FCS files found in the given folder
 #' @examples
 #' folder <- "Desktop/FCS_Files"
@@ -48,7 +48,7 @@ GetFCSNames <- function(folder, sort = TRUE) {
 #' that contains subfolders corresponding to each timepoint.
 #'
 #' @param folder the full path for a folder that contains the FCS files to be used
-#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order 
+#' @param sort Logical specifying whether FCS files should be sorted in alphanumeric order
 #' @return List with each member containing a vector with the file paths
 #' of FCS files found in the given subfolder
 #' @examples
@@ -92,7 +92,7 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 #' var.remove <- c("Channel3", "Channel4")
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
-#' 
+#'
 #' LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 #' @export
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
@@ -108,9 +108,9 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     cat("Reading FCS file data from:", current.file, "\n")
     # store currently read FCS file
     if (subsamples == FALSE) {
-      fcs.file <- read.FCS(fcs.file.names[i])  
+      fcs.file <- read.FCS(fcs.file.names[i])
       fcs.file <- as.data.frame(exprs(fcs.file))
-    } else { 
+    } else {
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
       fcs.file <- read.FCS(fcs.file.names[i], which.lines = subsamples[i])
       fcs.file <- as.data.frame(exprs(fcs.file))
@@ -127,10 +127,10 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     fcs.file <- subset(fcs.file, select = colnames(fcs.file)[!colnames(fcs.file) %in% channel.remove])
     if (transform) {
       cat("Transforming data from:", current.file, "\n")
-      fcs.file <- apply(fcs.file, 2, Asinh) 
+      fcs.file <- apply(fcs.file, 2, Asinh)
     }
     fcs.file <- as.data.frame(fcs.file)
-    fcs.file <- RemoveExistingTimeVar(fcs.file) 
+    fcs.file <- RemoveExistingTimeVar(fcs.file)
     clean.fcs.files[[i]] <- fcs.file
     rm(fcs.file)
   }
@@ -159,7 +159,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
 #' var.remove <- c("Channel3", "Channel4")
 #' var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 #' "c3" = "Channel3", "c4" = "Channel4")
-#' 
+#'
 #' LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 #' @export
 LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annotate,
@@ -180,7 +180,7 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
                                            channel.annotate,
                                            subsamples,
                                            transform)
-    f.names <- c() 
+    f.names <- c()
     for (i in 1:length(list.of.FCS.files[[t]])) {
       Time <- rep(as.numeric(t), times = dim(list.of.FCS.files[[t]][[i]])[1])
       list.of.FCS.files[[t]][[i]] <- cbind.data.frame(list.of.FCS.files[[t]][[i]],
@@ -211,30 +211,35 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 }
 
 #' SPADE: density-dependent downsampling
-#' 
+#'
 #' This code was adapted from the spade R package,
 #' available here: \url{https://github.com/nolanlab/spade}.
-#' 
+#'
 #' Specifically, the code in this file is adapted from downsample.R.
-#' 
+#'
 #' This code, authored by M. Linderman, P. Qiu, E. Simonds, Z. Bjornson,
 #' and maintained by Michael Linderman <michael.d.linderman@gmail.com>,
 #' was used under the GNU General Public License v. 2.0
 #' (\url{https://github.com/nolanlab/spade/blob/master/LICENSE}) available
 #' here: \url{https://opensource.org/licenses/GPL-2.0}. In accordance with these
 #' license rules, our code is available under GPL-3.0.
+#'
+#' UPDATE 12/17/19: Spade is no longer maintained
+#' We have included relevant function here to maintain functionality of FLOWMAP
+#'
 #' @export
+
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
-                          transform = TRUE) {
+                          transform = TRUE, k=15) {
   downsample.data <- list()
   for (file.name in fcs.file.names) {
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
     SPADE.removeExistingDensityAndClusterColumns(file.name)
     current.file <- tail(strsplit(file.name, "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
-    fcs.file <- read.FCS(file.name)  
+    fcs.file <- read.FCS(file.name)
     fcs.file <- as.data.frame(exprs(fcs.file))
     cat("Fixing channel names from:", current.file, "\n")
     for (x in 1:length(colnames(fcs.file))) {
@@ -248,9 +253,20 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
       cat("Transforming data from:", current.file, "\n")
       fcs.file <- apply(fcs.file, 2, Asinh)
     }
-    fcs.file <- RemoveExistingTimeVar(fcs.file) 
+    fcs.file <- RemoveExistingTimeVar(fcs.file)
     cat("Calculating density for:", current.file, "\n")
-    density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
+    #############density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
+    nns <- RANN::nn2(data=fcs.file[, clustering.var], k=k+1, searchtype="priority", eps=0.1)
+    temp_nnids.df <- as.data.frame(nns$nn.idx)
+    temp_nndists.df <- as.data.frame(nns$nn.dists)
+    nn.ids.df <- temp_nnids.df[,2:length(temp_nnids.df)]
+    nn.dists.df <- temp_nndists.df[,2:length(temp_nndists.df)]
+    numcluster <- nrow(clusters)
+    #################################################################What to set for k?
+    density <- KnnDensity(k=k, min, max, n=0,nn.ids.df = nn.ids.df,
+                          nn.dists.df = nn.dists.df,numcluster = numcluster,
+                          table.breaks = NULL,offset = 0)
+    #############density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
     if (max(density) == 0.0) {
       warning(paste(current.file, "has degenerate densities, possibly due to many identical observations", sep = " "))
     }
@@ -270,9 +286,9 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     } else if (target.number < nrow(fcs.file2)) {
       sorted.density <- sort(density)
       cdf <- rev(cumsum(1.0 / rev(sorted.density)))
-      boundary <- target.number/cdf[1] 
+      boundary <- target.number/cdf[1]
       if (boundary > sorted.density[1]) {  # Boundary actually falls amongst densities present
-        targets <- (target.number - 1:length(sorted.density)) / cdf 
+        targets <- (target.number - 1:length(sorted.density)) / cdf
         boundary <- targets[which.min(targets - sorted.density > 0)]
       }
       cat("Downsampling for:", current.file, "\n")
@@ -297,8 +313,8 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                                      channel.remove, exclude.pctile, target.pctile,
                                      target.number, target.percent, transform)
     list.downsample.data[[t]] <- downsample.data
-    
-    f.names <- c() 
+
+    f.names <- c()
     for (i in 1:length(list.downsample.data[[t]])) {
       Time <- rep(as.numeric(t), times = dim(list.downsample.data[[t]][[i]])[1])
       list.downsample.data[[t]][[i]] <- cbind.data.frame(list.downsample.data[[t]][[i]],
@@ -320,6 +336,36 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     names(list.downsample.data[[t]]) <- f.names
   }
   return(list.downsample.data)
+}
+
+SPADE.removeExistingDensityAndClusterColumns <- function(file) {
+  # Do not comp or transform ... make this step invisible.
+  input_file <- suppressWarnings(read.FCS(file))
+
+  input_file_names <- names(input_file)
+
+  if ("<cluster> cluster" %in% input_file_names ||
+      "<density> density" %in% input_file_names) {
+    # Drop those columns
+    cleaned <- input_file[,!(input_file_names %in% c("<cluster> cluster", "<density> density"))]
+
+    # Rename the original file. Increment the suffix if it already exists.
+    suffix <- as.integer(regmatches(file, gregexpr("(\\d+)$", file, perl=TRUE)))
+
+    if (is.na(suffix)) {
+      suffix <- ".orig1"
+      new_file_name <- paste(file, suffix, sep = "")
+      # NB: file.rename is a namespaced function, not a method of the argument.
+      file.rename(file, new_file_name)
+    } else {
+      suffix <- paste(".orig", suffix + 1, sep = "")
+      new_file_name <- sub("(.orig\\d+)$", suffix, file);
+      file.rename(file, new_file_name)
+    }
+
+    # Save with the original file name
+    write.FCS(cleaned, file)
+  }
 }
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {

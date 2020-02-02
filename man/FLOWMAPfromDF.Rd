@@ -5,16 +5,17 @@
 \title{FLOWMAPfromDF - generate FLOWMAPR analysis results from
 dataframes in R}
 \usage{
-FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
-  clustering.var, distance.metric = "manhattan", minimum = 2,
-  maximum = 5, save.folder = getwd(), time.col.label = "Time",
+FLOWMAPfromDF(mode = c("single", "multi", "one", "static-multi"), df,
+  project.name, clustering.var, distance.metric = "manhattan",
+  density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
+  save.folder = getwd(), time.col.label = "Time",
   condition.col.label = NULL, name.sort = TRUE, clustering = FALSE,
   seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
-  cluster.numbers = NULL, cluster.mode, k = 10)
+  cluster.numbers = NULL, cluster.mode, k = 10, per = 5)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one", "one-special")}}
+available options include \code{c("single", "multi", "one", "static-multi")}}
 
 \item{df}{single dataframe, list of dataframes with each member belonging to single-cell
 data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,
@@ -26,6 +27,8 @@ but coming from different conditions, to be used in analysis}
 between cells for clustering (if requested) and edge-drawing steps}
 
 \item{distance.metric}{Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}}
+
+\item{density.metric}{Character string specifying which method to use for local density estimation for edge assignment in graph building}
 
 \item{minimum}{Numeric value specifying the minimum number of edges that will be allotted
 during each density-dependent edge-building step of the FLOW-MAP graph, default value is

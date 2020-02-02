@@ -6,7 +6,8 @@
 \usage{
 DownsampleFCS(fcs.file.names, clustering.var, channel.annotate,
   channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
-  target.number = NULL, target.percent = 0.1, transform = TRUE)
+  target.number = NULL, target.percent = 0.1, transform = TRUE,
+  k = 15)
 }
 \description{
 This code was adapted from the spade R package,
@@ -21,4 +22,7 @@ was used under the GNU General Public License v. 2.0
 (\url{https://github.com/nolanlab/spade/blob/master/LICENSE}) available
 here: \url{https://opensource.org/licenses/GPL-2.0}. In accordance with these
 license rules, our code is available under GPL-3.0.
+
+UPDATE 12/17/19: Spade is no longer maintained
+We have included relevant function here to maintain functionality of FLOWMAP
 }

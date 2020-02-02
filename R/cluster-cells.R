@@ -135,12 +135,11 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster,
 
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
-    method <- "ward"
+    method <- "ward.D2"###or "ward.D" ??
   } else {
     method <- "single"
   }
-  FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
-                                    distance = distance.metric)
+  FCS.clusters <- stats::hclust(dist(tmp.FCS.for.cluster, method = distance.metric), method = method)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
@@ -273,18 +272,34 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
                                       channel.annotate = var.annotate, subsamples = FALSE)
     original.fcs.file <- original.fcs.file[[1]]
     original.fcs.file <- original.fcs.file[, clustering.var]
+    global.original.fcs.file <<- original.fcs.file
     downsample.fcs.file <- fcs.files[[f]]
     downsample.fcs.file <- downsample.fcs.file[, clustering.var]
+    global.downsample.fcs.file <<- downsample.fcs.file
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
-    all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file,
-                                                      downsample.fcs.file,
-                                                      cluster.assign)
-    fixed.counts <- table(all.cells.assign)
+    global.cluster.assign <<- cluster.assign
+    #get cluster median marker values
+    downsample.fcs.file$cluster <- cluster.assign
+    cluster.medians <- downsample.fcs.file %>%
+                       dplyr::group_by(cluster) %>%
+                       dplyr::summarise_all(median)
+    #for each cell to upsample, find the nearest neighbor cell in the clustered data
+    #then record which cluster it came from
+    #data = cluster median marker values ("2:ncol(cluster.medians)" because don't want to include cluster id column)
+    #query = data to upsample
+    #k=1 because assigning to top nearest neighboor
+    all.cells.assign <- RANN::nn2(cluster.medians[,2:ncol(cluster.medians)], original.fcs.file, k=1)
+    global.all.cells.assign <<- all.cells.assign
+    #update cluster counts based on all cluster assigns
+    fixed.counts <- table(all.cells.assign[["nn.idx"]])
+    global.fixed.counts.tbl <<- fixed.counts
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
+    global.fixed.counts.df <<- fixed.counts
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
     rm(original.fcs.file, downsample.fcs.file, cluster.assign, fixed.counts)
   }
+  global.fixed.FLOWMAP.clusters <<- fixed.FLOWMAP.clusters
   return(fixed.FLOWMAP.clusters)
 }
 

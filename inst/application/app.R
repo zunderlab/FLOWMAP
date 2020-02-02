@@ -1,12 +1,21 @@
 #SMG 5.10.18
 
-library(shiny)
-library(shinythemes)
-library(shinyFiles)
-library(shinydashboard)
-library(shinyalert)
-library(flowCore)
-library(rhandsontable)
+#library(shiny)
+#library(shinythemes)
+#library(shinyFiles)
+#library(shinydashboard)
+#library(shinyalert)
+#library(flowCore)
+#library(rhandsontable)
+
+#' FLOWMAP  GUI - code to create interactive GUI for FLOWMAP
+#' @import shiny
+#' @import shinythemes
+#' @import shinyFiles
+#' @import shinydashboard
+#' @import shinyalert
+#' @import flowCore
+#' @import rhandsontable
 
 #Functions ====
 
@@ -330,6 +339,13 @@ server <- function(input, output, session) {
                 div(style="display:inline-block",
                     selectInput("distMetric", "Distance Metric:", c("manhattan", "euclidean"), selected = "manhattan")),
                 tags$h5(),
+                #Density Metric
+                #select input
+                useShinyalert(),  # Set up shinyalert
+                div(style="display:inline-block",actionButton("DensityMetricHelp", label = "?")),
+                div(style="display:inline-block",
+                    selectInput("densityMetric", "Density Metric:", c("radius", "kNN"), selected = "kNN")),
+                tags$h5(),
                 #Number of Clusters
                 useShinyalert(),  # Set up shinyalert
                 div(style="display:inline-block",actionButton("ClusterNumHelp", label = "?")),
@@ -434,7 +450,11 @@ server <- function(input, output, session) {
   })
   observeEvent(input$DistanceMetricHelp, {
     # Show a modal when the button is pressed
-    shinyalert("Select the appropriate distance metric.", type = "info")
+    shinyalert("Select the appropriate distance metric for your dataset.", type = "info")
+  })
+  observeEvent(input$DensityMetricHelp, {
+    # Show a modal when the button is pressed
+    shinyalert("Select the appropriate density metric for your dataset.", type = "info")
   })
   observeEvent(input$ModeHelp, {
     # Show a modal when the button is pressed
@@ -651,6 +671,7 @@ server <- function(input, output, session) {
     params$inputs[["savePDFs.toggle"]] <- input$saveGraphPDFs
     params$inputs[["subsample.num"]] <- input$subsampNum
     params$inputs[["distance.metric"]] <- input$distMetric
+    params$inputs[["density.metric"]] <- input$densityMetric
     params$inputs[["cluster.num"]] <- input$clusterNum
     params$inputs[["seed.num"]] <- input$seedNum
     params$inputs[["edge.max.num"]] <- input$maxEdgeNum
@@ -1080,7 +1101,7 @@ server <- function(input, output, session) {
   observeEvent(input$submitParams,{
   if (globe.inputs[["mode"]] == "single") {
       print("single")
-    print("observing Dirs...")
+      print("observing Dirs...")
       observeEvent(input$loadDir, {
         updateTabItems(session, "process_tabset", "File Order")
         print("observing Files...")
@@ -1222,6 +1243,7 @@ server <- function(input, output, session) {
           maximum <- as.numeric(globe.inputs[["edge.max.num"]])
           minimum <- as.numeric(globe.inputs[["edge.min.num"]])
           distance.metric <- globe.inputs[["distance.metric"]]
+          density.metric <- globe.inputs[["density.metric"]]
           subsamples <- as.numeric(globe.inputs[["subsample.num"]])
           cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
           seed.X <- as.numeric(globe.inputs[["seed.num"]])
@@ -1246,7 +1268,7 @@ server <- function(input, output, session) {
             FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                     clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                     distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                    save.folder = save.folder, subsamples = subsamples,
+                    density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                     name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                     savePDFs = savePDFs, which.palette = which.palette,
                     exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1256,7 +1278,7 @@ server <- function(input, output, session) {
             FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                     clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                     distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                    save.folder = save.folder, subsamples = subsamples,
+                    density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                     name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                     savePDFs = savePDFs, which.palette = which.palette)
           }
@@ -1413,6 +1435,7 @@ server <- function(input, output, session) {
         maximum <- as.numeric(globe.inputs[["edge.max.num"]])
         minimum <- as.numeric(globe.inputs[["edge.min.num"]])
         distance.metric <- globe.inputs[["distance.metric"]]
+        density.metric <- globe.inputs[["density.metric"]]
         subsamples <- as.numeric(globe.inputs[["subsample.num"]])
         cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
         seed.X <- as.numeric(globe.inputs[["seed.num"]])
@@ -1437,7 +1460,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1447,7 +1470,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }
@@ -1530,6 +1553,7 @@ server <- function(input, output, session) {
         maximum <- as.numeric(globe.inputs[["edge.max.num"]])
         minimum <- as.numeric(globe.inputs[["edge.min.num"]])
         distance.metric <- globe.inputs[["distance.metric"]]
+        density.metric <- globe.inputs[["density.metric"]]
         subsamples <- as.numeric(globe.inputs[["subsample.num"]])
         cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
         seed.X <- as.numeric(globe.inputs[["seed.num"]])
@@ -1555,7 +1579,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1565,7 +1589,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }
@@ -1728,6 +1752,7 @@ server <- function(input, output, session) {
         maximum <- as.numeric(globe.inputs[["edge.max.num"]])
         minimum <- as.numeric(globe.inputs[["edge.min.num"]])
         distance.metric <- globe.inputs[["distance.metric"]]
+        density.metric <- globe.inputs[["density.metric"]]
         subsamples <- as.numeric(globe.inputs[["subsample.num"]])
         cluster.numbers <- as.numeric(globe.inputs[["cluster.num"]])
         seed.X <- as.numeric(globe.inputs[["seed.num"]])
@@ -1752,7 +1777,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1762,7 +1787,7 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
-                  save.folder = save.folder, subsamples = subsamples,
+                  density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }

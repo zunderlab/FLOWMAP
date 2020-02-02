@@ -1,0 +1,13 @@
+Timepoint,var1,var2,var3,var4,var5,var6,var7,var8,var9,var10,Condition
+1,1,1,1,1,1,1,1,1,1,1,treated
+1,1,1,1,1,1,1,1,1,1,1,treated
+1,1,1,1,1,1,1,1,1,1,1,untreated
+1,1,1,1,1,1,1,1,1,1,1,untreated
+2,1,1,1,1,1,1,1,1,1,1,treated
+2,1,1,1,1,1,1,1,1,1,1,treated
+2,1,1,1,1,1,1,1,1,1,1,untreated
+2,1,1,1,1,1,1,1,1,1,1,untreated
+3,1,1,1,1,1,1,1,1,1,1,treated
+3,1,1,1,1,1,1,1,1,1,1,treated
+3,1,1,1,1,1,1,1,1,1,1,untreated
+3,1,1,1,1,1,1,1,1,1,1,untreated

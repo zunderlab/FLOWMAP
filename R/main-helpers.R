@@ -39,7 +39,7 @@ CheckModeSingle <- function(files) {
       fail.flag <- FALSE
       guide <- "FCS"
     }
-  } 
+  }
   return(c(fail.flag, guide))
 }
 
@@ -93,7 +93,7 @@ ParseTimes <- function(fcs.file.names, name.sort) {
     this.name <- unlist(strsplit(this.name, ""))
     this.name <- this.name[suppressWarnings(!is.na(as.numeric(this.name)))]
     if (length(this.name) > 1) {
-      this.name <- paste(this.name, collapse = "") 
+      this.name <- paste(this.name, collapse = "")
     }
     times <- c(times, this.name)
     rm(this.name)
@@ -171,7 +171,7 @@ ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
 #' @return List mapping channel names (taken from the "name" field of a
 #' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
-#' ConstructVarAnnotate(FCS.file.name = "Desktop/A.fcs")
+#' \dontrun{ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs",package = "FLOWMAPR"))}
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -218,7 +218,7 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")
 #' var.annotate <- ConstructVarAnnotate[1]
 #' var.remove <- c("Channel3", "Channel4")
-#' 
+#'
 #' SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
 #' var.remove, top.num = 20)
 #' @export
@@ -247,11 +247,11 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
   } else {
     stop("User-specified mode not recognized!")
   }
-  
+
   if (ncol(combined.fcs.files) < top.num) {
     stop("Requesting more suggested clustering var than available in data!")
   }
-  
+
   all.var <- apply(combined.fcs.files, 2, var)
   if (mode == "one") {
     top.selected.var <- sort(all.var, decreasing = TRUE)[1:top.num]
@@ -304,7 +304,7 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
       cross.var <- apply(temp.combined, 2, var)
       var.cross.time <- rbind(var.cross.time, cross.var)
     }
-    
+
     all.vars.time <- c()
     for (i in 1:(nrow(var.over.time) - 1)) {
       all.vars.time <- rbind(all.vars.time, var.over.time[i, ])
