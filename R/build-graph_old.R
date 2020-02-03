@@ -705,9 +705,9 @@ DrawNormalizedEdgesKnn <- function(output.graph, nn.ids.df, nn.dists.df,
                                 offset) {
   final.edgelist.with.distances <- c()
   global.normalized.densities <<- normalized.densities
-  print(paste0("Names of normalized.densities: ", names(normalized.densities)))
+  #print(paste0("Names of normalized.densities: ", names(normalized.densities)))
   for (i in names(normalized.densities)) {
-    print(i)
+    #print(i)
     ##new not relying on cluster dist matrix
     tmp.edgelist <- cbind(as.numeric(i), as.numeric(nn.ids.df[i,]),as.numeric(nn.dists.df[i,]))[1:normalized.densities[i], ]
     final.edgelist.with.distances <- rbind(final.edgelist.with.distances, tmp.edgelist)
@@ -754,9 +754,9 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n,
                          output.graph, k, min, max, distance.metric) {
 
   ##Find k+1 nearest neighbors
-  print(paste0("Clusters length:", as.character(dim(clusters))))
+  cat(paste0("Clusters length:", as.character(dim(clusters)), "\n"))
   if (distance.metric == 'manhattan') {
-    print("Manhattan distance no longer supported. Using euclinean distance.")
+    cat("Manhattan distance no longer supported. Using euclinean distance.\n")
     nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1)
   } else if (distance.metric == 'euclidean') {
     nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1)
@@ -768,12 +768,12 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n,
 
   #correctly index the edges at each sequential step
   if (offset > 0) {
-    print(paste0("In BaseBuildKNN, offset = ", as.character(offset)))
-    print(paste0("In BaseBuildKNN, table.breaks[n + 2] = ", as.character(table.breaks[n + 2])))
+    cat(paste0("In BaseBuildKNN, offset = ", as.character(offset), "\n"))
+    cat(paste0("In BaseBuildKNN, table.breaks[n + 2] = ", as.character(table.breaks[n + 2]), "\n"))
     row.names(nn.ids.df) <- offset:table.breaks[n + 2]
-    print(row.names(nn.ids.df))
+    #print(row.names(nn.ids.df))
     nn.ids.df[] <- lapply(nn.ids.df, function(x) x+table.breaks[n])
-    print(row.names(nn.ids.df))
+    #print(row.names(nn.ids.df))
     row.names(nn.dists.df) <- offset:table.breaks[n + 2]
   }
   global.inner.knn.ls[[as.character(offset)]] <<- list(indexes = nn.ids.df,
@@ -885,9 +885,9 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   for (n in 1:(length(FLOWMAP.clusters$cluster.medians) - 1)) {
     # offset value is used to correctly index the edges at each sequential step
     offset <- table.breaks[n] + 1
-    print(paste0("Starting next round, offset = ", as.character(offset)))
+    cat(paste0("Starting next round, offset = ", as.character(offset), "\n"))
     # go through sequential cluster sets, add edges for each a-a and a-a+1 set
-    print(paste("Building FLOWMAP from", n, "to", n + 1, "\n", sep = ''))
+    cat(paste0("Building FLOWMAP from", n, "to", n + 1, "\n"))
 
     #n_n1.table.lengths <- FLOWMAP.clusters$table.lengths[n:(n + 1)]
     #n_n1.table.breaks <- table.breaks[n:(n + 1)]

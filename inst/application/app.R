@@ -1,12 +1,12 @@
 #SMG 5.10.18
 
-#library(shiny)
-#library(shinythemes)
-#library(shinyFiles)
-#library(shinydashboard)
-#library(shinyalert)
-#library(flowCore)
-#library(rhandsontable)
+library(shiny)
+library(shinythemes)
+library(shinyFiles)
+library(shinydashboard)
+library(shinyalert)
+library(flowCore)
+library(rhandsontable)
 
 #' FLOWMAP  GUI - code to create interactive GUI for FLOWMAP
 #' @import shiny

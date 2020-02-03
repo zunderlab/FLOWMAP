@@ -111,7 +111,7 @@ RunUMAPlayout <- function(graph, file.clusters, file.name=file.name, umap.settin
   PLOT.WIDTH <- 7
 
   ggplot2::ggsave(paste0("basic_umap",".png"),
-                  plot = ggplot2::ggplot(global.umap.layout,
+                  plot = ggplot2::ggplot(umap.layout,
                                          ggplot2::aes_string(x="umap_x",y="umap_y",color="file_var")) + #factor()
                     ggplot2::geom_point(size = POINT.SIZE) +
                     ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
