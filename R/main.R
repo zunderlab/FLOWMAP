@@ -51,9 +51,9 @@
 #' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
 #' used as described in the SPADE driver function, see the documentation for the spade package at
 #' \url{https://github.com/nolanlab/spade}
-#' @param umap.settings
-#' @param umap.k
-#' @param graph.out
+#' @param umap.settings TBD
+#' @param umap.k TBD
+#' @param graph.out TBD
 #' @return the force-directed layout resolved igraph graph object
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
@@ -331,5 +331,4 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
       RunUMAPlayout(graph=graph, file.clusters=file.clusters, file.name=file.name,umap.settings=umap.settings)
     }
   }
-
 }#end FLOWMAP function
