@@ -135,8 +135,9 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   } else {
     method <- "single"
   }
-  FCS.clusters <- Rclusterpp.hclust(tmp.FCS.for.cluster, method = method,
-                                    distance = distance.metric)
+  ####change to use stats hclust to remove Rclusterpp dependency####
+  FCS.clusters <- stats::hclust(dist(tmp.FCS.for.cluster, method = distance.metric), method = method)
+  ####change to use stats hclust to remove Rclusterpp dependency####
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
@@ -273,9 +274,21 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
     downsample.fcs.file <- fcs.files[[f]]
     downsample.fcs.file <- downsample.fcs.file[, clustering.var]
     cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters$cell.assgn[[f]]))
-    all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file,
-                                                      downsample.fcs.file,
-                                                      cluster.assign)
+    ####added/modified to remove spade dependency####
+    #get cluster median marker values
+    downsample.fcs.file$cluster <- cluster.assign
+    cluster.medians <- downsample.fcs.file %>%
+                       dplyr::group_by(cluster) %>%
+                       dplyr::summarise_all(median)
+    #for each cell to upsample, find the nearest neighbor cell in the clustered data
+    #then record which cluster it came from
+    #data = cluster median marker values ("2:ncol(cluster.medians)" because don't want to include cluster id column)
+    #query = data to upsample
+    #k=1 because assigning to top nearest neighbor
+    all.cells.assign <- RANN::nn2(cluster.medians[,2:ncol(cluster.medians)], original.fcs.file, k=1)
+    #update cluster counts based on all cluster assigns
+    fixed.counts <- table(all.cells.assign[["nn.idx"]])
+    ####added/modified to remove spade dependency####
     fixed.counts <- table(all.cells.assign)
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
@@ -297,10 +310,21 @@ MultiUpsample <- function(file.names, FLOWMAP.clusters, fcs.files,
       downsample.fcs.file <- fcs.files[[t]][[f]]
       downsample.fcs.file <- downsample.fcs.file[, clustering.var]
       cluster.assign <- as.integer(as.matrix(FLOWMAP.clusters[[t]]$cell.assgn[[f]]))
-      all.cells.assign <- spade:::SPADE.assignToCluster(original.fcs.file,
-                                                        downsample.fcs.file,
-                                                        cluster.assign)
-      fixed.counts <- table(all.cells.assign)
+      ####added/modified to remove spade dependency####
+      #get cluster median marker values
+      downsample.fcs.file$cluster <- cluster.assign
+      cluster.medians <- downsample.fcs.file %>%
+        dplyr::group_by(cluster) %>%
+        dplyr::summarise_all(median)
+      #for each cell to upsample, find the nearest neighbor cell in the clustered data
+      #then record which cluster it came from
+      #data = cluster median marker values ("2:ncol(cluster.medians)" because don't want to include cluster id column)
+      #query = data to upsample
+      #k=1 because assigning to top nearest neighboor
+      all.cells.assign <- RANN::nn2(cluster.medians[,2:ncol(cluster.medians)], original.fcs.file, k=1)
+      #update cluster counts based on all cluster assigns
+      fixed.counts <- table(all.cells.assign[["nn.idx"]])
+      ####added/modified to remove spade dependency####
       fixed.counts <- as.data.frame(as.matrix(fixed.counts))
       colnames(fixed.counts) <- c("Counts")
       fixed.FLOWMAP.clusters[[t]]$cluster.counts[[f]]$Counts <- fixed.counts
