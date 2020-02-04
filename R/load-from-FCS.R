@@ -245,20 +245,25 @@ ConvertVariables <- function(clustering.var, var.annotate) {
 #' \url{https://github.com/nolanlab/spade}
 #' @param transform Logical specifying whether to transform the data using an Asinh
 #' transform typical of CyTOF/mass cytometry datasets, default is set to \code{TRUE}
+#' @param k number of nearest neighbors to use for density determination, default 15
 #' @importFrom stats runif
 #' @importFrom utils tail
 #' @importFrom flowCore exprs
 #' @importFrom flowCore read.FCS
 #' @importFrom flowCore arcsinhTransform
+#'
+#' UPDATE January 2020: Spade is no longer maintained
+#' We have included relevant function here to maintain functionality of FLOWMAP
+#'
 #' @export
 DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
                           channel.remove, exclude.pctile = 0.01, target.pctile = 0.99,
                           target.number = NULL, target.percent = 0.1,
-                          transform = TRUE) {
+                          transform = TRUE, k=15) {
   downsample.data <- list()
   for (file.name in fcs.file.names) {
     transforms <- arcsinhTransform(a = 0, b = 0.2)
-    SPADE.removeExistingDensityAndClusterColumns(file.name)
+    SPADE.removeExistingDensityAndClusterColumns(file.name) #this is actually flowmap internal function, not SPADE
     current.file <- tail(strsplit(file.name, "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
     fcs.file <- read.FCS(file.name)  
@@ -277,7 +282,18 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     }
     fcs.file <- RemoveExistingTimeVar(fcs.file) 
     cat("Calculating density for:", current.file, "\n")
-    density <- SPADE.density(fcs.file[, clustering.var], kernel_mult = 5.0, apprx_mult = 1.5, med_samples = 2000)
+    ####added/modified to remove spade dependency####
+    nns <- RANN::nn2(data=fcs.file[, clustering.var], k=k+1, searchtype="priority", eps=0.1)
+    temp_nnids.df <- as.data.frame(nns$nn.idx)
+    temp_nndists.df <- as.data.frame(nns$nn.dists)
+    nn.ids.df <- temp_nnids.df[,2:length(temp_nnids.df)]
+    nn.dists.df <- temp_nndists.df[,2:length(temp_nndists.df)]
+    numcluster <- nrow(clusters)
+    #TODO What to set for k?
+    density <- KnnDensity(k=k, min, max, n=0,nn.ids.df = nn.ids.df,
+                          nn.dists.df = nn.dists.df,numcluster = numcluster,
+                          table.breaks = NULL,offset = 0)
+    ####added/modified to remove spade dependency####
     if (max(density) == 0.0) {
       warning(paste(current.file, "has degenerate densities, possibly due to many identical observations", sep = " "))
     }
@@ -348,6 +364,37 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   }
   return(list.downsample.data)
 }
+
+## Function adapted from original SPADE package, cited above
+RemoveExistingDensityAndClusterColumns <- function(file) {
+  # Do not comp or transform ... make this step invisible.
+  input_file <- suppressWarnings(read.FCS(file))
+
+  input_file_names <- names(input_file)
+
+  if ("<cluster> cluster" %in% input_file_names ||
+      "<density> density" %in% input_file_names) {
+    # Drop those columns
+    cleaned <- input_file[,!(input_file_names %in% c("<cluster> cluster", "<density> density"))]
+
+    # Rename the original file. Increment the suffix if it already exists.
+    suffix <- as.integer(regmatches(file, gregexpr("(\\d+)$", file, perl=TRUE)))
+
+    if (is.na(suffix)) {
+      suffix <- ".orig1"
+      new_file_name <- paste(file, suffix, sep = "")
+      # NB: file.rename is a namespaced function, not a method of the argument.
+      file.rename(file, new_file_name)
+    } else {
+      suffix <- paste(".orig", suffix + 1, sep = "")
+      new_file_name <- sub("(.orig\\d+)$", suffix, file);
+      file.rename(file, new_file_name)
+    }
+
+    # Save with the original file name
+    write.FCS(cleaned, file)
+  }
+} 
 
 ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
   label.key <- list()
