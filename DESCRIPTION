@@ -23,7 +23,6 @@ Imports:
     SDMTools (>= 1.1-221),
     scaffold (>= 0.1),
     flowCore (>= 1.38.2),
-    Rclusterpp (>= 0.2.3),
     RcppEigen (>= 0.3.2.9.0),
     Rcpp (>= 0.12.6),
     igraph (>= 1.0.1),
@@ -34,7 +33,6 @@ Imports:
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
     shinythemes (>= 1.1.1),
-    spade (>= 1.10.4),
     vite(>= 0.1)
 License: MIT + file LICENSE
 Encoding: UTF-8
