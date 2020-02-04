@@ -208,7 +208,8 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
       ogw.ta.df <- data.frame(rbind(ogw.df, ta.df))
       E(output.graph.update)$weight <- ogw.ta.df[,1]
       ## Add vertex names
-      output.graph.update <- set.vertex.attribute(output.graph.update,'name', #TODO WHY IS THIS DIFFERENT FROM VERTEXT NAMES AFTER WHILE LOOP????????? *************
+      #TODO WHY IS THIS DIFFERENT FROM VERTEXT NAMES AFTER WHILE LOOP????????? *************
+      output.graph.update <- set.vertex.attribute(output.graph.update,'name',
                                                   index=V(output.graph.update),
                                                   as.character(offset:table.breaks[n + 2]))
       ## Make new edgelist
@@ -224,7 +225,8 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
     }#if
     else { break }
   }#while
-  output.graph.update <- graph.empty() #TODO <-make this and following three sections into a function, repeated above <OR JUST REMOVE THIS SECTION?>
+  #TODO <-make this and following three sections into a function, repeated above <OR JUST REMOVE THIS SECTION?>
+  output.graph.update <- graph.empty()
   og.el <- get.edgelist(output.graph)
   to.add.mat <- as.matrix(data.frame(lapply(data.frame(to.add.df),
                                             function(x) as.character(x))))
@@ -356,10 +358,10 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n,
     edgelist.save <- results$edgelist.with.distances
 
   }
-
+  #TODO remove knn outputs, no longer needed for umap
   return(list("output.graph" = output.graph,
               "edgelist.save" = edgelist.save,
-              "indexes" = nn.ids.df, #TODO remove knn outputs, no longer needed for umap
+              "indexes" = nn.ids.df,
               "distances" = nn.dists.df))
 }
 
@@ -438,8 +440,9 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   ## Remove duplicates and self-edges
   output.graph.final <- simplify(output.graph.final)
 
+  #TODO remove knn outputs, no longer needed for umap
   return(list("output.graph" = output.graph.final,
               "edgelist.save" = edgelist.save,
-              "knn.indexes" = knn.indexes, #TODO remove knn outputs, no longer needed for umap
+              "knn.indexes" = knn.indexes,
               "knn.distances" = knn.distances))
 }

@@ -262,7 +262,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
     nn.ids.df <- temp_nnids.df[,2:length(temp_nnids.df)]
     nn.dists.df <- temp_nndists.df[,2:length(temp_nndists.df)]
     numcluster <- nrow(clusters)
-    #################################################################What to set for k?
+    #TODO What to set for k?
     density <- KnnDensity(k=k, min, max, n=0,nn.ids.df = nn.ids.df,
                           nn.dists.df = nn.dists.df,numcluster = numcluster,
                           table.breaks = NULL,offset = 0)

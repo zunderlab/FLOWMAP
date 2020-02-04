@@ -1,21 +1,14 @@
 #SMG 5.10.18
 
-library(shiny)
-library(shinythemes)
-library(shinyFiles)
-library(shinydashboard)
-library(shinyalert)
-library(flowCore)
-library(rhandsontable)
+#library(shiny)
+#library(shinythemes)
+#library(shinyFiles)
+#library(shinydashboard)
+#library(shinyalert)
+#library(flowCore)
+#library(rhandsontable)
 
-#' FLOWMAP  GUI - code to create interactive GUI for FLOWMAP
-#' @import shiny
-#' @import shinythemes
-#' @import shinyFiles
-#' @import shinydashboard
-#' @import shinyalert
-#' @import flowCore
-#' @import rhandsontable
+
 
 #Functions ====
 
@@ -138,10 +131,9 @@ GetFilePathsfromCSV <- function(csv.path) {
 globe.toggle <- 0
 globe.inputs <- list()
 
-###########################################################################
-
-######################################################################## ui  ====
-
+########################################################################
+## ui  ====
+########################################################################
 
 header <- dashboardHeader(title = "FLOWMAPR")
 
@@ -301,7 +293,17 @@ body <- dashboardBody(
 )#dashboard body
 ui <- dashboardPage(header, sidebar, body, skin = "black")
 
+########################################################################
 #SERVER  ====
+########################################################################
+#' FLOWMAP  GUI server - code to create interactive GUI for FLOWMAP
+#' @import shiny
+#' @import shinythemes
+#' @import shinyFiles
+#' @import shinydashboard
+#' @import shinyalert
+#' @import flowCore
+#' @import rhandsontable
 server <- function(input, output, session) {
   #instructions tab
   # output$showfile <- renderUI({
