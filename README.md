@@ -62,8 +62,6 @@ Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made availa
 ```
 library(devtools)
 install_github("nolanlab/scaffold")
-install_github("nolanlab/Rclusterpp")
-install_github("nolanlab/spade")
 install_github("ParkerICI/vite")
 ```
 
