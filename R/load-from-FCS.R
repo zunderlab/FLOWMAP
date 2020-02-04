@@ -236,7 +236,7 @@ DownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   downsample.data <- list()
   for (file.name in fcs.file.names) {
     transforms <- flowCore::arcsinhTransform(a = 0, b = 0.2)
-    SPADE.removeExistingDensityAndClusterColumns(file.name)
+    RemoveExistingDensityAndClusterColumns(file.name)
     current.file <- tail(strsplit(file.name, "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
     fcs.file <- read.FCS(file.name)
@@ -337,8 +337,8 @@ MultiDownsampleFCS <- function(fcs.file.names, clustering.var, channel.annotate,
   }
   return(list.downsample.data)
 }
-
-SPADE.removeExistingDensityAndClusterColumns <- function(file) {
+## Function adapted from original SPADE package, cited above
+RemoveExistingDensityAndClusterColumns <- function(file) {
   # Do not comp or transform ... make this step invisible.
   input_file <- suppressWarnings(read.FCS(file))
 
