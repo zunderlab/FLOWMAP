@@ -40,7 +40,6 @@ library(devtools)
 FLOWMAPR package depends on several packages, which can be installed using the below commands:
 
 ```
-install.packages("SDMTools") 
 install.packages("igraph")
 install.packages("robustbase")
 if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -61,6 +60,7 @@ Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made availa
 
 ```
 library(devtools)
+install_github("cran/SDMTools")
 install_github("nolanlab/scaffold")
 install_github("ParkerICI/vite")
 ```
