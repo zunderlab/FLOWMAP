@@ -17,7 +17,6 @@ Depends:
     R (>= 3.3.0)
 Imports:
     robustbase (>= 0.92-6),
-    SDMTools (>= 1.1-221),
     scaffold (>= 0.1),
     flowCore (>= 1.38.2),
     RcppEigen (>= 0.3.2.9.0),
