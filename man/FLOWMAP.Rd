@@ -36,6 +36,8 @@ to generate from each separate FCS file}
 
 \item{distance.metric}{Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}}
 
+\item{umap.settings}{TBD}
+
 \item{files}{File paths for FCS files to be used or a folder containing
 the FCS files to be used in analysis}
 
@@ -64,6 +66,8 @@ them in the order supplied by the user}
 \item{savePDFs}{Logical specifying whether to generate PDFs for the resolved graph with
 nodes colored by each parameter}
 
+\item{graph.out}{TBD}
+
 \item{which.palette}{Optional variable, character specifying which color palette to use
 in generated PDFs, valid options include \code{c("bluered", "jet", "CB")}, where \code{"CB"}
 is a colorblind-friendly option}
@@ -83,6 +87,8 @@ used as described in the SPADE driver function, see the documentation for the sp
 \item{target.percent}{Optional variable, numeric value for the downsampling_target_percent variable
 used as described in the SPADE driver function, see the documentation for the spade package at
 \url{https://github.com/nolanlab/spade}}
+
+\item{umap.k}{TBD}
 }
 \value{
 the force-directed layout resolved igraph graph object
