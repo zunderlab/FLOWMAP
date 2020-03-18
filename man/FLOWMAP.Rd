@@ -7,11 +7,18 @@
 FLOWMAP(mode = c("single", "multi", "one", "static-multi"),
   var.remove = c(), var.annotate = NULL, clustering.var,
   cluster.numbers = 100, cluster.mode = "hclust",
+<<<<<<< HEAD
   distance.metric = "manhattan", umap.settings, files,
   density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
   save.folder = getwd(), subsamples = 200, name.sort = TRUE,
   downsample = FALSE, seed.X = 1, savePDFs = TRUE,
   graph.out = c("ForceDirected"), which.palette = "bluered",
+=======
+  distance.metric = "manhattan", files, density.metric = c("kNN",
+  "radius"), minimum = 2, maximum = 5, save.folder = getwd(),
+  subsamples = 200, name.sort = TRUE, downsample = FALSE,
+  seed.X = 1, savePDFs = TRUE, which.palette = "bluered",
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
   exclude.pctile = NULL, target.pctile = NULL, target.number = NULL,
   target.percent = NULL, k = 10, per = 5, ...)
 }
@@ -36,8 +43,11 @@ to generate from each separate FCS file}
 
 \item{distance.metric}{Character specifying which metric to use to calculate between-node distances, valid options include \code{c("manhattan", "euclidean")}}
 
+<<<<<<< HEAD
 \item{umap.settings}{TBD}
 
+=======
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
 \item{files}{File paths for FCS files to be used or a folder containing
 the FCS files to be used in analysis}
 

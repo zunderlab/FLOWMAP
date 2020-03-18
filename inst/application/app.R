@@ -168,113 +168,11 @@ body <- dashboardBody(
                                   containing your FCS/CSV files then press 'Load Directories' button. If there were any
                                   issues loading the directories, you will see a message alerting you to try again.
                                   Otherwise, you will be brought to the next tab. The remaining tabs on this page will
-                                  be formatted specifically the mode selected in 'Settings', and the usage from this
-                                  point on differs depending on what mode (e.g. 'multi' or 'single' or 'one') is used.</li>
-                           <br><br>")),
+                                  be formatted specifically for the analysis mode selected in 'Settings' based on the
+                                  number of conditions and timepoints to be analyzed, and the usage from this
+                                  point on will differ depending on which is used.</li>
+                           <br><br>"))
 
-             tabBox(width=12, id="info_modes",
-               tabPanel(
-                 title = "One",
-                 helpText(HTML("<b>For mode 'one' (one condition, one timepoint):</b>")),
-                 helpText(HTML("<ol>
-                                 <li>   Select the FCS file to be analyzed in 'Files'.</li>
-                                <li>	Press 'Read panel from fcs'.</li>
-                                <li>	An interactive table will appear with all the parameters as well as
-                                    options for selecting and deselecting them as clustering or removed
-                                    variables. Removed variables will not be in the final generated graph,
-                                    such as in the graphml file or the image PDFs.</li>
-                                <li>	You must check at least one or more of the parameters for clustering.
-                                    These variables are used both for clustering (calculation of similarity)
-                                    and for calculating edge distances during the graph building steps. If
-                                    you want to rename a parameter, you can click on the name under the
-                                    'annotate' column and type a new name.</li>
-                                <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been checked
-                                    and renamed to run the FLOW-MAP algorithm and generate all requested
-                                    FLOWMAPR results (PDFs, graphml files, etc. in a new folder).</li>"))
-
-               ),#tabPanel
-               tabPanel(
-                 title = "Single",
-                 helpText(HTML("<b>For mode 'single' (one condition, multiple timepoints):</b>")),
-                 helpText(HTML("<ol>
-                                  <li>	Enter in the order of the FCS files that you wish to use.
-                                  Generally, files will be used in an alphanumerical
-                                  order by time, but here you can specify the ordering
-                                  if the naming system does not reflect the order you want. </li>
-                            	<li>	Press 'Read panel from fcs'. </li>
-                            	<li>	Two things will happen: an interactive table will appear
-                                  with all the parameters and options for selecting how
-                                  parameters should be used for analysis, and the menus
-                                  for 'Similar Fields' and 'Different Fields' will
-                                  autopopulate as an aid to help you process channels
-                                  between the files. </li>
-                               <li>	If any channel needs to be merged, select the files from the
-                                  'Different Fields' window, enter the new merged name in
-                                  'Select New Merge Name', and press 'Merge Selected Diff'.
-                                  This will automatically remove the channels from
-                                  'Different Fields', add the merged name to 'Similar Fields',
-                                  and will update the table with new annotations. </li>
-                               <li>	The different parameters will by default be checked for removal.
-                                  You must check at least one or more of the parameters
-                                  for clustering. If you want to rename a parameter,
-                                  click on the name under 'annotate' and type a new name.</li>
-                               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
-                                  checked and renamed to run the FLOW-MAP algorithm
-                                  and generate all requested FLOWMAPR results
-                                  (PDFs, graphml files, etc. in a new folder).</li>"))
-
-                 ),#tabPanel
-               tabPanel(
-                 title = "Multi",
-                 helpText(HTML("<b>For mode 'multi' (multiple conditions, multiple timepoints):</b>")),
-                 helpText(HTML("<ol>
-                                 <li>   Select the CSV file that has the corresponding FCS file paths. How
-                                    the CSV file should be arranged (i.e. what information is put in
-                                    the columns/rows) will be shown in the following section.</li>
-                              	<li>	Press 'Input CSV' once the CSV is selected in the box.</li>
-                               <li>	If any channel needs to be merged, select the files from the
-                                  'Different Fields' window, enter the new merged name in
-                                  'Select New Merge Name', and press 'Merge Selected Diff'.
-                                  This will automatically remove the channels from
-                                  'Different Fields', add the merged name to 'Similar Fields',
-                                  and will update the table with new annotations.</li>
-                              <li>	The different parameters will by default be checked for removal.
-                                  You must check at least one or more of the
-                                  parameters for clustering. If you want to
-                                  rename a parameter, click on the name under
-                                  'annotate' and type a new name.</li>
-                              <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
-                                  checked and renamed to run the FLOW-MAP algorithm
-                                  and generate all requested FLOWMAPR results
-                                  (PDFs, graphml files, etc. in a new folder).</li>"))
-
-                 ),#tabPanel
-               tabPanel(
-                 title = "Static-Multi",
-                 helpText(HTML("<b>For mode 'static-multi' (multiple conditions, one timepoint):</b>")),
-                 helpText(HTML("<ol>
-                               <li>   Select the CSV file that has the corresponding FCS file paths. How
-                               the CSV file should be arranged (i.e. what information is put in
-                               the columns/rows) will be shown in the following section.</li>
-                               <li>	Press 'Input CSV' once the CSV is selected in the box.</li>
-                               <li>	If any channel needs to be merged, select the files from the
-                               'Different Fields' window, enter the new merged name in
-                               'Select New Merge Name', and press 'Merge Selected Diff'.
-                               This will automatically remove the channels from
-                               'Different Fields', add the merged name to 'Similar Fields',
-                               and will update the table with new annotations.</li>
-                               <li>	The different parameters will by default be checked for removal.
-                               You must check at least one or more of the
-                               parameters for clustering. If you want to
-                               rename a parameter, click on the name under
-                               'annotate' and type a new name.</li>
-                               <li>	Press 'Run FLOWMAPR' once the appropriate parameters have been
-                               checked and renamed to run the FLOW-MAP algorithm
-                               and generate all requested FLOWMAPR results
-                               (PDFs, graphml files, etc. in a new folder).</li>"))
-
-                 )#tabPanel
-             )#tabBox
            )#box
         )#fluidRow
     ),#tabItem
@@ -326,7 +224,7 @@ server <- function(input, output, session) {
               tabPanel(
                 "FLOW-MAP Mode",
                 useShinyalert(),  # Set up shinyalert
-                div(style="display:inline-block",actionButton("ModeHelp", label = "?")),
+                #div(style="display:inline-block",actionButton("ModeHelp", label = "?")),
                 div(style="display:inline-block",
                 #selectInput("flowmapMode", "Select Analysis Mode:", c("Choose one" = "", "multi", "single", "one")))
                 numericInput("conditions", "Number of conditions:", value = 1, min = 1),
@@ -422,10 +320,10 @@ server <- function(input, output, session) {
         box(
           width = '12',
           title = "Directions:",
-          helpText(HTML("	<p> Select whether the data should be analyzed
-                        by FLOWMAPR mode 'one', 'single', or 'multi'. Look through defaults for other
-                        settings and change as necessary. When completed, click the ‘Submit’ button.
-                        If one or more settings is missing, you will see a message alerting you to check
+          helpText(HTML("	<p> Select whether the number of conditions and timepoints in your dataset. This will
+                        determine FLOWMAPR analysis mode -- 'one', 'single', 'multi', or 'static-multi'. Look
+                        through defaults for other settings and change as necessary. When completed, click the
+                        ‘Submit’ button. If one or more settings is missing, you will see a message alerting you to check
                         your selections. Otherwise, you will be brought to the 'File Processing' page. <p>"
                         )#HTML
                     )#helpText
@@ -673,7 +571,11 @@ server <- function(input, output, session) {
     params$inputs[["savePDFs.toggle"]] <- input$saveGraphPDFs
     params$inputs[["subsample.num"]] <- input$subsampNum
     params$inputs[["distance.metric"]] <- input$distMetric
+<<<<<<< HEAD
     params$inputs[["density.metric"]] <- input$densityMetric
+=======
+    params$inputs[["density.metric"]] <- "radius" #this version doesnt have functioning BuildGraphKNN
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
     params$inputs[["cluster.num"]] <- input$clusterNum
     params$inputs[["seed.num"]] <- input$seedNum
     params$inputs[["edge.max.num"]] <- input$maxEdgeNum
@@ -1270,7 +1172,11 @@ server <- function(input, output, session) {
             FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                     clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                     distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                     density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                    save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                     name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                     savePDFs = savePDFs, which.palette = which.palette,
                     exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1280,7 +1186,11 @@ server <- function(input, output, session) {
             FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                     clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                     distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                     density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                    save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                     name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                     savePDFs = savePDFs, which.palette = which.palette)
           }
@@ -1462,7 +1372,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1472,7 +1386,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }
@@ -1581,7 +1499,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1591,7 +1513,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }
@@ -1779,7 +1705,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
@@ -1789,7 +1719,11 @@ server <- function(input, output, session) {
           FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
                   distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+<<<<<<< HEAD
                   density.metric = density.metric, save.folder = save.folder, subsamples = subsamples,
+=======
+                  save.folder = save.folder, subsamples = subsamples, density.metric = density.metric,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                   name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
         }

@@ -58,8 +58,13 @@
 #' @export
 FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
                     var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
+<<<<<<< HEAD
                     cluster.mode = "hclust", distance.metric = "manhattan", umap.settings,
                     files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 5,
+=======
+                    cluster.mode = "hclust", distance.metric = "manhattan",
+                    files, density.metric = c("kNN", "radius"), minimum = 2, maximum = 10,
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
                     save.folder = getwd(), subsamples = 200, name.sort = TRUE,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE, graph.out = c("ForceDirected"),
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
@@ -308,7 +313,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
     ##Build FLOWMAP one-special ====
     if (density.metric == "radius") {
       output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                             k = maximum, min = minimum, max = maximum,
+                                             per = per, min = minimum, max = maximum,
                                              distance.metric = distance.metric,
                                              clustering.var = clustering.var)
     }
@@ -319,10 +324,24 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"),
   } else {
     stop("Unknown mode!")
   }
+<<<<<<< HEAD
   #Make layout output ====
   if ("ForceDirected" %in% graph.out) {
     graph.xy <- RunForceDirectedLayout(mode=mode, file.name=file.name, graph=graph,
                                        orig.times=orig.times, which.palette=which.palette)
+=======
+  #Make graph output ====
+  file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
+  ConvertToGraphML(output.graph = graph, file.name = file.name)
+  graph.xy <- ForceDirectedXY(graph = graph)
+  file.name.xy <- paste(file.name, "xy", sep = "_")
+  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
+  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
+  if (mode != "one" && mode != "static-multi") {
+    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
+  } else {
+    fixed.graph <- graph.xy
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
   }
   if ("UMAP"  %in% graph.out) {
     if (umap.k > minimum) {

@@ -14,7 +14,7 @@ CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
     # stop("save.folder does not exist!")
     stop(paste("save.folder", save.folder, "does not exist!"))
   }
-  if (!(mode %in% c("single", "multi", "one", "one-special"))) {
+  if (!(mode %in% c("single", "multi", "one", "static-multi"))) {
     stop(paste("mode", mode, "is not a recognized value!"))
   }
   if (!(distance.metric %in% c("manhattan", "euclidean"))) {

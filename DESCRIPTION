@@ -28,6 +28,7 @@ Imports:
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
     shinythemes (>= 1.1.1),
+<<<<<<< HEAD
     dplyr (>= 0.8.3),
     RANN (>= 2.6.1),
     reshape2 (>= 1.4.3),
@@ -36,6 +37,9 @@ Imports:
     data.table (>= 1.12.6),
     umap (>= 0.2.3.1),
     Matrix (>= 1.2)
+=======
+    spade (>= 1.10.4)
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
 License: GNU General Public License v3 (GPL-3)
 Encoding: UTF-8
 LazyData: true

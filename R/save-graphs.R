@@ -2,7 +2,11 @@
 MakeOutFolder <- function(runtype, maximum, minimum, k = "", per = "") {
   name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
   name <- gsub(":", ".", name, fixed = TRUE)
+<<<<<<< HEAD
   output.folder <- paste("max", maximum, "_k", k, "_per", per, name, runtype, "run", sep = "_")
+=======
+  output.folder <- paste(k, per, name, runtype, "run", sep = "_") #default dont include max and min in folder name
+>>>>>>> 7017d079511d4db1eae54b327920cfb0e134034f
   dir.create(output.folder)
   cat("output.folder is", output.folder, "\n")
   return (output.folder)

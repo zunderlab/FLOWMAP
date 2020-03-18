@@ -42,7 +42,7 @@
 FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df, project.name,
                           clustering.var, distance.metric = "manhattan",
                           density.metric = c("kNN", "radius"),
-                          minimum = 2, maximum = 5, save.folder = getwd(),
+                          minimum = 2, maximum = 10, save.folder = getwd(),
                           time.col.label = "Time", condition.col.label = NULL,
                           name.sort = TRUE, clustering = FALSE, seed.X = 1,
                           savePDFs = TRUE, which.palette = "bluered", cluster.numbers = NULL,
