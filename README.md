@@ -4,6 +4,11 @@ This repository houses the code for the FLOW-MAP algorithm, which was developed 
 
 This code has been reformatted and compiled into a single R package known as **FLOWMAPR**, for extensible analysis of single-cell datasets including FCS files generated from mass/flow cytometry or data.frames of other single-cell data processed in R. This README provides full instructions for how to install, set-up, and use FLOWMAPR. Other details, including a comparison with other visualization tools for single-cell data, will be published imminently and linked when available.
 
+Version 2 released June 2020: 
+1. Better scalability to large cell numbers (when using UMAP layout)
+2. Removes bugs specified in issues from v1
+3. Removes need for dependencies that were no longer maintained & causing install issues
+
 # Navigation
 <!-- [Code Status]() -->
 [Getting Started: Installing FLOWMAPR](#install)  
@@ -42,15 +47,20 @@ FLOWMAPR package depends on several packages, which can be installed using the b
 ```
 install.packages("igraph")
 install.packages("robustbase")
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("flowCore", version = "3.8")
+install_github("cran/SDMTools") 
+install_github("ParkerICI/vite")
+source("http://bioconductor.org/biocLite.R")
+biocLite("flowCore")
 ```
 
-The GUI has a package dependency for Shiny, TclTk, and Rhandsontable. Install these packages with:
+The GUI has package dependencies for multiple Shiny-related packages and Rhandsontable. Install these packages with:
 
 ```
 install.packages("shiny")
+install.packages("shinythemes")
+install.packages("shinyFiles")
+install.packages("shinydashboard")
+install.packages("shinyalert")
 
 library(devtools)
 install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-project.org")
@@ -59,10 +69,8 @@ install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-pr
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
 
 ```
-library(devtools)
-install_github("cran/SDMTools")
 install_github("nolanlab/scaffold")
-install_github("ParkerICI/vite")
+
 ```
 
 <a name="install"></a>
@@ -70,19 +78,23 @@ install_github("ParkerICI/vite")
 
 To currently get the FLOWMAPR R package up and working on your computer, once you have installed all package dependencies (see above):
 
-1. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
-2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP")`. 
-3. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
+1. Make a github account if you haven't already.
+2. Get access to repo zunderlab/FLOWMAP for your github account.
+3. Create a token by going to this site when logged into your github account: https://github.com/settings/tokens/new
+4. Check off "repo" in the settings for your token.
+5. Click generate token and copy/save the provided code (your PAT) somewhere.
+6. Open R studio and load devtools using `library(devtools)`. If you don't have devtools you may have to install it with `install.packages("devtools")` and then use `library(devtools)`.
+7. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations. This should start installing all library dependencies so it may take a bit to finish. Check that it finishes without ERROR messages, though it may print WARNINGS.
 
 Typical installation time should take no more than 5 minutes for the most up-to-date FLOWMAPR package. However, total installation time will vary depending on the installation time of other required packages and the speed of your internet connectoin.
 
 <a name="update"></a>
 ### Updating FLOWMAPR:
 
-To quickly update your FLOWMAPR R package up and get the latest version from GitHub:
+To quickly update your FLOWMAPR R package and get the latest version from GitHub:
 
 1. Open R studio and load devtools using `library(devtools)`.
-2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP")`.
+2. Type the following into R studio: `install_github(repo = "zunderlab/FLOWMAP", auth_token = "PAT")` but replace PAT in quotations with your code in quotations.
 3. Load FLOWMAPR using `library(FLOWMAPR)`.
 
 If the above commands run without error, you should have the latest version of FLOWMAPR.
@@ -104,24 +116,27 @@ To run a FLOW-MAP analysis on your data set if you are using FCS files or an exa
 2. Establish variable names (you can copy the way they are assigned from the FLOWMAP_run.R file to declare each variable).  Some variables you have to assign are:
   * `mode` - what type of FLOW-MAP you want to run, this can be "single" - one condition, multiple timepoints, "multi" - multiple conditions, multiple timepoints or "one" - one condition, one timepoint
   * `files` - the directory where you can find the FCS files to be used
+  * `name.sort` - sort FCS files according to name in alphabetical/numerical order, default is set to TRUE for sorting
+  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `var.remove` - any channels you want completely excluded from analysis, you can auto-generate a suggested vector of variables for removal using the `FLOWMAPR::SuggestVarRemove()` function and supplying `var.annotate` as well as an optional `var.to.remove` vector that describes a character string for channels that should be removed (for example, blank channels in FCS files for mass cytometry may retain the "Di" or "Dd" substring in the desc, like in "Ba138Di"), default is to remove these channels with "Di" or "Dd" in the desc
   * `var.annotate` - rename channels as you see fit, the names you provide will the ones used to print out the PDFs, you can auto-generate a suggested `var.annotate` based on the `desc` attribute in your FCS files by using the `FLOWMAPR::ConstructVarAnnotate()` function and supplying a single FCS file name (full path)
   * `clustering.var` - which channels to use to influence the graph shape, you can generate a set of suggested `clustering.var` using the `FLOWMAPR::SuggestClusteringVar()` function, supplying the variables `fcs.file.names` (complete set of FCS files to be used in analysis), `mode` (as in FLOWMAPR mode), `var.annotate`, `var.remove`, `top.num` (which specifies how many clustering variables you want to use, less than the total number of variables in the dataset)
   * `cluster.numbers` - how many clusters to generate from each subsampled file, recommended ratio 1:2 from subsample (if subsample = 1000, recommended cluster.numbers = 500), default is set to 100
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
-  * `per` -  lower values for the “per” provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations.
+  * `subsamples` - how many cells to randomly subsample from each FCS file, default is set to 200
+  * `downsample` - use density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
+  * `k` - number of nearest neighbors to use for density calculation to determine number of edges per vertex; lower values provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
-  * `subsamples` - how many cells to randomly subsample from each FCS file, default is set to 200
-  * `name.sort` - sort FCS files according to name in alphabetical/numerical order, default is set to TRUE for sorting
-  * `downsample` - use SPADE density-dependent downsampling, in which case you may want to specify and pass optional variables `exclude.pctile`, `target.pctile`, `target.number`, `target.percent`, default is set to FALSE for downsampling
-  * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
+  * `graph.out` - "ForceDirected" or "UMAP" layout for vizualization of FLOWMAP graph
+  * `umap.n.neighbors` - number of neighbors to use for UMAP layout, must be <= `k`
   * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
 
+
 3. Run `FLOWMAPR::FLOWMAP()` as a command in R Studio, but pass the variables that you assigned into FLOWMAP() function. A full example is provided below.
-4. Check that it saves an output folder with reasonable looking PDFs and graphml files.
+4. Check that it saves an output folder with reasonable looking graph and layout files.
 
 <a name="FLOWMAPR-DF"></a>
 ### Starting from a Dataframe in R:
@@ -146,7 +161,7 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `condition.col.label` - variable that is only required for MultiFLOW-MAP runs to distinguish data from different conditions/treatments/timecourses, function will use the column with this label as the condition label for each cell, default is set to NULL
   * `clustering.var` - which channels to use to influence the graph shape
   * `distance.metric` - choose "manhattan" or "euclidean" for most cases, default is set to "manhattan"
-  * `per` -  lower values for the “per” provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations.
+  * `k` - number of nearest neighbors to use for density calculation to determine number of edges per vertex; lower values provide higher resolution and enable better separation of rare populations, but are more sensitive to noise whereas higher values are less sensitive to noise but will only capture the more robust populations
   * `minimum` - minimum number of edges allotted based on density, affects connectivity, recommended default is 2
   * `maximum` - maximum number of edges allotted based on density, affects connectivity, recommended default is 5
   * `save.folder` - where you want the output files to be saved to, default is set to current directory or getwd() result
@@ -154,39 +169,41 @@ To run a FLOW-MAP analysis and generate FLOW-MAP graphs from data that you need 
   * `clustering` - cluster within each timepoint, in which case you will want to specify optional variable `cluster.numbers`, default is set to FALSE for clustering
   * `seed.X` - an integer that sets the seed, can be re-used to reproduce results, default is set to 1
   * `savePDFs` - produce PDF files or only produce graphml files, default is set to TRUE for printing all results
+  * `graph.out` - "ForceDirected" or "UMAP" layout for vizualization of FLOWMAP graph
   * `which.palette` - optional argument for savePDFs functionality, can be “jet” (rainbow) or “bluered” or “CB” (the colorblind-friendly option), default is set to "bluered"
 
 3. Run `FLOWMAPR::FLOWMAPfromDF()` as a command in R Studio, but pass the variables that you assigned into FLOWMAPfromDF() function. A full example is provided below.
-4. Check that it saves an output folder with reasonable-looking PDFs and graphml files. **As of this most recent update, reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
+4. Check that it saves an output folder with reasonable-looking graph and layout files. **From previous update: reproducible run.R files are NOT generated for FLOW-MAPs from matrix/dataframe.**
 
 <a name="example-code"></a>
 ### Example Code for FLOWMAP():
 
 ```
 library(FLOWMAPR)
+seed.X <- 1
 files <- "/Users/mesako/Desktop/SingleFLOWMAP"
+name.sort <- FALSE
 mode <- "single"
 save.folder <- "/Users/mesako/Desktop"
 var.annotate <- list("marker1" = "marker1", "marker2" = "marker2")
 var.remove <- c()
 clustering.var <- c("marker1", "marker2")
+downsample <- FALSE
 subsamples <- 200
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-per <- 5
+k <- 5
 minimum <- 2
 maximum <- 5
-seed.X <- 1
-name.sort <- FALSE
-downsample <- FALSE
+graph.out <- 'UMAP'
 savePDFs <- TRUE
 which.palette <- "bluered"
 
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                  distance.metric = distance.metric, minimum = minimum, 
-                  maximum = maximum, save.folder = save.folder, subsamples = subsamples,
-                  name.sort = name.sort, per = per, downsample = downsample, seed.X = seed.X,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  save.folder = save.folder, subsamples = subsamples, k = k, graph.out = graph.out,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette)
 ```
 
@@ -202,7 +219,7 @@ var.remove <- c()
 clustering.var <- c("marker1", "marker2")
 cluster.numbers <- 100
 distance.metric <- "manhattan"
-per <- 5
+k<- 5
 minimum <- 2
 maximum <- 5
 seed.X <- 1
@@ -213,14 +230,15 @@ target.number <- NULL
 target.percent <- NULL
 name.sort <- FALSE
 downsample <- TRUE
+graph.out <- 'UMAP'
 savePDFs <- TRUE
 which.palette <- "bluered"
 
 FLOWMAPR::FLOWMAP(mode = mode, files = files, var.remove = var.remove, var.annotate = var.annotate,
                   clustering.var = clustering.var, cluster.numbers = cluster.numbers,
-                  distance.metric = distance.metric, minimum = minimum, 
-                  maximum = maximum, save.folder = save.folder, subsamples = subsamples,
-                  name.sort = name.sort, per = per, downsample = downsample, seed.X = seed.X,
+                  distance.metric = distance.metric, minimum = minimum, maximum = maximum,
+                  save.folder = save.folder, subsamples = subsamples,
+                  name.sort = name.sort, downsample = downsample, seed.X = seed.X,
                   savePDFs = savePDFs, which.palette = which.palette,
                   exclude.pctile = exclude.pctile, target.pctile = target.pctile,
                   target.number = target.number, target.percent = target.percent)
@@ -262,39 +280,50 @@ Supply this `files` variable as the `files` parameter in a `FLOWMAPR::FLOWMAP()`
 ### Example Output:
 Running the provided example files for SingleFLOW-MAP and MultiFLOW-MAP with the provided code should generate a folder of results in the `save.folder` specified by the user. The results folder will have the naming convention "YYYY-MM-DD_HH.MM.SS_ChosenFLOW-MAPMode_run" with the values filled in accordingly.
 
-Upon successful completion of one of the main `FLOWMAP` functions, FLOWMAPR will generate three graphml files: one is the initial graph produced by the algorithm without force-directed layout applied, one produced after the iterative force-directed layout with x-y coordinates for each node, and a final graphml with x-y coordinates and a relabeling of timepoints/conditions to the names scraped from the FCS files (if relevant).
-
-If the user chooses to save PDF outputs from FLOWMAPR, a folder with the same name as the final graphml generated with the added suffix "\_pdf" will be created that contains PDFs of the final graph colored by each parameter.
-
-In addition, FLOWMAPR creates a text file named "YYYY-MM-DD_HH.MM.SS_FLOW-MAPR_run_settings_summary.txt" that will summarize all provided settings as well as a file named "run_FLOWMAPR.R" that can be used to reproduce the same FLOWMAPR results when opened and executed in R.
+Upon successful completion of one of the main `FLOWMAP` functions, FLOWMAPR will generate outputs specified by `graph.out` parameter:
+- "ForceDirected" selection will produce three graphml files: one is the initial graph produced by the algorithm without force-directed layout applied, one produced after the iterative force-directed layout with x-y coordinates for each node, and a final graphml with x-y coordinates and a relabeling of timepoints/conditions to the names scraped from the FCS files (if relevant). If the user chooses to save PDF outputs from FLOWMAPR, a folder with the same name as the final graphml generated with the added suffix "\_pdf" will be created that contains PDFs of the final graph colored by each parameter.
+- "UMAP" selection will generate one graphml file produced by the algorithm without force-directed layout applied, one PDF containing the layout colored by all parameters in a grid, and one file containing the layout colored by time.
+- In both cases, FLOWMAPR creates a text file named "YYYY-MM-DD_HH.MM.SS_FLOW-MAPR_run_settings_summary.txt" that will summarize all provided settings as well as a file named "run_FLOWMAPR.R" that can be used to reproduce the same FLOWMAPR results when opened and executed in R.
 
 <a name="example-code2"></a>
 ### Example Code for FLOWMAPfromDF():
 ```
 library(FLOWMAPR)
-
-#FLOWMAP parameters
+library(readxl)
 mode <- "single"
-project.name <- "Striped Single"
-time.col.label <- "Timepoint"
-condition.col.label <- NULL
-clustering.var <- c("marker1","marker2")
+save.folder <- "/Users/mesako/Desktop"
+project.name <- "Example_FLOWMAP_Run"
+clustering.var <- c("marker1", "marker2")
 distance.metric <- "manhattan"
+k <- 5
 minimum <- 2
 maximum <- 5
-save.folder <- getwd()
+seed.X <- 1
 name.sort <- FALSE
 clustering <- FALSE
-seed.X <- 1
 savePDFs <- TRUE
 which.palette <- "bluered"
-FLOWMAPR::FLOWMAPfromDF(mode = mode, df = FLOWMAPfromDF.Clover, project.name = project.name,
+
+time.col.label <- "Time"
+condition.col.label <- NULL
+
+file <- "/Users/mesako/Downloads/Example-dataset.xlsx"
+df <- read_excel(file)
+df <- as.data.frame(df)
+df.keep <- subset.data.frame(df, select = c("Time"))
+df.transform <- subset.data.frame(df, select = setdiff(colnames(df), c("Time")))
+df.transform <- apply(df.transform, 2, log) 
+final.df <- cbind(df.keep, df.transform)
+df <- FLOWMAPR::RestructureDF(final.df, time.col.label = time.col.label, 
+                              condition.col.label = condition.col.label)$new.df
+
+FLOWMAPR::FLOWMAPfromDF(mode = mode, df = df, project.name = project.name,
                         time.col.label = time.col.label, condition.col.label = condition.col.label,
                         clustering.var = clustering.var, distance.metric = distance.metric,
-                        minimum = minimum, maximum = maximum,save.folder = save.folder,
-                        name.sort = name.sort, clustering = clustering,seed.X = seed.X, 
-                        savePDFs = savePDFs, which.palette = which.palette)
-setwd("./..")
+                        minimum = minimum, maximum = maximum, save.folder = save.folder,
+                        name.sort = name.sort, clustering = clustering,
+                        seed.X = seed.X, savePDFs = savePDFs, which.palette = which.palette)
+
 ```
 
 <a name="FLOWMAPR-guide"></a>
@@ -357,7 +386,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 * We recommend using the bluered palette used in the FLOWMAPR package to color by marker expression. Cells with lowest expression levels will be blue, intermediate will be grey, and high will be red. You can set this up by clicking on the left, middle, and right arrows and assigning them to Hex values 1500FB, C3C3C7, D10100 respectively. **Press the Apply button to have the graph update with these new color settings.**
 
-* However, to produce more accessible figures, you may want to consider using a **colorblind-friendly palette**. The colorblind option used in FLOWMAPR uses a blue-yellow scale. The hex color code for each arrow from left to right is 0072B2, C3C3C7, E69F00. The Viridis palette (good for white backgrounds), from left to right, is 440154, 21908C, FDE725.
+* However, to produce more accessible figures, you may want to consider using a **colorblind-friendly palette**. The colorblind option used in FLOWMAPR uses a blue-yellow scale. The hex color code for each arrow from left to right is 0072B2, C3C3C7, E69F00.
 
 5. **Save PDFs or image files of your graph colored by each marker.** Once you have your desired visual settings, click on the "Preview" button on the top bar. **Click the Refresh button on the bottom left to make your graph appear.** This graph will essentially be a duplicate of what you produced in the "Overview" mode with a few exceptions.
 
@@ -369,7 +398,7 @@ Producing aesthetically pleasing graphs is easier in Gephi. FLOWMAPR autogenerat
 
 <a name="gui-guide"></a>
 ## Using the GUI
-0. Make sure all FSC files to be used are in one folder.
+0. Make sure all FCS files to be used are in one folder.
 * If you plan to analyze files using FLOW-MAP mode "multi" (multiple conditions, multiple timepoints), you will need to set up a CSV file that outlines the FCS file paths (see section "CSV Format for Multiple Analysis") and select this folder instead of the FCS file folder.
 * Regardless of the mode, make sure that your FCS files meet the naming conventions described at the beginning of the section ["Running FLOWMAPR: Starting from FCS Files"](#FLOWMAPR-FCS).
 1. Run the command `FLOWMAPR::LaunchGUI()` and a dialogue box with the header "FLOWMAPR" should appear. 
@@ -436,9 +465,9 @@ Here are some common issues and suggestions for how to fix them:
 
 * **Eli Zunder** - *Initial work*
 * **Melissa Ko** - *R Package Development*
-* **Corey Williams** - *R Package Development*
-* **Sarah Goggin** - *GUI*
-* **Rohit Rustagi** - *Initial GUI work*
+* **Corey Williams - R Package Development
+* **Sarah Goggin - GUI, Version 2 
+* **Rohit Rustagi - Initial GUI work
 
 See also the list of [contributors](https://github.com/zunderlab/FLOWMAP/graphs/contributors) who participated in this project.
 
