@@ -282,7 +282,7 @@ Running the provided example files for SingleFLOW-MAP and MultiFLOW-MAP with the
 
 Upon successful completion of one of the main `FLOWMAP` functions, FLOWMAPR will generate outputs specified by `graph.out` parameter:
 - "ForceDirected" selection will produce three graphml files: one is the initial graph produced by the algorithm without force-directed layout applied, one produced after the iterative force-directed layout with x-y coordinates for each node, and a final graphml with x-y coordinates and a relabeling of timepoints/conditions to the names scraped from the FCS files (if relevant). If the user chooses to save PDF outputs from FLOWMAPR, a folder with the same name as the final graphml generated with the added suffix "\_pdf" will be created that contains PDFs of the final graph colored by each parameter.
-- "UMAP" selection will generate one graphml file produced by the algorithm without force-directed layout applied, one PDF containing the layout colored by all parameters in a grid, and one file containing the layout colored by time.
+- "UMAP" selection will generate one graphml file produced by the algorithm without force-directed layout applied, one PDF containing the layout colored by all parameters in a grid, one file containing the layout colored by condition, and one file containing the layout colored by time.
 - In both cases, FLOWMAPR creates a text file named "YYYY-MM-DD_HH.MM.SS_FLOW-MAPR_run_settings_summary.txt" that will summarize all provided settings as well as a file named "run_FLOWMAPR.R" that can be used to reproduce the same FLOWMAPR results when opened and executed in R.
 
 <a name="example-code2"></a>
