@@ -2,10 +2,8 @@ Package: FLOWMAPR
 Title: Graph-based visualizations of high-dimensional single-cell data across time
 Version: 1.2.0
 Authors@R: c(person("Eli", "Zunder", email = "ezunder@virginia.edu", role = "cre"),
-  person("Melissa", "Ko", email = "mesako@stanford.edu", role = "aut"),
-  person("Corey", "Williams", email = "cmw6pa@virginia.edu", role = "aut"),
-  person("Sarah", "Goggin", email = "sg4dm@virginia.edu", role = "ctb"),
-  person("Rohit", "Rustagi", email = "rsr8gx@virginia.edu", role = "ctb"))
+  person("Melissa", "Ko", email = "melissa.e.ko@gmail.com", role = "aut"),
+  person("Rohit", "Rustagi", role = "ctb"))
 Description: An Implementation of FLOW-MAP Algorithm in R. It takes user-specified inputs
     for settings of a FLOW-MAP analysis and generates a FLOW-MAP graph from provided FCS files
     or dataframes. Results include graphml files for the FLOW-MAP graph as well as a graph resolved
@@ -14,7 +12,6 @@ Description: An Implementation of FLOW-MAP Algorithm in R. It takes user-specifi
     particular run. A Shiny GUI is also available to establish FLOW-MAP settings and begin a FLOW-MAP
     analysis. Please see the accompanying README.md file and our GitHub repo for more detailed
     instructions and examples.
-Maintainer: Corey Williams <cmw6pa@virginia.edu>
 URL: https://github.com/zunderlab/FLOWMAP/
 Depends:
     R (>= 3.3.0)
@@ -27,15 +24,20 @@ Imports:
     Rcpp (>= 0.12.6),
     igraph (>= 1.0.1),
     rhandsontable (>= 0.3.4),
-    rlang (>= 0.3.0),
     shiny (>= 1.1.0),
     shinyalert (>= 1.0),
     shinydashboard (>= 0.7.0),
     shinyFiles (>= 0.6.2),
     shinythemes (>= 1.1.1),
-    vite(>= 0.1)
-License: MIT + file LICENSE
+    dplyr (>= 0.8.3),
+    RANN (>= 2.6.1),
+    reshape2 (>= 1.4.3),
+    ggplot2 (>= 3.2.0),
+    ggfortify (>= 0.4.8),
+    data.table (>= 1.12.6),
+    umap (>= 0.2.3.1),
+    Matrix (>= 1.2)
+License: GNU General Public License v3 (GPL-3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
-biocViews:
+RoxygenNote: 7.1.0
