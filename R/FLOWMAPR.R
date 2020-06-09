@@ -13,12 +13,16 @@
 #'
 #' @name FLOWMAPR
 #' @docType package
-#' @import Rclusterpp
+#' @import flowCore
 #' @import robustbase
 #' @import igraph
 #' @import scaffold
-#' @import spade
 #' @import SDMTools
 #' @import rhandsontable
 #' @import shiny
+#' @import shinythemes
+#' @import shinyFiles
+#' @import shinydashboard
+#' @import shinyalert
+#' @import flowCore
 NULL

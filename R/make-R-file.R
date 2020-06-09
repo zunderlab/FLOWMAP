@@ -43,7 +43,7 @@ MakePrintClusteringVar <- function(clustering.var) {
 MakePrintFiles <- function(files) {
   if (length(files) == 1) {
     if (exists("globe.raw.FCS.dir")) {
-      files <- paste(.data$globe.raw.FCS.dir, files, sep = "/")
+      files <- paste(globe.raw.FCS.dir, files, sep = "/")
     }
     p.files <- MakePrintChar("files", files)
   } else if (length(files) > 1 & !is.list(files)) {
@@ -90,6 +90,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.save.folder <- MakePrintChar("save.folder", env$save.folder)
   p.minimum <- MakePrintNum("minimum", env$minimum)
   p.maximum <- MakePrintNum("maximum", env$maximum)
+  p.kneighbors <- MakePrintNum("k", env$k)
   p.distance.metric <- MakePrintChar("distance.metric", env$distance.metric)
   p.cluster.numbers <- MakePrintNum("cluster.numbers", env$cluster.numbers)
   p.var.annotate <- MakePrintVarAnnotate(env$var.annotate)
@@ -99,9 +100,10 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   p.set.seed.X <- "set.seed(seed.X)"
   p.name.sort = MakePrintNum("name.sort", env$name.sort)
   p.downsample = MakePrintNum("downsample", env$downsample)
+  p.graphOut = MakePrintChar("graph.out", env$graph.out)
   p.savePDFs = MakePrintNum("savePDFs", env$savePDFs)
   p.which.palette = MakePrintChar("which.palette", env$which.palette)
-  
+  print("1")
   if (env$downsample) {
     p.exclude.pctile <- MakePrintNum("exclude.pctile", env$exclude.pctile)
     p.target.pctile <- MakePrintNum("target.pctile", env$target.pctile)
@@ -119,6 +121,7 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   } else {
     p.subsamples <- MakePrintNum("subsamples", env$subsamples)
   }
+  print("2")
   if (env$downsample) {
     p.FLOWMAP <- "FLOWMAP(seed.X = seed.X, files = files, var.remove = var.remove,
     var.annotate = var.annotate, clustering.var = clustering.var,
@@ -142,18 +145,19 @@ MakeFLOWMAPRFile <- function(env = parent.frame()) {
   output <- file(output.file)
   p.setup1 <- "rm(list = ls())"
   p.setup2 <- "library(FLOWMAPR)"
+  print("3")
   if (env$downsample) {
     writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.minimum,
-                 p.maximum, p.distance.metric, p.cluster.numbers,
+                 p.maximum, p.kneighbors, p.distance.metric, p.cluster.numbers,
                  p.var.annotate, p.var.remove, p.clustering.var,
                  p.seed.X, p.set.seed.X, p.subsamples, p.name.sort,
-                 p.downsample, p.savePDFs, p.which.palette,
+                 p.downsample, p.savePDFs, p.which.palette, p.graphOut,
                  p.exclude.pctile, p.target.pctile, p.target.number,
                  p.target.percent, p.FLOWMAP), output)
   } else {
     writeLines(c(p.setup1, p.setup2, p.files, p.mode, p.save.folder, p.minimum,
-                 p.maximum, p.distance.metric, p.cluster.numbers,
-                 p.var.annotate, p.var.remove, p.clustering.var,
+                 p.maximum, p.kneighbors, p.distance.metric, p.cluster.numbers,
+                 p.var.annotate, p.var.remove, p.clustering.var, p.graphOut,
                  p.seed.X, p.set.seed.X, p.subsamples, p.name.sort,
                  p.downsample, p.savePDFs, p.which.palette, p.FLOWMAP), output)
   }
