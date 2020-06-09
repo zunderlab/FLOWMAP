@@ -1,7 +1,9 @@
-MakeOutFolder <- function(runtype) {
+
+MakeOutFolder <- function(runtype, maximum, minimum, k = "") {
   name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
   name <- gsub(":", ".", name, fixed = TRUE)
-  output.folder <- paste(name, "_", runtype, "_run", sep = "")
+  output.folder <- paste("max", maximum, "_k", k, name, runtype, "run", sep = "_")
+  print(output.folder)
   dir.create(output.folder)
   cat("output.folder is", output.folder, "\n")
   return (output.folder)
@@ -19,10 +21,9 @@ MakeOutFolder <- function(runtype) {
 #' the saved igraph graph object. The user need not include the ".graphml"
 #' file extension as that is automatically appended.
 #' @examples
-#' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE,
-#' multiple = FALSE)
+#' current.graph <- igraph::sample_k_regular(no.of.nodes = 10, k = 2, directed = FALSE, multiple = FALSE)
 #' file.name <- "Practice_Graph"
-#' \dontrun{ConvertToGraphML(current.graph, file.name)}
+#' ConvertToGraphML(current.graph, file.name)
 #' @export
 ConvertToGraphML <- function(output.graph, file.name) {
   cat("Converting graph to graphml file:", file.name, "\n")
@@ -32,7 +33,6 @@ ConvertToGraphML <- function(output.graph, file.name) {
   return(file.name)
 }
 
-#' @importFrom utils write.csv
 ExportClusterTables <- function(output.graph, file.name) {
   cat("Saving cluster tables to file:", file.name, "\n")
   file.name <- paste(Sys.Date(), file.name, gsub(":", ".", format(Sys.time(), "%X")), sep = "_")
@@ -77,12 +77,6 @@ ConvertOrigTime <- function(graph, orig.times) {
   return(fixed.graph)
 }
 
-#' @importFrom stats quantile
-#' @importFrom grDevices pdf
-#' @importFrom grDevices colorRampPalette
-#' @importFrom grDevices dev.off
-#' @importFrom graphics par
-#' @importFrom graphics legend
 ConvertToPDF <- function(graphml.file, scale = NULL,
                          which.palette = "bluered") {
   pctile.color <- c(0.02, 0.98)
@@ -92,7 +86,7 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
   pdf.width <- 100
   pdf.height <- 100
   graph <- read.graph(graphml.file, format = "graphml")
-  out.folder <- paste(basename(graphml.file), "_pdf", sep = "")
+  out.folder <- paste(basename(graphml.file), "pdf", sep = "_")
   cat("Making output folder:", out.folder, "\n")
   dir.create(out.folder)
   setwd(out.folder)
@@ -236,8 +230,6 @@ PrintPanel <- function(var.annotate) {
   return(panel)
 }
 
-#' @importFrom stats setNames
-#' @importFrom utils write.table
 PrintSummary <- function(env = parent.frame()) {
   summary <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("Variable:", "Value"))
   cat("Printing summary for FLOWMAPR run from FCS files.", "\n")
@@ -309,13 +301,13 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("project.name (descriptive name of project provided by user):",
                                         env$project.name)
   summary[(dim(summary)[1] + 1), ] <- c("mode (selected FLOW-MAP mode):", env$mode)
-  if (!is.null(.data$time.col.label)) {
+  if (!is.null(time.col.label)) {
     summary[(dim(summary)[1] + 1), ] <- c("time.col.label (channel label for timepoints, if relevant):",
                                           env$time.col.label)
   } else {
     summary[(dim(summary)[1] + 1), ] <- c("time.col.label (channel label for timepoints, if relevant):", "NULL")
   }
-  if (!is.null(.data$condition.col.label)) {
+  if (!is.null(condition.col.label)) {
     summary[(dim(summary)[1] + 1), ] <- c("condition.col.label (channel label for timepoints, if relevant):",
                                           env$condition.col.label)
   } else {
@@ -328,21 +320,17 @@ PrintSummaryfromDF <- function(env = parent.frame()) {
   summary[(dim(summary)[1] + 1), ] <- c("maximum (max number of edges):", env$maximum)
   summary[(dim(summary)[1] + 1), ] <- c("clustering (whether clustering was performed on cells from DF):",
                                         env$clustering)
-  if (!is.null(.data$clustering)) {
-    if (.data$clustering) {
-      summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers (number of clusters for all DF samples):",
-                                            env$cluster.numbers)
-    }
+  if (clustering) {
+    summary[(dim(summary)[1] + 1), ] <- c("cluster.numbers (number of clusters for all DF samples):",
+                                          env$cluster.numbers)
   }
   summary[(dim(summary)[1] + 1), ] <- c("seed.X (set seed value):", env$seed.X)
   summary[(dim(summary)[1] + 1), ] <- c("name.sort (files sorted alphanumerically by name in algorithm):",
                                         env$name.sort)
   summary[(dim(summary)[1] + 1), ] <- c("save.folder (directory where results were saved):", env$save.folder)
   summary[(dim(summary)[1] + 1), ] <- c("savePDFs (whether PDFs of FLOW-MAP graphs were generated):", env$savePDFs)
-  if (!is.null(.data$savePDFs)) {
-    if (.data$savePDFs) {
-      summary[(dim(summary)[1] + 1), ] <- c("which.palette (color of palette used in PDFs):", env$which.palette)
-    }
+  if (savePDFs) {
+    summary[(dim(summary)[1] + 1), ] <- c("which.palette (color of palette used in PDFs):", env$which.palette)
   }
   file.name <- gsub(":", ".", gsub(" ", "_", Sys.time(), fixed = TRUE), fixed = TRUE)
   file.name <- paste(file.name, "FLOW-MAPR_run_settings_summary", sep = "_")

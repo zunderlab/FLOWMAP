@@ -39,7 +39,7 @@ CheckModeSingle <- function(files) {
       fail.flag <- FALSE
       guide <- "FCS"
     }
-  } 
+  }
   return(c(fail.flag, guide))
 }
 
@@ -93,7 +93,7 @@ ParseTimes <- function(fcs.file.names, name.sort) {
     this.name <- unlist(strsplit(this.name, ""))
     this.name <- this.name[suppressWarnings(!is.na(as.numeric(this.name)))]
     if (length(this.name) > 1) {
-      this.name <- paste(this.name, collapse = "") 
+      this.name <- paste(this.name, collapse = "")
     }
     times <- c(times, this.name)
     rm(this.name)
@@ -171,9 +171,7 @@ ProcessConditions <- function(list.of.clean.FCS.files, fcs.file.names) {
 #' @return List mapping channel names (taken from the "name" field of a
 #' flowFrame) to alternative names from the flowFrame "desc" fields
 #' @examples
-#' \dontrun{ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs", 
-#' package = "FLOWMAPR"))}
-#' @importFrom flowCore description
+#' \dontrun{ConstructVarAnnotate(FCS.file.name = system.file("extdata/SingleFLOWMAP/d1.fcs",package = "FLOWMAPR"))}
 #' @export
 ConstructVarAnnotate <- function(FCS.file.name) {
   fcs.file <- read.FCS(FCS.file.name)
@@ -208,8 +206,6 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' variance is calculated within and between timepoints. The top varying markers are noted
 #' and tabulated, and the markers that consistently vary the most are selected.
 #'
-#' @importFrom stats median
-#' @importFrom stats var
 #' @param fcs.file.names A vector of full file paths to the FCS files to be used
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
 #' available options include \code{c("single", "multi", "one")}
@@ -219,13 +215,12 @@ ConstructVarAnnotate <- function(FCS.file.name) {
 #' @param top.num Numeric specifying the number of variables in the vector to be returned
 #' @return Vector naming channels that vary the most within and between FCS files
 #' @examples
-#' \dontrun{fcs.file.names <- c(system.file("extdata/SingleFLOWMAP/d1.fcs", package = "FLOWMAPR"), 
-#' system.file("extdata/SingleFLOWMAP/d2.fcs", package = "FLOWMAPR"))}
-#' \dontrun{var.annotate <- ConstructVarAnnotate[1]}
+#' fcs.file.names <- c("Desktop/1.fcs", "Desktop/2.fcs")
+#' var.annotate <- ConstructVarAnnotate[1]
 #' var.remove <- c("Channel3", "Channel4")
-#' 
-#' \dontrun{SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
-#' var.remove, top.num = 20)}
+#'
+#' SuggestClusteringVar(fcs.file.names, mode = "single", var.annotate,
+#' var.remove, top.num = 20)
 #' @export
 SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
                                  var.remove, top.num) {
@@ -252,11 +247,11 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
   } else {
     stop("User-specified mode not recognized!")
   }
-  
+
   if (ncol(combined.fcs.files) < top.num) {
     stop("Requesting more suggested clustering var than available in data!")
   }
-  
+
   all.var <- apply(combined.fcs.files, 2, var)
   if (mode == "one") {
     top.selected.var <- sort(all.var, decreasing = TRUE)[1:top.num]
@@ -309,7 +304,7 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
       cross.var <- apply(temp.combined, 2, var)
       var.cross.time <- rbind(var.cross.time, cross.var)
     }
-    
+
     all.vars.time <- c()
     for (i in 1:(nrow(var.over.time) - 1)) {
       all.vars.time <- rbind(all.vars.time, var.over.time[i, ])
@@ -336,8 +331,8 @@ SuggestClusteringVar <- function(fcs.file.names, mode, var.annotate,
 #' @param var.to.remove Vector of substrings to, default is set to \code{NULL}
 #' @return Vector naming channels suggested to be removed from downstream FLOWMAPR analysis
 #' @examples
-#' \dontrun{var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")}
-#' \dontrun{SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")}
+#' var.annotate <- ConstructVarAnnotate("Desktop/A.fcs")
+#' SuggestVarRemove(var.annotate, var.to.remove = "Blank_Channel")
 #' @export
 SuggestVarRemove <- function(var.annotate, var.to.remove = NULL) {
   suggested.var.remove <- c()

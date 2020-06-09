@@ -5,9 +5,8 @@
 #' as well as a guide for how to choose the best settings for your analysis, go to
 #' our GitHub repo \url{https://github.com/zunderlab/FLOWMAP/}.
 #'
-#' @importFrom rlang .data
 #' @param mode FLOWMAPR mode to use in analysis based on starting input,
-#' available options include \code{c("single", "multi", "one", "one-special")}
+#' available options include \code{c("single", "multi", "one", "static-multi")}
 #' @param files File paths for FCS files to be used or a folder containing
 #' the FCS files to be used in analysis
 #' @param var.remove Vector naming channels to be removed from all downstream analysis, default
@@ -32,8 +31,6 @@
 #' subsample from each FCS file
 #' @param name.sort Logical specifying whether to sort FCS file path names alphanumerically or use
 #' them in the order supplied by the user
-#' @param per Percentile of edge length in fully connected graph that determines hypersphere radius
-#' in density calculation
 #' @param downsample Logical specifying whether to use SPADE density-dependent downsampling
 #' @param seed.X Numeric value for the seed to set for reproducible FLOWMAPR runs
 #' @param savePDFs Logical specifying whether to generate PDFs for the resolved graph with
@@ -53,17 +50,21 @@
 #' @param target.percent Optional variable, numeric value for the downsampling_target_percent variable
 #' used as described in the SPADE driver function, see the documentation for the spade package at
 #' \url{https://github.com/nolanlab/spade}
-#' @param ... flexibility to add more parameters
+#' @param graph.out TBD
+#' @param umap.n.neighbors TBD
+#' @param umap.n.components TBD
 #' @return the force-directed layout resolved igraph graph object
 #' @export
-FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, var.remove = c(),
-                    var.annotate = NULL, clustering.var, cluster.numbers = 100,
-                    cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5,
-                    save.folder = getwd(), subsamples = 200, name.sort = TRUE, per = 10,
-                    downsample = FALSE, seed.X = 1, savePDFs = TRUE,
+FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
+                    var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
+                    cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5, 
+                    save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+                    downsample = FALSE, seed.X = 1, savePDFs = TRUE, graph.out = c("ForceDirected"),
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
-                    target.number = NULL, target.percent = NULL, ...) {
-  FLOWMAPenv <- new.env(parent = emptyenv())
+                    target.number = NULL, target.percent = NULL, k = 10, umap.n.neighbors = 10, 
+                    umap.n.components = 2, ...) {
+                    #umap_min_dist = 0.05, umap_n_epochs = 200, umap_metric = "euclidean", ...) {
+
   set.seed(seed.X)
   cat("Seed set to", seed.X, "\n")
   cat("Mode set to", mode, "\n")
@@ -77,6 +78,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                             target.number, target.percent)
   }
   setwd(save.folder)
+#SINGLE====
   if (mode == "single") {
     check <- CheckModeSingle(files)
     cat("check", check, "\n")
@@ -84,8 +86,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
       stop("Unknown 'files' format provided for specified mode!")
     }
     runtype <- "SingleFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
+    
     PrintSummary(env = parent.frame())
     if (check[2] == "FCS") {
       fcs.file.names <- files
@@ -97,7 +101,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.name <- fcs.file.names[1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -112,12 +116,36 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.clusters <- ClusterFCS(fcs.files = fcs.files, clustering.var = clustering.var,
                                 numcluster = cluster.numbers, distance.metric = distance.metric,
                                 cluster.mode = cluster.mode)
-    cat("Upsampling all clusters to reflect Counts of entire file", "\n")
-    file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    results <- BuildFLOWMAP(FLOWMAP.clusters = file.clusters, per = per, min = minimum,
-                            max = maximum, distance.metric = distance.metric,
-                            clustering.var = clustering.var)
+    global.file.clusters1 <<- file.clusters
+    if (cluster.mode != "none") {
+      cat("Upsampling all clusters to reflect Counts of entire file", "\n")
+      file.clusters <- Upsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
+    }
+
+    #Build FLOWMAP single====
+    results <- BuildFLOWMAPkNN(FLOWMAP.clusters = file.clusters, k = k, min = minimum,
+                              max = maximum, distance.metric = distance.metric,
+                              clustering.var = clustering.var)
+    
     graph <- results$output.graph
+    knn.out <- results$knn.out
+    
+    #Write R file
+    MakeFLOWMAPRFile(env = parent.frame())
+    #Make graphml file
+    file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
+    ConvertToGraphML(output.graph = graph, file.name = file.name)
+    #Make layout output ====
+    if ("ForceDirected" %in% graph.out) {
+      graph.xy <- RunForceDirectedLayout(graph=graph, mode=mode, file.name=file.name, 
+                                         orig.times=orig.times, which.palette=which.palette)
+    }
+    if ("UMAP"  %in% graph.out) {
+      RunUMAPlayout(knn.in = knn.out, graph = graph,  file.clusters=file.clusters, umap_n_components=2, k=k,
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+    }
+
+#MULTI====
   } else if (mode == "multi") {
     check <- CheckModeMulti(files)
     cat("check", check, "\n")
@@ -125,7 +153,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
       stop("Unknown 'files' format provided for specified mode!")
     }
     runtype <- "MultiFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (check[2] == "list") {
@@ -139,10 +167,10 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     file.name <- fcs.file.names[[1]][1]
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
-      cat("Downsampling all files using SPADE downsampling", "\n")
+      cat("Downsampling all files using density-based downsampling", "\n")
       fcs.files <- MultiDownsampleFCS(fcs.file.names, clustering.var, channel.annotate = var.annotate,
                                       channel.remove = var.remove, exclude.pctile = exclude.pctile,
                                       target.pctile = target.pctile, target.number = target.number,
@@ -154,13 +182,35 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     fcs.files.conversion <- ConvertNumericLabel(fcs.files)
     fixed.fcs.files <- fcs.files.conversion$fixed.list.FCS.files
     label.key <- fcs.files.conversion$label.key
+    global.label.key <<- label.key
     file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
                                      distance.metric = distance.metric, cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    graph <- BuildMultiFLOWMAP(file.clusters, per = per, min = minimum,
-                               max = maximum, distance.metric = distance.metric,
-                               label.key = label.key, clustering.var = clustering.var)
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, label.key)
+    #Build FLOWMAP multi====
+    results <- BuildMultiFLOWMAPkNN(remodel.FLOWMAP.clusters, k = k, min = minimum,
+                                 max = maximum, distance.metric = distance.metric,
+                                 label.key = label.key, clustering.var = clustering.var)
+    graph <- results$output.graph
+    knn.out <- results$knn.out
+    
+    #Write R file
+    MakeFLOWMAPRFile(env = parent.frame())
+    #Make graphml file
+    file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
+    ConvertToGraphML(output.graph = graph, file.name = file.name)
+    #Make layout output ====
+    if ("ForceDirected" %in% graph.out) {
+      graph.xy <- RunForceDirectedLayout(graph=graph, mode=mode, file.name=file.name, 
+                                         orig.times=orig.times, which.palette=which.palette)
+    }
+    if ("UMAP"  %in% graph.out) {
+      RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=remodel.FLOWMAP.clusters, umap_n_components=2, k=k,
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+    }
+    
+#ONE====
   } else if (mode == "one") {
     check <- CheckModeOne(files)
     cat("check", check, "\n")
@@ -175,12 +225,12 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     }
     file.name <- fcs.file.names
     runtype <- "OneTimepoint"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -197,16 +247,34 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
                                 cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- Upsample(file.name, file.clusters, fcs.file, var.remove, var.annotate, clustering.var)
-    first.results <- BuildFirstFLOWMAP(FLOWMAP.clusters = file.clusters,
-                                       per = per, min = minimum, max = maximum,
-                                       distance.metric = distance.metric,
-                                       clustering.var = clustering.var)
-    output.graph <- first.results$output.graph
+    ##Build FLOWMAP one====
+    results <- BuildFirstFLOWMAPkNN(FLOWMAP.clusters = file.clusters, k = k, min = minimum,
+                               max = maximum, distance.metric = distance.metric,
+                               clustering.var = clustering.var)
+    output.graph <- results$output.graph
     output.graph <- AnnotateGraph(output.graph = output.graph,
                                   FLOWMAP.clusters = file.clusters)
     graph <- output.graph
-  } else if (mode == "one-special") {
-    check <- CheckModeSingle(files) # one-special mode will look the same as single
+    knn.out <- list("indexes" = results$indexes, "distances" = results$distances)
+    
+    #Write R file
+    MakeFLOWMAPRFile(env = parent.frame())
+    #Make graphml file
+    file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
+    ConvertToGraphML(output.graph = graph, file.name = file.name)
+    #Make layout output ====
+    if ("ForceDirected" %in% graph.out) {
+      graph.xy <- RunForceDirectedLayout(graph=graph, mode=mode, file.name=file.name, 
+                                         orig.times=orig.times, which.palette=which.palette)
+    }
+    if ("UMAP"  %in% graph.out) {
+      RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=file.clusters, umap_n_components=2, k=k,
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+    }
+
+#STATIC-MULTI====
+  } else if (mode == "static-multi") {
+    check <- CheckModeSingle(files) # static-multi mode will look the same as single
     cat("check", check, "\n")
     if (check[1]) {
       stop("Unknown 'files' format provided for specified mode!")
@@ -219,12 +287,12 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     }
     file.name <- fcs.file.names[1]
     runtype <- "OneTimepoint-MultipleConditions"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     PrintSummary(env = parent.frame())
     if (is.null(var.annotate)) {
       var.annotate <- ConstructVarAnnotate(file.name)
-      assign("var.annotate", var.annotate, envir = FLOWMAPenv)
+      assign("var.annotate", var.annotate, envir = .GlobalEnv)
     }
     if (downsample) {
       cat("Downsampling all files using SPADE downsampling", "\n")
@@ -251,33 +319,32 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "one-special"), files, va
     temp.name.list[[1]] <- fcs.file.names
     file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
     remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters)
-    output.graph <- BuildFirstMultiFLOWMAP(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
-                                           per = per, min = minimum, max = maximum,
-                                           distance.metric = distance.metric,
-                                           clustering.var = clustering.var)
+    ##Build FLOWMAP one-special ====
+    results <- BuildFirstMultiFLOWMAPkNN(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
+                                             k = maximum, min = minimum, max = maximum,
+                                             distance.metric = distance.metric,
+                                             clustering.var = clustering.var)
+    output.graph <- results$output.graph
     output.graph <- AnnotateSpecialGraph(output.graph, remodel.FLOWMAP.clusters,
                                          label.key.special)
     graph <- output.graph
+    knn.out <- list("indexes" = results$indexes, "distances" = results$distances)
+    
+    #Write R file
+    MakeFLOWMAPRFile(env = parent.frame())
+    #Make graphml file
+    file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
+    ConvertToGraphML(output.graph = graph, file.name = file.name)
+    #Make layout output ====
+    if ("ForceDirected" %in% graph.out) {
+      graph.xy <- RunForceDirectedLayout(graph=graph, mode=mode, file.name=file.name, 
+                                         orig.times=orig.times, which.palette=which.palette)
+    }
+    if ("UMAP"  %in% graph.out) {
+      RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=file.clusters, umap_n_components=2, k=k,
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+    }
   } else {
     stop("Unknown mode!")
   }
-  file.name <- paste(unlist(strsplit(basename(file.name), "\\."))[1], "FLOW-MAP", sep = "_")
-  ConvertToGraphML(output.graph = graph, file.name = file.name)
-  graph.xy <- ForceDirectedXY(graph = graph)
-  file.name.xy <- paste(file.name, "xy", sep = "_")
-  final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
-  fixed.file.name <- paste(file.name.xy, "orig_time", sep = "_")
-  if (mode != "one" && mode != "one-special") {
-    fixed.graph <- ConvertOrigTime(graph.xy, orig.times)
-  } else {
-    fixed.graph <- graph.xy
-  }
-  fixed.file <- ConvertToGraphML(output.graph = fixed.graph, file.name = fixed.file.name)
-  ExportClusterTables(output.graph = fixed.graph, file.name = fixed.file.name)
-  MakeFLOWMAPRFile(env = parent.frame())
-  if (savePDFs) {
-    cat("Printing pdfs.", "\n")
-    ConvertToPDF(graphml.file = fixed.file, which.palette = which.palette)
-  }
-  return(graph.xy)
-}
+}#end FLOWMAP function

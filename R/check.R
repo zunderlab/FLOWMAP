@@ -35,7 +35,7 @@ CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
     }
   }
   if (!is.null(cluster.mode)) {
-    if (cluster.mode != "hclust" && cluster.mode != "kmeans") {
+    if (cluster.mode != "hclust" && cluster.mode != "kmeans"&& cluster.mode != "none") {
       stop("cluster.mode must 'hclust' and 'kmeans'!")
     } else if (cluster.mode == "kmeans" && distance.metric == "manhattan") {
       stop("cluster.mode 'kmeans' only works with distance.metric 'euclidean'!")

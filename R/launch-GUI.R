@@ -13,9 +13,9 @@
 #' here: \url{https://opensource.org/licenses/Artistic-2.0}.
 #'
 #' @examples
-#' \dontrun{LaunchGUI()}
+#' LaunchGUI()
 #' @export
 LaunchGUI <- function() {
-  requireNamespace("shiny")
+  require(shiny)
   runApp(appDir = file.path(system.file(package = "FLOWMAPR"), "application"))
 }

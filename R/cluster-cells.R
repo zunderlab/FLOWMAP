@@ -11,7 +11,7 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
   return (object)
 }
 
-RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
+RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters, label.key) {
   # take FLOWMAP of conditions with timeseries and make into one timeseries
   # combine FLOWMAP conditions
   full.clusters <- data.frame()
@@ -39,6 +39,7 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters) {
     table.breaks <- c(table.breaks, sum(table.lengths))
     full.clusters <- rbind(full.clusters, temp.medians)
   }
+  full.clusters <- ConvertCharacterLabel(full.clusters, label.key) ###########################################################
   remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
                                                cluster.medians, cluster.counts, cell.assgn)
   return(remodeled.FLOWMAP.clusters)
@@ -62,6 +63,8 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
   }
   for (i in 1:length(fcs.files)) {
     current.file <- fcs.files[[i]]
+    global.current.file <<- current.file
+    global.clustering.var <<- clustering.var
     cat("Clustering data from file", i, "\n")
     cluster.counts[[i]] <- data.frame()
     cluster.medians[[i]] <- data.frame()
@@ -74,6 +77,11 @@ ClusterFCS <- function(fcs.files, clustering.var, numcluster,
     } else if (cluster.mode == "kmeans") {
       cluster.results <- KMeansClustering(current.file = current.file, tmp.FCS.for.cluster = tmp.FCS.for.cluster,
                                           distance.metric = distance.metric, numcluster = numcluster[i])
+    } else if (cluster.mode == "none") {
+      new.counts <- data.frame()
+      cluster.results <- list(tmp.cell.assgn = data.frame(1:dim(tmp.FCS.for.cluster)[1]),
+                              new.medians = tmp.FCS.for.cluster,
+                              new.counts = data.frame(rep.int(1,dim(tmp.FCS.for.cluster)[1])))
     } else {
       stop("Unrecognized clustering method!")
     }
@@ -128,16 +136,13 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster,
   return(list.of.FLOWMAP.clusters)
 }
 
-#' @importFrom stats cutree
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
-    method <- "ward"
+    method <- "ward.D2"###or "ward.D" ??
   } else {
     method <- "single"
   }
-  ####change to use stats hclust to remove Rclusterpp dependency####
   FCS.clusters <- stats::hclust(dist(tmp.FCS.for.cluster, method = distance.metric), method = method)
-  ####change to use stats hclust to remove Rclusterpp dependency####
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
   new.counts <- data.frame()
   new.medians <- data.frame()
@@ -175,7 +180,7 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
               new.counts = new.counts))
 }
 
-KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
+KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "euclidean", numcluster) {
   if (distance.metric == "euclidean") {
     FCS.clusters <- kmeans(tmp.FCS.for.cluster, numcluster)
   } else {
@@ -217,8 +222,7 @@ KMeansClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
               new.counts = new.counts))
 }
 
-#' @importFrom stats kmeans
-#' @importFrom stats complete.cases
+
 DensClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
     FCS.clusters <- kmeans(tmp.FCS.for.cluster, numcluster)
@@ -284,12 +288,11 @@ Upsample <- function(file.names, FLOWMAP.clusters, fcs.files,
     #then record which cluster it came from
     #data = cluster median marker values ("2:ncol(cluster.medians)" because don't want to include cluster id column)
     #query = data to upsample
-    #k=1 because assigning to top nearest neighbor
+    #k=1 because assigning to top nearest neighboor
     all.cells.assign <- RANN::nn2(cluster.medians[,2:ncol(cluster.medians)], original.fcs.file, k=1)
     #update cluster counts based on all cluster assigns
     fixed.counts <- table(all.cells.assign[["nn.idx"]])
     ####added/modified to remove spade dependency####
-    fixed.counts <- table(all.cells.assign)
     fixed.counts <- as.data.frame(as.matrix(fixed.counts))
     colnames(fixed.counts) <- c("Counts")
     fixed.FLOWMAP.clusters$cluster.counts[[f]] <- fixed.counts
