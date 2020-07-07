@@ -16,6 +16,7 @@ ForceDirectedXY <- function(graph) {
 }
 
 RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, which.palette=NULL) {
+  global.graph.pre.ml <<- graph
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
@@ -40,7 +41,7 @@ RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, whic
 #' @import ggplot2
 #' @import ggfortify
 RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.name=file.name, 
-                          umap_n_neighbors, k, umap_n_components) {
+                          umap_n_neighbors, k, umap_n_components, mode) {
 
   global.file.clusters <<- file.clusters
   # #Set up UMAP settings
@@ -101,10 +102,6 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     cluster.size <- (cluster.size / max(cluster.size))*(4 - 1) + 1 ## normalize to smaller range to make reasonably-sized points
     umap.layout$cluster_size <- cluster.size
     
-    # Extract "Condition"
-    condition.chr.id <- igraph::get.vertex.attribute(graph, "Condition", index = V(graph))
-    umap.layout$condition.chr.id <- as.factor(condition.chr.id)
-    
     global.umap.layout <<- umap.layout
     
     #Plot UMAP
@@ -122,17 +119,23 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
                                      panel.background = ggplot2::element_blank(),
                                      axis.line = ggplot2::element_line(colour = "black")),
                     height = PLOT.HEIGHT, width = PLOT.WIDTH)
-    # Plot colored by condition
-    ggplot2::ggsave(paste0("umap_layout_CONDITION",".png"),
-                    plot = ggplot2::ggplot(umap.layout,
-                                           ggplot2::aes_string(x="umap_x",y="umap_y",color="condition.chr.id")) + #factor()
-                      ggplot2::geom_point(size = umap.layout$cluster_size*0.2, alpha = 0.4) +
-                      ggplot2::geom_jitter() +
-                      ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
-                                     panel.grid.minor = ggplot2::element_blank(),
-                                     panel.background = ggplot2::element_blank(),
-                                     axis.line = ggplot2::element_line(colour = "black")),
-                    height = PLOT.HEIGHT, width = PLOT.WIDTH)
+
+    if (mode %in% c('multi', 'static-multi')) {
+      # Extract "Condition"
+      condition.chr.id <- igraph::get.vertex.attribute(graph, "Condition", index = V(graph))
+      umap.layout$condition.chr.id <- as.factor(condition.chr.id)
+      # Plot colored by condition
+      ggplot2::ggsave(paste0("umap_layout_CONDITION",".png"),
+                      plot = ggplot2::ggplot(umap.layout,
+                                             ggplot2::aes_string(x="umap_x",y="umap_y",color="condition.chr.id")) + #factor()
+                        ggplot2::geom_point(size = umap.layout$cluster_size*0.2, alpha = 0.4) +
+                        ggplot2::geom_jitter() +
+                        ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                                       panel.grid.minor = ggplot2::element_blank(),
+                                       panel.background = ggplot2::element_blank(),
+                                       axis.line = ggplot2::element_line(colour = "black")),
+                      height = PLOT.HEIGHT, width = PLOT.WIDTH)
+    }
     
     # Generate plots for clustering markers expression
     #First, make data frame out of cluster.medians
@@ -163,6 +166,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
             args=list(grobs=by(umap.layout, umap.layout$variable, basic_plot), 
                       nrow = round((length(clusters.exprs)/5)+0.49)))
     dev.off() # Close the file
+    # #make individual plots per marker
     # for (marker in colnames(clusters.exprs)) {
     #   print(marker)
     #   umap.layout.temp <- data.frame(cbind(umap.layout, clusters.exprs[marker]))

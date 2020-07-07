@@ -142,7 +142,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     }
     if ("UMAP"  %in% graph.out) {
       RunUMAPlayout(knn.in = knn.out, graph = graph,  file.clusters=file.clusters, umap_n_components=2, k=k,
-                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors, mode=mode)
     }
 
 #MULTI====
@@ -207,7 +207,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     }
     if ("UMAP"  %in% graph.out) {
       RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=remodel.FLOWMAP.clusters, umap_n_components=2, k=k,
-                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors, mode=mode)
     }
     
 #ONE====
@@ -269,7 +269,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     }
     if ("UMAP"  %in% graph.out) {
       RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=file.clusters, umap_n_components=2, k=k,
-                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors, mode=mode)
     }
 
 #STATIC-MULTI====
@@ -342,7 +342,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     }
     if ("UMAP"  %in% graph.out) {
       RunUMAPlayout(knn.in = knn.out, graph = graph, file.clusters=file.clusters, umap_n_components=2, k=k,
-                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors)
+                    clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors, mode=mode)
     }
   } else {
     stop("Unknown mode!")
