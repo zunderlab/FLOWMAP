@@ -125,18 +125,19 @@ FirstConnectSubgraphs <- function(output.graph, edge.list, offset,
 ConnectSubgraphs <- function(output.graph, edge.list, offset,
                              table.breaks, n, distance.metric, clusters) {
   print("in connected")
-  ## Make graph from edge.list
+  ## Make graph from edge.list (this is to force extra connection to be within self or neighboring time point)
+  #because edgelist only contains current round, whil graph has accumulation of all prior rounds
   time.prox.graph <- graph.empty()
-  time.prox.graph <- graph_from_edgelist(edge.list[,1:2], directed = FALSE)
+  time.prox.graph <- graph_from_edgelist(as.matrix(edge.list[,1:2]), directed = FALSE)
   E(time.prox.graph)$weight <- edge.list[,3]
   time.prox.graph <- set.vertex.attribute(time.prox.graph,'name',index=V(time.prox.graph),as.character(offset:table.breaks[n + 2]))
 
   ## Identify subgraphs of density-based nearest neighbor graph
   subgraphs.ls <- decompose.graph(time.prox.graph)
-
+  global.subgraph.ls.pre <<- subgraphs.ls
   ## Set index for while loop
   y <- 0
-
+  to.add.df <- NA #WORKAROUND FOR WHEN WHILE LOOP IS ENTERED BUT GRAPH IS ACTUALLY CONNECTED
   while (length(subgraphs.ls) >= 2) {
     y <- y + 1
     print(y)
@@ -189,7 +190,7 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
         inter.sub.nns.df <- inter.sub.nns.df[order(inter.sub.nns.df$Distance), ]
         to.add.df <- rbind(to.add.df, inter.sub.nns.df[1,])
 
-      }
+      }#for loop
       ## Add new edges and rebuild full graph
       #TODO make this and following three sections into a function, repeated below
       output.graph.update <- graph.empty()
@@ -218,36 +219,41 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
 
       ## Test for connectedness of new graph
       subgraphs.ls <- decompose.graph(output.graph.update)
+      global.subgraph.ls.inner <<- subgraphs.ls
       subgraphs.el.ls <- list()
       for (ind in 1:length(subgraphs.ls)) {
         subgraphs.el.ls[[ind]] <- get.edgelist(subgraphs.ls[[ind]])
       }
     }#if
-    else { break }
+    else { 
+      break }
   }#while
-  #TODO <-make this and following three sections into a function, repeated above <OR JUST REMOVE THIS SECTION?>
-  output.graph.update <- graph.empty()
-  og.el <- get.edgelist(output.graph)
-  to.add.mat <- as.matrix(data.frame(lapply(data.frame(to.add.df),
-                                            function(x) as.character(x))))
-  vertices.edges <- rbind(og.el[,1:2], to.add.mat[,1:2])
-  output.graph.update <- graph_from_edgelist(vertices.edges, directed = FALSE)
-
-  ## Add edge weights to graph
-  ogw.df <- data.frame()
-  ogw.df <- data.frame(E(output.graph)$weight)
-  ta.df <- data.frame(to.add.df[,3])
-  colnames(ogw.df)[1] <- "weight"
-  colnames(ta.df)[1] <- "weight"
-  ogw.ta.df <- data.frame(rbind(ogw.df, ta.df))
-  E(output.graph.update)$weight <- ogw.ta.df[,1]
-
-  ##Add vertex names
-  V(output.graph.update)$name <- 1:length(V(output.graph.update))
-
+  if (!is.na(to.add.df)) { #WORKAROUND FOR WHEN WHILE LOOP IS ENTERED BUT GRAPH IS ACTUALLY CONNECTED
+    ## This section adds new edges to full graph
+    output.graph.update <- graph.empty()
+    og.el <- get.edgelist(output.graph)
+    to.add.mat <- as.matrix(data.frame(lapply(data.frame(to.add.df),
+                                              function(x) as.character(x))))
+    vertices.edges <- rbind(og.el[,1:2], to.add.mat[,1:2]) #combine original edges in graph with new edges added here
+    output.graph.update <- graph_from_edgelist(vertices.edges, directed = FALSE)
+    
+    ## Add corresponding new edge weights to full graph
+    ogw.df <- data.frame()
+    ogw.df <- data.frame(E(output.graph)$weight)
+    ta.df <- data.frame(to.add.df[,3])
+    colnames(ogw.df)[1] <- "weight"
+    colnames(ta.df)[1] <- "weight"
+    ogw.ta.df <- data.frame(rbind(ogw.df, ta.df)) #combine original weights in graph with new weights added here
+    E(output.graph.update)$weight <- ogw.ta.df[,1]
+    
+    ##Add vertex names
+    V(output.graph.update)$name <- 1:length(V(output.graph.update))
+    
+    output.graph <- output.graph.update
+  }
   ##return edge.list and output.graph as results
   colnames(edge.list) <- c("row.inds", "col.inds", "values")
-  results <- list('output.graph' = output.graph.update, 'edgelist.with.distances' = edge.list)
+  results <- list('output.graph' = output.graph, 'edgelist.with.distances' = edge.list)
   return(results)
 
 }
@@ -363,6 +369,8 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
   
   ## Test whether graph is connected, connect by kNN if not
   if (!is_connected(output.graph)) {
+    global.edgelist.save.disconnect <<- edgelist.save
+    global.graph.disconnect <<- edgelist.save
     print("Graph has disconnected components!")
     if (offset == 0) {
       results <- FirstConnectSubgraphs(output.graph = output.graph,
