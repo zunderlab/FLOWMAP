@@ -144,7 +144,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     clusters.exprs <- file.clusters$full.clusters[,which(colnames(file.clusters$full.clusters) != 'Condition')]
     #clusters.exprs <- igraph::get.vertex.attribute(graph, index = V(graph))
     umap.layout <- data.frame(cbind(umap.layout, clusters.exprs))
-    umap.layout <- reshape2::melt(umap.layout, id.vars = c("umap_x","umap_y","file_var", "cluster_size", "condition.chr.id"), measure.vars = colnames(data.frame(clusters.exprs)))
+    umap.layout <- reshape2::melt(umap.layout, id.vars = c("umap_x","umap_y","file_var", "cluster_size"), measure.vars = colnames(data.frame(clusters.exprs)))
     
     basic_plot <- function(umap.layout) {
       ggplot2::ggplot(umap.layout,ggplot2::aes_string(x="umap_x",y="umap_y",color="value")) + #factor()
