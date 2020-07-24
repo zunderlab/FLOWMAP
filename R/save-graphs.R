@@ -204,10 +204,10 @@ ConvertToPDF <- function(graphml.file, scale = NULL,
            vertex.label = NA, edge.arrow.size = 0.25, edge.arrow.width = 1,
            asp = graph.aspect)
       if (grepl(name, pattern = "Time")) {
-        legend(0.875, 1.25, legend = unique(attribute),
+        legend(0.875, 1.0, legend = unique(attribute),
                fill = color.scale, cex = 10)
       } else {
-        legend(0.8, 1.25, legend = unique(attribute),
+        legend(0.8, 1.0, legend = unique(attribute),
                fill = color.scale, cex = 10)
       }
       dev.off()
