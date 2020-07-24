@@ -101,6 +101,7 @@ ParseTimes <- function(fcs.file.names, name.sort) {
   if (name.sort) {
     times <- times[order(as.numeric(times))]
   }
+  print(paste0("Timepoints: ", times))
   return(times)
 }
 
