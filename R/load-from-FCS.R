@@ -100,8 +100,8 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   clean.fcs.files <- list()
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
-    subsample.new <- rep(subsamples, times = length(fcs.file.names))
-    subsamples <- subsample.new
+    # subsample.new <- rep(subsamples, times = length(fcs.file.names))
+    # subsamples <- subsample.new
   }
   for (i in 1:length(fcs.file.names)) {
     current.file <- tail(strsplit(fcs.file.names[i], "/")[[1]], n = 1)
@@ -113,9 +113,11 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
       print(nrow(fcs.file))
     } else {
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
-      fcs.file <- read.FCS(fcs.file.names[i], which.lines = subsamples[i])
+      fcs.file <- read.FCS(fcs.file.names[i]) #, which.lines = subsamples[i] #THIS DOES JUST PICK FIRST ONES SUBSAMPLING
       fcs.file <- as.data.frame(exprs(fcs.file))
-      global.fcs.file <<- fcs.file
+      subsample.ids <- runif(subsamples, min=1, max=nrow(fcs.file))
+      fcs.file <- fcs.file[subsample.ids,]
+      rownames(fcs.file) <- c(1:nrow(fcs.file))
     }
     # rename variables with protein marker measured instead of metal channel
     cat("Fixing channel names from:", current.file, "\n")
