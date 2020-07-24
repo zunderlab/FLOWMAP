@@ -36,9 +36,9 @@ FirstConnectSubgraphs <- function(output.graph, edge.list, offset,
   ## Identify subgraphs of density-based nearest neighbor graph
   subgraphs.ls <- decompose.graph(output.graph)
   ## Change row names of cluster medians df to have correct indexing
-  rownames(clusters) <- c(offset:table.breaks[n + 2])
+  #rownames(clusters) <- c(offset:table.breaks[n + 2])
   ## Make edge.list a df and change colnames
-  edge.list <- as.data.frame(edgelist.save)
+  edge.list <- as.data.frame(edge.list)
   colnames(edge.list) <- c("Vertex1", "Vertex2", "Distance")
   ## Set lists and ind for while loop
   y <- 0
