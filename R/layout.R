@@ -42,7 +42,6 @@ RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, whic
 RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.name=file.name, 
                           umap_n_neighbors, k, umap_n_components) {
 
-  global.file.clusters <<- file.clusters
   # #Set up UMAP settings
   # umap.settings <- umap::umap.defaults
   # umap.settings$verbose <- TRUE
@@ -67,7 +66,6 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
   knn[['idx']] <- as.matrix(knn.in$indexes[,1:umap_n_neighbors]) #make sure ordered
   knn[['dist']] <- as.matrix(knn.in$distances[,1:umap_n_neighbors]) #make sure ordered
   umap.out <- uwot::umap(file.clusters$full.clusters, ret_nn = TRUE, nn_method = knn, verbose=TRUE, n_components=umap_n_components)
-  global.umap.out <<- umap.out
   cat("ran UMAP, outputting files\n")
 
   ## Add file var to umap layout
@@ -104,8 +102,6 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     # Extract "Condition"
     condition.chr.id <- igraph::get.vertex.attribute(graph, "Condition", index = V(graph))
     umap.layout$condition.chr.id <- as.factor(condition.chr.id)
-    
-    global.umap.layout <<- umap.layout
     
     #Plot UMAP
     PLOT.HEIGHT <- 7
