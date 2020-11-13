@@ -104,8 +104,8 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     umap.layout$condition.chr.id <- as.factor(condition.chr.id)
     
     #Plot UMAP
-    PLOT.HEIGHT <- 7
-    PLOT.WIDTH <- 7
+    PLOT.HEIGHT <- 10
+    PLOT.WIDTH <- 10
 
     # Plot colored by time point
     ggplot2::ggsave(paste0("umap_layout_TIME",".png"),
@@ -141,7 +141,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     
     basic_plot <- function(umap.layout) {
       ggplot2::ggplot(umap.layout,ggplot2::aes_string(x="umap_x",y="umap_y",color="value")) + #factor()
-        ggplot2::geom_point(size = umap.layout$cluster_size/15, alpha = 0.4) +
+        ggplot2::geom_point(size = umap.layout$cluster_size/15, alpha = 0.2) +
         ggplot2::scale_color_viridis_c() +
         ggplot2::ggtitle(umap.layout$variable) +
         #ggplot2::labs(color = paste0(variable,"\n")) + #umap.layout$
