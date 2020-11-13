@@ -47,10 +47,13 @@ FLOWMAPR package depends on several packages, which can be installed using the b
 ```
 install.packages("igraph")
 install.packages("robustbase")
-install_github("cran/SDMTools") 
-install_github("ParkerICI/vite")
-source("http://bioconductor.org/biocLite.R")
-biocLite("flowCore")
+
+devtools::install_github("cran/SDMTools") 
+devtools::install_github("ParkerICI/vite")
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("flowCore")
 ```
 
 The GUI has package dependencies for multiple Shiny-related packages and Rhandsontable. Install these packages with:
@@ -62,15 +65,13 @@ install.packages("shinyFiles")
 install.packages("shinydashboard")
 install.packages("shinyalert")
 
-library(devtools)
-install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-project.org")
+devtools::install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-project.org")
 ```
 
 Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
 
 ```
-install_github("nolanlab/scaffold")
-
+devtools::install_github("nolanlab/scaffold")
 ```
 
 <a name="install"></a>
