@@ -88,10 +88,9 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     colnames(umap.out$embedding) <- c("umap_x","umap_y")
     data.table::fwrite(umap.out$embedding,file = "UMAP_layout.csv",row.names = FALSE,col.names = TRUE, sep = ",") #uwot package
     
-    print(umap.out$embedding[1:10, 1:10])
     #Also write file with cluster expression per marker, timepoint, and condition info
-    set_vertex_attr(graph=graph, name="x", index = V(graph), value=umap.out$embedding[,umap_x])
-    set_vertex_attr(graph=graph, name="y", index = V(graph), value=umap.out$embedding[,umap_y])
+    #set_vertex_attr(graph=graph, name="x", index = V(graph), value=umap.out$embedding[,umap_x])
+    #set_vertex_attr(graph=graph, name="y", index = V(graph), value=umap.out$embedding[,umap_y])
     ExportClusterTables(output.graph = graph, file.name = fixed.file.name)
     
     print("Generating 2D layouts colored by cluster") 
