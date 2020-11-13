@@ -111,7 +111,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     ggplot2::ggsave(paste0("umap_layout_TIME",".png"),
                     plot = ggplot2::ggplot(umap.layout,
                                            ggplot2::aes_string(x="umap_x",y="umap_y",color="file_var")) + #factor()
-                      ggplot2::geom_point(size = umap.layout$cluster_size*0.2, alpha = 0.4) +
+                      ggplot2::geom_point(size = umap.layout$cluster_size*0.1, alpha = 0.2) +
                       ggplot2::geom_jitter() +
                       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                                      panel.grid.minor = ggplot2::element_blank(),
@@ -122,7 +122,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     ggplot2::ggsave(paste0("umap_layout_CONDITION",".png"),
                     plot = ggplot2::ggplot(umap.layout,
                                            ggplot2::aes_string(x="umap_x",y="umap_y",color="condition.chr.id")) + #factor()
-                      ggplot2::geom_point(size = umap.layout$cluster_size*0.2, alpha = 0.4) +
+                      ggplot2::geom_point(size = umap.layout$cluster_size*0.1, alpha = 0.2) +
                       ggplot2::geom_jitter() +
                       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                                      panel.grid.minor = ggplot2::element_blank(),
@@ -141,7 +141,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     
     basic_plot <- function(umap.layout) {
       ggplot2::ggplot(umap.layout,ggplot2::aes_string(x="umap_x",y="umap_y",color="value")) + #factor()
-        ggplot2::geom_point(size = umap.layout$cluster_size/10, alpha = 0.5) +
+        ggplot2::geom_point(size = umap.layout$cluster_size/15, alpha = 0.4) +
         ggplot2::scale_color_viridis_c() +
         ggplot2::ggtitle(umap.layout$variable) +
         #ggplot2::labs(color = paste0(variable,"\n")) + #umap.layout$
