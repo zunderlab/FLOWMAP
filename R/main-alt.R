@@ -65,7 +65,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df
       stop("Unknown 'df' format provided for specified mode!")
     }
     runtype <- "SingleFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     orig.times <- GetOrigTimesfromDF(df, time.col.label, name.sort = name.sort)
     df <- StripTimesfromDFList(df, time.col.label)
@@ -96,7 +96,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df
       stop("Unknown 'df' format provided for specified mode!")
     }
     runtype <- "MultiFLOWMAP"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
     PrintSummaryfromDF(env = parent.frame())
@@ -124,7 +124,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df
       stop("Unknown 'df' format provided for specified mode!")
     }
     runtype <- "OneTimepoint"
-    output.folder <- MakeOutFolder(runtype = runtype)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
     setwd(output.folder)
     PrintSummaryfromDF(env = parent.frame())
     fcs.files <- list()
