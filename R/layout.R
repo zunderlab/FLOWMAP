@@ -1,19 +1,19 @@
-
-# ForceDirectedXY <- function(graph) {
-#   V(graph)$size <- rep(20, vcount(graph))
-#   force.graph1 <- scaffold::layout.forceatlas2(graph, iter = 10000,
-#                                                 stopping_tolerance = 0.001,
-#                                                 prevent.overlap = FALSE)
-#   graph.with.xy <- graph
-#   V(graph.with.xy)$x <- force.graph1$lay[, 1]
-#   V(graph.with.xy)$y <- force.graph1$lay[, 2]
-#   force.graph2 <- scaffold::layout.forceatlas2(graph.with.xy, iter = 1000,
-#                                                 stopping_tolerance = 0.001,
-#                                                 prevent.overlap = TRUE)
-#   V(graph.with.xy)$x <- force.graph2$lay[, 1]
-#   V(graph.with.xy)$y <- force.graph2$lay[, 2]
-#   return(graph.with.xy)
-# }
+#' @importFrom vite layout_forceatlas2
+ForceDirectedXY <- function(graph) {
+  V(graph)$size <- rep(20, vcount(graph))
+  force.graph1 <- vite::layout_forceatlas2(graph, iter = 10000,
+                                                stopping.tolerance = 0.001,
+                                                prevent.overlap = FALSE)
+  graph.with.xy <- graph
+  V(graph.with.xy)$x <- force.graph1$lay[, 1]
+  V(graph.with.xy)$y <- force.graph1$lay[, 2]
+  force.graph2 <- vite::layout_forceatlas2(graph.with.xy, iter = 1000,
+                                                stopping.tolerance = 0.001,
+                                                prevent.overlap = TRUE)
+  V(graph.with.xy)$x <- force.graph2$lay[, 1]
+  V(graph.with.xy)$y <- force.graph2$lay[, 2]
+  return(graph.with.xy)
+}
 
 RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, which.palette=NULL) {
   global.graph.pre.ml <<- graph
@@ -68,7 +68,6 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
   knn[['idx']] <- as.matrix(knn.in$indexes[,1:umap_n_neighbors]) #make sure ordered
   knn[['dist']] <- as.matrix(knn.in$distances[,1:umap_n_neighbors]) #make sure ordered
   umap.out <- uwot::umap(file.clusters$full.clusters, ret_nn = TRUE, nn_method = knn, verbose=TRUE, n_components=umap_n_components)
-  global.umap.out <<- umap.out
   cat("ran UMAP, outputting files\n")
 
   ## Add file var to umap layout
@@ -91,6 +90,11 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     colnames(umap.out$embedding) <- c("umap_x","umap_y")
     data.table::fwrite(umap.out$embedding,file = "UMAP_layout.csv",row.names = FALSE,col.names = TRUE, sep = ",") #uwot package
     
+    #Also write file with cluster expression per marker, timepoint, and condition info
+    #set_vertex_attr(graph=graph, name="x", index = V(graph), value=umap.out$embedding[,umap_x])
+    #set_vertex_attr(graph=graph, name="y", index = V(graph), value=umap.out$embedding[,umap_y])
+    ExportClusterTables(output.graph = graph, file.name = fixed.file.name)
+    
     print("Generating 2D layouts colored by cluster") 
     # Add file.var to layout to color by file number
     #umap.layout <- data.frame(cbind(umap.out$layout, diff.file.var)) #umap package
@@ -102,17 +106,18 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     cluster.size <- (cluster.size / max(cluster.size))*(4 - 1) + 1 ## normalize to smaller range to make reasonably-sized points
     umap.layout$cluster_size <- cluster.size
     
+
     global.umap.layout <<- umap.layout
     
     #Plot UMAP
-    PLOT.HEIGHT <- 7
-    PLOT.WIDTH <- 7
+    PLOT.HEIGHT <- 10
+    PLOT.WIDTH <- 10
 
     # Plot colored by time point
     ggplot2::ggsave(paste0("umap_layout_TIME",".png"),
                     plot = ggplot2::ggplot(umap.layout,
                                            ggplot2::aes_string(x="umap_x",y="umap_y",color="file_var")) + #factor()
-                      ggplot2::geom_point(size = umap.layout$cluster_size*0.2, alpha = 0.4) +
+                      ggplot2::geom_point(size = umap.layout$cluster_size*0.1, alpha = 0.2) +
                       ggplot2::geom_jitter() +
                       ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
                                      panel.grid.minor = ggplot2::element_blank(),
@@ -148,7 +153,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     
     basic_plot <- function(umap.layout) {
       ggplot2::ggplot(umap.layout,ggplot2::aes_string(x="umap_x",y="umap_y",color="value")) + #factor()
-        ggplot2::geom_point(size = umap.layout$cluster_size/10, alpha = 0.5) +
+        ggplot2::geom_point(size = umap.layout$cluster_size/15, alpha = 0.2) +
         ggplot2::scale_color_viridis_c() +
         ggplot2::ggtitle(umap.layout$variable) +
         #ggplot2::labs(color = paste0(variable,"\n")) + #umap.layout$
