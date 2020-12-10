@@ -1,12 +1,23 @@
 
-MakeOutFolder <- function(runtype, maximum, minimum, k = "") {
-  name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
-  name <- gsub(":", ".", name, fixed = TRUE)
-  output.folder <- paste("max", maximum, "_k", k, name, runtype, "run", sep = "_")
-  print(output.folder)
-  dir.create(output.folder)
-  cat("output.folder is", output.folder, "\n")
-  return (output.folder)
+MakeOutFolder <- function(runtype, maximum, minimum, k = "", out_folder_basename = NA) {
+  if (is.na(out_folder_basename)) {
+    name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
+    name <- gsub(":", ".", name, fixed = TRUE)
+    output.folder <- paste("max", maximum, "_k", k, name, runtype, "run", sep = "_")
+    print(output.folder)
+    dir.create(output.folder)
+    cat("output.folder is", output.folder, "\n")
+    return (output.folder)
+  } else {
+    name <- gsub(" ", "_", Sys.time(), fixed = TRUE)
+    name <- gsub(":", ".", name, fixed = TRUE)
+    output.folder <- paste(out_folder_basename, name, runtype, "run", sep = "_")
+    print(output.folder)
+    dir.create(output.folder)
+    cat("output.folder is", output.folder, "\n")
+    return (output.folder)
+  }
+
 }
 
 #' Saving an igraph object as a local graphml file.

@@ -31,6 +31,7 @@
 #' subsample from each FCS file
 #' @param name.sort Logical specifying whether to sort FCS file path names alphanumerically or use
 #' them in the order supplied by the user
+#' @param out_folder_basename = NA by default, provide string base name is desired
 #' @param downsample Logical specifying whether to use SPADE density-dependent downsampling
 #' @param seed.X Numeric value for the seed to set for reproducible FLOWMAPR runs
 #' @param savePDFs Logical specifying whether to generate PDFs for the resolved graph with
@@ -58,7 +59,7 @@
 FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
                     var.remove = c(), var.annotate = NULL, clustering.var, cluster.numbers = 100,
                     cluster.mode = "hclust", distance.metric = "manhattan", minimum = 2, maximum = 5, 
-                    save.folder = getwd(), subsamples = 200, name.sort = TRUE,
+                    save.folder = getwd(), subsamples = 200, name.sort = TRUE, out_folder_basename = NA,
                     downsample = FALSE, seed.X = 1, savePDFs = TRUE, graph.out = c("ForceDirected"),
                     which.palette = "bluered", exclude.pctile = NULL, target.pctile = NULL,
                     target.number = NULL, target.percent = NULL, k = 10, umap.n.neighbors = 10, 
@@ -87,7 +88,8 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     }
     runtype <- "SingleFLOWMAP"
     
-    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, minimum = minimum)
+    output.folder <- MakeOutFolder(runtype = runtype, k = k, maximum = maximum, 
+                                   minimum = minimum, out_folder_basename = out_folder_basename)
     setwd(output.folder)
     
     PrintSummary(env = parent.frame())
@@ -141,7 +143,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
                                          orig.times=orig.times, which.palette=which.palette)
     }
     if ("UMAP"  %in% graph.out) {
-      RunUMAPlayout(knn.in = knn.out, graph = graph,  file.clusters=file.clusters, umap_n_components=2, k=k,
+      RunUMAPlayout(knn.in = knn.out, graph = graph,  file.clusters=file.clusters, umap_n_components=umap.n.components, k=k,
                     clustering.var=clustering.var,file.name=file.name, umap_n_neighbors=umap.n.neighbors, mode=mode)
     }
 
