@@ -119,6 +119,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
       fcs.file <- fcs.file[subsample.ids,]
       rownames(fcs.file) <- c(1:nrow(fcs.file))
     }
+    global.colnames.pre.fix <<- colnames(fcs.file)
     # rename variables with protein marker measured instead of metal channel
     cat("Fixing channel names from:", current.file, "\n")
     for (x in 1:length(colnames(fcs.file))) {

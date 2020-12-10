@@ -327,6 +327,7 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
     cat(paste0("Input k (",k,") less than max edge number (",max,") -- changing k to max edge number"))
     k <- max
   }
+  global.clusters <<- clusters
   if (distance.metric == 'manhattan') {
     cat("Manhattan distance no longer supported. Using euclinean distance.\n")
     nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1)
