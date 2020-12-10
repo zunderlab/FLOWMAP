@@ -189,23 +189,34 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
   
   ## Outputs for 3D UMAP ====
   else if (umap_n_components == 3) {
+    
     ## Save UMAP layout and knn graph
-    data.table::fwrite(umap.out$knn$indexes,file = "UMAP_knn_indexes.csv",row.names = FALSE,col.names = FALSE,sep = ",")
-    data.table::fwrite(umap.out$knn$distances,file = "UMAP_knn_distances.csv",row.names = FALSE,col.names = FALSE,sep = ",")
-    colnames(umap.out$layout) <- c("umap_x","umap_y", "umap_z")
-    data.table::fwrite(umap.out$layout,file = "UMAP_layout_3D.csv",row.names = FALSE,col.names = TRUE, sep = ",")
+    #data.table::fwrite(umap.out$knn$indexes,file = "UMAP_knn_indexes.csv",row.names = FALSE,col.names = FALSE,sep = ",")
+    data.table::fwrite(umap.out$nn$precomputed$idx,file = "UMAP_knn_indexes_3D.csv",row.names = FALSE,col.names = FALSE,sep = ",")
+    #data.table::fwrite(umap.out$knn$distances,file = "UMAP_knn_distances.csv",row.names = FALSE,col.names = FALSE,sep = ",")
+    data.table::fwrite(umap.out$nn$precomputed$dist,file = "UMAP_knn_distances_3D.csv",row.names = FALSE,col.names = FALSE,sep = ",")
+    #colnames(umap.out$layout) <- c("umap_x","umap_y")
+    #data.table::fwrite(umap.out$layout,file = "UMAP_layout.csv",row.names = FALSE,col.names = TRUE, sep = ",") #umap package
+    colnames(umap.out$embedding) <- c("umap_x","umap_y", "umap_z")
+    data.table::fwrite(umap.out$embedding,file = "UMAP_layout_3D.csv",row.names = FALSE,col.names = TRUE, sep = ",") #uwot package
     
-    
-    umap.layout <- data.frame(cbind(umap.out$layout, diff.file.var))
-    colnames(umap.layout) <- c("umap_x","umap_y","umap_z" ,"file_var")
+    print("Generating 3D layouts") 
+    # Add file.var to layout to color by file number
+    umap.layout <- data.frame(cbind(umap.out$embedding, diff.file.var)) #uwot package
+    colnames(umap.layout) <- c("umap_x","umap_y","umap_z","file_var")
     umap.layout$file_var <- as.factor(umap.layout$file_var)
+    
+    # Extract cluster cell number percent total attribute to assign size of points in layout plot
+    cluster.size <- igraph::get.vertex.attribute(graph, "percent.total", index = V(graph))
+    cluster.size <- (cluster.size / max(cluster.size))*(3) + 3 ## normalize to smaller range to make reasonably-sized points
+    umap.layout$cluster_size <- cluster.size
     
     global.umap.layout <<- umap.layout
     
     print("Generating 3D layouts colored by cluster")
     ## 3D PLOTTING
     # Plot your data, in this example my Seurat object had 21 clusters (0-20)
-    p <- plotly::plot_ly(data = global.umap.layout, 
+    p <- plotly::plot_ly(data = umap.layout, 
                          x = ~umap_x, y = ~umap_y, z = ~umap_z, 
                          color = ~file_var, 
                          opacity = 0.5,
