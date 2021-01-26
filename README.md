@@ -49,7 +49,6 @@ install.packages("igraph")
 install.packages("robustbase")
 
 devtools::install_github("cran/SDMTools") 
-devtools::install_github("ParkerICI/vite")
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
@@ -68,10 +67,10 @@ install.packages("shinyalert")
 devtools::install_version("rhandsontable", version = "0.3.4", repos = "http://cran.us.r-project.org")
 ```
 
-Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the scaffold package from the Nolan Lab. Instructions to install that package are available here: https://github.com/nolanlab/scaffold. After installing all dependencies, you can install the package with the following commands:
+Lastly, FLOWMAPR utilizes the R/C++ implementation of ForceAtlas2 as made available in the 'vite' package:
 
 ```
-devtools::install_github("nolanlab/scaffold")
+devtools::install_github("ParkerICI/vite")
 ```
 
 <a name="install"></a>
