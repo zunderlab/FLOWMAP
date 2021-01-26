@@ -3,6 +3,7 @@ Title: Graph-based visualizations of high-dimensional single-cell data across ti
 Version: 1.2.0
 Authors@R: c(person("Eli", "Zunder", email = "ezunder@virginia.edu", role = "cre"),
   person("Melissa", "Ko", email = "melissa.e.ko@gmail.com", role = "aut"),
+  person("Sarah", "Goggin", email = "sarahmgoggin@gmail.com", role = "aut"),
   person("Rohit", "Rustagi", role = "ctb"))
 Description: An Implementation of FLOW-MAP Algorithm in R. It takes user-specified inputs
     for settings of a FLOW-MAP analysis and generates a FLOW-MAP graph from provided FCS files
