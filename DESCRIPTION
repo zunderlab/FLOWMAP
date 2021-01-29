@@ -35,8 +35,9 @@ Imports:
     ggplot2 (>= 3.2.0),
     ggfortify (>= 0.4.8),
     data.table (>= 1.12.6),
-    umap (>= 0.2.3.1),
-    Matrix (>= 1.2)
+    uwot (>= 0.1.10),
+    Matrix (>= 1.2),
+    BBmisc (>= 1.0)
 License: GNU General Public License v3 (GPL-3)
 Encoding: UTF-8
 LazyData: true
