@@ -125,12 +125,16 @@ FirstConnectSubgraphs <- function(output.graph, edge.list, offset,
 ConnectSubgraphs <- function(output.graph, edge.list, offset,
                              table.breaks, n, distance.metric, clusters) {
   print("in connected")
+  #Remember starting nrow of edgelist to use for adding new edges to full graph later
+  orig.nrow.edge.list <- nrow(edge.list)
   ## Make graph from edge.list (this is to force extra connection to be within self or neighboring time point)
-  #because edgelist only contains current round, whil graph has accumulation of all prior rounds
+  #because edgelist only contains current round, while graph has accumulation of all prior rounds
   time.prox.graph <- graph.empty()
-  time.prox.graph <- graph_from_edgelist(as.matrix(edge.list[,1:2]), directed = FALSE)
-  E(time.prox.graph)$weight <- edge.list[,3]
-  time.prox.graph <- set.vertex.attribute(time.prox.graph,'name',index=V(time.prox.graph),as.character(offset:table.breaks[n + 2]))
+  edge.list$id_num <- edge.list$id-offset+1 #have to number from 1 so igraph doesnt count all numbers up to vertex "name" number
+  edge.list$index_num <- edge.list$index-offset+1 #have to number from 1 so igraph doesnt count all numbers up to vertex "name" number
+  time.prox.graph <- graph_from_edgelist(as.matrix(cbind(edge.list$id_num, edge.list$index_num)), directed = FALSE)
+  E(time.prox.graph)$weight <- edge.list$dist
+  time.prox.graph <- set.vertex.attribute(time.prox.graph,'name',index=V(time.prox.graph),as.character(offset:table.breaks[n + 2])) #or, edge.list$id
 
   ## Identify subgraphs of density-based nearest neighbor graph
   subgraphs.ls <- decompose.graph(time.prox.graph)
@@ -146,10 +150,6 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
       print("in loop")
       ## Change row names of cluster medians df to have correct indexing
       rownames(clusters) <- c(offset:table.breaks[n + 2])
-
-      ## Make edge.list a df and change colnames
-      edge.list <- as.data.frame(edge.list)
-      colnames(edge.list) <- c("Vertex1", "Vertex2", "Distance")
 
       ## Compute inter-subgraph edges
       i <- 1
@@ -179,43 +179,33 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
                                        k=1, searchtype="priority", eps=0.1)
           }
           ## Add nn output to temp df, then bind to full list
-          temp.inter.sub.nns.df <- data.frame("Vertex1" = V(si.graph)$name)
+          temp.inter.sub.nns.df <- data.frame("id" = V(si.graph)$name)
           temp.inter.sub.nns.df <- cbind(temp.inter.sub.nns.df,
                                          as.data.frame(V(sj.graph)$name[as.numeric(inter.sub.nns$nn.idx)]),
                                          as.data.frame(inter.sub.nns$nn.dists))
-          colnames(temp.inter.sub.nns.df) <- c("Vertex1", "Vertex2", "Distance")
+          colnames(temp.inter.sub.nns.df) <- c("id", "index", "dist")
           inter.sub.nns.df <-  rbind(inter.sub.nns.df, temp.inter.sub.nns.df)
-        }
+        }#for loop
         ## Put list of nearest neighbors in order with shortest dist at top
-        inter.sub.nns.df <- inter.sub.nns.df[order(inter.sub.nns.df$Distance), ]
+        inter.sub.nns.df <- inter.sub.nns.df[order(inter.sub.nns.df$dist), ]
         to.add.df <- rbind(to.add.df, inter.sub.nns.df[1,])
 
       }#for loop
-      ## Add new edges and rebuild full graph
+      ## Add new edges to edgelist and rebuild full graph
       #TODO make this and following three sections into a function, repeated below
+      to.add.df <- data.frame(lapply(data.frame(to.add.df),function(x) as.numeric(as.character(x))))
+      to.add.df$id_num <- to.add.df$id-offset+1 #have to number from 1 so igraph doesnt count all numbers up to vertex "name" number
+      to.add.df$index_num <- to.add.df$index-offset+1 #have to number from 1 so igraph doesnt count all numbers up to vertex "name" number
+      edge.list <- rbind(edge.list, to.add.df)
+      ## rebuild graph from new updated edgelist
       output.graph.update <- graph.empty()
-      to.add.mat <- as.matrix(data.frame(lapply(data.frame(to.add.df),
-                                                function(x) as.character(x))))
-      edge.list.mat <- as.matrix(edge.list)
-      vertices.edges <- rbind(edge.list.mat[,1:2], to.add.mat[,1:2])
-      output.graph.update <- graph_from_edgelist(vertices.edges, directed = FALSE)
-
+      output.graph.update <- graph_from_edgelist(as.matrix(edge.list[,c("id_num", "index_num")]), directed = FALSE)
       ## Add edge weights to graph
-      ogw.df <- data.frame()
-      ogw.df <- data.frame(edge.list[,3])
-      ta.df <- data.frame(to.add.df[,3])
-      colnames(ogw.df)[1] <- "weight"
-      colnames(ta.df)[1] <- "weight"
-      ogw.ta.df <- data.frame(rbind(ogw.df, ta.df))
-      E(output.graph.update)$weight <- ogw.ta.df[,1]
-      ## Add vertex names
-      #TODO WHY IS THIS DIFFERENT FROM VERTEX NAMES AFTER WHILE LOOP????????? *************
+      E(output.graph.update)$weight <- edge.list$dist 
+      ## Add vertex names to edgelist (still only has the two timepoints)
       output.graph.update <- set.vertex.attribute(output.graph.update,'name',
                                                   index=V(output.graph.update),
                                                   as.character(offset:table.breaks[n + 2]))
-      ## Make new edgelist
-      edge.list <- data.frame(vertices.edges)
-      edge.list$weights <- ogw.ta.df[,1]
 
       ## Test for connectedness of new graph
       subgraphs.ls <- decompose.graph(output.graph.update)
@@ -232,27 +222,23 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
     ## This section adds new edges to full graph
     output.graph.update <- graph.empty()
     og.el <- get.edgelist(output.graph)
-    to.add.mat <- as.matrix(data.frame(lapply(data.frame(to.add.df),
-                                              function(x) as.character(x))))
-    vertices.edges <- rbind(og.el[,1:2], to.add.mat[,1:2]) #combine original edges in graph with new edges added here
-    output.graph.update <- graph_from_edgelist(vertices.edges, directed = FALSE)
+    colnames(og.el) <- c("id", "index")
+    #combine original edges in graph with new edges added here
+    og.el <- rbind(og.el[,1:2], edge.list[(orig.nrow.edge.list+1):nrow(edge.list),c("id", "index")]) #can use actual numbers bc this has from 1:highest anyway
+    output.graph.update <- graph_from_edgelist(as.matrix(og.el), directed = FALSE)
     
     ## Add corresponding new edge weights to full graph
-    ogw.df <- data.frame()
-    ogw.df <- data.frame(E(output.graph)$weight)
-    ta.df <- data.frame(to.add.df[,3])
-    colnames(ogw.df)[1] <- "weight"
-    colnames(ta.df)[1] <- "weight"
-    ogw.ta.df <- data.frame(rbind(ogw.df, ta.df)) #combine original weights in graph with new weights added here
-    E(output.graph.update)$weight <- ogw.ta.df[,1]
+    ogu.weights <- c(E(output.graph)$weight, edge.list[(orig.nrow.edge.list+1):nrow(edge.list),"dist"])#combine original weights in graph with new weights added here
+    E(output.graph.update)$weight <- ogu.weights
     
-    ##Add vertex names
+    ##Add vertex names to graph containing all clusters from all timepoints so far
     V(output.graph.update)$name <- 1:length(V(output.graph.update))
     
     output.graph <- output.graph.update
   }
   ##return edge.list and output.graph as results
-  colnames(edge.list) <- c("row.inds", "col.inds", "values")
+  edgelist.with.distances <- edge.list[,c("id", "index","dist")]
+  colnames(edgelist.with.distances) <- c("row.inds", "col.inds", "values")
   results <- list('output.graph' = output.graph, 'edgelist.with.distances' = edge.list)
   return(results)
 
