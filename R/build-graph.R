@@ -445,8 +445,8 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
     #output.graph <- simplify(output.graph) ### TEMP FOR TESTING!!!!!
     
     #First fill in new connections from cells in previous timepoint
-    knn.indexes[[n]] <- data.frame(cbind(knn.indexes[[n]],results$indexes[1:(nrow(results$indexes)/2),])) #to make cols for adding connections back from second timepoint
-    knn.distances[[n]] <- data.frame(cbind(knn.distances[[n]],results$distances[1:(nrow(results$distances)/2),]))
+    knn.indexes[[n]] <- data.frame(dplyr::bind_cols(knn.indexes[[n]],results$indexes[1:(nrow(results$indexes)/2),])) #to make cols for adding connections back from second timepoint
+    knn.distances[[n]] <- data.frame(dplyr::bind_cols(knn.distances[[n]],results$distances[1:(nrow(results$distances)/2),]))
     #Then add for cells in new timepoint
     #knn.indexes[[n+1]] <- results$indexes[1:(nrow(results$indexes)/2),] 
     knn.indexes[[n+1]] <- results$indexes[(nrow(results$indexes)/2+1):nrow(results$indexes),]
