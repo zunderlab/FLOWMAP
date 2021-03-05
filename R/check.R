@@ -1,8 +1,8 @@
 
 CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
                           clustering.var, cluster.numbers, cluster.mode,
-                          distance.metric, minimum, maximum,
-                          subsamples, which.palette) {
+                          distance.metric, minimum, maximum, 
+                          which.palette, subsamples) {
   check.whole.number <- function(x) { return (x %% 1 == 0) }
   check.pos.number <- function(x) { return (x > 0) }
 
@@ -12,7 +12,9 @@ CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
 
   if (!dir.exists(save.folder)) {
     # stop("save.folder does not exist!")
-    stop(paste("save.folder", save.folder, "does not exist!"))
+    cat(paste("save.folder", save.folder, "does not exist!"))
+    cat(paste("Creating save.folder", save.folder))
+    dir.create(save.folder)
   }
   if (!(mode %in% c("single", "multi", "one", "one-special"))) {
     stop(paste("mode", mode, "is not a recognized value!"))
@@ -41,14 +43,16 @@ CheckSettings <- function(mode, save.folder, var.remove, var.annotate,
       stop("cluster.mode 'kmeans' only works with distance.metric 'euclidean'!")
     }
   }
-  if (is.numeric(subsamples)) {
-    if (!check.pos.number(subsamples) || !check.whole.number(subsamples)) {
-      stop("subsamples must be positive whole number!")
+  if (!is.na(subsamples)) {
+    if (is.numeric(subsamples)) {
+      if (!check.pos.number(subsamples) || !check.whole.number(subsamples)) {
+        stop("subsamples must be positive whole number!")
+      }
     }
-  }
-  if (is.numeric(subsamples) && is.numeric(cluster.numbers)) {
-    if (subsamples < cluster.numbers) {
-      stop("subsamples must be greater than cluster.numbers!")
+    if (is.numeric(subsamples) && is.numeric(cluster.numbers)) {
+      if (subsamples < cluster.numbers) {
+        stop("subsamples must be greater than cluster.numbers!")
+      }
     }
   }
   if (!(which.palette %in% c("bluered", "jet", "CB"))) {
