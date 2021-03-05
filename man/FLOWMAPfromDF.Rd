@@ -5,16 +5,34 @@
 \title{FLOWMAPfromDF - generate FLOWMAPR analysis results from
 dataframes in R}
 \usage{
-FLOWMAPfromDF(mode = c("single", "multi", "one"), df, project.name,
-  clustering.var, distance.metric = "manhattan", minimum = 2,
-  maximum = 5, save.folder = getwd(), time.col.label = "Time",
-  condition.col.label = NULL, name.sort = TRUE, per = 10,
-  clustering = FALSE, seed.X = 1, savePDFs = TRUE,
-  which.palette = "bluered", cluster.numbers = NULL, cluster.mode)
+FLOWMAPfromDF(
+  mode = c("single", "multi", "one", "static-multi"),
+  df,
+  project.name,
+  clustering.var,
+  distance.metric = "manhattan",
+  minimum = 2,
+  maximum = 5,
+  save.folder = getwd(),
+  time.col.label = "Time",
+  condition.col.label = NULL,
+  name.sort = TRUE,
+  clustering = FALSE,
+  seed.X = 1,
+  graph.out = c("ForceDirected"),
+  savePDFs = TRUE,
+  which.palette = "bluered",
+  cluster.numbers = NULL,
+  cluster.mode,
+  k = 10,
+  umap.n.neighbors = 10,
+  umap.n.components = 2,
+  ...
+)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one", "one-special")}}
+available options include \code{c("single", "multi", "one", "static-multi")}}
 
 \item{df}{single dataframe, list of dataframes with each member belonging to single-cell
 data from a different timepoint, or a list of lists of dataframes belonging to the same timepoint,
@@ -44,12 +62,11 @@ set to \code{5}, no less than 3 is recommended}
 \item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
 them in the order supplied by the user}
 
-\item{per}{Percentile of edge length in fully connected graph that determines hypersphere radius
-in density calculation}
-
 \item{clustering}{Logical specifying whether to cluster single-cell data}
 
 \item{seed.X}{Numeric value for the seed to set for reproducible FLOWMAPR runs}
+
+\item{graph.out}{TBD}
 
 \item{savePDFs}{Logical specifying whether to generate PDFs for the resolved graph with
 nodes colored by each parameter}
@@ -62,6 +79,14 @@ is a colorblind-friendly option}
 how many clusters to generate from each separate dataframe}
 
 \item{cluster.mode}{Character specifying which clustering algorithm to use, valid options include \code{c("hclust", "kmeans")}}
+
+\item{k}{}
+
+\item{umap.n.neighbors}{TBD}
+
+\item{umap.n.components}{TBD}
+
+\item{out_folder_basename}{= NA by default, provide string base name is desired}
 }
 \value{
 the force-directed layout resolved igraph graph object

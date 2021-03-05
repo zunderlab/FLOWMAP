@@ -20,5 +20,5 @@ was used under the Artistic License 2.0 or Artistic-2.0 available
 here: \url{https://opensource.org/licenses/Artistic-2.0}.
 }
 \examples{
-\dontrun{LaunchGUI()}
+LaunchGUI()
 }

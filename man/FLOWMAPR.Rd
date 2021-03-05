@@ -3,7 +3,6 @@
 \docType{package}
 \name{FLOWMAPR}
 \alias{FLOWMAPR}
-\alias{FLOWMAPR-package}
 \title{FLOWMAPR - Graph-based visualizations of high-dimensional single-cell data across time}
 \description{
 An Implementation of FLOW-MAP Algorithm in R. It takes user-specified
