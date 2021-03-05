@@ -93,7 +93,7 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     #Also write file with cluster expression per marker, timepoint, and condition info
     #set_vertex_attr(graph=graph, name="x", index = V(graph), value=umap.out$embedding[,umap_x])
     #set_vertex_attr(graph=graph, name="y", index = V(graph), value=umap.out$embedding[,umap_y])
-    ExportClusterTables(output.graph = graph, file.name = fixed.file.name)
+    ExportClusterTables(output.graph = graph, file.name = file.name)
     
     print("Generating 2D layouts colored by cluster") 
     # Add file.var to layout to color by file number
