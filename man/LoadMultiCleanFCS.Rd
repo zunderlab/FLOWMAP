@@ -4,8 +4,13 @@
 \alias{LoadMultiCleanFCS}
 \title{LoadMultiCleanFCS}
 \usage{
-LoadMultiCleanFCS(list.of.file.names, channel.remove, channel.annotate,
-  subsamples = 1000, transform = TRUE)
+LoadMultiCleanFCS(
+  list.of.file.names,
+  channel.remove,
+  channel.annotate,
+  subsamples = 1000,
+  transform = TRUE
+)
 }
 \arguments{
 \item{list.of.file.names}{A list where each member contains a vector of full file paths
@@ -37,6 +42,5 @@ var.remove <- c("Channel3", "Channel4")
 var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 "c3" = "Channel3", "c4" = "Channel4")
 
-\dontrun{LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, 
-transform = TRUE)}
+LoadMultiCleanFCS(list.of.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 }

@@ -28,6 +28,6 @@ each individual cell. This function is a pre-processing step before starting a F
 analysis using FLOWMAPfromDF as it only accepts single-cell data in a certain format.
 }
 \examples{
-\dontrun{df <- read.csv(file = "/single-cell-data.csv", header = TRUE, sep = ",")}
+\dontrun{df <- read.csv(file = system.file("extdata/csv/single-cell-data.csv",package = "FLOWMAPR"), header = TRUE, sep = ",")}
 \dontrun{RestructureDF(df, time.col.label = "Timepoint", condition.col.label = "Treatment")}
 }

@@ -4,8 +4,7 @@
 \alias{SuggestClusteringVar}
 \title{SuggestClusteringVar}
 \usage{
-SuggestClusteringVar(fcs.file.names, mode, var.annotate, var.remove,
-  top.num)
+SuggestClusteringVar(fcs.file.names, mode, var.annotate, var.remove, top.num)
 }
 \arguments{
 \item{fcs.file.names}{A vector of full file paths to the FCS files to be used}

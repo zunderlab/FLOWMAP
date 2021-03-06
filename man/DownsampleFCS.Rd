@@ -51,4 +51,7 @@ was used under the GNU General Public License v. 2.0
 (\url{https://github.com/nolanlab/spade/blob/master/LICENSE}) available
 here: \url{https://opensource.org/licenses/GPL-2.0}. In accordance with these
 license rules, our code is available under GPL-3.0.
+
+UPDATE 12/17/19: Spade is no longer maintained
+We have included relevant function here to maintain functionality of FLOWMAP
 }

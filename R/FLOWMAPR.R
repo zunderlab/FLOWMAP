@@ -16,7 +16,6 @@
 #' @import flowCore
 #' @import robustbase
 #' @import igraph
-#' @import scaffold
 #' @import SDMTools
 #' @import rhandsontable
 #' @import shiny
@@ -25,4 +24,5 @@
 #' @import shinydashboard
 #' @import shinyalert
 #' @import flowCore
+#' @import uwot
 NULL

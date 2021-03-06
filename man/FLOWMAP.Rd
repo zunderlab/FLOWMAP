@@ -4,19 +4,39 @@
 \alias{FLOWMAP}
 \title{FLOWMAP - generate FLOWMAPR analysis results from FCS files in R}
 \usage{
-FLOWMAP(mode = c("single", "multi", "one", "one-special"), files,
-  var.remove = c(), var.annotate = NULL, clustering.var,
-  cluster.numbers = 100, cluster.mode = "hclust",
-  distance.metric = "manhattan", minimum = 2, maximum = 5,
-  save.folder = getwd(), subsamples = 200, name.sort = TRUE,
-  per = 10, downsample = FALSE, seed.X = 1, savePDFs = TRUE,
-  which.palette = "bluered", exclude.pctile = NULL,
-  target.pctile = NULL, target.number = NULL, target.percent = NULL,
-  ...)
+FLOWMAP(
+  mode = c("single", "multi", "one", "static-multi"),
+  files,
+  var.remove = c(),
+  var.annotate = NULL,
+  clustering.var,
+  cluster.numbers = 100,
+  cluster.mode = "hclust",
+  distance.metric = "manhattan",
+  minimum = 2,
+  maximum = 5,
+  save.folder = getwd(),
+  subsamples = 200,
+  name.sort = TRUE,
+  out_folder_basename = NA,
+  downsample = FALSE,
+  seed.X = 1,
+  savePDFs = TRUE,
+  graph.out = c("ForceDirected"),
+  which.palette = "bluered",
+  exclude.pctile = NULL,
+  target.pctile = NULL,
+  target.number = NULL,
+  target.percent = NULL,
+  k = 10,
+  umap.n.neighbors = 10,
+  umap.n.components = 2,
+  ...
+)
 }
 \arguments{
 \item{mode}{FLOWMAPR mode to use in analysis based on starting input,
-available options include \code{c("single", "multi", "one", "one-special")}}
+available options include \code{c("single", "multi", "one", "static-multi")}}
 
 \item{files}{File paths for FCS files to be used or a folder containing
 the FCS files to be used in analysis}
@@ -54,8 +74,7 @@ subsample from each FCS file}
 \item{name.sort}{Logical specifying whether to sort FCS file path names alphanumerically or use
 them in the order supplied by the user}
 
-\item{per}{Percentile of edge length in fully connected graph that determines hypersphere radius
-in density calculation}
+\item{out_folder_basename}{= NA by default, provide string base name is desired}
 
 \item{downsample}{Logical specifying whether to use SPADE density-dependent downsampling}
 
@@ -63,6 +82,8 @@ in density calculation}
 
 \item{savePDFs}{Logical specifying whether to generate PDFs for the resolved graph with
 nodes colored by each parameter}
+
+\item{graph.out}{TBD}
 
 \item{which.palette}{Optional variable, character specifying which color palette to use
 in generated PDFs, valid options include \code{c("bluered", "jet", "CB")}, where \code{"CB"}
@@ -84,7 +105,9 @@ used as described in the SPADE driver function, see the documentation for the sp
 used as described in the SPADE driver function, see the documentation for the spade package at
 \url{https://github.com/nolanlab/spade}}
 
-\item{...}{flexibility to add more parameters}
+\item{umap.n.neighbors}{TBD}
+
+\item{umap.n.components}{TBD}
 }
 \value{
 the force-directed layout resolved igraph graph object

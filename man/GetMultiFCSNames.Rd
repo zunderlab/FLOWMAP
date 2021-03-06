@@ -20,6 +20,6 @@ of FCS files found in the given subfolder
 that contains subfolders corresponding to each timepoint.
 }
 \examples{
-\dontrun{folder <- "Desktop/FCS_Files"}
-\dontrun{GetMultiFCSNames(folder, sort = TRUE)}
+folder <- "Desktop/FCS_Files"
+GetMultiFCSNames(folder, sort = TRUE)
 }

@@ -4,8 +4,13 @@
 \alias{LoadCleanFCS}
 \title{LoadCleanFCS}
 \usage{
-LoadCleanFCS(fcs.file.names, channel.remove, channel.annotate,
-  subsamples = 1000, transform = TRUE)
+LoadCleanFCS(
+  fcs.file.names,
+  channel.remove,
+  channel.annotate,
+  subsamples = 1000,
+  transform = TRUE
+)
 }
 \arguments{
 \item{fcs.file.names}{A vector of full file paths to the FCS files to be used}
@@ -35,6 +40,5 @@ var.remove <- c("Channel3", "Channel4")
 var.annotate <- list("c1" = "Channel1", "c2" = "Channel2",
 "c3" = "Channel3", "c4" = "Channel4")
 
-\dontrun{LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, 
-transform = TRUE)}
+LoadCleanFCS(fcs.file.names, var.remove, var.annotate, subsamples = 100, transform = TRUE)
 }
