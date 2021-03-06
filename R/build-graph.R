@@ -22,7 +22,6 @@ KnnDensity <- function(k, min, max, n, nn.ids.df, nn.dists.df,
   }
   densities.df <- rbind(matrix(unlist(all.densities.list), byrow=T))
   normalized.densities <- BBmisc::normalize(densities.df, method = "range", range = c(min, max), margin = 2, on.constant = "quiet")
-  global.normalized.densities <<- normalized.densities
   if (offset == 0) {
     names(normalized.densities) <- (1:numcluster)
   } else {
@@ -140,7 +139,6 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
 
   ## Identify subgraphs of density-based nearest neighbor graph
   subgraphs.ls <- decompose.graph(time.prox.graph)
-  global.subgraph.ls.pre <<- subgraphs.ls
   ## Set index for while loop
   y <- 0
   to.add.df <- NA #WORKAROUND FOR WHEN WHILE LOOP IS ENTERED BUT GRAPH IS ACTUALLY CONNECTED
@@ -211,7 +209,6 @@ ConnectSubgraphs <- function(output.graph, edge.list, offset,
 
       ## Test for connectedness of new graph
       subgraphs.ls <- decompose.graph(output.graph.update)
-      global.subgraph.ls.inner <<- subgraphs.ls
       subgraphs.el.ls <- list()
       for (ind in 1:length(subgraphs.ls)) {
         subgraphs.el.ls[[ind]] <- get.edgelist(subgraphs.ls[[ind]])
@@ -254,12 +251,8 @@ DrawNormalizedEdgesKnn <- function(output.graph, nn.ids.df, nn.dists.df,
   knn.distances <- list()
   for (i in names(normalized.densities)) {
     ## New not relying on cluster dist matrix
-    global.normalized.densities <<- normalized.densities
-    global.nn.ids.df <<- nn.ids.df
-    global.nn.dists.df <<- nn.dists.df
     # Set density-based edge number and format as igraph edgelist
     tmp.edgelist <- data.frame(cbind(as.numeric(i), as.numeric(nn.ids.df[i,]),as.numeric(nn.dists.df[i,])))#[1:normalized.densities[i],]
-    global.tmp.edgelist <<- tmp.edgelist
     colnames(tmp.edgelist) <- c("id","index", "dist")
     tmp.el.ord <- tmp.edgelist[with(tmp.edgelist, order(dist)), ] #need this because keeping all edges, just expanding distance for ones that originally would have been dropped ##############################################################################################
     if (nrow(tmp.el.ord) > normalized.densities[i]) {
@@ -315,7 +308,6 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
     cat(paste0("Input k (",k,") less than max edge number (",max,") -- changing k to max edge number"))
     k <- max
   }
-  global.clusters <<- clusters
   if (distance.metric == 'manhattan') {
     cat("Manhattan distance no longer supported. Using euclinean distance.\n")
     nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1) #k=k+1
@@ -358,8 +350,6 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
   
   ## Test whether graph is connected, connect by kNN if not
   if (!is_connected(output.graph)) {
-    global.edgelist.save.disconnect <<- edgelist.save
-    global.graph.disconnect <<- edgelist.save
     print("Graph has disconnected components!")
     if (offset == 0) {
       results <- FirstConnectSubgraphs(output.graph = output.graph,
@@ -416,7 +406,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
                                         distance.metric = distance.metric,
                                         clustering.var = clustering.var)
   output.graph <- first.results$output.graph
-  global.output.graph.first <<- output.graph
   knn.indexes <- list()
   knn.distances <- list()
   knn.indexes[[1]] <- first.results$indexes #
@@ -460,7 +449,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   knn.indexes[[n+1]] <- data.frame(knn.indexes[[n+1]]) #make final timepoint a dataframe so it doesnt mess up below processing
   knn.distances[[n+1]] <- data.frame(knn.distances[[n+1]])
   ## Remove duplicate connections====
-  global.pre.simplify <<- knn.indexes
   keep_ind = lapply(knn.indexes, function(y) apply(y,1,function(x){
     to.keep <- c()
     for (i in unique(x)) {
@@ -468,9 +456,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
     }
     to.keep
   }))
-  global.keep.ind <<- keep_ind
-  #knn.ind.sim <- c()
-  #knn.dist.sim <- c()
 
   knn.ind.sim <- lapply(1:(length(keep_ind)-1), function(x) {
     knn.indexes.keep <- c()
@@ -493,7 +478,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   print("post-simplify")
 
   knn.out <- list("indexes" = knn.ind.sim, "distances" = knn.dist.sim)
-  global.knn.out.pre <<- knn.out
   print("processing knn output")
   for(i in 1:ncol(knn.out$indexes)) knn.out$indexes[sapply(knn.out$indexes[,i], is.null),i] <- 0 #replace null index with 0 (so 'unlist' maintains full dim)
   for(i in 1:ncol(knn.out$distances)) knn.out$distances[sapply(knn.out$distances[,i], is.null),i] <- 10000 #replace null dist with high dist
@@ -504,7 +488,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   knn.out$indexes  <-  as.data.frame(matrix(unlist(knn.out$indexes), nrow=length(unlist(knn.out$indexes[1])))) 
   knn.out$distances  <-  as.data.frame(matrix(unlist(knn.out$distances), nrow=length(unlist(knn.out$distances[1]))))
   print("finished processing knn output")
-  global.knn.out <<- knn.out
   
   # PREP GRAPH FOR OUTPUT #######################################
   output.graph.final <- graph.empty()
@@ -517,8 +500,6 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
   print("3")
   ## Remove duplicates and self-edges
   output.graph.final.simplified <- simplify(output.graph.final)
-  global.output.graph.final <<- output.graph.final
-  global.output.graph.simplified <<- output.graph.final.simplified
   
   
   return(list("output.graph" = output.graph.final.simplified,

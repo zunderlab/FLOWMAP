@@ -16,7 +16,6 @@ ForceDirectedXY <- function(graph) {
 }
 
 RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, which.palette=NULL) {
-  global.graph.pre.ml <<- graph
   graph.xy <- ForceDirectedXY(graph = graph)
   file.name.xy <- paste(file.name, "xy", sep = "_")
   final.file.name <- ConvertToGraphML(output.graph = graph.xy, file.name = file.name.xy)
@@ -42,8 +41,6 @@ RunForceDirectedLayout <- function(mode, file.name, graph, orig.times=NULL, whic
 #' @import ggfortify
 RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.name=file.name, 
                           umap_n_neighbors, k, umap_n_components, mode) {
-
-  global.file.clusters <<- file.clusters
   # #Set up UMAP settings
   # umap.settings <- umap::umap.defaults
   # umap.settings$verbose <- TRUE
@@ -105,9 +102,6 @@ RunUMAPlayout <- function(graph, knn.in, file.clusters, clustering.var, file.nam
     cluster.size <- igraph::get.vertex.attribute(graph, "percent.total", index = V(graph))
     cluster.size <- (cluster.size / max(cluster.size))*(4 - 1) + 1 ## normalize to smaller range to make reasonably-sized points
     umap.layout$cluster_size <- cluster.size
-    
-
-    global.umap.layout <<- umap.layout
     
     #Plot UMAP
     PLOT.HEIGHT <- 10
