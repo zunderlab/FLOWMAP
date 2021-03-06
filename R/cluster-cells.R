@@ -140,7 +140,7 @@ HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric 
   if (distance.metric == "euclidean") {
     method <- "ward.D2"###or "ward.D" ??
   } else {
-    method <- "single"
+    method <- "ward.D2" #"single"
   }
   FCS.clusters <- stats::hclust(dist(tmp.FCS.for.cluster, method = distance.metric), method = method)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
