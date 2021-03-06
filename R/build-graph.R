@@ -2,6 +2,7 @@
 # ##FUNCTIONS FOR KNN-BASED DENSITY GRAPH BUILDING====
 # #############################################################################
 
+#' @importFrom BBmisc normalize
 # kNN density function ====
 KnnDensity <- function(k, min, max, n, nn.ids.df, nn.dists.df,
                        numcluster = numcluster, #table.lengths
@@ -10,17 +11,18 @@ KnnDensity <- function(k, min, max, n, nn.ids.df, nn.dists.df,
   for(i in 1:nrow(nn.ids.df)) {
     ## Alternatives for calculating density
     ## Dist to kth nearest neighbor:
-    density.by.knn <- abs(nn.dists.df[i,k])
+    #density.by.knn <- abs(nn.dists.df[i,k])
     ## Transformed metric from X.shift paper:
     #density.by.Xshift <- (1/(n*(longest.dist^d))) * (sum(c(1:k)^d)/sum(compile.dists))^d
     ## Sum of distances from 1:kth nearest neighbor:
     #density.by.knn <- sum(abs(nn.dists.df[i,1:k]))
     ## Mean of distances from 1:kth nearest neighbor:
-    #density.by.knn <- sum(abs(nn.dists.df[i,1:k]))/k
+    density.by.knn <- sum(abs(nn.dists.df[i,1:k]))/k
     all.densities.list[[paste(i,".nn", sep='')]] <- density.by.knn
   }
   densities.df <- rbind(matrix(unlist(all.densities.list), byrow=T))
-  normalized.densities <- round(densities.df / max(densities.df) * (max - min) + min)
+  normalized.densities <- BBmisc::normalize(densities.df, method = "range", range = c(min, max), margin = 2, on.constant = "quiet")
+  global.normalized.densities <<- normalized.densities
   if (offset == 0) {
     names(normalized.densities) <- (1:numcluster)
   } else {
