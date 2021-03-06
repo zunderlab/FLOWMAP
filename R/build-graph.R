@@ -324,7 +324,7 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
                          output.graph, edgelist.save, distance.metric) {
 
   ## Find k+1 nearest neighbors
-  cat(paste0("Clusters length:", as.character(dim(clusters)), "\n"))
+  cat(paste0("Clusters length:", as.character(dim(clusters)[1]), "\n"))
   if (k < max) {
     cat(paste0("Input k (",k,") less than max edge number (",max,") -- changing k to max edge number"))
     k <- max
@@ -332,9 +332,9 @@ BaseBuildKNN <- function(clusters, table.breaks, offset, n, k, min, max,
   global.clusters <<- clusters
   if (distance.metric == 'manhattan') {
     cat("Manhattan distance no longer supported. Using euclinean distance.\n")
-    nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1)
+    nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1) #k=k+1
   } else if (distance.metric == 'euclidean') {
-    nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1)
+    nns <- RANN::nn2(data=clusters, k=k+1, searchtype="priority", eps=0.1) #k=k+1
   }
   temp_nnids.df <- as.data.frame(nns$nn.idx)
   temp_nndists.df <- as.data.frame(nns$nn.dists)
@@ -461,12 +461,12 @@ BuildFLOWMAPkNN <- function(FLOWMAP.clusters, k, min, max,
     #output.graph <- simplify(output.graph) ### TEMP FOR TESTING!!!!!
     
     #First fill in new connections from cells in previous timepoint
-    knn.indexes[[n]] <- data.frame(cbind(knn.indexes[[n]],results$indexes[1:(nrow(results$indexes)/2),])) #to make cols for adding connections back from second timepoint
-    knn.distances[[n]] <- data.frame(cbind(knn.distances[[n]],results$distances[1:(nrow(results$distances)/2),]))
+    knn.indexes[[n]] <- data.frame(cbind(knn.indexes[[n]],results$indexes[1:table.lengths[n],])) #to make cols for adding connections back from second timepoint
+    knn.distances[[n]] <- data.frame(cbind(knn.distances[[n]],results$distances[1:table.lengths[n],])) #(nrow(results$indexes)/2) dplyr::bind_cols
     #Then add for cells in new timepoint
     #knn.indexes[[n+1]] <- results$indexes[1:(nrow(results$indexes)/2),] 
-    knn.indexes[[n+1]] <- results$indexes[(nrow(results$indexes)/2+1):nrow(results$indexes),]
-    knn.distances[[n+1]] <- results$distances[(nrow(results$distances)/2+1):nrow(results$distances),]
+    knn.indexes[[n+1]] <- results$indexes[(table.lengths[n]+1):nrow(results$indexes),]
+    knn.distances[[n+1]] <- results$distances[(table.lengths[n]+1):nrow(results$distances),]
   }
   # PREP KNN FOR OUTPUT ####################################### (should probably be simplified in the future, but works so ok for now)
   #make final timepoint data frame as well
