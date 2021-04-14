@@ -72,7 +72,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
   CheckSettings(mode, save.folder, var.remove, var.annotate,
                 clustering.var, cluster.numbers, cluster.mode,
                 distance.metric, minimum, maximum,
-                subsamples, which.palette)
+                which.palette, subsamples)
 
   if (downsample) {
     CheckDownsampleSettings(exclude.pctile, target.pctile,
