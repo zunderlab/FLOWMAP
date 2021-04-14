@@ -138,9 +138,9 @@ MultiClusterFCS <- function(list.of.files, clustering.var, numcluster,
 
 HclustClustering <- function(current.file, tmp.FCS.for.cluster, distance.metric = "manhattan", numcluster) {
   if (distance.metric == "euclidean") {
-    method <- "ward.D2"###or "ward.D" ??
+    method <- "ward"###or "ward.D" ??
   } else {
-    method <- "ward.D2" #"single"
+    method <- "single" #"average"
   }
   FCS.clusters <- stats::hclust(dist(tmp.FCS.for.cluster, method = distance.metric), method = method)
   clust <- list(assgn = cutree(FCS.clusters, k = numcluster))
