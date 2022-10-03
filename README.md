@@ -48,7 +48,8 @@ FLOWMAPR package depends on several packages, which can be installed using the b
 install.packages("igraph")
 install.packages("robustbase")
 
-devtools::install_github("cran/SDMTools") 
+install.packages("remotes")
+remotes::install_version("SDMTools", "1.1-221")
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
