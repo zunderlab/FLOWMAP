@@ -100,8 +100,12 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   clean.fcs.files <- list()
   if (length(subsamples) == 1 & subsamples != FALSE) {
     cat("Subsampling all files to:", subsamples, "\n")
-    # subsample.new <- rep(subsamples, times = length(fcs.file.names))
-    # subsamples <- subsample.new
+    subsample.new <- rep(subsamples, times = length(fcs.file.names))
+    subsamples <- subsample.new
+  } else {
+    subsamples <- subsamples
+    # this should check to see if it is the right data structure
+    # update to do this at some point
   }
   for (i in 1:length(fcs.file.names)) {
     current.file <- tail(strsplit(fcs.file.names[i], "/")[[1]], n = 1)
