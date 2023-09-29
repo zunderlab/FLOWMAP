@@ -119,7 +119,7 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
       fcs.file <- read.FCS(fcs.file.names[i]) #, which.lines = subsamples[i] #THIS DOES JUST PICK FIRST ONES SUBSAMPLING
       fcs.file <- as.data.frame(exprs(fcs.file))
-      subsample.ids <- runif(subsamples, min=1, max=nrow(fcs.file))
+      subsample.ids <- runif(subsamples[i], min=1, max=nrow(fcs.file))
       fcs.file <- fcs.file[subsample.ids,]
       rownames(fcs.file) <- c(1:nrow(fcs.file))
     }
