@@ -98,11 +98,15 @@ GetMultiFCSNames <- function(folder, sort = TRUE) {
 LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
                          subsamples = 1000, transform = TRUE) {
   clean.fcs.files <- list()
+  print("Subamples variable: ")
+  print(subsamples)
   if (!is.list(subsamples)) {
-    if (length(subsamples) == 1 & subsamples != FALSE) {
-      cat("Subsampling all files to:", subsamples, "\n")
-      subsample.new <- rep(subsamples, times = length(fcs.file.names))
-      subsamples <- subsample.new
+    if (length(subsamples) == 1) { # & subsamples != FALSE
+      if (subsamples != FALSE) {
+        cat("Subsampling all files to:", subsamples, "\n")
+        subsample.new <- rep(subsamples, times = length(fcs.file.names))
+        subsamples <- subsample.new
+      }
     } 
   } else {
     subsamples <- subsamples
@@ -182,10 +186,12 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
     if (!is.list(subsamp.orig)) {
-      if (length(subsamp.orig) == 1 & subsamp.orig != FALSE) {
-        cat("Subsampling all files to:", subsamp.orig, "\n")
-        subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
-        subsamples <- subsample.new
+      if (length(subsamp.orig) == 1) { 
+        if (subsamp.orig != FALSE) {
+          cat("Subsampling all files to:", subsamp.orig, "\n")
+          subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
+          subsamples <- subsample.new
+        }
       }
     } else if (length(subsamp.orig) > 1 ) { #& subsamp.orig != FALSE
       subsamples <- subsamp.orig[[t]]
