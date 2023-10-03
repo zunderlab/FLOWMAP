@@ -100,8 +100,8 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   clean.fcs.files <- list()
   print("Subamples variable: ")
   print(subsamples)
-  if (!is.list(subsamples)) {
-    if (length(subsamples) == 1) { # & subsamples != FALSE
+  if (length(subsamples) == 1) {
+    if (subsamples != FALSE) { 
       if (subsamples != FALSE) {
         cat("Subsampling all files to:", subsamples, "\n")
         subsample.new <- rep(subsamples, times = length(fcs.file.names))
@@ -117,11 +117,18 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
     current.file <- tail(strsplit(fcs.file.names[i], "/")[[1]], n = 1)
     cat("Reading FCS file data from:", current.file, "\n")
     # store currently read FCS file
-    if (!is.list(subsamples)) {
+    if (length(subsamples) == 1) {
       if (subsamples == FALSE) {
         fcs.file <- read.FCS(fcs.file.names[i])
         fcs.file <- as.data.frame(exprs(fcs.file))
         print(nrow(fcs.file))
+      } else {
+        cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
+        fcs.file <- read.FCS(fcs.file.names[i]) #, which.lines = subsamples[i] #THIS DOES JUST PICK FIRST ONES SUBSAMPLING
+        fcs.file <- as.data.frame(exprs(fcs.file))
+        subsample.ids <- runif(subsamples[i], min=1, max=nrow(fcs.file))
+        fcs.file <- fcs.file[subsample.ids,]
+        rownames(fcs.file) <- c(1:nrow(fcs.file))
       }
     } else {
       cat("Subsampling", current.file, "to", subsamples[i], "cells\n")
@@ -185,13 +192,11 @@ LoadMultiCleanFCS <- function(list.of.file.names, channel.remove, channel.annota
   subsamp.orig <- subsamples
   for (t in 1:length(list.of.file.names)) {
     fcs.file.names <- list.of.file.names[[t]]
-    if (!is.list(subsamp.orig)) {
-      if (length(subsamp.orig) == 1) { 
-        if (subsamp.orig != FALSE) {
-          cat("Subsampling all files to:", subsamp.orig, "\n")
-          subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
-          subsamples <- subsample.new
-        }
+    if (length(subsamp.orig) == 1) { 
+      if (subsamp.orig != FALSE) {
+        cat("Subsampling all files to:", subsamp.orig, "\n")
+        subsample.new <- rep(subsamp.orig, times = length(fcs.file.names))
+        subsamples <- subsample.new
       }
     } else if (length(subsamp.orig) > 1 ) { #& subsamp.orig != FALSE
       subsamples <- subsamp.orig[[t]]
