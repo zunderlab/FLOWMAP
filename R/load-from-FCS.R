@@ -102,11 +102,9 @@ LoadCleanFCS <- function(fcs.file.names, channel.remove, channel.annotate,
   print(subsamples)
   if (length(subsamples) == 1) {
     if (subsamples != FALSE) { 
-      if (subsamples != FALSE) {
-        cat("Subsampling all files to:", subsamples, "\n")
-        subsample.new <- rep(subsamples, times = length(fcs.file.names))
-        subsamples <- subsample.new
-      }
+      cat("Subsampling all files to:", subsamples, "\n")
+      subsample.new <- rep(subsamples, times = length(fcs.file.names))
+      subsamples <- subsample.new
     } 
   } else {
     subsamples <- subsamples
