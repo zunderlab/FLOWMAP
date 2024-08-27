@@ -121,8 +121,9 @@ BuildMultiFLOWMAPkNN <- function(remodel.FLOWMAP.clusters, k, min,
   for(i in 1:ncol(knn.out$distances)) knn.out$distances[sapply(knn.out$distances[,i], is.null),i] <- 10000
   knn.out$indexes  <-  as.data.frame(matrix(unlist(knn.out$indexes), nrow=length(unlist(knn.out$indexes[1])))) 
   knn.out$distances  <-  as.data.frame(matrix(unlist(knn.out$distances), nrow=length(unlist(knn.out$distances[1]))))
-  for(i in 1:nrow(knn.out$indexes)) knn.out$indexes[i,] <- knn.out$indexes[i,order(knn.out$distances[i,])] 
-  for(i in 1:nrow(knn.out$distances)) knn.out$distances[i,] <- knn.out$distances[i,][order(knn.out$distances[i,])]
+  dist_order = t(apply(knn.out$distances, 1, order))
+  for(i in 1:nrow(knn.out$indexes)) knn.out$indexes[i,] <- knn.out$indexes[i,dist_order[i,]] #order indexes by increasing distance (necessary to incorporate second timepoint connections into overall order)
+  for(i in 1:nrow(knn.out$distances)) knn.out$distances[i,] <- knn.out$distances[i,][dist_order[i,]] #increasing order distances
   knn.out$indexes  <-  as.data.frame(matrix(unlist(knn.out$indexes), nrow=length(unlist(knn.out$indexes[1])))) 
   knn.out$distances  <-  as.data.frame(matrix(unlist(knn.out$distances), nrow=length(unlist(knn.out$distances[1]))))
   print("finished processing knn output")
