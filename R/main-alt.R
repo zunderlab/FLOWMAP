@@ -117,13 +117,13 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df
     label.key <- GetLabelKeyfromDF(df, time.col.label, condition.col.label)
     PrintSummaryfromDF(env = parent.frame())
     if (clustering) {
-      file.clusters <- MultiClusterFCS(fixed.fcs.files, clustering.var = clustering.var, numcluster = cluster.numbers,
+      file.clusters <- MultiClusterFCS(df, clustering.var = clustering.var, numcluster = cluster.numbers,
                                        distance.metric = distance.metric, cluster.mode = cluster.mode)
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
     #Build FLOWMAP multi====
-    results <- BuildMultiFLOWMAPkNN(remodel.FLOWMAP.clusters, k = k, min = minimum,
+    results <- BuildMultiFLOWMAPkNN(file.clusters, k = k, min = minimum,
                                     max = maximum, distance.metric = distance.metric,
                                     label.key = label.key, clustering.var = clustering.var)
     graph <- results$output.graph
