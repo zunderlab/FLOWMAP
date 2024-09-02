@@ -410,19 +410,19 @@ ConvertNumericLabel <- function(list.of.clean.FCS.files.with.labels) {
               label.key = label.key))
 }
 
-ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key) {
+ConvertCharacterLabel <- function(data.frame.with.numeric.labels, label.key, time.col.label, condition.col.label) {
   data.frame.with.character.labels <- data.frame.with.numeric.labels
-  times <- unique(data.frame.with.numeric.labels[, "Time"])
+  times <- unique(data.frame.with.numeric.labels[, time.col.label])
   for (t in 1:length(times)) {
     # for (t in times) {
     # this.label <- label.key[[t]]
     this.label <- label.key[[t]]
-    this.ind <- which(data.frame.with.numeric.labels[, "Time"] == times[t])
-    # this.ind <- which(data.frame.with.numeric.labels[, "Time"] == t)
+    this.ind <- which(data.frame.with.numeric.labels[, time.col.label] == times[t])
+    # this.ind <- which(data.frame.with.numeric.labels[, time.col.label] == t)
     for (i in 1:length(this.label)) {
-      fix.ind <- which(data.frame.with.numeric.labels[, "Condition"] == i)
+      fix.ind <- which(data.frame.with.numeric.labels[, condition.col.label] == i)
       use.ind <- intersect(fix.ind, this.ind)
-      data.frame.with.character.labels[use.ind, "Condition"] <- this.label[i]
+      data.frame.with.character.labels[use.ind, condition.col.label] <- this.label[i]
     }
   }
   return(data.frame.with.character.labels)
