@@ -11,7 +11,7 @@ FLOWMAPcluster <- function(full.clusters, table.breaks, table.lengths,
   return (object)
 }
 
-RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters, label.key) {
+RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters, label.key, time.col.label) {
   # take FLOWMAP of conditions with timeseries and make into one timeseries
   # combine FLOWMAP conditions
   full.clusters <- data.frame()
@@ -39,7 +39,7 @@ RemodelFLOWMAPClusterList <- function(list.of.FLOWMAP.clusters, label.key) {
     table.breaks <- c(table.breaks, sum(table.lengths))
     full.clusters <- rbind(full.clusters, temp.medians)
   }
-  full.clusters <- ConvertCharacterLabel(full.clusters, label.key) ###########################################################
+  full.clusters <- ConvertCharacterLabel(full.clusters, label.key, time.col.label) ###########################################################
   remodeled.FLOWMAP.clusters <- FLOWMAPcluster(full.clusters, table.breaks, table.lengths,
                                                cluster.medians, cluster.counts, cell.assgn)
   return(remodeled.FLOWMAP.clusters)
