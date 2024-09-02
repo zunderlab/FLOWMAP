@@ -189,7 +189,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
                                      distance.metric = distance.metric, cluster.mode = cluster.mode)
     cat("Upsampling all clusters to reflect Counts of entire file", "\n")
     file.clusters <- MultiUpsample(fcs.file.names, file.clusters, fcs.files, var.remove, var.annotate, clustering.var)
-    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, label.key, time.col.label)
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, label.key, time.col.label, condition.col.label)
     #Build FLOWMAP multi====
     results <- BuildMultiFLOWMAPkNN(remodel.FLOWMAP.clusters, k = k, min = minimum,
                                  max = maximum, distance.metric = distance.metric,
@@ -320,7 +320,7 @@ FLOWMAP <- function(mode = c("single", "multi", "one", "static-multi"), files,
     temp.name.list <- list()
     temp.name.list[[1]] <- fcs.file.names
     file.clusters <- MultiUpsample(temp.name.list, file.clusters, temp.files.list, var.remove, var.annotate, clustering.var)
-    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, time.col.label=time.col.label)
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, time.col.label=time.col.label, condition.col.label=condition.col.label)
     ##Build FLOWMAP one-special ====
     results <- BuildFirstMultiFLOWMAPkNN(list.of.FLOWMAP.clusters = remodel.FLOWMAP.clusters,
                                              k = maximum, min = minimum, max = maximum,
