@@ -122,7 +122,7 @@ FLOWMAPfromDF <- function(mode = c("single", "multi", "one", "static-multi"), df
     } else {
       file.clusters <- ConstructMultiFLOWMAPCluster(df)
     }
-    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, label.key)
+    remodel.FLOWMAP.clusters <- RemodelFLOWMAPClusterList(file.clusters, label.key, time.col.label)
     #Build FLOWMAP multi====
     results <- BuildMultiFLOWMAPkNN(remodel.FLOWMAP.clusters, k = k, min = minimum,
                                     max = maximum, distance.metric = distance.metric,
